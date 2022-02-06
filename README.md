@@ -15,5 +15,5 @@
 
 <div align='center'>
   <p style = "font-size: 40px;"><b> آموزش ساخت ربات جدید در بله </b></p>
-  <p> میتوانید از طریق [این ویدیو](https://devbale.ir/sites/default/files/1398-03/final_5ce505a96467ba00144535c8_377089.mp4) ویدیو ساخت بات بله را ببینید </p>
 </div>
+میتوانید از طریق [این ویدیو](https://devbale.ir/sites/default/files/1398-03/final_5ce505a96467ba00144535c8_377089.mp4) ویدیو ساخت بات بله را ببینید.
