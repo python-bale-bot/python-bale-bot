@@ -1,5 +1,5 @@
 <div align='center'>
-<p style = "color: green;"># bale-bot</p>
+<p style = "font-size: 40px;">Bale Bot</p>
 </div>
 
 سلام، این پروژه جهت حضور و غیاب از طریق ربات پلتفرم بله نوشته شده است. ⚙
