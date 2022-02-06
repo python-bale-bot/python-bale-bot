@@ -14,5 +14,5 @@
 
 
 <div align='center'>
-<p style = "font-size: 40px;">آموزش ساخت ربات جدید در بله</p>
+  <p style = "font-size: 40px;"><b> آموزش ساخت ربات جدید در بله </b></p>
 </div>
