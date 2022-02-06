@@ -451,12 +451,4 @@ Chat ID : {m['result']['chat']['id']}```""")
 if __name__ == '__main__':
     print('App is Started!\nPlease Press "Enter" for Start Bot!\nMade By: IRAN TEAM')
     wait('enter')
-    BaleApp(token = "1705600104:cEscAcR8qoighfG7y3zlPDRWssUjOGZtvwTJkPot", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
-    
-    
-    
-    
-"""
-{'update_id': 8229, 'message': {'message_id': -1242649485, 'from': {'id': 1140327281, 'first_name': '', 'username': '', 'is_bot': False}, 'date': 1642906984, 'chat': {'id': 4900093239, 'type': 'group', 'title': 'گروه رشته برنامه نویسی', 'username': '', 'first_name': '', 'last_name': '', 'all_members_are_administrators': False, 'photo': None, 'pinned_message': None}, 'text': 'در سیاهی شب نور چشمانم را کور کرد'}}
-{'update_id': 8230, 'message': {'message_id': 323181634, 'from': {'id': 520436584, 'first_name': 'کیان احمدیان حلی 5', 'username': 'kian_ahmadian_helli5', 'is_bot': False}, 'date': 1642921619, 'chat': {'id': 520436584, 'type': 'private', 'title': '', 'username': 'kian_ahmadian_helli5', 'first_name': 'کیان احمدیان حلی 5', 'last_name': '', 'all_members_are_administrators': False, 'photo': None, 'pinned_message': None}, 'text': 'شروع'}}
-"""
+    BaleApp(token = "Your Token", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
