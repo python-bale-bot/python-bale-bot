@@ -46,7 +46,7 @@ class Msg():
         self.author = User(self.update)
     
     def delete_message(self):
-        msg = get(f"https://tapi.bale.ai/bot{self.base_url}/deletemessage", params = {
+        msg = get(f"{self.update.base_url}bot{self.update.token}/deletemessage", params = {
         "chat_id": f"{self.chat_id}",
         "message_id": f"{self.message_id}"
         }, timeout = (10, 15))
@@ -60,11 +60,11 @@ class Msg():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = int(self.message_id)
-        msg = post(f"https://tapi.bale.ai/bot{self.base_url}/sendMessage", json = json, timeout = (10, 15)) 
+        msg = post(f"{self.update.base_url}bot{self.update.token}/sendMessage", json = json, timeout = (10, 15)) 
         return msg.json()
     
     def get_chat_info(self):
-        info = get("https://tapi.bale.ai/bot{self.base_url}/getChat", params = {
+        info = get(f"{self.update.base_url}bot{self.update.token}/getChat", params = {
             "chat_id": str(self.chat_id)
         }, timeout = (10, 15))
         return info.json()
@@ -111,5 +111,5 @@ class User():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        msg = post(f"{self.base_url}bot"+ f"{self.update.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
+        msg = post(f"{self.update.base_urll}bot"+ f"{self.update.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
         return msg.json()
