@@ -22,13 +22,11 @@ class BaleApp():
         print('Bot Started!')
 
         while True:
-            # try:
-            if 1 == 1:
+            try:
                 if offset:
                     updates = post(f"{self.base_url}bot{self.token}/getupdates", json = {"offset" : offset + 1})
                     if updates.json()["result"] == []:
                         pass
-                    
                     elif int(updates.json()["result"][-1]["update_id"]) == offset:
                         pass
                     else:
@@ -54,8 +52,8 @@ class BaleApp():
                             else:
                                 update = Update(update, self)
                                 self.on_message(update, None, self.bot)
-            # except Exception as error:
-            #     print(error)
+            except Exception as error:
+                print(error)
      
     def send_message(self, chat_id, text, reply_markup = None, reply_to_message_id : int = None, token : str =  None):
         json = {}
@@ -69,7 +67,7 @@ class BaleApp():
         return msg.json()
     
     def delete_message(self, chat_id, message_id, token : str = None):
-        msg = get("https://tapi.bale.ai/bot"+ f"{token}" if token is not None else f"{self.token}" +"/deletemessage", params = {
+        msg = get(f"{self.base_url}bot"+ f"{token}" if token is not None else f"{self.token}" +"/deletemessage", params = {
             "chat_id": f"{chat_id}",
             "message_id": f"{message_id}"
         }, timeout = (10, 15))
@@ -125,8 +123,7 @@ class BaleApp():
             
     
     def on_message(self ,update, context, bot):
-        # try:
-        if 1 == 1:
+        try:
             if update.message.chat_type == 'private' and str(update.message.author.id) != bot["id"]:
                 db = connect('./data.db')
                 cursor = db.cursor()
@@ -136,6 +133,7 @@ class BaleApp():
                 db.commit()
                 cursor.close()
                 db.close()
+                
                 if update.message.text == '/start' or update.message.text == '/help' or update.message.text == 'شروع':
                     if not self.check_command(update):
                         return
@@ -152,8 +150,8 @@ Text : {m['result']['text']}
 Chat ID : {m['result']['chat']['id']}```""")
                 else:
                     return self.check_message_command(update, context, bot)
-        # except Exception as error:
-        #     self.check_error(update, context, error)
+        except Exception as error:
+            self.check_error(update, context, error)
             
     def start(self, update, context, bot):
         try:
@@ -443,7 +441,7 @@ Chat ID : {m['result']['chat']['id']}```""")
             self.check_error(update, context, error)
     
     def send_msg(self, user_id, text):
-        return post("https://tapi.bale.ai/bot{self.token}/sendMessage", json = {
+        return post(f"{self.base_url}bot{self.token}/sendMessage", json = {
             "chat_id": f"{user_id}",
             "text": f"{text}"
         })        
@@ -451,4 +449,14 @@ Chat ID : {m['result']['chat']['id']}```""")
 
     
 if __name__ == '__main__':
-    BaleApp(token = "Token", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
+    print('App is Started!\nPlease Press "Enter" for Start Bot!\nMade By: IRAN TEAM')
+    wait('enter')
+    BaleApp(token = "1705600104:cEscAcR8qoighfG7y3zlPDRWssUjOGZtvwTJkPot", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
+    
+    
+    
+    
+"""
+{'update_id': 8229, 'message': {'message_id': -1242649485, 'from': {'id': 1140327281, 'first_name': '', 'username': '', 'is_bot': False}, 'date': 1642906984, 'chat': {'id': 4900093239, 'type': 'group', 'title': 'گروه رشته برنامه نویسی', 'username': '', 'first_name': '', 'last_name': '', 'all_members_are_administrators': False, 'photo': None, 'pinned_message': None}, 'text': 'در سیاهی شب نور چشمانم را کور کرد'}}
+{'update_id': 8230, 'message': {'message_id': 323181634, 'from': {'id': 520436584, 'first_name': 'کیان احمدیان حلی 5', 'username': 'kian_ahmadian_helli5', 'is_bot': False}, 'date': 1642921619, 'chat': {'id': 520436584, 'type': 'private', 'title': '', 'username': 'kian_ahmadian_helli5', 'first_name': 'کیان احمدیان حلی 5', 'last_name': '', 'all_members_are_administrators': False, 'photo': None, 'pinned_message': None}, 'text': 'شروع'}}
+"""
