@@ -10,10 +10,4 @@
 
 این پروژه هنوز در دست ساخت است و در صورتی که نظری دارید میتوانید در دی ام دیسکورد پیام بدید.
 لینک ها در [پروفایل من](https://github.com/kianahmadian/)
-اطلاعات بیشتر در [سایت برنامه نویسان بله](https://github.com/kianahmadian/)
-
-
-<div align='center'>
-  <p style = "font-size: 40px;"><b> آموزش ساخت ربات جدید در بله </b></p>
-</div>
-میتوانید از طریق (https://devbale.ir/sites/default/files/1398-03/final_5ce505a96467ba00144535c8_377089.mp4)[این ویدیو]
+اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
