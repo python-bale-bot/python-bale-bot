@@ -15,4 +15,6 @@
 اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
 ## Social Media 📚
 
-[Discord](https://discord.com/users/684748470799958033)
+<div align='center'>
+<a href="https://discord.com/users/684748470799958033"> Discord </a>
+</div>
