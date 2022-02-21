@@ -38,7 +38,7 @@ class Msg():
         else:
             self.text = update.json["message"].get("text", "")
             update = update.json  
-        self.message_id = int(update["message"]["message_id"])
+        self.message_id = update["message"]["message_id"]
         self.chat_type = update["message"]["chat"]["type"]
         self.chat_id = int(update["message"]["chat"]["id"])
         self.date_code = update["message"]["date"]

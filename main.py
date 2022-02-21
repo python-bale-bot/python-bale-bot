@@ -69,7 +69,7 @@ class BaleApp():
         return msg.json()
     
     def delete_message(self, chat_id, message_id, token : str = None):
-        msg = get(f"{self.base_url}bot"+ f"{token}" if token is not None else f"{self.token}" +"/deletemessage", params = {
+        msg = get(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/deletemessage", params = {
             "chat_id": f"{chat_id}",
             "message_id": f"{message_id}"
         }, timeout = (10, 15))
@@ -240,7 +240,7 @@ Chat ID : {m['result']['chat']['id']}```""")
                 (status,) = cursor.fetchone()
                 if status:
                     try:
-                        date = (jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code)) + timedelta(hours = 3, minutes = 30)).strftime('%Y-%m-%d-%H-%M').split('-')
+                        date = (jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code))).strftime('%Y-%m-%d-%H-%M').split('-')
                         y, m, d, H, M  = jdatetime.datetime.now().strftime('%Y-%m-%d-%H-%M').split('-')
                         if y == date[0] and m == date[1] and d == date[2]:
                             cursor.execute("SELECT start_present_time, end_present_time FROM setting")
@@ -249,7 +249,7 @@ Chat ID : {m['result']['chat']['id']}```""")
                             (hour_end, minute_end) = str(time_end).split(':')
                             time_start = jdatetime.datetime.strptime(f'{y}/{m}/{d}/{hour_start}/{minute_start}', '%Y/%m/%d/%H/%M')
                             time_end = jdatetime.datetime.strptime(f'{y}/{m}/{d}/{hour_end}/{minute_end}', '%Y/%m/%d/%H/%M')
-                            time_now = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code)) + timedelta(hours = 3, minutes = 30)
+                            time_now = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code))
                             if hour_start > hour_end:
                                 time_end += timedelta(days = 1)
                             if time_now >= time_start and time_now <= time_end:
@@ -261,8 +261,6 @@ Chat ID : {m['result']['chat']['id']}```""")
                                         val = (user[3], update.message.author.id, f'{date[0]}-{date[1]}-{date[2]}')
                                         cursor.execute('SELECT * FROM present WHERE id = ? AND user_id = ? AND date = ?', val)
                                         sql = ('INSERT INTO present(id, user_id, date) VALUES(?,?,?)')
-                                        print("salam")
-                                        
                                         result = cursor.fetchone()
                                         if result is None or result == []:
                                             cursor.execute(sql, val)
@@ -270,24 +268,26 @@ Chat ID : {m['result']['chat']['id']}```""")
                                             cursor.close()
                                             db.close()
                                             self.send_message(chat_id = update.message.chat_id, text = f'[{update.message.author.username}](https://ble.ir/@{update.message.author.username})\n*حضور شما تایید شد!✅*', reply_markup = {"keyboard": [[{"text":"شروع"}]]})
-                                            return self.delete_message(chat_id = f'{update["callback_query"]["message"]["chat"]["id"]}', message_id = f'{update["callback_query"]["data"].split("|")[1]}')
+                                            return self.delete_message(chat_id = f'{update.json["message"]["chat"]["id"]}', message_id = f'{update.json["data"].split("|")[1]}')
                                         else:
                                             cursor.close()
                                             db.close()
-                                            self.send_message(chat_id = update["callback_query"]["message"]["chat"]["id"], text = '* 📛حضور شما از قبل ثبت شده است.📛 *')
-                                            return self.delete_message(chat_id = f'{update["callback_query"]["message"]["chat"]["id"]}', message_id = f'{update["callback_query"]["data"].split("|")[1]}')
+                                            self.send_message(chat_id = update.json["message"]["chat"]["id"], text = '* 📛حضور شما از قبل ثبت شده است.📛 *')
+                                            return self.delete_message(chat_id = f'{update.json["message"]["chat"]["id"]}', message_id = f'{update.json["data"].split("|")[1]}')
                                 cursor.close()
                                 db.close()
-                                self.send_message(chat_id = update["callback_query"]["message"]["chat"]["id"], text = f'* 📛نام شما  در دیتا بیس پیدا نشد، درصورتی که نام شما در اپلیکشن بله با نام واقعی شما مغایرت دارد لطفا اصلاح کرده و مجددا امتحان نمایید📛 *\nنام فعلی شما در بله : {update["callback_query"]["message"]["chat"]["first_name"]}')
-                                return self.delete_message(chat_id = f'{update["callback_query"]["message"]["chat"]["id"]}', message_id = f'{update["callback_query"]["data"].split("|")[1]}')
+                                self.send_message(chat_id = update.json["message"]["chat"]["id"], text = f'* 📛نام شما  در دیتا بیس پیدا نشد، درصورتی که نام شما در اپلیکشن بله با نام واقعی شما مغایرت دارد لطفا اصلاح کرده و مجددا امتحان نمایید📛 *\nنام فعلی شما در بله : {update.json["message"]["chat"]["first_name"]}')
+                                update.message.delete_message()
+                                return self.delete_message(chat_id = f'{update.json["message"]["chat"]["id"]}', message_id = f'{update.json["data"].split("|")[1]}')
                             else:
-                                msg = self.send_message(chat_id = update["callback_query"]["message"]["chat"]["id"], text = f'📛کاربر گرامی شما فقط میتوانید در بین ساعت `{hour_start}:{minute_start}` تا `{hour_end}:{minute_end}` درخواست حضور خود را تائید کنید📛', reply_markup = {"keyboard": [[{"text":"شروع"}]]})
-                                return self.delete_message(chat_id = f'{update["callback_query"]["message"]["chat"]["id"]}', message_id = f'{update["callback_query"]["data"].split("|")[1]}')
+                                msg = self.send_message(chat_id = update.json["message"]["chat"]["id"], text = f'📛کاربر گرامی شما فقط میتوانید در بین ساعت `{hour_start}:{minute_start}` تا `{hour_end}:{minute_end}` درخواست حضور خود را تائید کنید📛', reply_markup = {"keyboard": [[{"text":"شروع"}]]})
+                                update.message.delete_message()
+                                return self.delete_message(chat_id = update.message.chat_id, message_id = f'{update.json["data"].split("|")[1]}')
                         else:
                             cursor.close()
                             db.close()
-                            self.delete_message(chat_id=update["callback_query"]["message"]["chat"]["id"],message_id=update["callback_query"]["message"]["message_id"])
-                            return self.delete_message(chat_id = f'{update["callback_query"]["message"]["chat"]["id"]}', message_id = f'{update["callback_query"]["data"].split("|")[1]}')
+                            update.message.delete_message()
+                            return self.delete_message(chat_id = f'{update.json["message"]["chat"]["id"]}', message_id = f'{update.json["data"].split("|")[1]}')
                     except Exception as error:
                         print(error)
                 else:
@@ -455,4 +455,4 @@ Chat ID : {m['result']['chat']['id']}```""")
 if __name__ == '__main__':
     print('App is Started!\nPlease Press "Enter" for Start Bot!\nMade By: IRAN TEAM')
     wait('enter')
-    BaleApp(token = "1705600104:blTu9Ti8GK4Lv6rLvpnegORBTVpgYgbdPFa21WlY", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
+    BaleApp(token = "Your Token", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
