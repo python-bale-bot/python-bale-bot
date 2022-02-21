@@ -6,6 +6,7 @@ from requests.exceptions import ConnectTimeout
 from jdatetime import timedelta
 from sqlite3 import connect, OperationalError
 from keyboard import wait
+from time import sleep
 
 class BaleApp():
     def __init__(self, token:str, base_url:str, base_file_url:str, offset : int = None):
@@ -52,6 +53,7 @@ class BaleApp():
                             else:
                                 update = Update(update, self)
                                 self.on_message(update, None, self.bot)
+                sleep(5.0)
             except Exception as error:
                 print(error)
      
