@@ -16,7 +16,7 @@ class Update():
         self.json = update    
         self.message = Msg(self)
         
-    def send_message(self, chat_id, text, reply_markup = None, reply_to_message_id : int = None, token : str =  None):
+    def send_message(self, chat_id, text, reply_markup = None, reply_to_message_id = None, token : str =  None):
         json = {}
         json["chat_id"] = f"{chat_id}"
         json["text"] = f"{text}"
@@ -60,8 +60,8 @@ class Msg():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = int(self.message_id)
-        msg = post(f"{self.update.base_url}bot{self.update.token}/sendMessage", json = json, timeout = (10, 15)) 
-        return msg.json()
+        msg = post(f"{self.update.base_url}bot{self.update.token}/sendMessage", json = json, timeout = (10, 15))
+        return msg.json()["result"]
     
     def get_chat_info(self):
         info = get(f"{self.update.base_url}bot{self.update.token}/getChat", params = {

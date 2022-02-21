@@ -57,7 +57,7 @@ class BaleApp():
             except Exception as error:
                 print(error)
      
-    def send_message(self, chat_id, text, reply_markup = None, reply_to_message_id : int = None, token : str =  None):
+    def send_message(self, chat_id, text, reply_markup = None, reply_to_message_id = None, token : str =  None):
         json = {}
         json["chat_id"] = f"{chat_id}"
         json["text"] = f"{text}"
@@ -179,13 +179,13 @@ Chat ID : {m['result']['chat']['id']}```""")
                         time_end += timedelta(days = 1)
                     if time_now >= start_time and time_now <= time_end:
                         msg = update.message.reply_message(text = '👇لطفا از طریق منوی زیر، گزینه *من حاضرم* را برای تائید حضور خود انتخاب نمایید',reply_markup = {"keyboard": [[{"text":"شروع"}]]})
-                        return self.send_message(chat_id = update.message.message_id, text = '[در صورتی که گزینه ای نمیبینید بله خود را آپدیت نمایید](https://bale.ai/#download)\n\n[سازندگان بات](send:سازندگان)', reply_markup = { "inline_keyboard": [[{"text": "من حاضرم", "callback_data": f'run_command|{msg["message_id"]}'}]]})
+                        return update.message.reply_message(text = '[در صورتی که گزینه ای نمیبینید بله خود را آپدیت نمایید](https://bale.ai/#download)\n\n[سازندگان بات](send:سازندگان)', reply_markup = { "inline_keyboard": [[{"text": "من حاضرم", "callback_data": f'run_command|{msg["message_id"]}'}]]})
                     else:
-                        return self.send_message(chat_id = update.message.message_id, text = f'📛کاربر گرامی شما فقط میتوانید در بین ساعت `{hour_start}:{minute_start}` تا `{hour_end}:{minute_end}` درخواست حضور خود را تائید کنید📛', reply_markup = { "inline_keyboard": [[{"text": "سازندگان بات", "callback_data": "developer"}]]})
+                        return update.message.reply_message(text = f'📛کاربر گرامی شما فقط میتوانید در بین ساعت `{hour_start}:{minute_start}` تا `{hour_end}:{minute_end}` درخواست حضور خود را تائید کنید📛', reply_markup = { "inline_keyboard": [[{"text": "سازندگان بات", "callback_data": "developer"}]]})
                 else:
                     cursor.close()
                     db.close()
-                    return self.send_message(chat_id = update.message.message_id, text = f"❌ *وضعیت حضور و غیاب توسط ادمین غیر فعال شده است!* ❌", reply_markup = {"keyboard": [[{"text":"شروع"}]]})
+                    return update.message.reply_message(text = f"❌ *وضعیت حضور و غیاب توسط ادمین غیر فعال شده است!* ❌", reply_markup = {"keyboard": [[{"text":"شروع"}]]})
         except Exception as error:
             return self.check_error(update, context, error)
         
@@ -231,7 +231,7 @@ Chat ID : {m['result']['chat']['id']}```""")
 
     def action(self, update, context, bot):
         try:
-            if update.message.author.is_bot_admin(return_msg_to_user = True):
+            if update.message.author.is_bot_admin(return_msg_to_user = False):
                 update.message.reply_message(chat_id = update.message.author.id, text = '* 📛ادمین گرامی این بخش مخصوص کاربران عادی است!📛 *' )
             else:
                 db = connect('./data.db')
@@ -240,7 +240,7 @@ Chat ID : {m['result']['chat']['id']}```""")
                 (status,) = cursor.fetchone()
                 if status:
                     try:
-                        date = (jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.data)) + timedelta(hours = 3, minutes = 30)).strftime('%Y-%m-%d-%H-%M').split('-')
+                        date = (jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code)) + timedelta(hours = 3, minutes = 30)).strftime('%Y-%m-%d-%H-%M').split('-')
                         y, m, d, H, M  = jdatetime.datetime.now().strftime('%Y-%m-%d-%H-%M').split('-')
                         if y == date[0] and m == date[1] and d == date[2]:
                             cursor.execute("SELECT start_present_time, end_present_time FROM setting")
@@ -249,7 +249,7 @@ Chat ID : {m['result']['chat']['id']}```""")
                             (hour_end, minute_end) = str(time_end).split(':')
                             time_start = jdatetime.datetime.strptime(f'{y}/{m}/{d}/{hour_start}/{minute_start}', '%Y/%m/%d/%H/%M')
                             time_end = jdatetime.datetime.strptime(f'{y}/{m}/{d}/{hour_end}/{minute_end}', '%Y/%m/%d/%H/%M')
-                            time_now = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date)) + timedelta(hours = 3, minutes = 30)
+                            time_now = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update.message.date_code)) + timedelta(hours = 3, minutes = 30)
                             if hour_start > hour_end:
                                 time_end += timedelta(days = 1)
                             if time_now >= time_start and time_now <= time_end:
@@ -261,6 +261,8 @@ Chat ID : {m['result']['chat']['id']}```""")
                                         val = (user[3], update.message.author.id, f'{date[0]}-{date[1]}-{date[2]}')
                                         cursor.execute('SELECT * FROM present WHERE id = ? AND user_id = ? AND date = ?', val)
                                         sql = ('INSERT INTO present(id, user_id, date) VALUES(?,?,?)')
+                                        print("salam")
+                                        
                                         result = cursor.fetchone()
                                         if result is None or result == []:
                                             cursor.execute(sql, val)
@@ -453,4 +455,4 @@ Chat ID : {m['result']['chat']['id']}```""")
 if __name__ == '__main__':
     print('App is Started!\nPlease Press "Enter" for Start Bot!\nMade By: IRAN TEAM')
     wait('enter')
-    BaleApp(token = "Your Token", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
+    BaleApp(token = "1705600104:blTu9Ti8GK4Lv6rLvpnegORBTVpgYgbdPFa21WlY", base_url = "https://tapi.bale.ai/", base_file_url = 'https://tapi.bale.ai/file')
