@@ -1,5 +1,5 @@
 <div align='center'>
-<p style = "font-size: 40px;"><b> Bale Bot </b></p>
+<p style = "font-size: 40px;"><b> Bale Bot s</b></p>
 </div>
 
 ## Info ℹ
