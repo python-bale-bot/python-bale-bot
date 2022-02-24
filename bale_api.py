@@ -1,3 +1,4 @@
+from msilib.schema import Class
 from requests import post, get
 import jdatetime
 from jdatetime import timedelta
@@ -53,7 +54,6 @@ class Bot():
                 del self.commands[command_name]
             else:
                 raise "Command Not Found!"
-            
 
 class Update():
     def __init__(self, update : dict, baseclass):
