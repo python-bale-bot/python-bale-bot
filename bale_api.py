@@ -55,7 +55,6 @@ class Bot():
             else:
                 raise "Command Not Found!"
 
-
 class Update():
     def __init__(self, update : dict, baseclass):
         self.token = baseclass.token
