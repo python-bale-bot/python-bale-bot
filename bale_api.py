@@ -4,6 +4,57 @@ from jdatetime import timedelta
 import datetime
 from sqlite3 import connect
 
+class Bot():
+    def __init__(self, base_url, token, base_file_url, admin_ids : list, prefix : str):
+        self.token = token
+        self.base_url = base_url
+        self.base_file_url = base_file_url
+        self.admin_ids = []
+        self.prefix = prefix
+        self.commands = {}
+        for id in admin_ids:
+            if isinstance(id, str):
+                if id.isdigit():
+                    self.admin_ids.append(int(id)) 
+            elif isinstance(id, int):
+                self.admin_ids.append(int(id)) 
+        
+    @classmethod
+    def delete_webhook(self, timeout):
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        result = get(f"{self.base_url}bot{self.token}/deleteWebhook", timeout=timeout)
+        return result.json()["result"]
+    
+    @classmethod
+    def add_handler(self, command_name : str, filter : str):
+        if command_name == self.prefix:
+            raise "Command Name is not True"
+        elif not (filter.lower() == "text" or filter.lower() == "sticker"):
+            raise "Filter is not True"
+        else:
+            if command_name.startswith(self.prefix):
+                command_name = command_name.replace(self.prefix, "", 1)
+            if not command_name in self.commands:
+                self.commands[command_name] = {
+                    "filter": f"{filter}"
+                }
+            else:
+                raise "The order already entered"
+            
+    @classmethod
+    def delete_handler(self, command_name : str):
+        if command_name == self.prefix:
+            raise "Command Name is not True"
+        else:
+            if command_name.startswith(self.prefix):
+                command_name = command_name.replace(self.prefix, "", 1)
+            if command_name in self.commands:
+                del self.commands[command_name]
+            else:
+                raise "Command Not Found!"
+            
+
 class Update():
     def __init__(self, update : dict, baseclass):
         self.token = baseclass.token
@@ -59,7 +110,7 @@ class Msg():
         if reply_markup:
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
-            json["reply_to_message_id"] = int(self.message_id)
+            json["reply_to_message_id"] = str(self.message_id)
         msg = post(f"{self.update.base_url}bot{self.update.token}/sendMessage", json = json, timeout = (10, 15))
         return msg.json()["result"]
     
@@ -70,7 +121,7 @@ class Msg():
         return info.json()
     
     def __str__(self):
-        return f"Message ID: {self.message_id}\nMessage Date Code: {self.date_code}\nMessage Chat ID: {self.chat_id}"
+        return self.message_id
     
 class User():
     def __init__(self, update):
@@ -113,3 +164,5 @@ class User():
             json["reply_to_message_id"] = reply_to_message_id
         msg = post(f"{self.update.base_urll}bot"+ f"{self.update.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
         return msg.json()
+    def __str__(self):
+        return str(self.first_name) + str(self.last_name) + f"#{self.id}"
