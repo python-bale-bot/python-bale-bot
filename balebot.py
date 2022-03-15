@@ -1,7 +1,7 @@
 from requests import post, get
 import jdatetime
 from jdatetime import timedelta
-import datetimes
+import datetime
 
 class Bot():
     def __init__(self, base_url : str, token : str, base_file_url : str, prefix : str):
