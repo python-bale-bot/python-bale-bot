@@ -21,8 +21,7 @@ class Bot():
             return error
         self.bot = User(result.json()["result"], self)
         return result.json()["ok"]
-        
-        
+    
     def delete_webhook(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
@@ -70,7 +69,7 @@ class Bot():
 class Update():
     def __init__(self, update : dict, base_class):
         self.__dict__ = {
-            "token": None, "base_url" : None, "base_file_url": None, "bot": None, "base_class": None, "json": None, "type": None, "message": None, "successful_payment": None
+            "token": None, "base_url" : None, "base_file_url": None, "bot": None, "base_class": None, "json": None, "type": None, "message": None, "successful_payment": None, "callback_query": None
         }
         self.token = base_class.token
         self.base_url = base_class.base_url
@@ -82,6 +81,7 @@ class Update():
         if update.get("callback_query"):
             self.type = "callback_query"
             self.callback_query = CallbackQuery(update.get("callback_query"))
+            self.message = self.callback_query.message
         elif update.get("message"):
             self.type = "message"
             self.message = Msg(update["message"], self)
