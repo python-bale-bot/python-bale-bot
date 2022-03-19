@@ -145,6 +145,30 @@ class Msg():
         msg = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
         return msg.json()["result"]
     
+    def reply_message_invoice(self, title, description, provider_token, prices, photo_url = False, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
+        json = {}
+        json["chat_id"] = f"{self.chat_id}"
+        json["title"] = f"{title}"
+        json["description"] = f"{description}"
+        json["provider_token"] = f"{provider_token}"
+        json["prices"] = prices
+        if photo_url:
+            json["photo_url"] = photo_url
+        if need_name:
+            json["need_name"] = need_name
+        if need_phone_number:
+            json["need_phone_number"] = need_phone_number
+        if need_email:
+            json["need_email"] = need_email
+        if need_shipping_address:
+            json["need_shipping_address"] = need_shipping_address
+        if is_flexible:
+            json["is_flexible"] = is_flexible
+        if reply_markup:
+            json["reply_markup"] = reply_markup
+        msg = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        return msg.json()["result"]
+    
     def get_chat_info(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
