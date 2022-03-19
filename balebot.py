@@ -29,6 +29,20 @@ class Bot():
         result = get(f"{self.base_url}bot{self.token}/deleteWebhook", timeout=timeout)
         return result.json()["result"]
 
+    def send_message(self, chat_id, timeout, text = None,
+        sticker = None, files = None, reply_markup = None, reply_to_message_id = None, token : str =  None ):
+        if not isinstance(timeout, (tuple, int)):
+                raise "Time out Not true"
+        json = {}
+        json["chat_id"] = f"{chat_id}"
+        json["text"] = f"{text}"
+        if reply_markup:
+            json["reply_markup"] = reply_markup
+        if reply_to_message_id:
+            json["reply_to_message_id"] = reply_to_message_id
+        msg = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
+        return msg.json()
+
     def get_updates(self, timeout, offset : int = None, limit : int = None):
         if offset is None:
             offset = self.offset
