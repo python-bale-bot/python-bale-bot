@@ -8,6 +8,7 @@ class Bot():
         self.token = token
         self.base_url = base_url
         self.base_file_url = base_file_url
+        self.bot = {}
         self.prefix = prefix
         self.commands = {}
         self.offset = None   
@@ -52,14 +53,18 @@ class Bot():
             options["offset"] = offset
         if limit is not None:
             options["limit"] = limit
-        updates = post(self.base_url + "bot" + self.token + "/getupdates", json = options, timeout = timeout)
-        if not updates.json()["ok"]:
-            updates = updates.json()
-            raise f"{updates['error_code']} | {updates['description']}"
-        if len(updates.json()["result"]) != 0:
-            self.offset = int(updates.json()["result"][-1]["update_id"])
+        while True:
+            try:
+                updates = post(self.base_url + "bot" + self.token + "/getupdates", json = options, timeout = timeout)
+                if not updates.json()["ok"]:
+                    updates = updates.json()
+                    raise f"{updates['error_code']} | {updates['description']}"
+                if len(updates.json()["result"]) != 0:
+                    self.offset = int(updates.json()["result"][-1]["update_id"]) 
+                break   
+            except:
+                pass
         result = []
-        print(updates.json())
         for i in updates.json()["result"]:
             update = Update(i, self)
             result.append(update)
@@ -80,7 +85,7 @@ class Update():
         self.type = "unknown"
         if update.get("callback_query"):
             self.type = "callback_query"
-            self.callback_query = CallbackQuery(update.get("callback_query"))
+            self.callback_query = CallbackQuery(update.get("callback_query"), self)
             self.message = self.callback_query.message
         elif update.get("message"):
             self.type = "message"
@@ -108,10 +113,12 @@ class Update():
 class Msg():
     def __init__(self, update : dict, baseclass):
         self.__dict__ = {
-            "update": None, "baseclass": None, "caption": None, "forward_from": None, "contact": None, "message_id": None, "chat_type": None, "chat_id": None, "chat_id": None, "date_code": None, "date": None, "author": None, "edit_date": None, "audio": None, "document": None, "photo": None, "voice": None, "location": None, "invoice": None
+            "update": None, "baseclass": None, "text": None,"caption": None, "forward_from": None, "contact": None, "message_id": None, "chat_type": None, "chat_id": None, "chat_id": None, "date_code": None, "date": None, "author": None, "edit_date": None, "audio": None, "document": None, "photo": None, "voice": None, "location": None, "invoice": None
         }
         self.update = update
         self.baseclass = baseclass
+        if update.get("text"):
+            self.text = str(update["text"])
         if update.get("caption"):
             self.caption = str(update["caption"])
         if update.get("forward_from"):
