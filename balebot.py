@@ -131,7 +131,7 @@ class Msg():
         self.date = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update["date"]))
         self.author = User(self.update["chat"] if self.chat_type == "private" else self.update["from"], self.baseclass)
     
-    def delete_message(self, timeout):
+    def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         msg = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
@@ -140,7 +140,7 @@ class Msg():
         }, timeout = timeout)
         return msg.json()
     
-    def reply_message(self, text, reply_markup = None, reply_to_message_id : bool = True):
+    def reply(self, text, reply_markup = None, reply_to_message_id : bool = True):
         json = {}
         json["chat_id"] = f"{self.chat_id}"
         json["text"] = f"{text}"
