@@ -68,7 +68,6 @@ class Bot():
         for i in updates.json()["result"]:
             update = Update(i, self)
             result.append(update)
-        result.reverse()
         return result
 
 class Update():
