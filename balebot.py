@@ -279,7 +279,7 @@ class ReplyMarkup():
                     self.keyboards.append(key_list)
         if inlinekeyboards is not None:
             self.inlinekeyboards = []
-            for i in keyboards:
+            for i in inlinekeyboards:
                 if type(i) is dict:
                     pass
                 elif type(i) is list:
@@ -291,7 +291,8 @@ class ReplyMarkup():
         if self.keyboards:
             self.result["keyboard"] = self.keyboards
         if self.inlinekeyboards:
-            self.result["inlinekeyboard"] = self.inlinekeyboards
+            self.result["inline_keyboard"] = self.inlinekeyboards
+        print(self.result)
         
 class InlineKeyboard():
     def __init__(self, text : str, callback_data : str):
