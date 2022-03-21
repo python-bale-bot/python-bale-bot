@@ -140,12 +140,15 @@ class Msg():
         }, timeout = timeout)
         return msg.json()
     
-    def reply(self, text, reply_markup = None, reply_to_message_id : bool = True):
+    def reply(self, text, components = None, reply_to_message_id : bool = True):
         json = {}
         json["chat_id"] = f"{self.chat_id}"
         json["text"] = f"{text}"
-        if reply_markup:
-            json["reply_markup"] = reply_markup
+        if components:
+            if type(components) is ReplyMarkup:
+                json["reply_markup"] = components.result
+            elif type(components) is dict:
+                json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
         msg = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
@@ -203,14 +206,17 @@ class User():
         self.last_name = None
         self.username = None
         self.id = None  
+        self.mention = None
         if update.get("first_name"):
             self.first_name = update["first_name"]
         if update.get("last_name"):
             self.last_name = update["last_name"]
         if update.get("username"):
             self.username = update["username"]
+            self.mention = "[{username}](https://ble.ir/@{username})".format(username = self.username)
         if update.get("id"):
             self.id = int(update['id'])
+        
     
     def send_message_to_user(self, text, reply_markup = None, reply_to_message_id : int = None):
         json = {}
@@ -258,23 +264,45 @@ class Location():
         self.link = f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
         
 class ReplyMarkup():
-    def __init__(self, keyboard : dict = None, inlinekeyboard : dict = None):
-        self.inlinekeyboard = inlinekeyboard
-        self.keyboard = keyboard
-        if keyboard is None:
-            self.keyboard = {}
-        if inlinekeyboard is None:
-            self.inlinekeyboard = {}
-        self.result =  {"keyboard": self.keyboard, "inlinekeyboard": self.inlinekeyboard}
+    def __init__(self, keyboards = None, inlinekeyboards = None):
+        self.keyboards = None
+        self.inlinekeyboards = None
+        if keyboards is not None:
+            self.keyboards = []
+            for i in keyboards:
+                if type(i) is dict:
+                    pass
+                elif type(i) is list:
+                    key_list = []
+                    for i in i:
+                        key_list.append({"text": i.text})
+                    self.keyboards.append(key_list)
+        if inlinekeyboards is not None:
+            self.inlinekeyboards = []
+            for i in keyboards:
+                if type(i) is dict:
+                    pass
+                elif type(i) is list:
+                    key_list = []
+                    for i in i:
+                        key_list.append({"text": i.text, "callback_data": i.callback_data})
+                    self.inlinekeyboards.append(key_list)
+        self.result =  {}
+        if self.keyboards:
+            self.result["keyboard"] = self.keyboards
+        if self.inlinekeyboards:
+            self.result["inlinekeyboard"] = self.inlinekeyboards
         
 class InlineKeyboard():
     def __init__(self, text : str, callback_data : str):
         self.text = text
         self.callback_data = callback_data
+        self.result = {"text": self.text, "callback_data": self.callback_data}
     
 class keyboard():
     def __init__(self, text: str):
         self.text = text
+        self.result = {"text": self.text}
     
 
         
