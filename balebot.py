@@ -229,7 +229,7 @@ class User():
         msg = post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
         return msg.json()
     def __str__(self):
-        return str(self.first_name) + str(self.last_name) + f"#{self.id}"
+        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
     
 class ContactMessage():
     def __init__(self, update : dict, baseclass):
