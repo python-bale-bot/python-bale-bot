@@ -13,7 +13,7 @@ class Bot():
         self.commands = {}
         self.offset = None   
         if not self.check_bot():
-            raise f"Bot is not Ready!"
+            raise f"Bot is not Ready!!"
      
     def check_bot(self):
         try:

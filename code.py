@@ -22,5 +22,5 @@ class BaleApp(Bot):
                         i.message.reply(text = f"salam {i.message.author}", components = ReplyMarkup(inlinekeyboards = [[InlineKeyboard("salam", "help")]]))
             if updates != [] or updates:
                 offset = updates[-1].id
-            sleep(5.0)
+            sleep(6.0)
 BaleApp()
