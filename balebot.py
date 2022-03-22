@@ -269,28 +269,36 @@ class ReplyMarkup():
         self.inlinekeyboards = None
         if keyboards is not None:
             self.keyboards = []
-            for i in keyboards:
-                if type(i) is dict:
-                    key_list = []
-                    key_list.append(i)
-                    self.keyboards.append(key_list)
-                elif type(i) is list:
-                    key_list = []
-                    for i in i:
-                        key_list.append({"text": i.text})
-                    self.keyboards.append(key_list)
+            if type(keyboards) is list:
+                for i in keyboards:
+                    if type(i) is dict:
+                        key_list = []
+                        key_list.append(i)
+                        self.keyboards.append(key_list)
+                    elif type(i) is list:
+                        key_list = []
+                        for i in i:
+                            key_list.append({"text": i.text})
+                        self.keyboards.append(key_list)
+            elif type(keyboards) is dict:
+                if "name" in keyboards:
+                    self.keyboards.append(keyboards)
         if inlinekeyboards is not None:
             self.inlinekeyboards = []
-            for i in inlinekeyboards:
-                if type(i) is dict:
-                    key_list = []
-                    key_list.append(i)
-                    self.inlinekeyboards.append(key_list)
-                elif type(i) is list:
-                    key_list = []
-                    for i in i:
-                        key_list.append({"text": i.text, "callback_data": i.callback_data})
-                    self.inlinekeyboards.append(key_list)
+            if type(inlinekeyboards) is list:
+                for i in inlinekeyboards:
+                    if type(i) is dict:
+                        key_list = []
+                        key_list.append(i)
+                        self.inlinekeyboards.append(key_list)
+                    elif type(i) is list:
+                        key_list = []
+                        for i in i:
+                            key_list.append({"text": i.text, "callback_data": i.callback_data})
+                        self.inlinekeyboards.append(key_list)
+            elif type(inlinekeyboards) is dict:
+                if "name" in keyboards and "callback_data" in keyboards:
+                    self.keyboards.append(keyboards)
         self.result =  {}
         if self.keyboards:
             self.result["keyboard"] = self.keyboards
@@ -303,7 +311,7 @@ class InlineKeyboard():
         self.callback_data = callback_data
         self.result = {"text": self.text, "callback_data": self.callback_data}
     
-class keyboard():
+class Keyboard():
     def __init__(self, text: str):
         self.text = text
         self.result = {"text": self.text}
