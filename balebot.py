@@ -271,7 +271,9 @@ class ReplyMarkup():
             self.keyboards = []
             for i in keyboards:
                 if type(i) is dict:
-                    pass
+                    key_list = []
+                    key_list.append(i)
+                    self.keyboards.append(key_list)
                 elif type(i) is list:
                     key_list = []
                     for i in i:
@@ -281,7 +283,9 @@ class ReplyMarkup():
             self.inlinekeyboards = []
             for i in inlinekeyboards:
                 if type(i) is dict:
-                    pass
+                    key_list = []
+                    key_list.append(i)
+                    self.inlinekeyboards.append(key_list)
                 elif type(i) is list:
                     key_list = []
                     for i in i:
@@ -292,7 +296,6 @@ class ReplyMarkup():
             self.result["keyboard"] = self.keyboards
         if self.inlinekeyboards:
             self.result["inline_keyboard"] = self.inlinekeyboards
-        print(self.result)
         
 class InlineKeyboard():
     def __init__(self, text : str, callback_data : str):
