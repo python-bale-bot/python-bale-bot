@@ -9,7 +9,11 @@ class BaleApp(Bot):
         for i in updates:
             i = Update(i.json, i.base_class)
             if i.type == "callback_query":
-                i.callback_query.message.reply(text = f"{i.callback_query.data} click shod!")
+                if i.callback_query.data == "help":
+                    i.callback_query.message.reply(text = "salam", components = ReplyMarkup(keyboards=[]))
+                elif i.callback_query.data == "test":
+                    i.callback_query.message.delete()
             elif i.type == "message":
-                i.message.reply(text = f"salam {i.message.author.mention}", components = ReplyMarkup(inlinekeyboards = [[InlineKeyboard("salam", "ss")]]))
+                if i.message.text == "test":
+                    i.message.reply(text = f"salam {i.message.author}", components = ReplyMarkup(inlinekeyboards = [[InlineKeyboard("salam", "help")]]))
 BaleApp()
