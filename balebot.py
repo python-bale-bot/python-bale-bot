@@ -73,8 +73,9 @@ class Bot():
 class Update():
     def __init__(self, update : dict, base_class):
         self.__dict__ = {
-            "token": None, "base_url" : None, "base_file_url": None, "bot": None, "base_class": None, "json": None, "type": None, "message": None, "successful_payment": None, "callback_query": None
+            "id": None, "token": None, "base_url" : None, "base_file_url": None, "bot": None, "base_class": None, "json": None, "type": None, "message": None, "successful_payment": None, "callback_query": None
         }
+        self.id = int(update.get("update_id"))
         self.token = base_class.token
         self.base_url = base_class.base_url
         self.base_file_url = base_class.base_file_url
