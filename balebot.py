@@ -4,8 +4,8 @@ from jdatetime import timedelta
 import datetime
 
 class Bot():
-    def __init__(self, base_url : str, token : str, base_file_url : str, prefix : str):
-        self.token = token
+    def __init__(self, base_url : str, token : str, base_file_url : str, prefix : str = None):
+        self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
         self.bot = {}
@@ -29,8 +29,8 @@ class Bot():
         result = get(f"{self.base_url}bot{self.token}/deleteWebhook", timeout=timeout)
         return result.json()["result"]
 
-    def send_message(self, chat_id, timeout, text = None,
-        sticker = None, files = None, reply_markup = None, reply_to_message_id = None, token : str =  None ):
+    def send_message(self, chat_id : int, timeout, text : str = None,
+        sticker = None, files = None, reply_markup = None, reply_to_message_id : str = None, token : str =  None ):
         if not isinstance(timeout, (tuple, int)):
                 raise "Time out Not true"
         json = {}
@@ -40,8 +40,8 @@ class Bot():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        msg = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
-        return msg.json()
+        Message = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
+        return Message.json()
 
     def get_updates(self, timeout, offset : int = None, limit : int = None):
         if offset is None:
@@ -86,13 +86,13 @@ class Update():
         if update.get("callback_query"):
             self.type = "callback_query"
             self.callback_query = CallbackQuery(update.get("callback_query"), self)
-            self.message = self.callback_query.message
+            self.message : Message = self.callback_query.message
         elif update.get("message"):
             self.type = "message"
-            self.message = Msg(update["message"], self)
+            self.message : Message = Message(update["message"], self)
         elif update.get("edited_message"):
             self.type = "edited_message"
-            self.message = Msg(update.get("edited_message"), self)
+            self.message : Message = Message(update.get("edited_message"), self)
             
         
         
@@ -107,10 +107,10 @@ class Update():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        msg = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
-        return msg.json()
+        Message = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
+        return Message.json()
 
-class Msg():
+class Message():
     def __init__(self, update : dict, baseclass):
         self.__dict__ = {
             "update": None, "baseclass": None, "text": None,"caption": None, "forward_from": None, "contact": None, "message_id": None, "chat_type": None, "chat_id": None, "chat_id": None, "date_code": None, "date": None, "author": None, "edit_date": None, "audio": None, "document": None, "photo": None, "voice": None, "location": None, "invoice": None
@@ -135,11 +135,11 @@ class Msg():
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        msg = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
+        Message = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
         "chat_id": f"{self.chat_id}",
         "message_id": f"{self.message_id}"
         }, timeout = timeout)
-        return msg.json()
+        return Message.json()
     
     def reply(self, text, components = None, reply_to_message_id : bool = True):
         json = {}
@@ -152,8 +152,8 @@ class Msg():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        msg = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return msg.json()["result"]
+        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        return Message.json()["result"]
     
     def reply_message_invoice(self, title, description, provider_token, prices, photo_url = False, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
         json = {}
@@ -176,8 +176,8 @@ class Msg():
             json["is_flexible"] = is_flexible
         if reply_markup:
             json["reply_markup"] = reply_markup
-        msg = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return msg.json()["result"]
+        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        return Message.json()["result"]
     
     def get_chat_info(self, timeout):
         if not isinstance(timeout, (tuple, int)):
@@ -194,7 +194,7 @@ class CallbackQuery():
     def __init__(self, update, baseclass):
         self.baseclass = baseclass
         self.data = update["data"]
-        self.message = Msg(update["message"], self.baseclass)
+        self.message = Message(update["message"], self.baseclass)
         self.id = int(update["id"])
         self.inline_message_id = str(update["inline_message_id"])
         self.from_user = User(update["from"], self.baseclass) 
@@ -227,8 +227,8 @@ class User():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        msg = post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
-        return msg.json()
+        Message = post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
+        return Message.json()
     def __str__(self):
         return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
     

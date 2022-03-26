@@ -1,10 +1,9 @@
 from balebot import *
 from time import sleep
-
 class BaleApp(Bot):
     def __init__(self):
         offset = None
-        bot = Bot.__init__(self, base_url="https://tapi.bale.ai/", token = "634737971:xGwkvAEjSN4vX7UBnCFhlgJcEABYfZa7xst2By7m", base_file_url = "s", prefix = "-")
+        bot = Bot.__init__(self, base_url="https://tapi.bale.ai/", token = "634737971:xGwkvAEjSN4vX7UBnCFhlgJcEABYfZa7xst2By7m", base_file_url = "s")
         while True:
             updates = self.get_updates(timeout = (10,30), offset = offset)
             for i in updates:
@@ -19,8 +18,17 @@ class BaleApp(Bot):
                         i.callback_query.message.delete((10, 30))
                 elif i.type == "message":
                     if i.message.text == "test":
-                        i.message.reply(text = f"salam {i.message.author}", components = ReplyMarkup(inlinekeyboards = [[InlineKeyboard("salam", "help")]]))
+                        i.message.reply(text = f"salam {i.message.author}", components = ReplyMarkup(inlinekeyboards = [[InlineKeyboard("salam", "test")]]))
+                    elif i.message.text == "/start":
+                        i.message.reply(text = f"salam {i.message.author.mention}", components = ReplyMarkup(keyboards = [[Keyboard("test")]]))
             if updates != [] or updates:
                 offset = updates[-1].id
-            sleep(6.0)
+            sleep(2.0)
+
+
+# bot = Bot(base_url="https://tapi.bale.ai/", token = "634737971:xGwkvAEjSN4vX7UBnCFhlgJcEABYfZa7xst2By7m", base_file_url = "s")
+
+# @bot.command()
+# def sala():
+#     print("ali")
 BaleApp()
