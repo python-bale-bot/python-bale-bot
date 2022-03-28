@@ -9,7 +9,9 @@ setup(
     platforms = ["Windows"],
     author = "Kian Ahmadian",
     long_description = readmefile,
-    keywords = ["bale", "bot", "api"]
+    keywords = ["bale", "bot", "api"],
+    python_requires='>=3.5',
+    url = "https://github.com/kianahmadian/bale-bot"
 ) 
 
 print(r"""
