@@ -8,9 +8,7 @@ setup(
     version = balebot.__version__,
     platforms = ["Windows"],
     author = "Kian Ahmadian",
-    zip_safe = True,
     long_description = readmefile,
-    long_description_content_type = 'text/markdown',
     keywords = ["bale", "bot", "api"]
 ) 
 
