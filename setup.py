@@ -1,7 +1,7 @@
 from setuptools import setup
 import balebot
 
-with open("./README.md") as file:
+with open("README.md") as file:
     readmefile = file.read()
 setup(
     name = "balebot",
