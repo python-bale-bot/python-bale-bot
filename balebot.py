@@ -56,6 +56,7 @@ class Bot():
         while True:
             try:
                 updates = post(self.base_url + "bot" + self.token + "/getupdates", json = options, timeout = timeout)
+                print(updates.json())
                 if not updates.json()["ok"]:
                     updates = updates.json()
                     raise f"{updates['error_code']} | {updates['description']}"
