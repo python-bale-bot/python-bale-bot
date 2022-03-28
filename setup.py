@@ -8,7 +8,8 @@ setup(
     author = "Kian Ahmadian",
     keywords = ["bale", "bot", "api"],
     python_requires='>=3.5',
-    url = "https://github.com/kianahmadian/bale-bot"
+    url = "https://github.com/kianahmadian/bale-bot",
+    packages = ['balebot']
 ) 
 
 print(r"""
