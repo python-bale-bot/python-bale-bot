@@ -1,4 +1,4 @@
-from .bot import *
+from .balebot import *
 
 __title__ = "balebot"
 __loader__ = "Kian Ahmadian"
