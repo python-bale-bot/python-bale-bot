@@ -17,6 +17,10 @@
 اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
 
 
+### Setup Files `⚙`
+* [setup (Python)](https://github.com/kianahmadian/bale-bot/blob/main/setup.py)
+* [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
+
 * [LICENSE](https://github.com/kianahmadian/bale-bot/blob/main/LICENSE)
 
 
