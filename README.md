@@ -1,8 +1,6 @@
 <div align='center'>
 <p style = "font-size: 40px;"><b> Bale Bot </b></p>
 
-<div align='center'>
-
 ## Info `ℹ`
 
 سلام دوستان عزیز امیدوارم حالتون خوب باشه 
