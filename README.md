@@ -15,5 +15,5 @@
 ## Social Media 📚
 
 <div align='center'>
-<a href="https://discord.com/users/684748470799958033"> Discord </a>
+<a href="https://discord.com/users/684748470799958033"> Discord </a> <img href="https://play-lh.googleusercontent.com/0oO5sAneb9lJP6l8c6DH4aj6f85qNpplQVHmPmbbBxAukDnlO7DarDW0b-kEIHa8SQ">
 </div>
