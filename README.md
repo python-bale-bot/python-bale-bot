@@ -15,7 +15,7 @@
 
 اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
 
-## Files `🗃`
+## Files `🗂`
 
 </div>
 
@@ -25,6 +25,25 @@
 ### Setup Files `⚙`
 * [setup (Python)](https://github.com/kianahmadian/bale-bot/blob/main/setup.py)
 * [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
+
+
+<div align='center'>
+
+## Installing `⬇`
+
+### with Git:
+
+```
+pip install git+https://github.com/kianahmadian/balebot
+```
+
+### with PyPi:
+
+```
+pip install python-bale-bot
+```
+
+</div>
 
 
 <div align='center'>
