@@ -2,6 +2,7 @@
 <p style = "font-size: 40px;"><b> Bale Bot </b></p>
 
 ## 🗃 Table of contents
+</div>
 
 * [Info](https://github.com/kianahmadian/bale-bot#%E2%84%B9-info)
 * [Files](https://github.com/kianahmadian/bale-bot#-files)
@@ -9,7 +10,6 @@
 * [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
 * [More Info]()
 
-</div>
 
 <div align='center'>
 
