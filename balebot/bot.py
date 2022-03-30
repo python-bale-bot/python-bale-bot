@@ -1,9 +1,9 @@
 import requests
-import datetime
 from .message import Message
 from .update import Update
 from .user import User
 from .components import Components
+from .payments.price import Price
 
 class Bot():
     __slots__ = (
@@ -12,11 +12,11 @@ class Bot():
         "base_url",
         "base_file_url"
     )
-    def __init__(self, token : str,base_url : str = "https://tapi.bale.ai/", base_file_url : str = "https://tapi.bale.ai/file", bot : Bot = None):
+    def __init__(self, token : str,base_url : str = "https://tapi.bale.ai/", base_file_url : str = "https://tapi.bale.ai/file"):
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
-        self._bot = bot
+        self._bot = None
         self._requests = requests
         self.offset = None   
         if not self.check_token(self.token):
@@ -61,18 +61,15 @@ class Bot():
         if not isinstance(timeout, (tuple, int)):
                 raise "Time out Not true"
         json = {}
-        json["chat_id"] = f"{chat_id}"
-        json["text"] = f"{text}"
+        json["chat_id"] = str(chat_id)
+        json["text"] = text
         if components:
             if isinstance(components, Components):
                 json["reply_markup"] = components
             else:
                 json["reply_markup"] = components
         if reply_to_message_id:
-            if isinstance(reply_to_message_id, Message):
-                reply_to_message_id = reply_to_message_id.message_id
-            else:
-                json["reply_to_message_id"] = reply_to_message_id
+            json["reply_to_message_id"] = reply_to_message_id
         message = self.req("post", "sendMessage", json)
         json = message.json()
         if json["ok"]: 
@@ -80,13 +77,16 @@ class Bot():
         else:
             return None
 
-    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, components : Components = None, timeout = (5, 10)):
+    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, components : Components = None, timeout = (5, 10)):
         json = {}
-        json["chat_id"] = f"{self.chat_id}"
+        json["chat_id"] = str(chat_id)
         json["title"] = title
         json["description"] = description
         json["provider_token"] = provider_token
-        json["prices"] = prices
+        if isinstance(prices, Price):
+            json["prices"] = prices.to_dict()
+        else:
+            json["prices"] = prices
         if photo_url:
             json["photo_url"] = photo_url
         json["need_name"] = need_name
@@ -94,6 +94,8 @@ class Bot():
         json["need_email"] = need_email
         json["need_shipping_address"] = need_shipping_address
         json["is_flexible"] = is_flexible
+        if reply_to_message_id:
+            json["reply_to_message_id"] = reply_to_message_id
         if components:
             if isinstance(components, Components):
                 json["reply_markup"] = components.to_dict()

@@ -26,14 +26,27 @@ class Message():
     def author(self):
         if self.chat is not None:
             if self.chat.type == Chat.PRIVATE:
-                self.author = User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self)
+                self.author = User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self.bot)
             elif self.chat.type == Chat.GROUP: 
-                self.author = User.dict(bot = self, data = "")
+                self.author = User(bot = self.bot, id = self.forward_from.id, first_name = self.forward_from.first_name, last_name = self.forward_from.last_name, username = self.forward_from.username)
         return None
     
     @classmethod
     def dict(cls, data : dict, bot):
         return cls(bot = bot)
+    
+    def to_dict(self):
+        data = {}
+        
+        data["message_id"] = self.message_id
+        data["date"] = self.date
+        data["text"] = self.text
+        data["chat"] = self.chat.to_dict()
+        data["forward_from"] = self.forward_from.to_dict()
+        data["caption"] = self.caption
+        data["contact"] = self.contact.to_dict()
+        
+        return data
     
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
@@ -55,20 +68,12 @@ class Message():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        Message = self.bot.send_message(text = text, components = components, timeout = (10, 15))
+        Message = self.bot.send_message(text = text, components = components, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = (10, 15))
         return Message
     
-    def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
-        message = self.bot.send_invoice(chat_id = self.chat.id, title = title, description = description, provider_token = provider_token, prices = prices, photo_url = photo_url, need_name = need_name, need_email = need_email, need_phone_number = need_phone_number, need_shipping_address = need_shipping_address, is_flexible = is_flexible ,components = reply_markup, timeout = (10, 15))
+    def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None, reply_to_message_id : bool = True):
+        message = self.bot.send_invoice(chat_id = self.chat.id, title = title, description = description, provider_token = provider_token, prices = prices, photo_url = photo_url, need_name = need_name, need_email = need_email, need_phone_number = need_phone_number, need_shipping_address = need_shipping_address, is_flexible = is_flexible ,components = reply_markup, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = (10, 15))
         return message
-    
-    def get_chat_info(self, timeout):
-        if not isinstance(timeout, (tuple, int)):
-            raise "Time out Not true"
-        info = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/getChat", params = {
-            "chat_id": str(self.chat_id)
-        }, timeout = timeout)
-        return info.json()
     
     def __str__(self):
         return self.message_id
