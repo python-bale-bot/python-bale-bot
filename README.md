@@ -8,7 +8,7 @@
 * [Files](https://github.com/kianahmadian/bale-bot#-files)
 * [Installing](https://github.com/kianahmadian/bale-bot#-installing)
 * [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
-* [More Info]()
+* [More Info](https://github.com/kianahmadian/bale-bot#-more-info)
 
 
 <div align='center'>
@@ -65,6 +65,8 @@ pip install python-bale-bot -U
 
 * [وب سایت بله](https://bale.ai/)
 * [سایت برنامه نویسان بله](https://devbale.ir/)
+* [وب سرویس های بله](https://devbale.ir/api/)
+* [بات ساخت بات در بله](https://ble.ir/@botfather)
 
 <div align='center'>
 
