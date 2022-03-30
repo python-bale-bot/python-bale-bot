@@ -57,6 +57,14 @@ pip install python-bale-bot -U
 
 </div>
 
+<div align='center'>
+
+## `📡` More Info
+
+</div>
+
+* [وب سایت بله](https://bale.ai/)
+* [سایت برنامه نویسان بله](https://devbale.ir/)
 
 <div align='center'>
 
