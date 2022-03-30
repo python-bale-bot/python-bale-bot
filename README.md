@@ -46,7 +46,7 @@
 ### with Git:
 
 ```
-pip install git+https://github.com/kianahmadian/balebot -U
+pip install git+https://github.com/kianahmadian/bale-bot -U
 ```
 
 ### with PyPi:
