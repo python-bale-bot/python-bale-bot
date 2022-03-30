@@ -1,6 +1,6 @@
 from .bot import Bot
 from .user  import User
-from .components import ReplyMarkup
+from .components import Components
 from .message import Message
 from .callbackquery import CallbackQuery
 

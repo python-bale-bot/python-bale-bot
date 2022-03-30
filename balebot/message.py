@@ -3,7 +3,7 @@ from .attachments.audio import Audio
 from .attachments.contact import ContactMessage
 from .attachments.location import Location
 from .user import User
-from .components import ReplyMarkup
+from .components import Components
 from .chat import Chat
 import datetime
 
@@ -49,42 +49,18 @@ class Message():
         json["chat_id"] = f"{self.chat_id}"
         json["text"] = f"{text}"
         if components:
-            if type(components) is ReplyMarkup:
+            if type(components) is Components:
                 json["reply_markup"] = components.result
             elif type(components) is dict:
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        Message = self.bot.send_message(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return Message.json()["result"]
+        Message = self.bot.send_message(text = text, components = components, timeout = (10, 15))
+        return Message
     
-    def reply_message_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
-        json = {}
-        json["chat_id"] = f"{self.chat_id}"
-        json["title"] = title
-        json["description"] = description
-        json["provider_token"] = provider_token
-        json["prices"] = prices
-        if photo_url:
-            json["photo_url"] = photo_url
-        if need_name:
-            json["need_name"] = need_name
-        if need_phone_number:
-            json["need_phone_number"] = need_phone_number
-        if need_email:
-            json["need_email"] = need_email
-        if need_shipping_address:
-            json["need_shipping_address"] = need_shipping_address
-        if is_flexible:
-            json["is_flexible"] = is_flexible
-        if reply_markup:
-            if isinstance(reply_markup, ReplyMarkup):
-                json["reply_markup"] = reply_markup.to_dict()
-            else:
-                json["reply_markup"] = reply_markup
-                
-        message = self.bot.send_invoice(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return message.json()["result"]
+    def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
+        message = self.bot.send_invoice(chat_id = self.chat.id, title = title, description = description, provider_token = provider_token, prices = prices, photo_url = photo_url, need_name = need_name, need_email = need_email, need_phone_number = need_phone_number, need_shipping_address = need_shipping_address, is_flexible = is_flexible ,components = reply_markup, timeout = (10, 15))
+        return message
     
     def get_chat_info(self, timeout):
         if not isinstance(timeout, (tuple, int)):

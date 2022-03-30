@@ -1,6 +1,6 @@
 from .bot import *
 
-class ReplyMarkup():
+class Components():
     __slots__ = (
         "keyboards", "inlinekeyboards"
     )

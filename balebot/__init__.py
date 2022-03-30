@@ -2,7 +2,7 @@ from .bot import Bot
 from .update import Update
 from .user import User
 from .message import Message
-from .components import ReplyMarkup, InlineKeyboard, Keyboard
+from .components import Components, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
 from .attachments.contact import ContactMessage
@@ -13,7 +13,7 @@ __all__ = (
     "User",
     "Message",
     "Keyboard",
-    "ReplyMarkup",
+    "Components",
     "InlineKeyboard",
     "Location",
     "Audio",

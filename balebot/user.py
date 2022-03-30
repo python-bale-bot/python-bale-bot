@@ -1,4 +1,5 @@
 from datetime import datetime
+from .components import Components
 from .bot import Bot
 
 class User():
@@ -22,15 +23,15 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-    def send(self, text, reply_markup = None, reply_to_message_id : int = None):
+    def send(self, text, components : Components = None, reply_to_message_id : str = None):
         json = {}
-        json["chat_id"] = f"{self.id}"
-        json["text"] = f"{text}"
-        if reply_markup:
-            json["reply_markup"] = reply_markup
+        json["chat_id"] = self.id
+        json["text"] = text
+        if components:
+            json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        message = self.bot.send_message(chat_id = self.id, text = text, reply_markup = reply_markup, timeout = (10, 15)) 
+        message = self.bot.send_message(chat_id = self.id, text = text, components = components, timeout = (10, 15)) 
         return message
     
     def __str__(self):

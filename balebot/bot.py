@@ -3,7 +3,7 @@ import datetime
 from .message import Message
 from .update import Update
 from .user import User
-from .components import ReplyMarkup
+from .components import Components
 
 class Bot():
     __slots__ = (
@@ -64,7 +64,7 @@ class Bot():
         json["chat_id"] = f"{chat_id}"
         json["text"] = f"{text}"
         if components:
-            if isinstance(components, ReplyMarkup):
+            if isinstance(components, Components):
                 json["reply_markup"] = components
             else:
                 json["reply_markup"] = components
@@ -76,7 +76,33 @@ class Bot():
         message = self.req("post", "sendMessage", json)
         json = message.json()
         if json["ok"]: 
-            return Message.dict(data = message.json()["result"])
+            return Message.dict(data = message.json()["result"], bot = self)
+        else:
+            return None
+
+    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, components : Components = None, timeout = (5, 10)):
+        json = {}
+        json["chat_id"] = f"{self.chat_id}"
+        json["title"] = title
+        json["description"] = description
+        json["provider_token"] = provider_token
+        json["prices"] = prices
+        if photo_url:
+            json["photo_url"] = photo_url
+        json["need_name"] = need_name
+        json["need_phone_number"] = need_phone_number
+        json["need_email"] = need_email
+        json["need_shipping_address"] = need_shipping_address
+        json["is_flexible"] = is_flexible
+        if components:
+            if isinstance(components, Components):
+                json["reply_markup"] = components.to_dict()
+            else:
+                json["reply_markup"] = components
+        message = self.req("post", "sendInvoice", data = json, timeout = timeout)
+        json = message.json()
+        if json["ok"]: 
+            return Message.dict(data = message.json()["result"], bot = self)
         else:
             return None
 
