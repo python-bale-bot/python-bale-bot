@@ -1,27 +1,32 @@
-
-
+from .user import User
+from .replymarkup import ReplyMarkup
+from .chat import Chat
+from telegram.chat import Chat
+import datetime
 
 class Message():
-    def __init__(self, update : dict, baseclass):
-        self.__dict__ = {
-            "update": None, "baseclass": None, "text": None,"caption": None, "forward_from": None, "contact": None, "message_id": None, "chat_type": None, "chat_id": None, "chat_id": None, "date_code": None, "date": None, "author": None, "edit_date": None, "audio": None, "document": None, "photo": None, "voice": None, "location": None, "invoice": None
-        }
-        self.update = update
-        self.baseclass = baseclass
-        if update.get("text"):
-            self.text = str(update["text"])
-        if update.get("caption"):
-            self.caption = str(update["caption"])
-        if update.get("forward_from"):
-            self.forward_from = User(update["forward_from"], self.baseclass)
-        if update.get("contact"):
-            self.contact = ContactMessage(update["contact"], self.baseclass)
-        self.message_id = update["message_id"]
-        self.chat_type = update["chat"]["type"]
-        self.chat_id = int(update["chat"]["id"])
-        self.date_code = update["date"]
-        self.date = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update["date"]))
-        self.author = User(self.update["chat"] if self.chat_type == "private" else self.update["from"], self.baseclass)
+    __slots__ = (
+        "text", "caption", "forward_from", "author","contact", "chat","message_id", "date_code", "date", "author", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
+    )
+    def __init__(self, message_id : int, date : datetime.datetime, text = None, caption = None, forward_from = None, contact = None, chat : Chat = None, document = None, photo = None, voice = None, location = None, invoice = None, bot = None):
+        self.message_id = message_id if message_id is not None else None
+        self.date = date if date is not None else None
+        
+        self.text = text if text is not None else None
+        self.chat = chat if chat is not None else None
+        self.forward_from = forward_from if forward_from is not None else None
+        self.caption = caption if caption is not None else None
+        self.contact = contact if contact is not None else None
+        self.bot = bot if bot is not None else None
+
+    @property
+    def author(self):
+        if self.chat is not None:
+            if self.chat.type == Chat.PRIVATE:
+                self.author = User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self)
+            elif self.chat.type == Chat.GROUP: 
+                self.author = User.dict(bot = self, data = "")
+        return None
     
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):

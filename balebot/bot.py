@@ -1,46 +1,57 @@
-from requests import post, get
+import requests
 import jdatetime
 from jdatetime import timedelta
 import datetime
+from .replymarkup import ReplyMarkup, InlineKeyboard, Keyboard
 
 class Bot():
-    def __init__(self, base_url : str, token : str, base_file_url : str, prefix : str = None):
+    __slots__ = (
+        "_bot",
+        "token",
+        "base_url",
+        "base_file_url"
+    )
+    def __init__(self, token : str,base_url : str = "", base_file_url : str = ""):
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
         self.bot = {}
-        self.prefix = prefix
-        self.commands = {}
+        self._requests = requests
         self.offset = None   
-        if not self.check_bot():
-            raise f"Bot is not Ready!!"
+        if not self.check_token():
+            raise f"Bot is not Ready!"
      
-    def check_bot(self):
+    def check_token(self, token, timeout = (5, 10)):
+        if not isinstance(timeout, (tuple, int)):
+            return
         try:
-            result = get(f"{self.base_url}bot{self.token}/getme", timeout = (5, 10))
+            result = self._requests.get(self.base_url + "bot" + self.token + "/getme", timeout = timeout)
         except Exception as error:
             return error
         self.bot = User(result.json()["result"], self)
         return result.json()["ok"]
     
-    def delete_webhook(self, timeout):
+    def delete_webhook(self, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
-            raise "Time out Not true"
-        result = get(f"{self.base_url}bot{self.token}/deleteWebhook", timeout=timeout)
+            return
+        result = self._requests.get(f"{self.base_url}bot{self.token}/deleteWebhook", timeout=timeout)
         return result.json()["result"]
 
-    def send_message(self, chat_id : int, timeout, text : str = None,
-        sticker = None, files = None, reply_markup = None, reply_to_message_id : str = None, token : str =  None ):
+    def send_message(self, chat_id : int, text : str = None,
+        sticker = None, files = None, reply_markup = None, reply_to_message_id : str = None, token : str =  None , timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
                 raise "Time out Not true"
         json = {}
         json["chat_id"] = f"{chat_id}"
         json["text"] = f"{text}"
         if reply_markup:
-            json["reply_markup"] = reply_markup
+            if isinstance(reply_markup, ReplyMarkup):
+                json["reply_markup"] = reply_markup
+            else:
+                json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        Message = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
+        Message = self._requests.post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
         return Message.json()
 
     def get_updates(self, timeout, offset : int = None, limit : int = None):
@@ -55,7 +66,7 @@ class Bot():
             options["limit"] = limit
         while True:
             try:
-                updates = post(self.base_url + "bot" + self.token + "/getupdates", json = options, timeout = timeout)
+                updates = self._requests.post(self.base_url + "bot" + self.token + "/getupdates", json = options, timeout = timeout)
                 print(updates.json())
                 if not updates.json()["ok"]:
                     updates = updates.json()
@@ -108,7 +119,7 @@ class Update():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        Message = post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
+        Message = self._requests.post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
         return Message.json()
 
 class Message():
@@ -136,7 +147,7 @@ class Message():
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        Message = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
+        Message = self._requests.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
         "chat_id": f"{self.chat_id}",
         "message_id": f"{self.message_id}"
         }, timeout = timeout)
@@ -153,7 +164,7 @@ class Message():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        Message = self._requests.post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
         return Message.json()["result"]
     
     def reply_message_invoice(self, title, description, provider_token, prices, photo_url = False, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
@@ -177,13 +188,13 @@ class Message():
             json["is_flexible"] = is_flexible
         if reply_markup:
             json["reply_markup"] = reply_markup
-        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        Message = self._requests.post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
         return Message.json()["result"]
     
     def get_chat_info(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        info = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/getChat", params = {
+        info = self._requests.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/getChat", params = {
             "chat_id": str(self.chat_id)
         }, timeout = timeout)
         return info.json()
@@ -228,7 +239,7 @@ class User():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        Message = post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
+        Message = self._requests.post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
         return Message.json()
     def __str__(self):
         return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
@@ -264,59 +275,6 @@ class Location():
         self.longitude = longitude
         self.latitude = latitude
         self.link = f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
-        
-class ReplyMarkup():
-    def __init__(self, keyboards = None, inlinekeyboards = None):
-        self.keyboards = None
-        self.inlinekeyboards = None
-        if keyboards is not None:
-            self.keyboards = []
-            if type(keyboards) is list:
-                for i in keyboards:
-                    if type(i) is dict:
-                        key_list = []
-                        key_list.append(i)
-                        self.keyboards.append(key_list)
-                    elif type(i) is list:
-                        key_list = []
-                        for i in i:
-                            key_list.append({"text": i.text})
-                        self.keyboards.append(key_list)
-            elif type(keyboards) is dict:
-                if "name" in keyboards:
-                    self.keyboards.append(keyboards)
-        if inlinekeyboards is not None:
-            self.inlinekeyboards = []
-            if type(inlinekeyboards) is list:
-                for i in inlinekeyboards:
-                    if type(i) is dict:
-                        key_list = []
-                        key_list.append(i)
-                        self.inlinekeyboards.append(key_list)
-                    elif type(i) is list:
-                        key_list = []
-                        for i in i:
-                            key_list.append({"text": i.text, "callback_data": i.callback_data})
-                        self.inlinekeyboards.append(key_list)
-            elif type(inlinekeyboards) is dict:
-                if "name" in keyboards and "callback_data" in keyboards:
-                    self.keyboards.append(keyboards)
-        self.result =  {}
-        if self.keyboards:
-            self.result["keyboard"] = self.keyboards
-        if self.inlinekeyboards:
-            self.result["inline_keyboard"] = self.inlinekeyboards
-        
-class InlineKeyboard():
-    def __init__(self, text : str, callback_data : str):
-        self.text = text
-        self.callback_data = callback_data
-        self.result = {"text": self.text, "callback_data": self.callback_data}
-    
-class Keyboard():
-    def __init__(self, text: str):
-        self.text = text
-        self.result = {"text": self.text}
     
 
         
