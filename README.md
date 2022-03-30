@@ -27,9 +27,10 @@
 * [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
 
 
+<div align='center'>
 
 ## Social Media `📚`
 
-<div align='center'>
 <a href="https://discord.com/users/684748470799958033"> Discord </a>
+
 </div>
