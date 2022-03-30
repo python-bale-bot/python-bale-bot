@@ -1,4 +1,4 @@
-from ..user import User
+from balebot import User
 
 class ContactMessage():
     __slots__ = (

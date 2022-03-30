@@ -1,9 +1,5 @@
 import requests
-from .message import Message
-from .update import Update
-from .user import User
-from .components import Components
-from .payments.price import Price
+from balebot import Message, Update, User, Components, Price
 
 class Bot():
     __slots__ = (

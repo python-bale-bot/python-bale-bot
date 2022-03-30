@@ -1,7 +1,4 @@
-from .bot import Bot
-from .user import User
-from .message import Message
-from .components import Components
+from balebot import Bot, Message, Update, User, Components
 
 class Chat():
     PRIVATE = "private"

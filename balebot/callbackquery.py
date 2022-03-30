@@ -1,5 +1,4 @@
-from .user import User
-from .message import Message
+from balebot import User, Message
 
 class CallbackQuery():
     __slots__ = (

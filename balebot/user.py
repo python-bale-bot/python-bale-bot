@@ -1,6 +1,5 @@
+from balebot import Bot, Components
 from datetime import datetime
-from .components import Components
-from .bot import Bot
 
 class User():
     __slots__ = (

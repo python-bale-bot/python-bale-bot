@@ -1,10 +1,4 @@
-from .bot import Bot
-from .attachments.audio import Audio
-from .attachments.contact import ContactMessage
-from .attachments.location import Location
-from .user import User
-from .components import Components
-from .chat import Chat
+from balebot import Bot, Message, Update, User, Components, Audio, ContactMessage, Location, Chat
 import datetime
 
 class Message():

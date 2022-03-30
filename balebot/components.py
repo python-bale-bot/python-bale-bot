@@ -1,5 +1,3 @@
-from .bot import *
-
 class Components():
     __slots__ = (
         "keyboards", "inlinekeyboards"

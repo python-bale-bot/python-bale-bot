@@ -1,8 +1,4 @@
-from .bot import Bot
-from .user  import User
-from .components import Components
-from .message import Message
-from .callbackquery import CallbackQuery
+from balebot import Bot, CallbackQuery, Message, Update, User, Components
 
 class Update():
     __slots__ = (
