@@ -9,6 +9,10 @@
 * [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
 * [More Info]()
 
+</div>
+
+<div align='center'>
+
 ## `ℹ` Info 
 
 سلام دوستان عزیز امیدوارم حالتون خوب باشه 
