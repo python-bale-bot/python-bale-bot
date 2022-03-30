@@ -1,7 +1,7 @@
 <div align='center'>
 <p style = "font-size: 40px;"><b> Bale Bot </b></p>
 
-## `ℹ`Info 
+## `ℹ` Info 
 
 سلام دوستان عزیز امیدوارم حالتون خوب باشه 
 
@@ -15,21 +15,21 @@
 
 اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
 
-## `🗂`Files 
+## `🗂` Files 
 
 </div>
 
-### `📜`License 
+### `📜` License 
 * [MIT License](https://github.com/kianahmadian/bale-bot/blob/main/LICENSE)
 
-### `⚙`Setup Files 
+### `⚙` Setup Files 
 * [setup (Python)](https://github.com/kianahmadian/bale-bot/blob/main/setup.py)
 * [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
 
 
 <div align='center'>
 
-## `⬇`Installing 
+## `⬇` Installing 
 
 ### with Git:
 
@@ -48,7 +48,7 @@ pip install python-bale-bot
 
 <div align='center'>
 
-## `📚`Social Media
+## `📚` Social Media
 
 <a href="https://discord.com/users/684748470799958033"> Discord </a>
 
