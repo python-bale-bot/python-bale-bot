@@ -1,6 +1,14 @@
 <div align='center'>
 <p style = "font-size: 40px;"><b> Bale Bot </b></p>
 
+## 🗃 Table of contents
+
+* [Info](https://github.com/kianahmadian/bale-bot#%E2%84%B9-info)
+* [Files](https://github.com/kianahmadian/bale-bot#-files)
+* [Installing](https://github.com/kianahmadian/bale-bot#-installing)
+* [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
+* [More Info]()
+
 ## `ℹ` Info 
 
 سلام دوستان عزیز امیدوارم حالتون خوب باشه 
@@ -34,13 +42,13 @@
 ### with Git:
 
 ```
-pip install git+https://github.com/kianahmadian/balebot
+pip install git+https://github.com/kianahmadian/balebot -U
 ```
 
 ### with PyPi:
 
 ```
-pip install python-bale-bot
+pip install python-bale-bot -U
 ```
 
 </div>
