@@ -17,6 +17,9 @@
 اطلاعات بیشتر در [سایت برنامه نویسان بله](https://devbale.ir/)
 
 
+* [LICENSE](https://github.com/kianahmadian/bale-bot/blob/main/LICENSE)
+
+
 ## Social Media `📚`
 
 <div align='center'>
