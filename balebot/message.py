@@ -1,14 +1,17 @@
+from .bot import Bot
+from .attachments.audio import Audio
+from .attachments.contact import ContactMessage
+from .attachments.location import Location
 from .user import User
 from .components import ReplyMarkup
 from .chat import Chat
-from telegram.chat import Chat
 import datetime
 
 class Message():
     __slots__ = (
         "text", "caption", "forward_from", "author","contact", "chat","message_id", "date_code", "date", "author", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
     )
-    def __init__(self, message_id : int, date : datetime.datetime, text = None, caption = None, forward_from = None, contact = None, chat : Chat = None, document = None, photo = None, voice = None, location = None, invoice = None, bot = None):
+    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, forward_from : User = None, contact : ContactMessage = None, chat : Chat = None, document = None, photo = None, voice : Audio = None, location : Location = None, invoice = None, bot : Bot = None):
         self.message_id = message_id if message_id is not None else None
         self.date = date if date is not None else None
         
@@ -28,12 +31,16 @@ class Message():
                 self.author = User.dict(bot = self, data = "")
         return None
     
+    @classmethod
+    def dict(cls, data : dict, bot):
+        return cls(bot = bot)
+    
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        Message = self.bot.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
-        "chat_id": f"{self.chat_id}",
-        "message_id": f"{self.message_id}"
+        Message = self.bot.req(mode = "get", type = "deletemessage", params = {
+        "chat_id": str(self.chat.id),
+        "message_id": self.message_id
         }, timeout = timeout)
         return Message.json()
     
@@ -48,15 +55,15 @@ class Message():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        Message = self.bot.send_message(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
         return Message.json()["result"]
     
-    def reply_message_invoice(self, title, description, provider_token, prices, photo_url = False, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
+    def reply_message_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
         json = {}
         json["chat_id"] = f"{self.chat_id}"
-        json["title"] = f"{title}"
-        json["description"] = f"{description}"
-        json["provider_token"] = f"{provider_token}"
+        json["title"] = title
+        json["description"] = description
+        json["provider_token"] = provider_token
         json["prices"] = prices
         if photo_url:
             json["photo_url"] = photo_url
@@ -71,9 +78,13 @@ class Message():
         if is_flexible:
             json["is_flexible"] = is_flexible
         if reply_markup:
-            json["reply_markup"] = reply_markup
-        Message = post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return Message.json()["result"]
+            if isinstance(reply_markup, ReplyMarkup):
+                json["reply_markup"] = reply_markup.to_dict()
+            else:
+                json["reply_markup"] = reply_markup
+                
+        message = self.bot.send_invoice(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
+        return message.json()["result"]
     
     def get_chat_info(self, timeout):
         if not isinstance(timeout, (tuple, int)):
@@ -85,3 +96,5 @@ class Message():
     
     def __str__(self):
         return self.message_id
+    
+    

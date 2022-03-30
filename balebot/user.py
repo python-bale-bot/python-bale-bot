@@ -1,5 +1,5 @@
 from datetime import datetime
-
+from .bot import Bot
 
 class User():
     __slots__ = (
@@ -9,11 +9,11 @@ class User():
         "id",
         "bot"
     )
-    def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot = None):
+    def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : Bot = None):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
-        self.id = int(id)
+        self.id = str(id)
         self.bot = bot
         
     @property
@@ -22,7 +22,7 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-    def send_message_to_user(self, text, reply_markup = None, reply_to_message_id : int = None):
+    def send(self, text, reply_markup = None, reply_to_message_id : int = None):
         json = {}
         json["chat_id"] = f"{self.id}"
         json["text"] = f"{text}"
@@ -30,8 +30,8 @@ class User():
             json["reply_markup"] = reply_markup
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        Message = post(f"{self.baseclass.base_url}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
-        return Message.json()
+        message = self.bot.send_message(chat_id = self.id, text = text, reply_markup = reply_markup, timeout = (10, 15)) 
+        return message
     
     def __str__(self):
         return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))

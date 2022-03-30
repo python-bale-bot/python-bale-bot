@@ -1,4 +1,4 @@
-from .bot import *
+from .bot import Bot
 from .update import Update
 from .user import User
 from .message import Message
@@ -8,6 +8,7 @@ from .attachments.location import Location
 from .attachments.contact import ContactMessage
 
 __all__ = (
+    "Bot",
     "Update",
     "User",
     "Message",
