@@ -22,7 +22,6 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-
     def send_message_to_user(self, text, reply_markup = None, reply_to_message_id : int = None):
         json = {}
         json["chat_id"] = f"{self.id}"

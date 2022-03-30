@@ -1,12 +1,15 @@
 from .bot import *
 
 class ReplyMarkup():
+    __slots__ = (
+        "keyboards", "inlinekeyboards"
+    )
     def __init__(self, keyboards = None, inlinekeyboards = None):
         self.keyboards = None
         self.inlinekeyboards = None
         if keyboards is not None:
             self.keyboards = []
-            if type(keyboards) is list:
+            if isinstance(keyboards, list):
                 for i in keyboards:
                     if type(i) is dict:
                         key_list = []
@@ -15,9 +18,12 @@ class ReplyMarkup():
                     elif type(i) is list:
                         key_list = []
                         for i in i:
-                            key_list.append({"text": i.text})
+                            if isinstance(i, Keyboard):
+                                key_list.append(i.to_dict())
+                            else:
+                                key_list.append(i)
                         self.keyboards.append(key_list)
-            elif type(keyboards) is dict:
+            else:
                 if "name" in keyboards:
                     self.keyboards.append(keyboards)
         if inlinekeyboards is not None:
@@ -31,28 +37,41 @@ class ReplyMarkup():
                     elif type(i) is list:
                         key_list = []
                         for i in i:
-                            key_list.append({"text": i.text, "callback_data": i.callback_data})
+                            if isinstance(i, InlineKeyboard):
+                                key_list.append(i.to_dict())
+                            else:
+                                key_list.append(i)
                         self.inlinekeyboards.append(key_list)
             elif type(inlinekeyboards) is dict:
                 if "name" in keyboards and "callback_data" in keyboards:
                     self.keyboards.append(keyboards)
-        self.result =  {}
-        if self.keyboards:
-            self.result["keyboard"] = self.keyboards
-        if self.inlinekeyboards:
-            self.result["inline_keyboard"] = self.inlinekeyboards
         
+    @classmethod
+    def dict(cls, data : dict, bot):
+        return cls(keyboards = data["keyboard"], inlinekeyboards = data["inline_keyboard"], bot = bot)
     
+    def to_dict(self):
+        data = {}
+        
+        data["keyboard"] = self.keyboards
+        data["inline_keyboard"] = self.inlinekeyboards
+        
+        return data
         
 class InlineKeyboard():
-    def __init__(self, text : str, callback_data : str):
+    __slots__ = (
+        "text", "callback_data", "bot"
+    )
+    def __init__(self, text : str, callback_data : str, bot = None):
         self.text = text
         self.callback_data = callback_data
+        self.bot = bot
+        
     @classmethod
-    def dict(cls, data : dict):
+    def dict(cls, data : dict, bot):
         if not data.get("text") or not data.get("callback_data"):
             return None
-        return cls(text = data["text"], callback_data = data["callback_data"])
+        return cls(text = data["text"], callback_data = data["callback_data"], bot = bot)
     
     def to_dict(self):
         data = {}
@@ -61,14 +80,17 @@ class InlineKeyboard():
         return data
     
 class Keyboard():
-    def __init__(self, text: str):
+    __slots__ = (
+        "text", "bot"
+    )
+    def __init__(self, text: str, bot = None):
         self.text = text
     
     @classmethod
-    def dict(cls, data : dict):
+    def dict(cls, data : dict, bot):
         if not data.get("text"):
             return None
-        return cls(text = data["text"])
+        return cls(text = data["text"], bot = bot)
     
     def to_dict(self):
         data = {}

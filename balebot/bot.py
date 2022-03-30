@@ -2,7 +2,9 @@ import requests
 import jdatetime
 from jdatetime import timedelta
 import datetime
-from .replymarkup import ReplyMarkup, InlineKeyboard, Keyboard
+from .user import User
+from .components import ReplyMarkup, InlineKeyboard, Keyboard
+
 
 class Bot():
     __slots__ = (
@@ -11,11 +13,11 @@ class Bot():
         "base_url",
         "base_file_url"
     )
-    def __init__(self, token : str,base_url : str = "", base_file_url : str = ""):
+    def __init__(self, token : str,base_url : str = "", base_file_url : str = "", bot = None):
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
-        self.bot = {}
+        self._bot = bot
         self._requests = requests
         self.offset = None   
         if not self.check_token():
@@ -28,8 +30,20 @@ class Bot():
             result = self._requests.get(self.base_url + "bot" + self.token + "/getme", timeout = timeout)
         except Exception as error:
             return error
-        self.bot = User(result.json()["result"], self)
         return result.json()["ok"]
+
+    def get_bot(self):
+        try:
+            result = self._requests.get(self.base_url + "bot" + self.token + "/getme", timeout = timeout)
+        except Exception as error:
+            return None
+        return User.dict(data = result.json()["result"], bot = self)
+    
+    @property
+    def bot(self):
+        if self._bot is None:
+            self._bot = self.get_bot()
+        return self._bot
     
     def delete_webhook(self, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
@@ -122,86 +136,6 @@ class Update():
         Message = self._requests.post(f"{self.base_url}bot"+ (f"{token}" if token is not None else f"{self.token}") +"/sendMessage", json = json, timeout = timeout) 
         return Message.json()
 
-class Message():
-    def __init__(self, update : dict, baseclass):
-        self.__dict__ = {
-            "update": None, "baseclass": None, "text": None,"caption": None, "forward_from": None, "contact": None, "message_id": None, "chat_type": None, "chat_id": None, "chat_id": None, "date_code": None, "date": None, "author": None, "edit_date": None, "audio": None, "document": None, "photo": None, "voice": None, "location": None, "invoice": None
-        }
-        self.update = update
-        self.baseclass = baseclass
-        if update.get("text"):
-            self.text = str(update["text"])
-        if update.get("caption"):
-            self.caption = str(update["caption"])
-        if update.get("forward_from"):
-            self.forward_from = User(update["forward_from"], self.baseclass)
-        if update.get("contact"):
-            self.contact = ContactMessage(update["contact"], self.baseclass)
-        self.message_id = update["message_id"]
-        self.chat_type = update["chat"]["type"]
-        self.chat_id = int(update["chat"]["id"])
-        self.date_code = update["date"]
-        self.date = jdatetime.datetime.fromgregorian(datetime = datetime.datetime.fromtimestamp(update["date"]))
-        self.author = User(self.update["chat"] if self.chat_type == "private" else self.update["from"], self.baseclass)
-    
-    def delete(self, timeout):
-        if not isinstance(timeout, (tuple, int)):
-            raise "Time out Not true"
-        Message = self._requests.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
-        "chat_id": f"{self.chat_id}",
-        "message_id": f"{self.message_id}"
-        }, timeout = timeout)
-        return Message.json()
-    
-    def reply(self, text, components = None, reply_to_message_id : bool = True):
-        json = {}
-        json["chat_id"] = f"{self.chat_id}"
-        json["text"] = f"{text}"
-        if components:
-            if type(components) is ReplyMarkup:
-                json["reply_markup"] = components.result
-            elif type(components) is dict:
-                json["reply_markup"] = components
-        if reply_to_message_id:
-            json["reply_to_message_id"] = str(self.message_id)
-        Message = self._requests.post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return Message.json()["result"]
-    
-    def reply_message_invoice(self, title, description, provider_token, prices, photo_url = False, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None):
-        json = {}
-        json["chat_id"] = f"{self.chat_id}"
-        json["title"] = f"{title}"
-        json["description"] = f"{description}"
-        json["provider_token"] = f"{provider_token}"
-        json["prices"] = prices
-        if photo_url:
-            json["photo_url"] = photo_url
-        if need_name:
-            json["need_name"] = need_name
-        if need_phone_number:
-            json["need_phone_number"] = need_phone_number
-        if need_email:
-            json["need_email"] = need_email
-        if need_shipping_address:
-            json["need_shipping_address"] = need_shipping_address
-        if is_flexible:
-            json["is_flexible"] = is_flexible
-        if reply_markup:
-            json["reply_markup"] = reply_markup
-        Message = self._requests.post(f"{self.baseclass.base_url}bot{self.baseclass.token}/sendMessage", json = json, timeout = (10, 15))
-        return Message.json()["result"]
-    
-    def get_chat_info(self, timeout):
-        if not isinstance(timeout, (tuple, int)):
-            raise "Time out Not true"
-        info = self._requests.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/getChat", params = {
-            "chat_id": str(self.chat_id)
-        }, timeout = timeout)
-        return info.json()
-    
-    def __str__(self):
-        return self.message_id
-
 class CallbackQuery():
     def __init__(self, update, baseclass):
         self.baseclass = baseclass
@@ -210,71 +144,7 @@ class CallbackQuery():
         self.id = int(update["id"])
         self.inline_message_id = str(update["inline_message_id"])
         self.from_user = User(update["from"], self.baseclass) 
- 
-class User():
-    def __init__(self, update : dict, baseclass):
-        self.baseclass = baseclass
-        self.update = update
-        self.first_name = None
-        self.last_name = None
-        self.username = None
-        self.id = None  
-        self.mention = None
-        if update.get("first_name"):
-            self.first_name = update["first_name"]
-        if update.get("last_name"):
-            self.last_name = update["last_name"]
-        if update.get("username"):
-            self.username = update["username"]
-            self.mention = "[{username}](https://ble.ir/@{username})".format(username = self.username)
-        if update.get("id"):
-            self.id = int(update['id'])
-        
     
-    def send_message_to_user(self, text, reply_markup = None, reply_to_message_id : int = None):
-        json = {}
-        json["chat_id"] = f"{self.id}"
-        json["text"] = f"{text}"
-        if reply_markup:
-            json["reply_markup"] = reply_markup
-        if reply_to_message_id:
-            json["reply_to_message_id"] = reply_to_message_id
-        Message = self._requests.post(f"{self.baseclass.base_urll}bot"+ f"{self.baseclass.token}" +"/sendMessage", json = json, timeout = (10, 15)) 
-        return Message.json()
-    def __str__(self):
-        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
-    
-class ContactMessage():
-    def __init__(self, update : dict, baseclass):
-        self.update = update
-        self.baseclass = baseclass
-        self.user = None
-        if update.get("phone_number"):
-            self.phone_number = str(update["phone_number"])
-        if update.get("first_name"):
-            self.first_name = str(update["first_name"])
-        if update.get("last_name"):
-            self.last_name = str(update["last_name"])
-        if update.get("user_id"):
-            self.user_id = str(update["user_id"])
-            
-        if self.user_id.isdigit():
-            self.user = User(update, self.baseclass)
-
-class Audio():
-    def __init__(self, update : dict):
-        self.update = update
-        self.file_id = update["file_id"]
-        self.title = update["title"]
-        self.file_size = update["file_size"]
-        self.mime_type = update["mime_type"]
-
-class Location():
-    def __init__(self, update : dict, longitude : int, latitude : int):
-        self.update = update
-        self.longitude = longitude
-        self.latitude = latitude
-        self.link = f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
     
 
         

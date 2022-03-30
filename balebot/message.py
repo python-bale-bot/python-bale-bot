@@ -1,5 +1,5 @@
 from .user import User
-from .replymarkup import ReplyMarkup
+from .components import ReplyMarkup
 from .chat import Chat
 from telegram.chat import Chat
 import datetime
@@ -31,7 +31,7 @@ class Message():
     def delete(self, timeout):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        Message = get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
+        Message = self.bot.get(f"{self.baseclass.base_url}bot{self.baseclass.token}/deletemessage", params = {
         "chat_id": f"{self.chat_id}",
         "message_id": f"{self.message_id}"
         }, timeout = timeout)
