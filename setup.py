@@ -24,8 +24,7 @@ setup(
 "multidict==3.3.2",
 "yarl==0.17.0",
 "pillow==5.2.0",
-"redis==3.0.1",
-"requests==2.26.0"]
+"redis==3.0.1",]
 ) 
 
 print(r"""
