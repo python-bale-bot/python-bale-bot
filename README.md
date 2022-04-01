@@ -1,5 +1,5 @@
 <div align='center'>
-<p style = "font-size: 40px;"><b> Bale Bot </b></p>
+<h1><b> Bale Bot </b></h1>
 
 ## 🗃 Table of contents
 </div>
