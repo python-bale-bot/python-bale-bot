@@ -4,7 +4,7 @@ setup(
     name = "python-bale-bot",
     version = "2.2.1",
     platforms = ["Windows"],
-    author = "Kian Ahmadian",
+    author = "kianahmadian",
     license = "MIT License",
     project_urls = {
         "Source Code": "https://github.com/kianahmadian/bale-bot/"    
