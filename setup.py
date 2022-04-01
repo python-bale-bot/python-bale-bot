@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 import balebot
 
 setup(
-    name = "balebot",
+    name = "python-bale-bot",
     version = balebot.__version__,
     platforms = ["Windows"],
     author = "Kian Ahmadian",
@@ -12,6 +12,7 @@ setup(
     },
     keywords = ["bale", "bot", "api"],
     python_requires = '>=3.8',
+    include_package_data=True,
     url = "https://github.com/kianahmadian/bale-bot/",
     packages = ['balebot'],
     install_requires = [
