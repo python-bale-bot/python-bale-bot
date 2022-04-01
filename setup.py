@@ -1,6 +1,9 @@
 from setuptools import setup, find_packages
 import balebot
 
+
+print(find_packages())
+
 setup(
     name = "balebot",
     version = balebot.__version__,
@@ -14,7 +17,7 @@ setup(
     # python_requires = '>=3.8',
     url = "https://github.com/kianahmadian/bale-bot/",
     packages = find_packages(),
-    requires = [
+    install_requires = [
 "aiohttp==2.3.7",
 "async-timeout==2.0.0",
 "asyncio==3.4.3",
