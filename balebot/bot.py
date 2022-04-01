@@ -1,6 +1,5 @@
 import requests
-from balebot import (Message, Update, User, Components, Price)
-
+from balebot import Message, Update, User, Components, Price
 class Bot():
     __slots__ = (
         "_bot",
