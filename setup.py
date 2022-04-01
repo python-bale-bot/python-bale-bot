@@ -13,7 +13,7 @@ setup(
     keywords = ["bale", "bot", "api"],
     python_requires = '>=3.8',
     url = "https://github.com/kianahmadian/bale-bot/",
-    packages = find_packages(),
+    packages = ['balebot'],
     install_requires = [
 "aiohttp==2.3.7",
 "async-timeout==2.0.0",
