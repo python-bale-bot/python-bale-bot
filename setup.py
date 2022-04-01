@@ -1,9 +1,9 @@
 from setuptools import setup, find_packages
-import balebot
+from balebot import __version__
 
 setup(
     name = "python-bale-bot",
-    version = balebot.__version__,
+    version = __version__,
     platforms = ["Windows"],
     author = "Kian Ahmadian",
     license = "MIT License",
