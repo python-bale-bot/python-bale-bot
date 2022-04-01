@@ -1,9 +1,6 @@
 from setuptools import setup, find_packages
 import balebot
 
-
-print(find_packages())
-
 setup(
     name = "balebot",
     version = balebot.__version__,
