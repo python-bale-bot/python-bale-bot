@@ -7,11 +7,11 @@ setup(
     platforms = ["Windows"],
     author = "Kian Ahmadian",
     license = "MIT License",
-    # project_urls = {
-    #     "Source Code": "https://github.com/kianahmadian/bale-bot/"    
-    # },
+    project_urls = {
+        "Source Code": "https://github.com/kianahmadian/bale-bot/"    
+    },
     keywords = ["bale", "bot", "api"],
-    # python_requires = '>=3.8',
+    python_requires = '>=3.8',
     url = "https://github.com/kianahmadian/bale-bot/",
     packages = find_packages(),
     install_requires = [
@@ -24,7 +24,7 @@ setup(
 "multidict==3.3.2",
 "yarl==0.17.0",
 "pillow==5.2.0",
-"redis==3.0.1",]
+"redis==3.0.1"]
 ) 
 
 print(r"""
