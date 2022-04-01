@@ -21,7 +21,7 @@ class Bot():
         if not isinstance(timeout, (tuple, int)):
             return
         try:
-            result = self._requests.get(self.base_url + "bot" + self.token + "/getme", timeout = timeout)
+            result = self._requests.get(self.base_url + "bot" + token + "/getme", timeout = timeout)
         except Exception as error:
             return None
         return result.json()["ok"]
