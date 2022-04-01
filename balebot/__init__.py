@@ -11,19 +11,19 @@ from .attachments.contact import ContactMessage
 from .payments.price import Price
 
 __all__ = (
-    Bot,
-    Update,
-    Chat,
-    Message,
-    CallbackQuery,
-    User,
-    Components,
-    Keyboard,
-    InlineKeyboard,
-    Location,
-    Audio,
-    ContactMessage,
-    Price
+    "Bot",
+    "Update",
+    "Chat",
+    "Message",
+    "CallbackQuery",
+    "User",
+    "Components",
+    "Keyboard",
+    "InlineKeyboard",
+    "Location",
+    "Audio",
+    "ContactMessage",
+    "Price"
 )
 
 __title__ = "balebot"
