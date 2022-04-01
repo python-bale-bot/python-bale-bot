@@ -1,4 +1,4 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 import balebot
 
 setup(
@@ -6,10 +6,14 @@ setup(
     version = balebot.__version__,
     platforms = ["Windows"],
     author = "Kian Ahmadian",
+    license = "MIT License",
+    project_urls = {
+        "Source Code": "https://github.com/kianahmadian/bale-bot/"    
+    },
     keywords = ["bale", "bot", "api"],
-    python_requires='>=3.5',
-    url = "https://github.com/kianahmadian/bale-bot",
-    packages = ['balebot']
+    python_requires = '>=3.8',
+    url = "https://github.com/kianahmadian/bale-bot/",
+    packages = find_packages()
 ) 
 
 print(r"""
