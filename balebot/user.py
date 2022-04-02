@@ -1,9 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import Bot
-
-from balebot import Components
+    from balebot import Bot, Components
 
 class User():
     __slots__ = (
@@ -26,7 +24,7 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-    def send(self, text, components : Components = None, reply_to_message_id : str = None):
+    def send(self, text, components : "Components" = None, reply_to_message_id : str = None):
         json = {}
         json["chat_id"] = self.id
         json["text"] = text
