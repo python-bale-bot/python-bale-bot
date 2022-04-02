@@ -12,7 +12,7 @@ class Update():
         "edited_message",    
         "bot"
     )
-    def __init__(self, id : int, callback_query : "CallbackQuery" = None, message : Message = None, edited_message : "Message" = None, bot : 'Bot' = None):
+    def __init__(self, id : int, callback_query : "CallbackQuery" = None, message : "Message" = None, edited_message : "Message" = None, bot : 'Bot' = None):
         self.id = int(id)
         self.bot = bot
         self.callback_query = None
