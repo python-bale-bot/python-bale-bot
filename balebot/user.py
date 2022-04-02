@@ -1,5 +1,9 @@
-from balebot import Bot, Components
-from datetime import datetime
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from balebot import Bot
+
+from balebot import Components
 
 class User():
     __slots__ = (

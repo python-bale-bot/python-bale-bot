@@ -1,7 +1,9 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import Bot, CallbackQuery, Message
+    from balebot import Bot, Message
+
+from balebot import CallbackQuery
 
 class Update():
     __slots__ = (

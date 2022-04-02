@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import User, Message
+    from balebot import Bot, User, Message
 
 class CallbackQuery():
     __slots__ = (
@@ -11,7 +11,7 @@ class CallbackQuery():
         "data",
         "bot"
     )
-    def __init__(self, id : int,data : str, message : Message, inline_message_id : str, from_user : User, bot = None):
+    def __init__(self, id : int,data : str, message : "Message", inline_message_id : str, from_user : "User", bot : "Bot" = None):
         self.data = data
         self.id = id
         self.message = message
