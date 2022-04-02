@@ -14,8 +14,8 @@ setup(
     include_package_data=True,
     url = "https://github.com/kianahmadian/bale-bot/",
     packages = ['balebot'],
-    package_dir = ""
-    ,install_requires = [
+    package_dir = "",
+    install_requires = [
 "aiohttp==2.3.7",
 "async-timeout==2.0.0",
 "asyncio==3.4.3",
