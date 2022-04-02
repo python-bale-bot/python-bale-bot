@@ -1,4 +1,4 @@
-from balebot import Bot, Message, Update, User, Components, Audio, ContactMessage, Location, Chat
+from balebot import Bot, User, Components, Audio, ContactMessage, Location, Chat
 import datetime
 
 class Message():
