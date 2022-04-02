@@ -1,4 +1,7 @@
-from balebot import User, Message
+from typing import TYPE_CHECKING
+
+if TYPE_CHECKING:
+    from balebot import User, Message
 
 class CallbackQuery():
     __slots__ = (

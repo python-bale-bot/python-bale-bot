@@ -9,7 +9,7 @@ class User():
         "id",
         "bot"
     )
-    def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : Bot = None):
+    def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : 'Bot' = None):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
