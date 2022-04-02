@@ -6,7 +6,7 @@ if TYPE_CHECKING:
     
 class Message():
     __slots__ = (
-        "text", "caption", "forward_from", "_author","contact", "chat","message_id", "date_code", "date", "author", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
+        "text", "caption", "forward_from", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
     )
     def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, forward_from : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, bot : 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
