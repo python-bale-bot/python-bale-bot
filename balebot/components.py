@@ -45,8 +45,8 @@ class Components():
                     self.keyboards.append(keyboards)
         
     @classmethod
-    def dict(cls, data : dict, bot):
-        return cls(keyboards = data["keyboard"], inlinekeyboards = data["inline_keyboard"], bot = bot)
+    def dict(cls, data : dict):
+        return cls(keyboards = data["keyboard"], inlinekeyboards = data["inline_keyboard"])
     
     def to_dict(self):
         data = {}
@@ -58,18 +58,17 @@ class Components():
         
 class InlineKeyboard():
     __slots__ = (
-        "text", "callback_data", "bot"
+        "text", "callback_data"
     )
-    def __init__(self, text : str, callback_data : str, bot = None):
+    def __init__(self, text : str, callback_data : str):
         self.text = text
         self.callback_data = callback_data
-        self.bot = bot
         
     @classmethod
-    def dict(cls, data : dict, bot):
+    def dict(cls, data : dict):
         if not data.get("text") or not data.get("callback_data"):
             return None
-        return cls(text = data["text"], callback_data = data["callback_data"], bot = bot)
+        return cls(text = data["text"], callback_data = data["callback_data"])
     
     def to_dict(self):
         data = {}
@@ -79,16 +78,16 @@ class InlineKeyboard():
     
 class Keyboard():
     __slots__ = (
-        "text", "bot"
+        "text"
     )
-    def __init__(self, text: str, bot = None):
+    def __init__(self, text: str):
         self.text = text
     
     @classmethod
-    def dict(cls, data : dict, bot):
+    def dict(cls, data : dict):
         if not data.get("text"):
             return None
-        return cls(text = data["text"], bot = bot)
+        return cls(text = data["text"])
     
     def to_dict(self):
         data = {}
