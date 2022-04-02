@@ -12,10 +12,10 @@ from .payments.price import Price
 
 __all__ = (
     "Bot",
+    "CallbackQuery",
     "Update",
     "Chat",
     "Message",
-    "CallbackQuery",
     "User",
     "Components",
     "Keyboard",
