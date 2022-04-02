@@ -13,7 +13,7 @@ setup(
     python_requires = '>=3.8',
     include_package_data = True,
     url = "https://github.com/kianahmadian/bale-bot/",
-    packages = ['balebot'],
+    packages = find_packages(),
     package_dir = "",
     install_requires = [
 "aiohttp==2.3.7",
