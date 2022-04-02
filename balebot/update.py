@@ -6,7 +6,7 @@ if TYPE_CHECKING:
 class Update():
     __slots__ = (
         "id",
-        "type",        
+        "_type",        
         "message",        
         "callback_query",   
         "edited_message",    
