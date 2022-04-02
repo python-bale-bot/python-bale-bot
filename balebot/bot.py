@@ -40,10 +40,13 @@ class Bot():
         return self._bot
     
     def req(self, mode : str, type : str,data : dict = None, params : dict = None,timeout = (5, 10)):
-        if mode == "post":
-            return self._requests.post(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
-        elif mode == "get":
-            return self._requests.get(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
+        try:
+            if mode == "post":
+                return self._requests.post(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
+            elif mode == "get":
+                return self._requests.get(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
+        except:
+            return None
     
     def delete_webhook(self, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
@@ -117,16 +120,15 @@ class Bot():
         if limit is not None:
             options["limit"] = limit
             
-        try:
-            updates = self.req("post", "getupdates", options)
+        updates = self.req("post", "getupdates", options)
+        if updates:
             if not updates.json()["ok"]:
                 updates = updates.json()
                 raise f"{updates['error_code']} | {updates['description']}"
             if len(updates.json()["result"]) != 0:
                 self.offset = int(updates.json()["result"][-1]["update_id"]) 
-        except:
+        else:
             return None
-        
         for i in updates.json()["result"]:
             update = Update.dict(data = i, bot = self)
             result.append(update)

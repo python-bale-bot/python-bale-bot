@@ -14,7 +14,7 @@ class Chat():
         "pinned_message",
         "bot"
     )
-    def __init__(self, id : int, type : str, title : str, username : str, first_name : str, last_name : str, pinned_message : list[Message] = [], all_members_are_administrators : bool = True, bot : Bot = None):
+    def __init__(self, id : str, type : str, title : str, username : str, first_name : str, last_name : str, pinned_message : list[Message] = [], all_members_are_administrators : bool = True, bot : Bot = None):
         self.id = id
         self.type = type
         self.title = title
