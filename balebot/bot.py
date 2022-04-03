@@ -1,9 +1,5 @@
 import requests
-from .update import Update
-from .message import Message
-from .user import User
-from .components import Components
-from .payments.price import Price
+from balebot import (Message, Update, User, Components, Price)
 
 class Bot():
     __slots__ = (
@@ -49,9 +45,9 @@ class Bot():
     def req(self, mode : str, type : str,data : dict = None, params : dict = None,timeout = (5, 10)):
         try:
             if mode == "post":
-                return self._requests.post(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
+                return self._requests.post(f"{self.base_url}" + "" if self.base_url.endswith("/") else "/"+ f"bot{self.token}/{type}", json = data, params = params, timeout = timeout)
             elif mode == "get":
-                return self._requests.get(f"{self.base_url}/bot{self.token}/{type}", json = data, params = params, timeout = timeout)
+                return self._requests.get(f"{self.base_url}" + "" if self.base_url.endswith("/") else "/"+ f"bot{self.token}/{type}", json = data, params = params, timeout = timeout)
         except:
             return None
     
