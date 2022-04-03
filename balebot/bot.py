@@ -10,7 +10,9 @@ class Bot():
         "_bot",
         "token",
         "base_url",
-        "base_file_url"
+        "base_file_url",
+        "offset",
+        "_requests"
     )
     def __init__(self, token : str,base_url : str = "https://tapi.bale.ai/", base_file_url : str = "https://tapi.bale.ai/file"):
         self.token = token 
