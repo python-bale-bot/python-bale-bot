@@ -7,7 +7,6 @@ class Bot():
         "token",
         "base_url",
         "base_file_url",
-        "offset",
         "_requests"
     )
     def __init__(self, token : str,base_url : str = "https://tapi.bale.ai/", base_file_url : str = "https://tapi.bale.ai/file"):
@@ -16,7 +15,6 @@ class Bot():
         self.base_file_url = base_file_url
         self._bot = None
         self._requests = requests
-        self.offset = None   
         if not self.check_token(self.token):
             raise f"Bot is not Ready!"
      
@@ -114,9 +112,6 @@ class Bot():
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         
-        if offset is None:
-            offset = self.offset
-            
         options = {}
         if offset is not None:
             options["offset"] = offset
@@ -128,11 +123,11 @@ class Bot():
             if not updates.json()["ok"]:
                 updates = updates.json()
                 raise f"{updates['error_code']} | {updates['description']}"
-            if len(updates.json()["result"]) != 0:
-                self.offset = int(updates.json()["result"][-1]["update_id"]) 
         else:
             return None
         for i in updates.json()["result"]:
+            if offset is not None and i["update_id"] < offset:
+                continue
             update = Update.dict(data = i, bot = self)
             result.append(update)
         return result
