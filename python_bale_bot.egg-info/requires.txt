@@ -1,4 +1,0 @@
-aiohttp==2.3.7
-async-timeout==2.0.0
-asyncio==3.4.3
-requests==2.26.0
