@@ -1,10 +1,11 @@
 <div align='center'>
 <h1><b> Bale Bot </b></h1>
 
-![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)
-![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)
-![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)
-![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)
+[![All Contributors](https://img.shields.io/github/contributors/kianahmadian/python-mini-projects)](#contributors-)
+![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/python-mini-projects?)
+![Forks](https://img.shields.io/github/forks/kianahmadian/python-mini-projects)
+![Stars](https://img.shields.io/github/stars/kianahmadian/python-mini-projects)
+![License](https://img.shields.io/github/license/kianahmadian/python-mini-projects)
   
 ## 🗃 Table of contents
 </div>
