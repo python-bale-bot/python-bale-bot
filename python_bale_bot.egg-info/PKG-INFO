@@ -1,21 +1,17 @@
-from this import d
-from setuptools import setup, find_packages
+Metadata-Version: 2.1
+Name: python-bale-bot
+Version: 2.2.1
+Summary: UNKNOWN
+Home-page: https://github.com/kianahmadian/bale-bot/
+Author: kianahmadian
+License: MIT License
+Project-URL: Source Code, https://github.com/kianahmadian/bale-bot/
+Keywords: bale,bot,api
+Platform: Windows
+Requires-Python: >=3.8
+License-File: LICENSE
 
-setup(
-    name = "python-bale-bot",
-    version = "2.2.1",
-    platforms = ["Windows"],
-    author = "kianahmadian",
-    license = "MIT License",
-    project_urls = {
-        "Source Code": "https://github.com/kianahmadian/bale-bot/"    
-    },
-    keywords = ["bale", "bot", "api"],
-    python_requires = '>=3.8',
-    include_package_data = True,
-    url = "https://github.com/kianahmadian/bale-bot/",
-    packages = find_packages(),
-    long_description = """<div align='center'>
+<div align='center'>
 <h1><b> Bale Bot </b></h1>
 
 [![All Contributors](https://img.shields.io/github/contributors/kianahmadian/bale-bot)](#contributors-)
@@ -90,17 +86,5 @@ pip install python-bale-bot -U
 <a href="https://discord.com/users/684748470799958033"> Discord </a>
 
 </div>
-""",
-    install_requires = [
-"aiohttp==2.3.7",
-"async-timeout==2.0.0",
-"asyncio==3.4.3",
-"requests==2.26.0"]
-)
 
-print(r"""
-____    __        ____   ____  ____  _____
-|___|  /__\  |    |___   |___| |   |   |
-|___| /    \ |___ |___   |___| |___|   |
 
-""")
