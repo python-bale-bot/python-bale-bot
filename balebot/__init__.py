@@ -1,8 +1,8 @@
+from .user import User
 from .chat import Chat
 from .message import Message
 from .callbackquery import CallbackQuery
 from .update import Update
-from .user import User
 from .components import Components, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
