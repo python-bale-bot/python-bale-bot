@@ -23,14 +23,14 @@ class Message():
     def author(self):
         if self.chat is not None:
             if self.chat.type == Chat.PRIVATE:
-                self.author = User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self.bot)
+                return User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self.bot)
             elif self.chat.type == Chat.GROUP: 
-                self.author = User(bot = self.bot, id = self.forward_from.id, first_name = self.forward_from.first_name, last_name = self.forward_from.last_name, username = self.forward_from.username)
+                return User(bot = self.bot, id = self.forward_from.id, first_name = self.forward_from.first_name, last_name = self.forward_from.last_name, username = self.forward_from.username)
         return None
     
     @classmethod
     def dict(cls, data : dict, bot):
-        return cls(bot = bot)
+        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), forward_from = User.dict(bot = bot, data = data.get("forward_from")))
     
     def to_dict(self):
         data = {}
