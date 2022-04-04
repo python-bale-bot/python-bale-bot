@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "python-bale-bot",
-    version = "2.2.1",
+    version = "2.2.1.3",
     platforms = ["Windows"],
     author = "kianahmadian",
     license = "MIT License",
