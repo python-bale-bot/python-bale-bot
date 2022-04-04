@@ -1,6 +1,11 @@
 <div align='center'>
 <h1><b> Bale Bot </b></h1>
 
+![forthebadge](https://forthebadge.com/images/badges/built-by-developers.svg)
+![forthebadge](https://forthebadge.com/images/badges/built-with-love.svg)
+![forthebadge](https://forthebadge.com/images/badges/built-with-swag.svg)
+![forthebadge](https://forthebadge.com/images/badges/made-with-python.svg)
+  
 ## 🗃 Table of contents
 </div>
 
