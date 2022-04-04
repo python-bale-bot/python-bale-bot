@@ -40,7 +40,7 @@ class User():
     
     @classmethod
     def dict(cls, bot, data : dict):
-        return cls(username = data["username"], first_name = data["first_name"], last_name = data["last_name"], id = data["id"], bot = bot)
+        return cls(username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), id = data.get("id"), bot = bot)
     
     def to_dict(self):
         data = {}
