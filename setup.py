@@ -90,6 +90,7 @@ pip install python-bale-bot -U
 
 </div>
 """,
+    long_description_content_type='text/markdown',
     install_requires = [
 "aiohttp==2.3.7",
 "async-timeout==2.0.0",
