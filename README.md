@@ -1,11 +1,11 @@
 <div align='center'>
 <h1><b> Bale Bot </b></h1>
 
-[![All Contributors](https://img.shields.io/github/contributors/kianahmadian/python-mini-projects)](#contributors-)
-![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/python-mini-projects?)
-![Forks](https://img.shields.io/github/forks/kianahmadian/python-mini-projects)
-![Stars](https://img.shields.io/github/stars/kianahmadian/python-mini-projects)
-![License](https://img.shields.io/github/license/kianahmadian/python-mini-projects)
+[![All Contributors](https://img.shields.io/github/contributors/kianahmadian/bale-bot)](#contributors-)
+![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/bale-bot?)
+![Forks](https://img.shields.io/github/forks/kianahmadian/bale-bot)
+![Stars](https://img.shields.io/github/stars/kianahmadian/bale-bot)
+![License](https://img.shields.io/github/license/kianahmadian/bale-bot)
   
 ## 🗃 Table of contents
 </div>
