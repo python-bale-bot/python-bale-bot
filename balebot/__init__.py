@@ -1,13 +1,13 @@
+from .components import Components, InlineKeyboard, Keyboard
+from .attachments.audio import Audio
+from .attachments.location import Location
+from .payments.price import Price
 from .user import User
+from .attachments.contact import ContactMessage
 from .chat import Chat
 from .message import Message
 from .callbackquery import CallbackQuery
 from .update import Update
-from .components import Components, InlineKeyboard, Keyboard
-from .attachments.audio import Audio
-from .attachments.location import Location
-from .attachments.contact import ContactMessage
-from .payments.price import Price
 from .bot import Bot
 
 __all__ = (
