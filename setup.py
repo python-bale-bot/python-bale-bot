@@ -1,4 +1,3 @@
-from this import d
 from setuptools import setup, find_packages
 
 setup(
