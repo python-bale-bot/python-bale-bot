@@ -21,6 +21,8 @@ class Components():
                             else:
                                 key_list.append(i)
                         self.keyboards.append(key_list)
+                    elif type(i) is Keyboard:
+                        self.keyboards.append([i.to_dict()])
             else:
                 if "name" in keyboards:
                     self.keyboards.append(keyboards)
@@ -40,6 +42,8 @@ class Components():
                             else:
                                 key_list.append(i)
                         self.inlinekeyboards.append(key_list)
+                    elif type(i) is InlineKeyboard:
+                        self.inlinekeyboards.append([i.to_dict()])
             elif type(inlinekeyboards) is dict:
                 if "name" in inlinekeyboards and "callback_data" in inlinekeyboards:
                     self.inlinekeyboards.append(inlinekeyboards)
