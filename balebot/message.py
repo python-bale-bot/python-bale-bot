@@ -48,7 +48,7 @@ class Message():
         
         return data
     
-    def delete(self, timeout):
+    def delete(self, timeout = (10, 30)):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         Message = self.bot.req(mode = "get", type = "deletemessage", params = {
@@ -57,7 +57,7 @@ class Message():
         }, timeout = timeout)
         return Message.json()
     
-    def reply(self, text, components = None, reply_to_message_id : bool = True):
+    def reply(self, text, components = None, reply_to_message_id : bool = True, timeout = (10, 30)):
         json = {}
         json["chat_id"] = f"{self.chat_id}"
         json["text"] = f"{text}"
@@ -68,7 +68,7 @@ class Message():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = str(self.message_id)
-        Message = self.bot.send_message(text = text, components = components, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = (10, 15))
+        Message = self.bot.send_message(text = text, components = components, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = timeout)
         return Message
     
     def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None, reply_to_message_id : bool = True):

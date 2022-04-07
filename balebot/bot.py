@@ -78,16 +78,22 @@ class Bot():
                 return Message.dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, components : Components = None, timeout = (5, 10)):
+    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)):
         json = {}
         json["chat_id"] = str(chat_id)
         json["title"] = title
         json["description"] = description
         json["provider_token"] = provider_token
         if isinstance(prices, Price):
-            json["prices"] = prices.to_dict()
-        else:
-            json["prices"] = prices
+            json["prices"] = [prices.to_dict()]
+        elif isinstance(prices, list):
+            key_list = []
+            for i in prices:
+                if type(i) is Price:
+                    key_list.append(i.to_dic())
+                else:
+                    key_list.append(i)
+            json["prices"] = key_list
         if photo_url:
             json["photo_url"] = photo_url
         json["need_name"] = need_name
@@ -108,6 +114,8 @@ class Bot():
             if json["ok"]: 
                 return Message.dict(data = message.json()["result"], bot = self)
         return None
+    
+    
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
         result = []
