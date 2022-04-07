@@ -3,6 +3,8 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from balebot import Bot, Message
 
+from balebot import Components
+
 class Chat():
     PRIVATE = "private"
     GROUP = "group"
@@ -26,6 +28,14 @@ class Chat():
         self.last_name = last_name
         self.pinned_message = pinned_message
         self.bot = bot
+     
+    def send(self, text : str = None,
+        sticker = None, files = None, components = None, timeout = (5, 10)):
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        message = self.bot.send_message(chat_id = self.id, components = components, timeout = timeout)
+        return message
+        
         
     @classmethod
     def dict(cls, data : dict, bot):
