@@ -11,7 +11,8 @@ class CallbackQuery():
         "inline_message_id",
         "from_user",
         "data",
-        "bot"
+        "bot",
+        "id"
     )
     def __init__(self, id : int,data : str, message : "Message", inline_message_id : str, from_user : "User", bot : "Bot" = None):
         self.data = data
