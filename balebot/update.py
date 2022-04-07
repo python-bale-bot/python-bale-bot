@@ -48,7 +48,7 @@ class Update():
             message = Message.dict(data.get("message"), bot = bot)
         elif data.get("edited_message"):
             edited_message = Message.dict(data = data.get("edited_message"), bot = bot)
-
+            
         return cls(id = data["update_id"], message = message, callback_query = callback_query, edited_message = edited_message)
     
     def to_dict(self):

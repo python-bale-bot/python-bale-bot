@@ -15,10 +15,10 @@ class Bot():
         self.base_file_url = base_file_url
         self._bot = None
         self._requests = requests
-        if not self.check_token(self.token):
+        if not self.check_token():
             raise f"Bot is not Ready!"
      
-    def check_token(self, token, timeout = (5, 10)):
+    def check_token(self, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "getme", timeout = timeout)

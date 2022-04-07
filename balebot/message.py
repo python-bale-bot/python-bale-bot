@@ -8,15 +8,15 @@ from balebot import (Chat, User, Components, Audio, ContactMessage, Location)
     
 class Message():
     __slots__ = (
-        "text", "caption", "forward_from", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
+        "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
     )
-    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, forward_from : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, bot : 'Bot' = None):
+    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, bot : 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
         self.date = date if date is not None else None
         
         self.text = text if text is not None else None
         self.chat = chat if chat is not None else None
-        self.forward_from = forward_from if forward_from is not None else None
+        self.from_user = from_user if from_user is not None else None
         self.caption = caption if caption is not None else None
         self.contact = contact if contact is not None else None
         self.bot = bot if bot is not None else None
@@ -27,12 +27,12 @@ class Message():
             if self.chat.type == Chat.PRIVATE:
                 return User(id = self.chat.id, first_name = self.chat.first_name, last_name = self.chat.last_name, username = self.chat.username, bot = self.bot)
             elif self.chat.type == Chat.GROUP: 
-                return User(bot = self.bot, id = self.forward_from.id, first_name = self.forward_from.first_name, last_name = self.forward_from.last_name, username = self.forward_from.username)
+                return User(bot = self.bot, id = self.from_user.id, first_name = self.from_user.first_name, last_name = self.from_user.last_name, username = self.from_user.username)
         return None
     
     @classmethod
     def dict(cls, data : dict, bot):
-        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), forward_from = User.dict(bot = bot, data = data.get("forward_from")))
+        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), from_user = User.dict(bot = bot, data = data.get("from")))
     
     def to_dict(self):
         data = {}
@@ -41,7 +41,7 @@ class Message():
         data["date"] = self.date
         data["text"] = self.text
         data["chat"] = self.chat.to_dict()
-        data["forward_from"] = self.forward_from.to_dict()
+        data["from"] = self.from_user.to_dict()
         data["caption"] = self.caption
         data["contact"] = self.contact.to_dict()
         

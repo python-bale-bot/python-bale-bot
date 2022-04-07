@@ -21,7 +21,7 @@ class CallbackQuery():
     
     @classmethod
     def dict(cls, data : dict, bot):
-        return cls(bot = bot, data = data["data"], id = data["id"], message = Message.dict(data["message"], bot = bot), inline_message_id = data["inline_message_id"], from_user = User.dict(bot = bot, data = data["from_user"])) 
+        return cls(bot = bot, data = data["data"], id = data["id"], message = Message.dict(data["message"], bot = bot), inline_message_id = data["inline_message_id"], from_user = User.dict(bot = bot, data = data["from"])) 
         
     def to_dict(self):
         data = {}
