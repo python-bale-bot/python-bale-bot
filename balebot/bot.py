@@ -113,7 +113,7 @@ class Bot():
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        Message = self.bot.req(mode = "get", type = "deletemessage", params = {
+        Message = self.req(mode = "get", type = "deletemessage", params = {
         "chat_id": str(chat_id),
         "message_id": message_id
         }, timeout = timeout)
