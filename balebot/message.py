@@ -49,7 +49,7 @@ class Message():
         return data
     
     def delete(self, timeout = (10, 30)):
-        message = self.bot.delete_message(chat_id = self.chat.id, message_id = self.message_id)
+        message = self.bot.delete_message(chat_id = self.chat.id, message_id = self.message_id, timeout = timeout)
         return message
     
     def reply(self, text, components = None, reply_to_message_id : bool = True, timeout = (10, 30)):
