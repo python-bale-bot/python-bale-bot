@@ -58,7 +58,7 @@ class Bot():
         return None
 
     def send_message(self, chat_id : int, text : str = None,
-        sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)):
+        sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         json = {}
@@ -78,7 +78,7 @@ class Bot():
                 return Message.dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)):
+    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
         json = {}
         json["chat_id"] = str(chat_id)
         json["title"] = title
@@ -119,7 +119,7 @@ class Bot():
         }, timeout = timeout)
         return Message.json()
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
+    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list[Update]:
         result = []
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
