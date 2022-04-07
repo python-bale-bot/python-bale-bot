@@ -28,11 +28,10 @@ class Bot():
 
 
     def get_bot(self, timeout = (5, 10)):
-        try:
-            result = self._requests.get(self.base_url + "bot" + self.token + "/getme", timeout = timeout)
-        except Exception as error:
-            return None
-        return User.dict(data = result.json()["result"], bot = self)
+        result = self.req("get", "getme", timeout = timeout)
+        if result is not None:
+            return User.dict(data = result.json()["result"], bot = self)
+        return None
     
     @property
     def bot(self):
@@ -67,7 +66,7 @@ class Bot():
         json["text"] = text
         if components:
             if isinstance(components, Components):
-                json["reply_markup"] = components
+                json["reply_markup"] = components.to_dict()
             else:
                 json["reply_markup"] = components
         if reply_to_message_id:

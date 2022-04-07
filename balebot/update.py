@@ -30,9 +30,9 @@ class Update():
             
     @property
     def type(self):
-        if self.callback_query:
+        if self.callback_query is not None:
             return "callback_query"
-        elif self.message:
+        elif self.message is not None:
             return "message"
         return "unknown"
     

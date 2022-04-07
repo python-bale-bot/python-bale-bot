@@ -8,9 +8,9 @@ from balebot import (Chat, User, Components, Audio, ContactMessage, Location)
     
 class Message():
     __slots__ = (
-        "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice"
+        "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "bot"
     )
-    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, bot : 'Bot' = None):
+    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_members : list["User"] = None,bot : 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
         self.date = date if date is not None else None
         
@@ -19,6 +19,7 @@ class Message():
         self.from_user = from_user if from_user is not None else None
         self.caption = caption if caption is not None else None
         self.contact = contact if contact is not None else None
+        self.new_chat_members = new_chat_members if new_chat_members is not None else None
         self.bot = bot if bot is not None else None
 
     @property
