@@ -103,11 +103,6 @@ class Bot():
         json["is_flexible"] = is_flexible
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        if components:
-            if isinstance(components, Components):
-                json["reply_markup"] = components.to_dict()
-            else:
-                json["reply_markup"] = components
         message = self.req("post", "sendInvoice", data = json, timeout = timeout)
         if message is not None:
             json = message.json()
@@ -115,7 +110,14 @@ class Bot():
                 return Message.dict(data = message.json()["result"], bot = self)
         return None
     
-    
+    def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        Message = self.bot.req(mode = "get", type = "deletemessage", params = {
+        "chat_id": str(chat_id),
+        "message_id": message_id
+        }, timeout = timeout)
+        return Message.json()
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
         result = []
