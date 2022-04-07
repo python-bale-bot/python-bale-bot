@@ -33,7 +33,13 @@ class Message():
     
     @classmethod
     def dict(cls, data : dict, bot):
-        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), from_user = User.dict(bot = bot, data = data.get("from")))
+        new_chat_members = None
+        if data.get("new_chat_members"):
+            new_chat_members = []
+            for i in data.get("new_chat_members"):
+                new_chat_members.append(User.dict(bot = bot, data = i))
+        
+        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), from_user = User.dict(bot = bot, data = data.get("from")), new_chat_members = new_chat_members if new_chat_members != [] and new_chat_members != None else None)
     
     def to_dict(self):
         data = {}
@@ -45,6 +51,7 @@ class Message():
         data["from"] = self.from_user.to_dict()
         data["caption"] = self.caption
         data["contact"] = self.contact.to_dict()
+        data["new_chat_members"] = self.new_chat_members
         
         return data
     
@@ -66,11 +73,11 @@ class Message():
         Message = self.bot.send_message(text = text, components = components, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = timeout)
         return Message
     
-    def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_markup = None, reply_to_message_id : bool = True):
-        message = self.bot.send_invoice(chat_id = self.chat.id, title = title, description = description, provider_token = provider_token, prices = prices, photo_url = photo_url, need_name = need_name, need_email = need_email, need_phone_number = need_phone_number, need_shipping_address = need_shipping_address, is_flexible = is_flexible ,components = reply_markup, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = (10, 15))
+    def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_to_message_id : bool = True):
+        message = self.bot.send_invoice(chat_id = self.chat.id, title = title, description = description, provider_token = provider_token, prices = prices, photo_url = photo_url, need_name = need_name, need_email = need_email, need_phone_number = need_phone_number, need_shipping_address = need_shipping_address, is_flexible = is_flexible, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = (10, 15))
         return message
     
     def __str__(self):
-        return self.message_id
+        return str(self.message_id)
     
     
