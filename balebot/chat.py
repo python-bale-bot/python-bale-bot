@@ -33,9 +33,8 @@ class Chat():
         sticker = None, files = None, components = None, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        message = self.bot.send_message(chat_id = self.id, components = components, timeout = timeout)
+        message = self.bot.send_message(chat_id = str(self.id), text = text, components = components, timeout = timeout)
         return message
-        
         
     @classmethod
     def dict(cls, data : dict, bot):
