@@ -31,6 +31,12 @@ class Message():
                 return User(bot = self.bot, id = self.from_user.id, first_name = self.from_user.first_name, last_name = self.from_user.last_name, username = self.from_user.username)
         return None
     
+    @property
+    def chat_id(self):
+        if self.chat is not None:
+            return self.chat.id
+        return None
+    
     @classmethod
     def dict(cls, data : dict, bot):
         new_chat_members = None
@@ -60,17 +66,7 @@ class Message():
         return message
     
     def reply(self, text, components = None, reply_to_message_id : bool = True, timeout = (10, 30)):
-        json = {}
-        json["chat_id"] = f"{self.chat_id}"
-        json["text"] = f"{text}"
-        if components:
-            if type(components) is Components:
-                json["reply_markup"] = components.result
-            elif type(components) is dict:
-                json["reply_markup"] = components
-        if reply_to_message_id:
-            json["reply_to_message_id"] = str(self.message_id)
-        Message = self.bot.send_message(text = text, components = components, reply_to_message_id = reply_to_message_id if reply_to_message_id else None, timeout = timeout)
+        Message = self.bot.send_message(chat_id = str(self.chat.id), text = text, components = components, reply_to_message_id = str(self.message_id) if reply_to_message_id else None, timeout = timeout)
         return Message
     
     def reply_invoice(self, title : str, description : str, provider_token : str, prices, photo_url = None, need_name = False, need_phone_number = False, need_email = False, need_shipping_address = False, is_flexible = True, reply_to_message_id : bool = True):
