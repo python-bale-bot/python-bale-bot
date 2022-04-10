@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name = "python-bale-bot",
-    version = "2.1.4",
+    version = "2.1.4.2",
     platforms = ["Windows"],
     fullname = "python-bale-bot-api",
     description = "The official repository of the programming of «Bale bot»",
