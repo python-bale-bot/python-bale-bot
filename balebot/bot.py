@@ -18,7 +18,7 @@ class Bot():
         if not self.check_token():
             raise f"Bot is not Ready!"
      
-    def check_token(self, timeout = (30, 10)):
+    def check_token(self, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "getme", timeout = timeout)
@@ -27,14 +27,14 @@ class Bot():
         return None
 
 
-    def get_bot(self, timeout = (30, 10)):
+    def get_bot(self, timeout = (5, 10)):
         result = self.req("get", "getme", timeout = timeout)
         if result is not None:
             return User.dict(data = result.json()["result"], bot = self)
         return None
     
     @property
-    def bot(self):
+    def bot(self) -> User:
         if self._bot is None:
             self._bot = self.get_bot()
         return self._bot
@@ -50,6 +50,7 @@ class Bot():
         return None
     
     def delete_webhook(self, timeout = (5, 10)):
+        """Delete Webhook"""
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "deleteWebhook", timeout = timeout)
@@ -59,6 +60,7 @@ class Bot():
 
     def send_message(self, chat_id : int, text : str = None,
         sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+        """Send Message In Chat"""
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         json = {}
