@@ -18,7 +18,7 @@ class Bot():
         if not self.check_token():
             raise f"Bot is not Ready!"
      
-    def check_token(self, timeout = (5, 10)):
+    def check_token(self, timeout = (30, 10)):
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "getme", timeout = timeout)
@@ -27,7 +27,7 @@ class Bot():
         return None
 
 
-    def get_bot(self, timeout = (5, 10)):
+    def get_bot(self, timeout = (30, 10)):
         result = self.req("get", "getme", timeout = timeout)
         if result is not None:
             return User.dict(data = result.json()["result"], bot = self)
