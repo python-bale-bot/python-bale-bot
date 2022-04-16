@@ -1,9 +1,9 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import Bot, Message
+    from bale import Bot, Message
 
-from balebot import Components
+from bale import Components
 
 class Chat():
     PRIVATE = "private"

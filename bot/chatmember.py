@@ -1,2 +1,2 @@
-from balebot import User
+from bale import User
 

@@ -2,9 +2,9 @@ import datetime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import Bot
+    from bale import Bot
    
-from balebot import (Chat, User, Components, Audio, ContactMessage, Location)
+from bale import (Chat, User, Components, Audio, ContactMessage, Location)
     
 class Message():
     __slots__ = (

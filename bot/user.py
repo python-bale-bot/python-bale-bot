@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from balebot import Bot, Components
+    from bale import Bot, Components
 
 class User():
     __slots__ = (
