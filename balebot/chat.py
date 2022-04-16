@@ -36,6 +36,9 @@ class Chat():
         message = self.bot.send_message(chat_id = str(self.id), text = text, components = components, timeout = timeout)
         return message
         
+    def getchatadministrators(self):
+        pass
+        
     @classmethod
     def dict(cls, data : dict, bot):
         pinned_message = []
