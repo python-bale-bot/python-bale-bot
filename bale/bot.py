@@ -54,7 +54,7 @@ class Bot():
             pass
         return None
     
-    def delete_webhook(self, timeout = (5, 10)):
+    def delete_webhook(self, timeout = (5, 10)) -> bool:
         """_summary_
 
         Args:
@@ -79,7 +79,6 @@ class Bot():
             components (bot.Components, dict): Message Components. 
             reply_to_message_id (str): Reply Message ID. 
             timeout (tuple, int): _description_. Defaults to (5, 10).
-             
         """
         
         if not isinstance(timeout, (tuple, int)):
