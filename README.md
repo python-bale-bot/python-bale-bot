@@ -1,11 +1,11 @@
 <div align='center'>
 <h1><b> Bale - بله</b></h1>
 
-[![All Contributors](https://img.shields.io/github/contributors/kianahmadian/bale-bot)](#contributors-)
-![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/bale-bot?)
-![Forks](https://img.shields.io/github/forks/kianahmadian/bale-bot)
-![Stars](https://img.shields.io/github/stars/kianahmadian/bale-bot)
-![License](https://img.shields.io/github/license/kianahmadian/bale-bot)
+[![All Contributors](https://img.shields.io/github/contributors/kianahmadian/python-bale-bot)](#contributors-)
+![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/python-bale-bot?)
+![Forks](https://img.shields.io/github/forks/kianahmadian/python-bale-bot)
+![Stars](https://img.shields.io/github/stars/kianahmadian/python-bale-bot)
+![License](https://img.shields.io/github/license/kianahmadian/python-bale-bot)
   
 ## 🗃 Table of contents
 </div>
