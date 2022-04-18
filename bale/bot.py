@@ -61,7 +61,7 @@ class Bot():
             timeout (tuple, int): _description_. Defaults to (5, 10).
 
         Returns:
-            bool: :class:`telegram.Message`: On success, the sent Message is returned.
+            bool: On success, the sent Message is returned.
         """
         if not isinstance(timeout, (tuple, int)):
             return
@@ -71,8 +71,16 @@ class Bot():
         return False
 
     def send_message(self, chat_id : int, text : str = None, sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+        """Delete Webhook
         
-        
+        Args:
+            chat_id (int): Chat ID.
+            text (str): Message Text. 
+            components (bot.Components, dict): Message Components. 
+            reply_to_message_id (str): Reply Message ID. 
+            timeout (tuple, int): _description_. Defaults to (5, 10).
+             
+        """
         
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
