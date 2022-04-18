@@ -9,12 +9,12 @@ setup(
     author = "Kian Ahmadian",
     license = "MIT License",
     project_urls = {
-        "Source Code": "https://github.com/kianahmadian/bale-bot/blob/main/balebot"    
+        "Source Code": "https://github.com/kianahmadian/python-bale-bot//blob/main/balebot"    
     },
     keywords = ["bale", "bot", "baleapi"],
     python_requires = '>=3.8',
     include_package_data = True,
-    url = "https://github.com/kianahmadian/bale-bot/",
+    url = "https://github.com/kianahmadian/python-bale-bot//",
     packages = find_packages(),
     long_description = """<div align='center'>
 <h1><b> Bale Bot </b></h1>
@@ -28,11 +28,11 @@ setup(
 ## 🗃 Table of contents
 </div>
 
-* [Info](https://github.com/kianahmadian/bale-bot#%E2%84%B9-info)
-* [Files](https://github.com/kianahmadian/bale-bot#-files)
-* [Installing](https://github.com/kianahmadian/bale-bot#-installing)
-* [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
-* [More Info](https://github.com/kianahmadian/bale-bot#-more-info)
+* [Info](https://github.com/kianahmadian/python-bale-bot/#%E2%84%B9-info)
+* [Files](https://github.com/kianahmadian/python-bale-bot/#-files)
+* [Installing](https://github.com/kianahmadian/python-bale-bot/#-installing)
+* [Social Media](https://github.com/kianahmadian/python-bale-bot/#-social-media)
+* [More Info](https://github.com/kianahmadian/python-bale-bot/#-more-info)
 
 
 <div align='center'>
@@ -48,11 +48,11 @@ setup(
 </div>
 
 ### `📜` License 
-* [MIT License](https://github.com/kianahmadian/bale-bot/blob/main/LICENSE)
+* [MIT License](https://github.com/kianahmadian/python-bale-bot//blob/main/LICENSE)
 
 ### `⚙` Setup Files 
-* [setup (Python)](https://github.com/kianahmadian/bale-bot/blob/main/setup.py)
-* [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
+* [setup (Python)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.py)
+* [setup (cfd)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.cfd)
 
 
 <div align='center'>
@@ -62,7 +62,7 @@ setup(
 ### with Git:
 
 ```
-pip install git+https://github.com/kianahmadian/bale-bot -U
+pip install git+https://github.com/kianahmadian/python-bale-bot/ -U
 ```
 
 ### with PyPi:

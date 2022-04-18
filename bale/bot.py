@@ -13,7 +13,7 @@ class Bot():
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
-        self._bot = None
+        self._bot = self.check_token()
         self._requests = requests
         if not self.check_token():
             raise f"Bot is not Ready!"
@@ -34,7 +34,12 @@ class Bot():
         return None
     
     @property
-    def bot(self) -> User:
+    def bot(self):
+        """Use this method to send A Message
+
+        Returns:
+            :class:`bale.Message`: On success, the sent Message is returned.
+        """
         if self._bot is None:
             self._bot = self.get_bot()
         return self._bot
@@ -50,17 +55,25 @@ class Bot():
         return None
     
     def delete_webhook(self, timeout = (5, 10)):
-        """Delete Webhook"""
+        """_summary_
+
+        Args:
+            timeout (tuple, int): _description_. Defaults to (5, 10).
+
+        Returns:
+            bool: :class:`telegram.Message`: On success, the sent Message is returned.
+        """
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "deleteWebhook", timeout = timeout)
         if result is not None:
             return result.json()["result"]
-        return None
+        return False
 
-    def send_message(self, chat_id : int, text : str = None,
-        sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
-        """Send Message In Chat"""
+    def send_message(self, chat_id : int, text : str = None, sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+        
+        
+        
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         json = {}

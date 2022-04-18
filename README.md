@@ -10,11 +10,11 @@
 ## 🗃 Table of contents
 </div>
 
-* [Info](https://github.com/kianahmadian/bale-bot#%E2%84%B9-info)
-* [Files](https://github.com/kianahmadian/bale-bot#-files)
-* [Installing](https://github.com/kianahmadian/bale-bot#-installing)
-* [Social Media](https://github.com/kianahmadian/bale-bot#-social-media)
-* [More Info](https://github.com/kianahmadian/bale-bot#-more-info)
+* [Info](https://github.com/kianahmadian/python-bale-bot/#%E2%84%B9-info)
+* [Files](https://github.com/kianahmadian/python-bale-bot/#-files)
+* [Installing](https://github.com/kianahmadian/python-bale-bot/#-installing)
+* [Social Media](https://github.com/kianahmadian/python-bale-bot/#-social-media)
+* [More Info](https://github.com/kianahmadian/python-bale-bot/#-more-info)
 
 
 <div align='center'>
@@ -30,11 +30,11 @@
 </div>
 
 ### `📜` License 
-* [MIT License](https://github.com/kianahmadian/bale-bot/blob/main/LICENSE)
+* [MIT License](https://github.com/kianahmadian/python-bale-bot//blob/main/LICENSE)
 
 ### `⚙` Setup Files 
-* [setup (Python)](https://github.com/kianahmadian/bale-bot/blob/main/setup.py)
-* [setup (cfd)](https://github.com/kianahmadian/bale-bot/blob/main/setup.cfd)
+* [setup (Python)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.py)
+* [setup (cfd)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.cfd)
 
 
 <div align='center'>
@@ -44,7 +44,7 @@
 ### with Git:
 
 ```
-pip install git+https://github.com/kianahmadian/bale-bot -U
+pip install git+https://github.com/kianahmadian/python-bale-bot/ -U
 ```
 
 ### with PyPi:
