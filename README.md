@@ -1,5 +1,5 @@
 <div align='center'>
-<h1><b> Bale Bot - بله بات</b></h1>
+<h1><b> Bale - بله</b></h1>
 
 [![All Contributors](https://img.shields.io/github/contributors/kianahmadian/bale-bot)](#contributors-)
 ![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/bale-bot?)
