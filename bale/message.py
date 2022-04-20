@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
    
-from bale import (Chat, User, Components, Audio, ContactMessage, Location)
+from bale import (Chat, User, Audio, ContactMessage, Location)
     
 class Message():
     __slots__ = (
