@@ -3,7 +3,7 @@ from bale import (Message, Update, User, Components, Price)
 
 class Bot():
     __slots__ = (
-        "_bot",
+        "_user",
         "token",
         "base_url",
         "base_file_url",
@@ -13,12 +13,12 @@ class Bot():
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
-        self._bot = self.check_token()
+        self._user = self.check_token()
         self._requests = requests
-        if not self.check_token():
+        if not self._user:
             raise f"Bot is not Ready!"
      
-    def check_token(self, timeout = (30, 10)):
+    def check_token(self, timeout = (30, 10)) -> bool:
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "getme", timeout = timeout)
@@ -40,9 +40,9 @@ class Bot():
         Returns:
             :class:`bale.Message`: On success, the sent Message is returned.
         """
-        if self._bot is None:
-            self._bot = self.get_bot()
-        return self._bot
+        if self._user is None:
+            self._user = self.get_bot()
+        return self._user
     
     def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
         try:
