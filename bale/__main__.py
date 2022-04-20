@@ -1,7 +1,6 @@
 import sys
 
 def main():
-    
     print("Pyhton-Bale-Bot By Kian Ahmadian")
     print("Python Version: ", sys.version)
 

@@ -70,7 +70,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : int, text : str = None, sticker = None, files = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
         """Delete Webhook
         
         Args:

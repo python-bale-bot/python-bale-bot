@@ -31,8 +31,7 @@ class Chat():
         self.all_members_are_administrators = all_members_are_administrators
         self.bot = bot
      
-    def send(self, text : str = None,
-        sticker = None, files = None, components = None, timeout = (5, 10)):
+    def send(self, text : str = None, components = None, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         message = self.bot.send_message(chat_id = str(self.id), text = text, components = components, timeout = timeout)
