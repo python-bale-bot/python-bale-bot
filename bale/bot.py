@@ -35,10 +35,10 @@ class Bot():
     
     @property
     def bot(self):
-        """Use this method to send A Message
+        """Get Bot User
 
         Returns:
-            :class:`bale.Message`: On success, the sent Message is returned.
+            :class:`bale.User`
         """
         if self._user is None:
             self._user = self.get_bot()
@@ -54,14 +54,14 @@ class Bot():
             pass
         return None
     
-    def delete_webhook(self, timeout = (5, 10)) -> bool:
-        """_summary_
+    def delete_webhook(self, timeout = (5, 10)):
+        """Delete Webhook
 
         Args:
-            timeout (tuple, int): _description_. Defaults to (5, 10).
+            timeout (tuple, optional): Defaults to (5, 10).
 
         Returns:
-            bool: On success, the sent Message is returned.
+            bool: If done "True" If not "False"
         """
         if not isinstance(timeout, (tuple, int)):
             return
@@ -70,7 +70,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)):
         """Delete Webhook
         
         Args:
@@ -79,6 +79,8 @@ class Bot():
             components (bot.Components, dict): Message Components. 
             reply_to_message_id (str): Reply Message ID. 
             timeout (tuple, int): _description_. Defaults to (5, 10).
+        Returns:
+            :class:`bale.Message`: On success, the sent Message is returned.
         """
         
         if not isinstance(timeout, (tuple, int)):
@@ -100,7 +102,7 @@ class Bot():
                 return Message.dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None,photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
+    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
         json = {}
         json["chat_id"] = str(chat_id)
         json["title"] = title
@@ -133,6 +135,22 @@ class Bot():
         return None
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
+        """Delete Message 
+        
+        In Channel or Group:
+            If it is a group or channel Manager, it can delete a message from (group or channel).
+
+        In private message (PV):
+            If the message was sent by a bot, it can be deleted with this method
+
+        Args:
+            chat_id (str): _description_
+            message_id (str): _description_
+            timeout (tuple, optional): _description_. Defaults to (10, 30).
+
+        Return:
+            bool: If done "True" If not "False"
+        """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         Message = self.req(mode = "get", type = "deletemessage", params = {
@@ -141,7 +159,21 @@ class Bot():
         }, timeout = timeout)
         return Message.json()
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list[Update]:
+    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
+        """Use this method to receive incoming updates using long polling. 
+
+        Args:
+            timeout (tuple, int, optional): Defaults to (10, 30).
+            offset (int, optional): Defaults to None.
+            limit (int, optional): Defaults to None.
+
+        Raises:
+            :class:`bale.Error`
+
+        Returns:
+            List[:class:`bale.Update`]
+        """
+        
         result = []
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
