@@ -2,19 +2,21 @@ from setuptools import setup, find_packages
 
 setup(
     name = "python-bale-bot",
-    version = "2.1.5",
+    version = "2.1.5.2",
     platforms = ["Windows"],
     fullname = "python-bale-bot-api",
     description = "The official repository of the programming of «Bale bot»",
     author = "Kian Ahmadian",
     license = "MIT License",
     project_urls = {
-        "Source Code": "https://github.com/kianahmadian/python-bale-bot//blob/main/balebot"    
+        "Source Code": "https://github.com/kianahmadian/python-bale-bot/blob/main/balebot",
+        "Documentation": "https://python-bale-bot.readthedocs.io/en/latest/",
+        "Bug Tracker": "https://github.com/kianahmadian/python-bale-bot/issues"
     },
     keywords = ["bale", "bot", "baleapi"],
     python_requires = '>=3.8',
     include_package_data = True,
-    url = "https://github.com/kianahmadian/python-bale-bot//",
+    url = "https://github.com/kianahmadian/python-bale-bot/",
     packages = find_packages(),
     long_description = """<div align='center'>
 <h1><b> Bale Bot </b></h1>
