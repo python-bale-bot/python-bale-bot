@@ -27,14 +27,14 @@ class Bot():
         return None
 
 
-    def get_bot(self, timeout = (30, 10)):
+    def get_bot(self, timeout = (30, 10)) -> User:
         result = self.req("get", "getme", timeout = timeout)
         if result is not None:
             return User.dict(data = result.json()["result"], bot = self)
         return None
     
     @property
-    def bot(self):
+    def bot(self) -> User:
         """Get Bot User
 
         Returns:
@@ -44,7 +44,7 @@ class Bot():
             self._user = self.get_bot()
         return self._user
     
-    def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
+    def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)) -> requests.Response:
         try:
             if mode == "post":
                 return self._requests.post(f"{self.base_url}" + ("" if self.base_url.endswith("/") else "/") + f"bot{self.token}/{type}", json = data, params = params, timeout = timeout)
@@ -54,7 +54,7 @@ class Bot():
             pass
         return None
     
-    def delete_webhook(self, timeout = (5, 10)):
+    def delete_webhook(self, timeout = (5, 10)) -> bool:
         """Delete Webhook
 
         Args:
@@ -70,7 +70,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)):
+    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
         """Delete Webhook
         
         Args:
@@ -159,7 +159,7 @@ class Bot():
         }, timeout = timeout)
         return Message.json()
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
+    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list(Update):
         """Use this method to receive incoming updates using long polling. 
 
         Args:
@@ -194,6 +194,6 @@ class Bot():
                     continue
                 update = Update.dict(data = i, bot = self)
                 result.append(update)
-            return result
+            return result if result != [] else None
         
         return None
