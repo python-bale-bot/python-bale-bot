@@ -1,4 +1,4 @@
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Literal
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -29,7 +29,7 @@ class Update():
             self.edited_message = message
             
     @property
-    def type(self):
+    def type(self) -> Literal['callback_query', 'message', 'unknown']:
         if self.callback_query is not None:
             return "callback_query"
         elif self.message is not None:
