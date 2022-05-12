@@ -23,8 +23,8 @@ class CallbackQuery():
         self.bot = bot
     
     @classmethod
-    def dict(cls, data : dict, bot):
-        return cls(bot = bot, data = data["data"], id = data["id"], message = Message.dict(data["message"], bot = bot), inline_message_id = data["inline_message_id"], from_user = User.dict(bot = bot, data = data["from"])) 
+    def fron_dict(cls, data : dict, bot):
+        return cls(bot = bot, data = data["data"], id = data["id"], message = Message.from_dict(data["message"], bot = bot), inline_message_id = data["inline_message_id"], from_user = User.from_dict(bot = bot, data = data["from"])) 
         
     def to_dict(self):
         data = {}

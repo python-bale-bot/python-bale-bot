@@ -12,9 +12,10 @@ class Update():
         "message",        
         "callback_query",   
         "edited_message",    
-        "bot"
+        "bot",
+        "raw_data"
     )
-    def __init__(self, id : int, callback_query : "CallbackQuery" = None, message : "Message" = None, edited_message : "Message" = None, bot : 'Bot' = None):
+    def __init__(self, id : int, callback_query : "CallbackQuery" = None, message : "Message" = None, edited_message : "Message" = None, bot : 'Bot' = None, raw_data : dict = None):
         self.id = int(id)
         self.bot = bot
         self.callback_query = None
@@ -37,17 +38,17 @@ class Update():
         return "unknown"
     
     @classmethod
-    def dict(cls, data : dict, bot):
+    def from_dict(cls, data : dict, bot):
         callback_query = None
         message = None
         edited_message = None
         if data.get("callback_query"):
-            callback_query = CallbackQuery.dict(data.get("callback_query"), bot = bot)
+            callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot = bot)
             message = callback_query.message
         elif data.get("message"):
-            message = Message.dict(data.get("message"), bot = bot)
+            message = Message.from_dict(data.get("message"), bot = bot)
         elif data.get("edited_message"):
-            edited_message = Message.dict(data = data.get("edited_message"), bot = bot)
+            edited_message = Message.from_dict(data = data.get("edited_message"), bot = bot)
              
         return cls(id = data["update_id"], message = message, callback_query = callback_query, edited_message = edited_message)
     

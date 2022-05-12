@@ -39,7 +39,7 @@ class User():
         return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
     
     @classmethod
-    def dict(cls, bot, data : dict):
+    def from_dict(cls, bot, data : dict):
         return cls(username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), id = data.get("id"), bot = bot)
     
     def to_dict(self):

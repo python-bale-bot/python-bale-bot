@@ -30,7 +30,7 @@ class Bot():
     def get_bot(self, timeout = (30, 10)) -> User:
         result = self.req("get", "getme", timeout = timeout)
         if result is not None:
-            return User.dict(data = result.json()["result"], bot = self)
+            return User.from_dict(data = result.json()["result"], bot = self)
         return None
     
     @property
@@ -99,7 +99,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.dict(data = message.json()["result"], bot = self)
+                return Message.from_dict(data = message.json()["result"], bot = self)
         return None
 
     def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
@@ -131,7 +131,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.dict(data = message.json()["result"], bot = self)
+                return Message.from_dict(data = message.json()["result"], bot = self)
         return None
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
@@ -192,7 +192,7 @@ class Bot():
             for i in updates.json()["result"]:
                 if offset is not None and i["update_id"] < offset:
                     continue
-                update = Update.dict(data = i, bot = self)
+                update = Update.from_dict(data = i, bot = self)
                 result.append(update)
             return result if result != [] else None
         

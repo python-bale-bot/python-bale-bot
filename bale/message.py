@@ -38,14 +38,14 @@ class Message():
         return None
     
     @classmethod
-    def dict(cls, data : dict, bot):
+    def from_dict(cls, data : dict, bot):
         new_chat_members = None
         if data.get("new_chat_members"):
             new_chat_members = []
             for i in data.get("new_chat_members"):
-                new_chat_members.append(User.dict(bot = bot, data = i))
+                new_chat_members.append(User.from_dict(bot = bot, data = i))
         
-        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), from_user = User.dict(bot = bot, data = data.get("from")), new_chat_members = new_chat_members if new_chat_members != [] and new_chat_members != None else None)
+        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.from_dict(bot = bot, data = data.get("chat")), date = data.get("date"), text = data.get("text"), from_user = User.from_dict(bot = bot, data = data.get("from")), new_chat_members = new_chat_members if new_chat_members != [] and new_chat_members != None else None)
     
     def to_dict(self):
         data = {}
