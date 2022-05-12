@@ -5,7 +5,7 @@ class Price():
         self.amount = amount
         
     @classmethod
-    def dict(cls, data):
+    def from_dict(cls, data):
         return cls(label = data["label"], amount = data["amount"])
     
     def to_dic(self):

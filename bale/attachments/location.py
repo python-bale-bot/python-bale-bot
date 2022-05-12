@@ -12,7 +12,7 @@ class Location():
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
     
     @classmethod
-    def dict(cls, data):
+    def from_dict(cls, data):
         return cls(longitude = data["longitude"], latitude = data["latitude"])
     
     def to_dict(self):

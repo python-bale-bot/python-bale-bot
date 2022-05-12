@@ -17,7 +17,7 @@ class Audio():
         self.bot = bot
     
     @classmethod
-    def dict(cls, data, bot):
+    def from_dict(cls, data, bot):
         return cls(bot = bot, file_id = data["file_id"], duration = data["duration"], file_size = data["file_size"], title = data["title"], mime_type = data["mime_type"])
         
     def to_dict(self):
