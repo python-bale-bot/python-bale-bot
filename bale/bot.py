@@ -1,5 +1,5 @@
 import requests
-from bale import (Message, Update, User, Components, Price)
+from bale import (Message, Update, User, Components, Chat, Price)
 
 class Bot():
     __slots__ = (
@@ -136,6 +136,22 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
     
+    # def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
+    #     """
+    #     Args:
+    #         chat_id (str): Chat Id.
+    #         message_id (str): Message Id.
+    #         newtext (str): New Content For Message.
+    #         components (:class:`bale.Components`, optional): Components. Defaults to None.
+    #         timeout (tuple, optional): _description_. Defaults to (10, 30).
+    #     Raises:
+    #         :class:`bale.Error`
+    #     Return:
+    #         :bool: If done "True" If not "False"
+    #     """
+    #     data = {}
+    #     chat_id
+    
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
         """Delete Message 
         
@@ -178,7 +194,7 @@ class Bot():
         chat = self.req("get", "getchat", data = {
             "chat_id": chat_id
         })
-        return chat
+        return bale. if chat is not None else None
         
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list(Update):
