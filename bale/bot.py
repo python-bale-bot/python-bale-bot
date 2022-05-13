@@ -159,6 +159,24 @@ class Bot():
         }, timeout = timeout)
         return Message.json()
 
+    def get_chat(self, chat_id : str, timeout = (10, 30)):
+        """Get Chat Object.
+
+        Args:
+            chat_id (str): Chat Id.
+            timeout (tuple, optional): TimeOut. Defaults to (10, 30).
+        Return:
+            :class:`bale.Chat`: On success, the sent Message is returned.
+        """
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        
+        chat = self.req("get", "getchat", data = {
+            "chat_id": chat_id
+        })
+        return chat
+        
+
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list(Update):
         """Use this method to receive incoming updates using long polling. 
 
