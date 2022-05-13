@@ -38,7 +38,7 @@ class Bot():
         """Get Bot User
 
         Returns:
-            :class:`bale.User`
+            :class:`bale.User` or None
         """
         if self._user is None:
             self._user = self.get_bot()
@@ -79,6 +79,8 @@ class Bot():
             components (bot.Components, dict): Message Components. 
             reply_to_message_id (str): Reply Message ID. 
             timeout (tuple, int): _description_. Defaults to (5, 10).
+        Raises:
+            :class:`bale.Error`
         Returns:
             :class:`bale.Message`: On success, the sent Message is returned.
         """
@@ -165,6 +167,8 @@ class Bot():
         Args:
             chat_id (str): Chat Id.
             timeout (tuple, optional): TimeOut. Defaults to (10, 30).
+        Raises:
+            :class:`bale.Error`
         Return:
             :class:`bale.Chat`: On success, the sent Message is returned.
         """
