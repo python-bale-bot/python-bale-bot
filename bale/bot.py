@@ -136,21 +136,20 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
     
-    # def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
-    #     """
-    #     Args:
-    #         chat_id (str): Chat Id.
-    #         message_id (str): Message Id.
-    #         newtext (str): New Content For Message.
-    #         components (:class:`bale.Components`, optional): Components. Defaults to None.
-    #         timeout (tuple, optional): _description_. Defaults to (10, 30).
-    #     Raises:
-    #         :class:`bale.Error`
-    #     Return:
-    #         :bool: If done "True" If not "False"
-    #     """
-    #     data = {}
-    #     chat_id
+    def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
+        """
+        Args:
+            chat_id (str): Chat Id.
+            message_id (str): Message Id.
+            newtext (str): New Content For Message.
+            components (:class:`bale.Components`, optional): Components. Defaults to None.
+            timeout (tuple, optional): _description_. Defaults to (10, 30).
+        Raises:
+            :class:`bale.Error`
+        Return:
+            dict: dict  Keys: {"chat_id", "message_id", }
+        """
+        data = {}
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
         """Delete Message 
@@ -184,7 +183,8 @@ class Bot():
             chat_id (str): Chat Id.
             timeout (tuple, optional): TimeOut. Defaults to (10, 30).
         Raises:
-            :class:`bale.Error`
+            None
+            # :class:`bale.Error`
         Return:
             :class:`bale.Chat`: On success, the sent Message is returned.
         """
@@ -194,7 +194,7 @@ class Bot():
         chat = self.req("get", "getchat", data = {
             "chat_id": chat_id
         })
-        return bale. if chat is not None else None
+        return Chat.dict(chat, bot = self) if chat is not None else None
         
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list(Update):
