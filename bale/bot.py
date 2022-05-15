@@ -70,7 +70,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : int, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
         """Delete Webhook
         
         Args:
@@ -104,7 +104,25 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : int, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
+    def send_photo(self, chat_id : str, photo, caption : str = None, reply_to_message_id : str = None, timeout = (5, 10)):
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        json = {}
+        json["chat_id"] = chat_id
+        json["photo"] = photo
+        json["caption"] = caption
+        json["reply_to_message_id"] = reply_to_message_id
+        
+        message = self.req("post", "SendPhoto", data = json, timeout = timeout)
+        if message is not None:
+            json = message.json()
+            if json["ok"]: 
+                return Message.from_dict(data = message.json()["result"], bot = self)
+        return None
+
+    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
         json = {}
         json["chat_id"] = str(chat_id)
         json["title"] = title
