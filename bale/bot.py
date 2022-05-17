@@ -13,8 +13,8 @@ class Bot():
         self.token = token 
         self.base_url = base_url
         self.base_file_url = base_file_url
-        self._user = self.check_token()
         self._requests = requests
+        self._user = self.check_token()
         if not self._user:
             raise f"Bot is not Ready!"
      
