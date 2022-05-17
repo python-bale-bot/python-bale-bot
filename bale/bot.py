@@ -101,7 +101,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.from_dict(data = message.json()["result"], bot = self)
+                return Message.dict(data = message.json()["result"], bot = self)
         return None
 
     # def send_photo(self, chat_id : str, photo, caption : str = None, reply_to_message_id : str = None, timeout = (5, 10)):
@@ -151,7 +151,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.from_dict(data = message.json()["result"], bot = self)
+                return Message.dict(data = message.json()["result"], bot = self)
         return None
     
     def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
@@ -168,6 +168,15 @@ class Bot():
             dict: dict  Keys: {"chat_id", "message_id", }
         """
         data = {}
+        data["chat_id"] = chat_id
+        data["message_id"] = message_id
+        data["text"] = newtext
+        if components:
+            if isinstance(components, Components):
+                data["reply_markup"] = components.to_dict()
+            else:
+                data["reply_markup"] = components
+        
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
         """Delete Message 
@@ -209,13 +218,16 @@ class Bot():
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         
-        chat = self.req("get", "getchat", data = {
+        chat = self.req("get", "getchat", params = {
             "chat_id": chat_id
         })
-        return Chat.dict(chat, bot = self) if chat is not None else None
-        
+        if chat is not None:
+            json = chat.json()
+            if json["ok"]: 
+                return Chat.dict(json["result"], bot = self) if chat is not None else None
+        return None
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list(Update):
+    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
         """Use this method to receive incoming updates using long polling. 
 
         Args:
