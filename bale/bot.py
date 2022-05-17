@@ -165,7 +165,7 @@ class Bot():
         Raises:
             :class:`bale.Error`
         Return:
-            dict: dict  Keys: {"chat_id", "message_id", }
+            None
         """
         data = {}
         data["chat_id"] = chat_id
@@ -176,6 +176,9 @@ class Bot():
                 data["reply_markup"] = components.to_dict()
             else:
                 data["reply_markup"] = components
+        
+        message = self.req("post", "editMessageText", data = data)
+        print(message.json())
         
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
@@ -260,7 +263,7 @@ class Bot():
             for i in updates.json()["result"]:
                 if offset is not None and i["update_id"] < offset:
                     continue
-                update = Update.from_dict(data = i, bot = self)
+                update = Update.dict(data = i, bot = self)
                 result.append(update)
             return result if result != [] else None
         
