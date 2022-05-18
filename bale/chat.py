@@ -46,7 +46,7 @@ class Chat():
         if isinstance(data["pinned_message"], list):
             for i in data["pinned_message"]:
                 pinned_messages.append(Message.from_dict(bot = bot, data = i))
-        return cls(bot = bot, id = data.get("id"), type = data.get("type"), title = data.get("title"), username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), pinned_message = pinned_messages, all_members_are_administrators = data.get("all_members_are_administrators", True))
+        return cls(bot = bot, id = data.get("id"), type = data.get("type"), title = data.get("title"), username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), pinned_messages = pinned_messages, all_members_are_administrators = data.get("all_members_are_administrators", True))
      
     def to_dict(self):
         data = {}
