@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
    
-from bale import (Chat, User, Audio, ContactMessage, Location)
+from bale import (Chat, User, Audio, ContactMessage, Location, Components)
     
 class Message():
     __slots__ = (
@@ -65,6 +65,9 @@ class Message():
     def delete(self, timeout = (10, 30)):
         message = self.bot.delete_message(chat_id = self.chat.id, message_id = self.message_id, timeout = timeout)
         return message
+    
+    def edit(self, newtext : str, components = None, timeout = (10, 30)):
+        self.bot.edit_message(self.chat.id, self.message_id, newtext, components, timeout)
     
     def reply(self, text, components = None, reply_to_message_id : bool = True, timeout = (10, 30)):
         Message = self.bot.send_message(chat_id = str(self.chat.id), text = text, components = components, reply_to_message_id = str(self.message_id) if reply_to_message_id else None, timeout = timeout)
