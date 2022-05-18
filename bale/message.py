@@ -10,7 +10,7 @@ class Message():
     __slots__ = (
         "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "bot"
     )
-    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_member : "User" = None, left_chat_member : "User" = None, bot : 'Bot' = None):
+    def __init__(self, message_id : str, date : datetime.datetime, text = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_members : "User" = None, left_chat_member : "User" = None, bot : 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
         self.date = date if date is not None else None
         
@@ -19,7 +19,7 @@ class Message():
         self.from_user = from_user if from_user is not None else None
         self.caption = caption if caption is not None else None
         self.contact = contact if contact is not None else None
-        self.new_chat_member = new_chat_member if new_chat_member is not None else None
+        self.new_chat_members = new_chat_members if new_chat_members is not None else None
         self.left_chat_member = left_chat_member if left_chat_member is not None else None
         self.bot = bot if bot is not None else None
 
@@ -43,7 +43,9 @@ class Message():
         new_chat_member = None
         left_chat_member = None
         if data.get("new_chat_members"):
-            new_chat_member = User.from_dict(bot = bot, data = i)
+            new_chat_members = []
+            for i in data.get("new_chat_members"):
+                new_chat_members.append(User.dict(bot = bot, data = i))
         if data.get("left_chat_member"):
             left_chat_member = User.from_dict(bot = bot, data = data.get("left_chat_member"))     
         
@@ -59,7 +61,7 @@ class Message():
         data["from"] = self.from_user.to_dict()
         data["caption"] = self.caption
         data["contact"] = self.contact.to_dict()
-        data["new_chat_member"] = self.new_chat_member
+        data["new_chat_members"] = self.new_chat_member
         data["left_chat_member"] = self.left_chat_member
         
         return data
