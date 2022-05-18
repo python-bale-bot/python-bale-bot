@@ -25,7 +25,7 @@ class ChatMember:
     @classmethod
     def from_dict(cls, data : dict):
         
-        permissions = AdminPermissions.PERMISSIONS_LIST
+        permissions = {}
         for i in AdminPermissions.PERMISSIONS_LIST:
             permissions[i] = data.get(i, False)
         

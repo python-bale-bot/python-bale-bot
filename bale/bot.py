@@ -225,14 +225,16 @@ class Bot():
         Returns:
             List[:class:`bale.ChatMember`]
         """
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
         result = self.req("get", "getChatAdministrators", params = {"chat_id": chat_id}, timeout = timeout)
-        messages = []
+        members = []
         if result:
             if result.json()["ok"]:
                 for i in result.json()["result"]:
-                    update = ChatMember.from_dict(data = i)
-                    result.append(update)   
-                return result if result != [] else None
+                    member = ChatMember.from_dict(data = i)
+                    members.append(member)   
+                return members if members != [] else None
         return None
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
