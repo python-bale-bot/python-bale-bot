@@ -67,7 +67,7 @@ class Message():
     
     def edit(self, newtext : str, components = None, timeout = (10, 30)):
         Response = self.bot.edit_message(self.chat.id, self.message_id, newtext, components, timeout)
-        if Response is not None and Response.json?().get("ok", False):
+        if Response is not None and Response.json().get("ok", False):
             self.text = newtext
     
     def reply(self, text, components = None, reply_to_message_id : bool = True, timeout = (10, 30)):
