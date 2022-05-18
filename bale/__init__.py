@@ -30,4 +30,4 @@ __all__ = (
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
-__version__ = '2.1.5.1'
+__version__ = '2.1.6'

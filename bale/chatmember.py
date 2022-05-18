@@ -1,4 +1,5 @@
 from bale import User
+from bale.permissions import AdminPermissions
 
 class Role:
     OWNER = "creator"
@@ -24,6 +25,9 @@ class ChatMember:
     @staticmethod
     def from_dict(cls, data : dict):
         
-        permissions = None
+        permissions = AdminPermissions.PERMISSIONS_LIST
+        for i in AdminPermissions.PERMISSIONS_LIST:
+            permissions[i] = data.get(i, False)
+        
         return cls(permissions = permissions, user = User.from_dict(data.get["user"]), role = data.get("status"))
     
