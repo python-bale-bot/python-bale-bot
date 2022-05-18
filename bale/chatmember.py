@@ -29,5 +29,5 @@ class ChatMember:
         for i in AdminPermissions.PERMISSIONS_LIST:
             permissions[i] = data.get(i, False)
         
-        return cls(permissions = permissions, user = User.from_dict(data.get["user"]), role = data.get("status"))
+        return cls(permissions = permissions, user = User.from_dict(data.get("user")), role = data.get("status"))
     
