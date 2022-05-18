@@ -45,7 +45,7 @@ class Message():
         if data.get("new_chat_members"):
             new_chat_members = []
             for i in data.get("new_chat_members"):
-                new_chat_members.append(User.dict(bot = bot, data = i))
+                new_chat_members.append(User.from_dict(bot = bot, data = i))
         if data.get("left_chat_member"):
             left_chat_member = User.from_dict(bot = bot, data = data.get("left_chat_member"))     
         
