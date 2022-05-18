@@ -1,5 +1,4 @@
-from bale import User
-from bale.permissions import AdminPermissions
+from bale import (AdminPermissions, User)
 
 class Role:
     OWNER = "creator"
