@@ -59,7 +59,7 @@ class Message():
         data["from"] = self.from_user.to_dict()
         data["caption"] = self.caption
         data["contact"] = self.contact.to_dict()
-        data["new_chat_members"] = self.new_chat_members
+        data["new_chat_member"] = self.new_chat_member
         data["left_chat_member"] = self.left_chat_member
         
         return data
