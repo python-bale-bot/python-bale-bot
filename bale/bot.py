@@ -177,8 +177,8 @@ class Bot():
             else:
                 data["reply_markup"] = components
         
-        message = self.req("post", "editMessageText", data = data)
-        print(message.json())
+        Response = self.req("post", "editMessageText", data = data, timeout = timeout)
+        return Response
         
     
     def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
