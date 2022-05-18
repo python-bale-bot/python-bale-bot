@@ -18,7 +18,7 @@ class Bot():
         if not self._user:
             raise f"Bot is not Ready!"
      
-    def check_token(self, timeout = (30, 10)) -> bool:
+    def check_token(self, timeout = (30, 10)):
         if not isinstance(timeout, (tuple, int)):
             return
         result = self.req("get", "getme", timeout = timeout)
@@ -27,14 +27,14 @@ class Bot():
         return None
 
 
-    def get_bot(self, timeout = (30, 10)) -> User:
+    def get_bot(self, timeout = (30, 10)):
         result = self.req("get", "getme", timeout = timeout)
         if result is not None:
             return User.from_dict(data = result.json()["result"], bot = self)
         return None
     
     @property
-    def bot(self) -> User:
+    def bot(self):
         """Get Bot User
 
         Returns:
@@ -44,7 +44,7 @@ class Bot():
             self._user = self.get_bot()
         return self._user
     
-    def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)) -> requests.Response:
+    def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
         try:
             if mode == "post":
                 return self._requests.post(f"{self.base_url}" + ("" if self.base_url.endswith("/") else "/") + f"bot{self.token}/{type}", json = data, params = params, timeout = timeout)
@@ -54,7 +54,7 @@ class Bot():
             pass
         return None
     
-    def delete_webhook(self, timeout = (5, 10)) -> bool:
+    def delete_webhook(self, timeout = (5, 10)):
         """Delete Webhook
 
         Args:
@@ -70,7 +70,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)):
         """Delete Webhook
         
         Args:
@@ -104,7 +104,7 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
+    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)):
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
         json = {}
