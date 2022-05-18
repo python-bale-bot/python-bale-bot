@@ -1,4 +1,18 @@
 class AdminPermissions:
+    PERMISSIONS_LIST = {
+        "can_be_edited",
+        "can_change_info",
+        "can_post_messages",
+        "can_edit_messages",
+        "can_delete_messages",
+        "can_invite_users",
+        "can_restrict_members",
+        "can_pin_messages",
+        "can_promote_members",
+        "can_send_messages",
+        "can_send_media_messages"
+    }
+    
     __slots__ = (
     "can_be_edited",
     "can_change_info",
@@ -28,4 +42,5 @@ class AdminPermissions:
     @staticmethod
     def from_dict(cls, data : dict):
         return cls(can_be_edited = data.get("can_be_edited"), can_change_info = data.get("can_change_info"), can_post_messages = data.get("can_post_messages"), can_edit_messages = data.get("can_edit_messages"), can_delete_messages = data.get("can_delete_messages"), can_invite_users = data.get("can_invite_users"), can_restrict_members = data.get("can_restrict_members"), can_pin_messages = data.get("can_pin_messages"), can_promote_members = data.get("can_promote_members"), can_send_messages = data.get("can_send_messages"), can_send_media_messages = data.get("can_send_media_messages"))
+    
     

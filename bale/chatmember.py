@@ -1,6 +1,5 @@
 from bale import User
 
-
 class Role:
     OWNER = "creator"
     ADMIN = "administrator" 
