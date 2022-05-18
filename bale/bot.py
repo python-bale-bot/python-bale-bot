@@ -230,6 +230,19 @@ class Bot():
                 return Chat.from_dict(json["result"], bot = self) if chat is not None else None
         return None
 
+    def get_chat_administrators(self, chat_id : str, timeout = (10, 30)):
+        """This service can be used to display admins of a group or channel.
+
+        Args:
+            chat_id (str): Group ID
+            timeout (tuple, int): Defaults to (10, 30).
+        Raises:
+            :class:`bale.Error`
+        Returns:
+            List[:class:`bale.ChatMember`]
+        """
+        pass
+
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
         """Use this method to receive incoming updates using long polling. 
 

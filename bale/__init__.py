@@ -8,6 +8,7 @@ from .chat import Chat
 from .message import Message
 from .callbackquery import CallbackQuery
 from .update import Update
+from .permissions import AdminPermissions
 from .bot import Bot
 
 __all__ = (
@@ -23,7 +24,8 @@ __all__ = (
     "Location",
     "Audio",
     "ContactMessage",
-    "Price"
+    "Price",
+    "AdminPermissions"
 )
 
 __title__ = "python-bale-bot"
