@@ -101,7 +101,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.dict(data = message.json()["result"], bot = self)
+                return Message.from_dict(data = message.json()["result"], bot = self)
         return None
 
     # def send_photo(self, chat_id : str, photo, caption : str = None, reply_to_message_id : str = None, timeout = (5, 10)):
@@ -151,7 +151,7 @@ class Bot():
         if message is not None:
             json = message.json()
             if json["ok"]: 
-                return Message.dict(data = message.json()["result"], bot = self)
+                return Message.from_dict(data = message.json()["result"], bot = self)
         return None
     
     def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
@@ -227,7 +227,7 @@ class Bot():
         if chat is not None:
             json = chat.json()
             if json["ok"]: 
-                return Chat.dict(json["result"], bot = self) if chat is not None else None
+                return Chat.from_dict(json["result"], bot = self) if chat is not None else None
         return None
 
     def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
@@ -263,7 +263,7 @@ class Bot():
             for i in updates.json()["result"]:
                 if offset is not None and i["update_id"] < offset:
                     continue
-                update = Update.dict(data = i, bot = self)
+                update = Update.from_dict(data = i, bot = self)
                 result.append(update)
             return result if result != [] else None
         

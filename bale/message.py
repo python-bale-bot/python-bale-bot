@@ -39,6 +39,7 @@ class Message():
     
     @classmethod
     def from_dict(cls, data : dict, bot):
+        print(type(data.get("message_id")))
         new_chat_members = None
         if data.get("new_chat_members"):
             new_chat_members = []
