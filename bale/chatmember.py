@@ -12,6 +12,7 @@ class ChatMember:
     def __init__(self, role : str = None, user = None, permissions = None):
         self.role = role
         self.user = user
+        self.permissions = permissions
     
     @property
     def is_admin(self):
@@ -21,7 +22,7 @@ class ChatMember:
     def is_owner(self):
         return True if self.role == Role.OWNER else False
     
-    @staticmethod
+    @classmethod
     def from_dict(cls, data : dict):
         
         permissions = AdminPermissions.PERMISSIONS_LIST
