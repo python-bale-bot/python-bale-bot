@@ -40,7 +40,7 @@ class Message():
     
     @classmethod
     def from_dict(cls, data : dict, bot):
-        new_chat_member = None
+        new_chat_members = None
         left_chat_member = None
         if data.get("new_chat_members"):
             new_chat_members = []
