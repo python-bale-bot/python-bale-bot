@@ -3,6 +3,12 @@ class Components():
         "keyboards", "inlinekeyboards"
     )
     def __init__(self, keyboards = None, inlinekeyboards = None):
+        """_summary_
+
+        Args:
+            keyboards (:class:`bale.Keyboards`): Defaults to None.
+            inlinekeyboards (:class:`bale.InlineKeyboards`): Defaults to None.
+        """
         self.keyboards = None
         self.inlinekeyboards = None
         if keyboards is not None:
@@ -49,7 +55,11 @@ class Components():
                     self.inlinekeyboards.append(inlinekeyboards)
         
     @classmethod
-    def dict(cls, data : dict):
+    def from_dict(cls, data : dict):
+        """
+        Args:
+            data (dict): Data
+        """
         return cls(keyboards = data["keyboard"], inlinekeyboards = data["inline_keyboard"])
     
     def to_dict(self):
@@ -65,6 +75,16 @@ class InlineKeyboard():
         "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat", "pay"
     )
     def __init__(self, text : str, callback_data : str = None, url : str = None, switch_inline_query : str = None, switch_inline_query_current_chat : str = None, pay : bool = False):
+        """This object shows an in -line keyboard (within the message).
+
+        Args:
+            text (str): _description_
+            callback_data (str, optional): _description_. Defaults to None.
+            url (str, optional): _description_. Defaults to None.
+            switch_inline_query (str, optional): _description_. Defaults to None.
+            switch_inline_query_current_chat (str, optional): _description_. Defaults to None.
+            pay (bool, optional): _description_. Defaults to False.
+        """
         self.text = text
         self.callback_data = callback_data if callback_data is not None else None
         self.url = url if url is not None else None
@@ -73,7 +93,11 @@ class InlineKeyboard():
         self.pay = pay if pay else False
         
     @classmethod
-    def dict(cls, data : dict):
+    def from_dict(cls, data : dict):
+        """
+        Args:
+            data (dict): Data
+        """
         if not data.get("text") or not data.get("callback_data"):
             return None
         return cls(text = data["text"], callback_data = data.get("callback_data"), url = data.get("url"), switch_inline_query = data.get("switch_inline_query"), switch_inline_query_current_chat = data.get("switch_inline_query_current_chat"), pay = data.get("pay", False))
@@ -99,15 +123,24 @@ class InlineKeyboard():
         
         return data
     
-class Keyboard():
+class Keyboard:
     __slots__ = (
         "text"
     )
     def __init__(self, text: str):
+        """This object shows a keyboard
+
+        Args:
+            text (str): Keyboard Text.
+        """
         self.text = text
     
     @classmethod
-    def dict(cls, data : dict):
+    def from_dict(cls, data : dict):
+        """
+        Args:
+            data (dict): Data
+        """
         if not data.get("text"):
             return None
         return cls(text = data["text"])

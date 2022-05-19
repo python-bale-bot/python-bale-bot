@@ -15,6 +15,16 @@ class CallbackQuery():
         "id"
     )
     def __init__(self, id : int, data : str, message : "Message", inline_message_id : str, from_user : "User", bot : "Bot" = None):
+        """This object represents an incoming callback query from a callback button in an inline keyboard.
+
+        Args:
+            id (int): Callback Query ID
+            data (str): Callback Data
+            message (:class:`bale.Message`): Callback Message
+            inline_message_id (str): Callback inline message id
+            from_user (:class:`bale.User`): Callback The user who gave the callback.
+            bot (:class:`bale.Bot`): Defaults to None.
+        """
         self.data = data
         self.id = id
         self.message = message
@@ -24,6 +34,11 @@ class CallbackQuery():
     
     @classmethod
     def fron_dict(cls, data : dict, bot):
+        """
+        Args:
+            data (dict): Data
+            bot (:class:`bale.Bot`): Bot
+        """
         return cls(bot = bot, data = data["data"], id = data["id"], message = Message.from_dict(data["message"], bot = bot), inline_message_id = data["inline_message_id"], from_user = User.from_dict(bot = bot, data = data["from"])) 
         
     def to_dict(self):

@@ -7,18 +7,30 @@ class Audio():
         "mime_type",
         "bot"
     )
-    def __init__(self, file_id : id, duration : int, file_size : int = None, mime_type : str = None, title : str = None, bot = None):
+    def __init__(self, file_id : id, duration : int, file_size : int = None, mime_type : str = None, title : str = None):
+        """This object shows a waist
+
+        Args:
+            file_id (id): Audio ID
+            duration (int): Audio duration
+            file_size (int): Audio Size. Defaults to None.
+            mime_type (str): Audio Mime type. Defaults to None.
+            title (str): Audio Title. Defaults to None.
+        """
         self.file_id = file_id
         self.duration = duration
         
         self.title = title
         self.file_size = file_size
         self.mime_type = mime_type
-        self.bot = bot
     
     @classmethod
-    def from_dict(cls, data, bot):
-        return cls(bot = bot, file_id = data["file_id"], duration = data["duration"], file_size = data["file_size"], title = data["title"], mime_type = data["mime_type"])
+    def from_dict(cls, data):
+        """
+        Args:
+            data (dict): Data
+        """
+        return cls(file_id = data["file_id"], duration = data["duration"], file_size = data["file_size"], title = data["title"], mime_type = data["mime_type"])
         
     def to_dict(self):
         data = {}

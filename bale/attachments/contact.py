@@ -12,6 +12,15 @@ class ContactMessage():
         "bot"
     )
     def __init__(self, phone_number : int, id = None, first_name : str = None, last_name : str = None, bot : "Bot" = None):
+        """This object shows a Messenge Contact.
+
+        Args:
+            phone_number (int)
+            id (int): Defaults to None.
+            first_name (str): Defaults to None.
+            last_name (str): Defaults to None.
+            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+        """
         self.phone_number = phone_number
         self.first_name = first_name
         self.last_name = last_name
@@ -26,6 +35,11 @@ class ContactMessage():
             
     @classmethod
     def from_dict(cls, bot, data : dict):
+        """
+        Args:
+            data (dict): Data
+            bot (:class:`bale.Bot`): Bot
+        """
         return cls(username = data["username"], first_name = data["first_name"], last_name = data["last_name"], id = data["id"], bot = bot)
 
     def to_dict(self):

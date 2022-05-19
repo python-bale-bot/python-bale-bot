@@ -4,6 +4,12 @@ class Location():
         "latitude"
     )
     def __init__(self, longitude : int, latitude : int):
+        """This object shows an end
+
+        Args:
+            longitude (int): Location longitude
+            latitude (int): Location latitude
+        """
         self.longitude = longitude
         self.latitude = latitude
         
@@ -13,6 +19,10 @@ class Location():
     
     @classmethod
     def from_dict(cls, data):
+        """
+        Args:
+            data (dict): Data
+        """
         return cls(longitude = data["longitude"], latitude = data["latitude"])
     
     def to_dict(self):

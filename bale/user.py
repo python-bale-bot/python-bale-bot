@@ -12,6 +12,15 @@ class User():
         "bot"
     )
     def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : 'Bot' = None):
+        """This object shows a user
+
+        Args:
+            id (int): User ID.
+            first_name (str): first user name
+            last_name (str): last user name. Defaults to None.
+            username (str): Username of the user. Defaults to None.
+            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+        """
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -24,7 +33,16 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-    def send(self, text, components : "Components" = None, reply_to_message_id : str = None):
+    def send(self, text : str, components = None, reply_to_message_id : str = None):
+        """:meth:`bale.Bot.send_message`
+
+        Args:
+            text (str): _description_
+            components (Components, dict): _description_. Defaults to None.
+            reply_to_message_id (str): Defaults to None.
+        Returns:
+            :class:`bale.Message`
+        """
         json = {}
         json["chat_id"] = self.id
         json["text"] = text
@@ -40,6 +58,11 @@ class User():
     
     @classmethod
     def from_dict(cls, data : dict, bot = None):
+        """
+        Args:
+            data (dict): Data
+            bot (:class:`bale.Bot`): Bot
+        """
         return cls(username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), id = data.get("id"), bot = bot)
     
     def to_dict(self):
