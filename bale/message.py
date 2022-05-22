@@ -8,9 +8,9 @@ from bale import (Chat, User, Audio, ContactMessage, Location)
     
 class Message():
     __slots__ = (
-        "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "bot"
+        "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "reply_to_message", "bot"
     )
-    def __init__(self, message_id : str, date : datetime.datetime, text : str = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_members : "User" = None, left_chat_member : "User" = None, bot : 'Bot' = None):
+    def __init__(self, message_id : str, date : datetime.datetime, text : str = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, reply_to_message : "Message" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_members : "User" = None, left_chat_member : "User" = None, bot : 'Bot' = None):
         """This object shows a message
 
         Args:
@@ -21,6 +21,7 @@ class Message():
             from_user (:class:`bale.User`): The user who has sent the message. Defaults to None.
             contact (:class:`bale.ContactMessage`): Defaults to None.
             chat (:class:`bale.Chat`): The chat where the message is sent. Defaults to None.
+            reply_to_message (:class:`bale.Message`)
             document (Any): Documentary that is attached in the message. Defaults to None.
             photo (Any): Photo sent along with message. Defaults to None.
             voice (:class:`bale.Audio`): Vissed Posted with Message. Defaults to None.
@@ -35,6 +36,7 @@ class Message():
         
         self.text = text if text is not None else None
         self.chat = chat if chat is not None else None
+        self.reply_to_message = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user = from_user if from_user is not None else None
         self.caption = caption if caption is not None else None
         self.contact = contact if contact is not None else None
