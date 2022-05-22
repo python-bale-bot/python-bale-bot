@@ -5,7 +5,7 @@ setup(
     version = "2.1.6.5",
     platforms = ["Windows"],
     fullname = "python-bale-bot-api",
-    description = "The official repository of the programming of «Bale bot»",
+    description = "An API wrapper for Bale written in Python",
     author = "Kian Ahmadian",
     license = "MIT License",
     project_urls = {
