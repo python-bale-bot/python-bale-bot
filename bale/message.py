@@ -59,6 +59,17 @@ class Message():
             return self.chat.id
         return None
     
+    @property
+    def reply_to_message_id(self):
+        if self.reply_to_message:
+            return self.reply_to_message.message_id
+        return None
+    
+    @reply_to_message_id.setter
+    def reply_to_message_id(self, _value):
+        if self.reply_to_message:
+            self.reply_to_message.message_id = _value
+    
     @classmethod
     def from_dict(cls, data : dict, bot):
         """
