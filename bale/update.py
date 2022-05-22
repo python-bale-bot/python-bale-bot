@@ -5,7 +5,7 @@ if TYPE_CHECKING:
 
 from bale import Message, CallbackQuery
 
-class Update():
+class Update:
     __slots__ = (
         "id",
         "_type",        
@@ -54,7 +54,7 @@ class Update():
         return "unknown"
     
     @classmethod
-    def from_dict(cls, data : dict, bot):
+    def from_dict(cls, data : dict, bot : "Bot"):
         """
         Args:
             data (dict): Data
@@ -76,9 +76,13 @@ class Update():
     def to_dict(self):
         data = {}
         
-        data["callback_query"] = self.callback_query if self.callback_query.to_dict() is not None else None
-        data["message"] = self.message if self.message.to_dict() is not None else None
-        data["edited_message"] = self.edited_message if self.edited_message.to_dict() is not None else None
-        data["type"] = self.type
-        
+        if self.type:
+            data["type"] = self.type
+        if self.callback_query:
+            data["callback_query"] = self.callback_query.to_dict() if self.callback_query is not None else None
+        if self.message:
+            data["message"] = self.message.to_dict() if self.message is not None else None
+        if self.edited_message:
+            data["edited_message"] = self.edited_message.to_dict() if self.edited_message is not None else None
+            
         return data

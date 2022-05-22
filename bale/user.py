@@ -24,7 +24,7 @@ class User():
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
-        self.id = str(id)
+        self.id = id
         self.bot = bot
         
     @property
@@ -33,7 +33,7 @@ class User():
             return "https://ble.ir/@{username}".format(username = self.username)
         return None
 
-    def send(self, text : str, components = None, reply_to_message_id : str = None):
+    def send(self, text : str, components = None, timeout = (10, 15)):
         """:meth:`bale.Bot.send_message`
 
         Args:
@@ -43,18 +43,9 @@ class User():
         Returns:
             :class:`bale.Message`
         """
-        json = {}
-        json["chat_id"] = self.id
-        json["text"] = text
-        if components:
-            json["reply_markup"] = components
-        if reply_to_message_id:
-            json["reply_to_message_id"] = reply_to_message_id
-        message = self.bot.send_message(chat_id = self.id, text = text, components = components, timeout = (10, 15)) 
+        message = self.bot.send_message(chat_id = self.id, text = text, components = components, timeout = timeout) 
         return message
     
-    def __str__(self):
-        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
     
     @classmethod
     def from_dict(cls, data : dict, bot = None):
@@ -75,3 +66,5 @@ class User():
         
         return data
     
+    def __str__(self):
+        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
