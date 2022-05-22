@@ -103,7 +103,7 @@ class Bot():
             text (str): Message Text. 
             components (bot.Components, dict): Message Components. 
             reply_to_message_id (str): Reply Message ID. 
-            timeout (tuple, int): _description_. Defaults to (5, 10).
+            timeout (tuple, int): Defaults to (5, 10).
         Raises:
             :class:`bale.Error`
         Returns:
