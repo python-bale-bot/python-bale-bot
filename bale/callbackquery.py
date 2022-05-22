@@ -33,7 +33,7 @@ class CallbackQuery:
         self.bot = bot
     
     @classmethod
-    def fron_dict(cls, data : dict, bot : "Bot"):
+    def from_dict(cls, data : dict, bot : "Bot"):
         """
         Args:
             data (dict): Data
