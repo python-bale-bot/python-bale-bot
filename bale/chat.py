@@ -42,13 +42,13 @@ class Chat():
         self.all_members_are_administrators = all_members_are_administrators
         self.bot = bot
      
-    def send(self, text : str = None, components = None, timeout = (5, 10)):
+    def send(self, text : str, components = None, timeout = (5, 10)):
         """:meth:`telegram.Bot.send_message`.
 
         Args:
-            text (str, optional): Message Text. Defaults to None.
-            components (:class:`bale.Components`, dictl): _description_. Defaults to None.
-            timeout (tuple, int): _description_. Defaults to (5, 10).
+            text (str): Message Text.
+            components (:class:`bale.Components`, dict): Defaults to None.
+            timeout (tuple, int): Defaults to (5, 10).
         Returns:
             List(:class:`bale.Message`)
         """
