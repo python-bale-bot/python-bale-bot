@@ -81,12 +81,18 @@ class Message():
         data["message_id"] = self.message_id
         data["date"] = self.date
         data["text"] = self.text
-        data["chat"] = self.chat.to_dict()
-        data["from"] = self.from_user.to_dict()
-        data["caption"] = self.caption
-        data["contact"] = self.contact.to_dict()
-        data["new_chat_members"] = self.new_chat_member
-        data["left_chat_member"] = self.left_chat_member
+        if self.chat:
+            data["chat"] = self.chat.to_dict()
+        if self.from_user:
+            data["from"] = self.from_user.to_dict()
+        if self.caption:
+            data["caption"] = self.caption
+        if self.contact:
+            data["contact"] = self.contact.to_dict()
+        if self.new_chat_members:
+            data["new_chat_members"] = self.new_chat_member
+        if self.left_chat_member:
+            data["left_chat_member"] = self.left_chat_member
         
         return data
     
