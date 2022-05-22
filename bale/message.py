@@ -97,7 +97,7 @@ class Message():
             text (str)
             components (Components, dict): Defaults to None.
             reply_to_message_id (bool): Defaults to True.
-            timeout (tuple, optional): _description_. Defaults to (10, 30).
+            timeout (tuple): Defaults to (10, 30).
 
         Returns:
             :class:`bale.Message`
