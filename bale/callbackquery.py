@@ -2,10 +2,10 @@ from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     from bale import Bot
-    
+
 from bale import User, Message
 
-class CallbackQuery():
+class CallbackQuery:
     __slots__ = (
         "message",
         "inline_message_id",
@@ -14,7 +14,7 @@ class CallbackQuery():
         "bot",
         "id"
     )
-    def __init__(self, id : int, data : str, message : "Message", inline_message_id : str, from_user : "User", bot : "Bot" = None):
+    def __init__(self, id : int = None, data : str = None, message : "Message" = None, inline_message_id : str = None, from_user : "User" = None, bot : "Bot" = None):
         """This object represents an incoming callback query from a callback button in an inline keyboard.
 
         Args:
@@ -33,7 +33,7 @@ class CallbackQuery():
         self.bot = bot
     
     @classmethod
-    def fron_dict(cls, data : dict, bot):
+    def fron_dict(cls, data : dict, bot : "Bot"):
         """
         Args:
             data (dict): Data
@@ -45,9 +45,13 @@ class CallbackQuery():
         data = {}
         
         data["id"] = self.id
-        data["data"] = self.data
-        data["inline_message_id"] = self.inline_message_id
-        data["message"] = self.message.to_dict()
-        data["from_user"] = self.from_user.to_dict()
+        if self.data:
+            data["data"] = self.data
+        if self.inline_message_id:
+            data["inline_message_id"] = self.inline_message_id
+        if self.message:
+            data["message"] = self.message.to_dict()
+        if self.from_user:
+            data["from_user"] = self.from_user.to_dict()
         
         return data
