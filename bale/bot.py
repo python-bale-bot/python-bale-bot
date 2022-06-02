@@ -1,5 +1,5 @@
 import requests
-from bale import (Message, Update, User, Components, Chat, Price, ChatMember)
+from bale import (Message, Update, User, Components, Chat, Price, ChatMember, InvalidToken, NetworkError, TimeOut)
 
 class Bot():
     __slots__ = (
@@ -63,21 +63,27 @@ class Bot():
         """Get Bot User
 
         Returns:
-            :class:`bale.User` or None
+            :class:`bale.User`
         """
         if self._user is None:
             self._user = self.get_bot()
         return self._user
     
-    def req(self, mode : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
+    def req(self, method : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
+        method = method.upper()
         try:
-            if mode == "post":
-                return self._requests.post(f"{self.base_url}" + ("" if self.base_url.endswith("/") else "/") + f"bot{self.token}/{type}", json = data, params = params, timeout = timeout)
-            elif mode == "get":
-                return self._requests.get(f"{self.base_url}" + ("" if self.base_url.endswith("/") else "/" )+ f"bot{self.token}/{type}", params = params, timeout = timeout)
-        except:
-            pass
-        return None
+            if method == "POST":
+                return self._requests.post( self.base_url + ("" if self.base_url.endswith("/") else "/") + (f"bot" f"{self.token}" "/" f"{type}"), json = data, params = params, timeout = timeout)
+            elif method == "GET":
+                return self._requests.get( self.base_url + ("" if self.base_url.endswith("/") else "/" )+ (f"bot" f"{self.token}" "/" f"{type}"), params = params, timeout = timeout)
+        except requests.Timeout as e:
+            raise TimeOut(
+                "Time Out"
+                f"{e.request}"
+            )
+        except requests.ConnectionError as e:
+            raise NetworkError("ConnectionError")
+        
     
     def delete_webhook(self, timeout = (5, 10)):
         """This service is used to remove the web hook set for the arm.
