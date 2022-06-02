@@ -27,7 +27,7 @@ class AdminPermissions:
     "can_send_media_messages"
     )
     def __init__(self, can_be_edited : bool = False, can_change_info : bool = False, can_post_messages : bool = False, can_edit_messages : bool = False, can_delete_messages : bool = False, can_invite_users : bool = False, can_restrict_members : bool = False, can_pin_messages : bool = False, can_promote_members : bool = False, can_send_messages : bool = False, can_send_media_messages : bool = False):
-        """_summary_
+        """This object shows the permissions and permissions of an admin or a member in a group (or channel).
 
         Args:
             can_be_edited (bool): Can you edit?. Defaults to False.
