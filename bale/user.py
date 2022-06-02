@@ -1,7 +1,7 @@
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
-    from bale import Bot, Components
+    from bale import Bot
 
 class User():
     __slots__ = (
@@ -12,7 +12,7 @@ class User():
         "bot"
     )
     def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : 'Bot' = None):
-        """This object shows a user
+        """This object shows a user.
 
         Args:
             id (int): User ID.
@@ -37,8 +37,8 @@ class User():
         """:meth:`bale.Bot.send_message`
 
         Args:
-            text (str): _description_
-            components (Components, dict): _description_. Defaults to None.
+            text (str): Message Text.
+            components (Components, dict): Message Components. Defaults to None.
             reply_to_message_id (str): Defaults to None.
         Returns:
             :class:`bale.Message`
