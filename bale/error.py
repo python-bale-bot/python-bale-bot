@@ -25,7 +25,7 @@ class InvalidToken(BaleError):
 class NetworkError(BaleError):
     __slots__ = ()
 
-class Timeout(BaleError):
+class TimeOut(BaleError):
     __slots__ = ()
     
     def __init__(self):
