@@ -10,6 +10,7 @@ from .permissions import AdminPermissions
 from .chatmember import ChatMember, Role
 from .callbackquery import CallbackQuery
 from .update import Update
+from .error import BaleError, InvalidToken, NetworkError, TimeOut
 from .bot import Bot
 
 __all__ = (
@@ -26,6 +27,10 @@ __all__ = (
     "Audio",
     "ContactMessage",
     "Price",
+    "BaleError",
+    "InvalidToken",
+    "NetworkError",
+    "TimeOut",
     "AdminPermissions",
     "ChatMember", 
     "Role"
