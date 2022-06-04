@@ -7,30 +7,30 @@ if TYPE_CHECKING:
 from bale import (Chat, User, Audio, ContactMessage, Location)
     
 class Message():
+    """This object shows a message
+
+    Args:
+        message_id (str): Message ID.
+        date (datetime.datetime): When the message has been sent.
+        text (str): Message Text. Defaults to None.
+        caption (str, optional): Message caption. Defaults to None.
+        from_user (:class:`bale.User`): The user who has sent the message. Defaults to None.
+        contact (:class:`bale.ContactMessage`): Defaults to None.
+        chat (:class:`bale.Chat`): The chat where the message is sent. Defaults to None.
+        reply_to_message (:class:`bale.Message`)
+        document (Any): Documentary that is attached in the message. Defaults to None.
+        photo (Any): Photo sent along with message. Defaults to None.
+        voice (:class:`bale.Audio`): Vissed Posted with Message. Defaults to None.
+        location (:class:`bale.Location`): _description_. Defaults to None.
+        invoice (Any): Defaults to None.
+        new_chat_members (:class:`bale.User`): User (An) who entered the chat. Defaults to None.
+        left_chat_member (:class:`bale.User`): A user out of chat. Defaults to None.
+        bot (:class:`bale.Bot`): Bot object. Defaults to None.
+    """
     __slots__ = (
         "text", "caption", "from_user", "_author","contact", "chat","message_id", "date_code", "date", "edit_date", "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "reply_to_message", "bot"
     )
     def __init__(self, message_id : str, date : datetime.datetime, text : str = None, caption : str = None, from_user : "User" = None, contact : "ContactMessage" = None, chat : "Chat" = None, reply_to_message : "Message" = None, document = None, photo = None, voice : "Audio" = None, location : "Location" = None, invoice = None, new_chat_members : "User" = None, left_chat_member : "User" = None, bot : 'Bot' = None):
-        """This object shows a message
-
-        Args:
-            message_id (str): Message ID.
-            date (datetime.datetime): When the message has been sent.
-            text (str): Message Text. Defaults to None.
-            caption (str, optional): Message caption. Defaults to None.
-            from_user (:class:`bale.User`): The user who has sent the message. Defaults to None.
-            contact (:class:`bale.ContactMessage`): Defaults to None.
-            chat (:class:`bale.Chat`): The chat where the message is sent. Defaults to None.
-            reply_to_message (:class:`bale.Message`)
-            document (Any): Documentary that is attached in the message. Defaults to None.
-            photo (Any): Photo sent along with message. Defaults to None.
-            voice (:class:`bale.Audio`): Vissed Posted with Message. Defaults to None.
-            location (:class:`bale.Location`): _description_. Defaults to None.
-            invoice (Any): Defaults to None.
-            new_chat_members (:class:`bale.User`): User (An) who entered the chat. Defaults to None.
-            left_chat_member (:class:`bale.User`): A user out of chat. Defaults to None.
-            bot (:class:`bale.Bot`): Bot object. Defaults to None.
-        """
         self.message_id = message_id if message_id is not None else None
         self.date = date if date is not None else None
         
@@ -107,6 +107,8 @@ class Message():
             data["new_chat_members"] = self.new_chat_member
         if self.left_chat_member:
             data["left_chat_member"] = self.left_chat_member
+        if self.reply_to_message_id:
+            data["reply_to_message_id"] = self.reply_to_message_id
         
         return data
     

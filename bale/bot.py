@@ -28,7 +28,7 @@ class Bot():
         if not self._user:
             raise f"Bot is not Ready!"
      
-    def check_token(self, timeout = (30, 10)):
+    def check_token(self, timeout = (30, 10)) -> bool:
         """Check the entered token.
 
         Args:
@@ -44,7 +44,7 @@ class Bot():
         return False
 
 
-    def get_bot(self, timeout = (30, 10)):
+    def get_bot(self, timeout = (30, 10)) -> (User | None):
         """Get Bot.
 
         Args:
@@ -85,7 +85,7 @@ class Bot():
             raise NetworkError("ConnectionError")
         
     
-    def delete_webhook(self, timeout = (5, 10)):
+    def delete_webhook(self, timeout = (5, 10)) -> bool:
         """This service is used to remove the web hook set for the arm.
 
         Args:
@@ -101,7 +101,7 @@ class Bot():
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)):
+    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
         """This service is used to send text messages.
         
         Args:
@@ -135,7 +135,7 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
 
-    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)):
+    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
         """You can use this service to send money request messages.
         Args:
             chat_id (str): Chat ID
@@ -187,7 +187,7 @@ class Bot():
                 return Message.from_dict(data = message.json()["result"], bot = self)
         return None
     
-    def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)):
+    def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)) -> requests.Response:
         """You can use this service to edit text messages that you have already sent through the arm.
         
         Args:
@@ -215,7 +215,7 @@ class Bot():
         return Response
         
     
-    def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)):
+    def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
         
         In Channel or Group:
@@ -238,9 +238,10 @@ class Bot():
         "chat_id": str(chat_id),
         "message_id": message_id
         }, timeout = timeout)
-        return Message.json()
+        result = Message.json()
+        return result["result"] if result["ok"] else False
 
-    def get_chat(self, chat_id : str, timeout = (10, 30)):
+    def get_chat(self, chat_id : str, timeout = (10, 30)) -> Chat:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
         Args:
@@ -263,7 +264,7 @@ class Bot():
                 return Chat.from_dict(json["result"], bot = self) if chat is not None else None
         return None
 
-    def get_chat_administrators(self, chat_id : str, timeout = (10, 30)):
+    def get_chat_administrators(self, chat_id : str, timeout = (10, 30)) -> list["ChatMember"]:
         """This service can be used to display admins of a group or channel.
 
         Args:
@@ -286,7 +287,7 @@ class Bot():
                 return members if members != [] else None
         return None
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None):
+    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list["Update"]:
         """Use this method to receive incoming updates using long polling. 
 
         Args:
