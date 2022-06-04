@@ -18,7 +18,7 @@ class Price():
         """
         return cls(label = data["label"], amount = data["amount"])
     
-    def to_dic(self):
+    def to_dict(self):
         data = {}
         
         data["label"] = self.label
