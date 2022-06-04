@@ -167,7 +167,7 @@ class Bot():
             key_list = []
             for i in prices:
                 if type(i) is Price:
-                    key_list.append(i.to_dic())
+                    key_list.append(i.to_dict())
                 else:
                     key_list.append(i)
             json["prices"] = key_list
