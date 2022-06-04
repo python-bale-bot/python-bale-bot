@@ -85,9 +85,9 @@ class Message():
                 new_chat_members.append(User.from_dict(bot = bot, data = i))
         if data.get("left_chat_member"):
             left_chat_member = User.from_dict(bot = bot, data = data.get("left_chat_member"))     
-            
+         
         
-        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.from_dict(bot = bot, data = data.get("chat")) if data.get("chat") else None, reply_to_message = Message.from_dict(bot = bot, data = data.get("reply_to_message") if data.get("reply_to_message") else None),date = data.get("date"), text = data.get("text"), from_user = User.from_dict(bot = bot, data = data.get("from")) if data.get("from") else None, new_chat_members = new_chat_members if new_chat_members != [] and new_chat_members != None else None, left_chat_member = left_chat_member if left_chat_member != [] and left_chat_member != None else None)
+        return cls(bot = bot, message_id = data.get("message_id"), chat = Chat.from_dict(bot = bot, data = data.get("chat")) if data.get("chat") else None, reply_to_message = Message.from_dict(bot = bot, data = data.get("reply_to_message")) if data.get("reply_to_message") else None,date = data.get("date"), text = data.get("text"), from_user = User.from_dict(bot = bot, data = data.get("from")) if data.get("from") else None, new_chat_members = new_chat_members if new_chat_members != [] and new_chat_members != None else None, left_chat_member = left_chat_member if left_chat_member != [] and left_chat_member != None else None)
     
     def to_dict(self):
         data = {}
