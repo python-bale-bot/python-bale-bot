@@ -3,7 +3,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot, Message
 
-class Chat():
+class Chat:
     PRIVATE = "private"
     GROUP = "group"
     
@@ -52,11 +52,31 @@ class Chat():
         Returns:
             List(:class:`bale.Message`)
         """
-        if not isinstance(timeout, (tuple, int)):
-            raise "Time out Not true"
         message = self.bot.send_message(chat_id = str(self.id), text = text, components = components, timeout = timeout)
         return message
-        
+
+    def get_chat_member(self, user_id : str, imeout = (10, 30)):
+        """:meth:`telegram.Bot.get_chat_member`.
+
+            Args:
+                timeout (tuple, int): Defaults to (5, 10).
+            Returns:
+                :class:`bale.ChatMember`
+        """
+        member = self.bot.get_chat_member(chat_id = self.id, user_id = user_id,timeout = timeout)
+        return member
+
+    def get_chat_members_count(self, timeout = (10, 30)):
+        """:meth:`telegram.Bot.get_chat_members_count`.
+
+            Args:
+                timeout (tuple, int): Defaults to (5, 10).
+            Returns:
+                :int:
+        """
+        memberscount = self.bot.get_chat_members_count(chat_id = self.id, timeout = timeout)
+        return memberscount
+
     def chat_administrators(self, timeout = (10, 30)):
         """:meth:`telegram.Bot.get_chat_administrators`.
 
