@@ -264,6 +264,55 @@ class Bot():
                 return Chat.from_dict(json["result"], bot = self) if chat is not None else None
         return None
 
+    def get_chat_member(self, chat_id : str, user_id : str, timeout = (10, 30)) -> "ChatMember":
+        """
+            Args:
+                chat_id (str): Group ID
+                user_id (str): Member ID
+                timeout (tuple, int) : Defaults to (10, 30).
+
+            Returns:
+                :class:`bale.ChatMember`
+            Raises:
+                :class:`bale.Error`
+        """
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        result = self.req(method="GET", type="getChatMember", params={
+            "chat_id": chat_id,
+            "user_id": user_id
+        })
+        if result is None:
+            return None
+        json_result: dict = result.json()
+        if json_result["ok"]:
+            member = ChatMember.from_dict(json_result["result"])
+            return member
+        return None
+
+    def get_chat_members_count(self, chat_id : str, timeout = (10, 30)) -> int:
+        """
+            Args:
+                chat_id (str): Group ID
+                timeout (tuple, int) : Defaults to (10, 30).
+
+            Returns:
+                :int: Memeber Chat count
+            Raises:
+                :class:`bale.Error`
+        """
+        if not isinstance(timeout, (tuple, int)):
+            raise "Time out Not true"
+        result = self.req(method="GET", type="getChatMembersCount", params={
+            "chat_id": chat_id
+        })
+        if result is None:
+            return None
+        json_result: dict = result.json()
+        if json_result["ok"]:
+            return json_result["result"]
+        return None
+
     def get_chat_administrators(self, chat_id : str, timeout = (10, 30)) -> list["ChatMember"]:
         """This service can be used to display admins of a group or channel.
 
