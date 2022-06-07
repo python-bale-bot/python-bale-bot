@@ -1,16 +1,11 @@
+from __future__ import annotations
+from typing import Any
 import requests
 from bale import (Message, Update, User, Components, Chat, Price, ChatMember, InvalidToken, NetworkError, TimeOut)
 
-class Bot():
-    __slots__ = (
-        "_user",
-        "token",
-        "base_url",
-        "base_file_url",
-        "_requests"
-    )
-    def __init__(self, token : str,base_url : str = "https://tapi.bale.ai/", base_file_url : str = "https://tapi.bale.ai/file"):
-        """This object represents a Bale Bot.
+
+class Bot:
+    """This object represents a Bale Bot.
 
         Args:
             token (str): Bot Token.
@@ -19,16 +14,26 @@ class Bot():
 
         Raises:
             :class:`bale.Error`
-        """
-        self.token = token 
+    """
+    __slots__ = (
+        "_user",
+        "token",
+        "base_url",
+        "base_file_url",
+        "_requests"
+    )
+
+    def __init__(self, token: str, base_url: str = "https://tapi.bale.ai/",
+                 base_file_url: str = "https://tapi.bale.ai/file"):
+        self.token = token
         self.base_url = base_url
         self.base_file_url = base_file_url
         self._requests = requests
         self._user = self.check_token()
         if not self._user:
             raise f"Bot is not Ready!"
-     
-    def check_token(self, timeout = (30, 10)) -> bool:
+
+    def check_token(self, timeout=(30, 10)) -> bool:
         """Check the entered token.
 
         Args:
@@ -38,13 +43,12 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             return
-        result = self.req("get", "getme", timeout = timeout)
+        result = self.req("get", "getme", timeout=timeout)
         if result is not None and result.json()["ok"]:
             return result.json()["ok"]
         return False
 
-
-    def get_bot(self, timeout = (30, 10)) -> (User | None):
+    def get_bot(self, timeout=(30, 10)) -> (User | None):
         """Get Bot.
 
         Args:
@@ -53,11 +57,11 @@ class Bot():
         Returns:
             :class:`Bale.User`: Bot User information.
         """
-        result = self.req("get", "getme", timeout = timeout)
+        result = self.req("get", "getme", timeout=timeout)
         if result is not None and result.json()["ok"]:
-            return User.from_dict(data = result.json()["result"], bot = self)
+            return User.from_dict(data=result.json()["result"], bot=self)
         return None
-    
+
     @property
     def bot(self):
         """Get Bot User
@@ -68,24 +72,34 @@ class Bot():
         if self._user is None:
             self._user = self.get_bot()
         return self._user
-    
-    def req(self, method : str, type : str, data : dict = {}, params : dict = {}, timeout = (5, 10)):
+
+    def req(self, method: str, type: str, data: dict = {}, params: dict = {}, timeout=(5, 10)):
+        """
+
+        Args:
+            method:
+            type:
+            data:
+            params:
+            timeout:
+
+        Returns:
+
+        """
         method = method.upper()
         try:
             if method == "POST":
-                return self._requests.post( self.base_url + ("" if self.base_url.endswith("/") else "/") + (f"bot" f"{self.token}" "/" f"{type}"), json = data, params = params, timeout = timeout)
+                return self._requests.post(self.base_url + ("" if self.base_url.endswith("/") else "/") + (
+                    f"bot" f"{self.token}" "/" f"{type}"), json=data, params=params, timeout=timeout)
             elif method == "GET":
-                return self._requests.get( self.base_url + ("" if self.base_url.endswith("/") else "/" )+ (f"bot" f"{self.token}" "/" f"{type}"), params = params, timeout = timeout)
-        except requests.Timeout as e:
-            raise TimeOut(
-                "Time Out"
-                f"{e.request}"
-            )
-        except requests.ConnectionError as e:
+                return self._requests.get(self.base_url + ("" if self.base_url.endswith("/") else "/") + (
+                    f"bot" f"{self.token}" "/" f"{type}"), params=params, timeout=timeout)
+        except requests.Timeout:
+            raise TimeOut()
+        except requests.ConnectionError:
             raise NetworkError("ConnectionError")
-        
-    
-    def delete_webhook(self, timeout = (5, 10)) -> bool:
+
+    def delete_webhook(self, timeout=(5, 10)) -> bool:
         """This service is used to remove the web hook set for the arm.
 
         Args:
@@ -96,12 +110,13 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             return
-        result = self.req("get", "deleteWebhook", timeout = timeout)
+        result = self.req("get", "deleteWebhook", timeout=timeout)
         if result is not None and result.json()["ok"]:
             return result.json()["result"]
         return False
 
-    def send_message(self, chat_id : str, text : str = None, components = None, reply_to_message_id : str = None , timeout = (5, 10)) -> Message:
+    def send_message(self, chat_id: str, text: str = None, components=None, reply_to_message_id: str = None,
+                     timeout=(5, 10)) -> Message | None:
         """This service is used to send text messages.
         
         Args:
@@ -115,12 +130,13 @@ class Bot():
         Returns:
             :class:`bale.Message`: On success, the sent Message is returned.
         """
-        
+
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        json = {}
-        json["chat_id"] = str(chat_id)
-        json["text"] = text
+        json = {
+            "chat_id": chat_id,
+            "text": text
+        }
         if components:
             if isinstance(components, Components):
                 json["reply_markup"] = components.to_dict()
@@ -128,14 +144,17 @@ class Bot():
                 json["reply_markup"] = components
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        message = self.req("post", "sendMessage", json, timeout = timeout)
+        message = self.req("post", "sendMessage", json, timeout=timeout)
         if message is not None:
             json = message.json()
-            if json["ok"]: 
-                return Message.from_dict(data = message.json()["result"], bot = self)
+            if json["ok"]:
+                return Message.from_dict(data=message.json()["result"], bot=self)
         return None
 
-    def send_invoice(self, chat_id : str, title : str, description : str, provider_token : str, prices : Price, reply_to_message_id : str = None, photo_url : str = None, need_name : bool = False, need_phone_number : bool = False, need_email : bool = False, need_shipping_address : bool = False, is_flexible : bool = True, timeout = (5, 10)) -> Message:
+    def send_invoice(self, chat_id: str, title: str, description: str, provider_token: str, prices: Price,
+                     reply_to_message_id: str = None, photo_url: str = None, need_name: bool = False,
+                     need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False,
+                     is_flexible: bool = True, timeout=(5, 10)) -> Any | None:
         """You can use this service to send money request messages.
         Args:
             chat_id (str): Chat ID
@@ -156,11 +175,12 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        json = {}
-        json["chat_id"] = str(chat_id)
-        json["title"] = title
-        json["description"] = description
-        json["provider_token"] = provider_token
+        json = {
+            "chat_id": chat_id,
+            "title": title,
+            "description": description,
+            "provider_token": provider_token
+        }
         if isinstance(prices, Price):
             json["prices"] = [prices.to_dict()]
         elif isinstance(prices, list):
@@ -180,14 +200,15 @@ class Bot():
         json["is_flexible"] = is_flexible
         if reply_to_message_id:
             json["reply_to_message_id"] = reply_to_message_id
-        message = self.req("post", "sendInvoice", data = json, timeout = timeout)
+        message = self.req("post", "sendInvoice", data=json, timeout=timeout)
         if message is not None:
             json = message.json()
-            if json["ok"]: 
-                return Message.from_dict(data = message.json()["result"], bot = self)
+            if json["ok"]:
+                return Message.from_dict(data=message.json()["result"], bot=self)
         return None
-    
-    def edit_message(self, chat_id : str, message_id : str, newtext : str, components = None, timeout = (10, 30)) -> requests.Response:
+
+    def edit_message(self, chat_id: str, message_id: str, newtext: str, components=None,
+                     timeout=(10, 30)) -> requests.Response:
         """You can use this service to edit text messages that you have already sent through the arm.
         
         Args:
@@ -201,21 +222,21 @@ class Bot():
         Return:
             :class:`requests.Response`
         """
-        data = {}
-        data["chat_id"] = chat_id
-        data["message_id"] = message_id
-        data["text"] = newtext
+        data = {
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "text": newtext
+        }
         if components:
             if isinstance(components, Components):
                 data["reply_markup"] = components.to_dict()
             else:
                 data["reply_markup"] = components
-        
-        Response = self.req("post", "editMessageText", data = data, timeout = timeout)
-        return Response
-        
-    
-    def delete_message(self, chat_id : str, message_id : str, timeout = (10, 30)) -> bool:
+
+        result = self.req("post", "editMessageText", data=data, timeout=timeout)
+        return result
+
+    def delete_message(self, chat_id: str, message_id: str, timeout=(10, 30)) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
         
         In Channel or Group:
@@ -234,14 +255,14 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        Message = self.req(mode = "get", type = "deletemessage", params = {
-        "chat_id": str(chat_id),
-        "message_id": message_id
-        }, timeout = timeout)
-        result = Message.json()
+        result = self.req(mode="get", type="deletemessage", params={
+            "chat_id": str(chat_id),
+            "message_id": message_id
+        }, timeout=timeout)
+        result = result.json()
         return result["result"] if result["ok"] else False
 
-    def get_chat(self, chat_id : str, timeout = (10, 30)) -> Chat:
+    def get_chat(self, chat_id: str, timeout=(10, 30)) -> Chat | None:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
         Args:
@@ -254,17 +275,17 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        
-        chat = self.req("get", "getchat", params = {
+
+        chat = self.req("get", "getchat", params={
             "chat_id": chat_id
         })
         if chat is not None:
             json = chat.json()
-            if json["ok"]: 
-                return Chat.from_dict(json["result"], bot = self) if chat is not None else None
+            if json["ok"]:
+                return Chat.from_dict(json["result"], bot=self) if chat is not None else None
         return None
 
-    def get_chat_member(self, chat_id : str, user_id : str, timeout = (10, 30)) -> "ChatMember":
+    def get_chat_member(self, chat_id: str, user_id: str, timeout=(10, 30)) -> "ChatMember" | None:
         """
             Args:
                 chat_id (str): Group ID
@@ -290,7 +311,7 @@ class Bot():
             return member
         return None
 
-    def get_chat_members_count(self, chat_id : str, timeout = (10, 30)) -> int:
+    def get_chat_members_count(self, chat_id: str, timeout=(10, 30)) -> int:
         """
             Args:
                 chat_id (str): Group ID
@@ -313,7 +334,7 @@ class Bot():
             return json_result["result"]
         return None
 
-    def get_chat_administrators(self, chat_id : str, timeout = (10, 30)) -> list["ChatMember"]:
+    def get_chat_administrators(self, chat_id: str, timeout=(10, 30)) -> list["ChatMember"]:
         """This service can be used to display admins of a group or channel.
 
         Args:
@@ -326,17 +347,17 @@ class Bot():
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        result = self.req("get", "getChatAdministrators", params = {"chat_id": chat_id}, timeout = timeout)
+        result = self.req("get", "getChatAdministrators", params={"chat_id": chat_id}, timeout=timeout)
         members = []
         if result:
             if result.json()["ok"]:
                 for i in result.json()["result"]:
-                    member = ChatMember.from_dict(data = i)
-                    members.append(member)   
+                    member = ChatMember.from_dict(data=i)
+                    members.append(member)
                 return members if members != [] else None
         return None
 
-    def get_updates(self, timeout = (10, 30), offset : int = None, limit : int = None) -> list["Update"]:
+    def get_updates(self, timeout=(10, 30), offset: int = None, limit: int = None) -> list["Update"]:
         """Use this method to receive incoming updates using long polling. 
 
         Args:
@@ -350,18 +371,18 @@ class Bot():
         Returns:
             List[:class:`bale.Update`]
         """
-        
+
         result = []
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        
+
         options = {}
         if offset is not None:
             options["offset"] = offset
         if limit is not None:
             options["limit"] = limit
-            
-        updates = self.req("post", "getupdates", options, timeout = timeout)
+
+        updates = self.req("post", "getupdates", options, timeout=timeout)
         if updates:
             if not updates.json()["ok"]:
                 updates = updates.json()
@@ -369,8 +390,8 @@ class Bot():
             for i in updates.json()["result"]:
                 if offset is not None and i["update_id"] < offset:
                     continue
-                update = Update.from_dict(data = i, bot = self)
+                update = Update.from_dict(data=i, bot=self)
                 result.append(update)
             return result if result != [] else None
-        
+
         return None

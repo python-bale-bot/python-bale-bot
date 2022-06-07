@@ -1,12 +1,13 @@
-class Price():
-    __slots__ = ("label", "amount")
-    def __init__(self, label : str = None, amount : int = None):
-        """This object shows a Price
+class Price:
+    """This object shows a Price
 
         Args:
             label (str): Label Price. Defaults to None.
             amount (int): Amount Price. Defaults to None.
-        """
+    """
+    __slots__ = ("label", "amount")
+
+    def __init__(self, label: str = None, amount: int = None):
         self.label = label
         self.amount = amount
         
@@ -16,12 +17,15 @@ class Price():
         Args:
             data (dict): Data
         """
-        return cls(label = data["label"], amount = data["amount"])
+        return cls(label=data["label"], amount=data["amount"])
     
     def to_dict(self):
-        data = {}
-        
-        data["label"] = self.label
-        data["amount"] = self.amount
-        
+        """Convert Class to dict
+            Returns:
+                :dict:
+        """
+        data = {
+            "label": self.label,
+            "amount": self.amount
+        }
         return data

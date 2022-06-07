@@ -3,15 +3,17 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
 
-class User():
+
+class User:
     __slots__ = (
-        "first_name", 
+        "first_name",
         "last_name",
         "username",
         "id",
         "bot"
     )
-    def __init__(self, id : int, first_name : str, last_name : str = None, username : str = None, bot : 'Bot' = None):
+
+    def __init__(self, id: int, first_name: str, last_name: str = None, username: str = None, bot: 'Bot' = None):
         """This object shows a user.
 
         Args:
@@ -26,45 +28,44 @@ class User():
         self.username = username
         self.id = id
         self.bot = bot
-        
+
     @property
     def link(self):
         if self.username:
-            return "https://ble.ir/@{username}".format(username = self.username)
+            return "https://ble.ir/@{username}".format(username=self.username)
         return None
 
-    def send(self, text : str, components = None, timeout = (10, 15)):
+    def send(self, text: str, components=None, timeout=(10, 15)):
         """:meth:`bale.Bot.send_message`
 
         Args:
             text (str): Message Text.
             components (Components, dict): Message Components. Defaults to None.
-            reply_to_message_id (str): Defaults to None.
+            timeout (str): Defaults to (10, 15).
         Returns:
             :class:`bale.Message`
         """
-        message = self.bot.send_message(chat_id = self.id, text = text, components = components, timeout = timeout) 
+        message = self.bot.send_message(chat_id=self.id, text=text, components=components, timeout=timeout)
         return message
-    
-    
+
     @classmethod
-    def from_dict(cls, data : dict, bot = None):
+    def from_dict(cls, data: dict, bot=None):
         """
         Args:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        return cls(username = data.get("username"), first_name = data.get("first_name"), last_name = data.get("last_name"), id = data.get("id"), bot = bot)
-    
+        return cls(username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
+                   id=data.get("id"), bot=bot)
+
     def to_dict(self):
-        data = {}
-        
-        data["first_name"] = self.first_name if self.first_name is not None else None
-        data["last_name"] = self.last_name if self.last_name is not None else None
-        data["username"] = self.username if self.username is not None else None
-        data["id"] = self.id if self.id is not None else None
-        
+        data = {"first_name": self.first_name if self.first_name is not None else None,
+                "last_name": self.last_name if self.last_name is not None else None,
+                "username": self.username if self.username is not None else None,
+                "id": self.id if self.id is not None else None}
+
         return data
-    
+
     def __str__(self):
-        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(self.last_name))
+        return (str(self.username) + " #" + str(self.id) if self.username else str(self.first_name) + " " + str(
+            self.last_name))

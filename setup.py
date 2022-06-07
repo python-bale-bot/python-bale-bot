@@ -1,24 +1,24 @@
 from setuptools import setup, find_packages
 
 setup(
-    name = "python-bale-bot",
-    version = "2.1.6.5",
-    platforms = ["Windows"],
-    fullname = "python-bale-bot-api",
-    description = "An API wrapper for Bale written in Python",
-    author = "Kian Ahmadian",
-    license = "MIT License",
-    project_urls = {
+    name="python-bale-bot",
+    version="2.1.6.5",
+    platforms=["Windows"],
+    fullname="python-bale-bot-api",
+    description="An API wrapper for Bale written in Python",
+    author="Kian Ahmadian",
+    license="MIT License",
+    project_urls={
         "Source Code": "https://github.com/kianahmadian/python-bale-bot/blob/main/balebot",
         "Documentation": "https://python-bale-bot.readthedocs.io/en/latest/",
         "Bug Tracker": "https://github.com/kianahmadian/python-bale-bot/issues"
     },
-    keywords = ["bale", "bot", "baleapi"],
-    python_requires = '>=3.8',
-    include_package_data = True,
-    url = "https://github.com/kianahmadian/python-bale-bot/",
-    packages = find_packages(),
-    long_description = """<div align='center'>
+    keywords=["bale", "bot", "baleapi"],
+    python_requires='>=3.8',
+    include_package_data=True,
+    url="https://github.com/kianahmadian/python-bale-bot/",
+    packages=find_packages(),
+    long_description="""<div align='center'>
 <h1><b> Bale Bot </b></h1>
 
 [![All Contributors](https://img.shields.io/github/contributors/kianahmadian/python-bale-bot)](#contributors-)
@@ -95,11 +95,11 @@ pip install python-bale-bot -U
 </div>
 """,
     long_description_content_type='text/markdown',
-    install_requires = [
-"aiohttp==2.3.7",
-"async-timeout==2.0.0",
-"asyncio==3.4.3",
-"requests==2.26.0"]
+    install_requires=[
+        "aiohttp==2.3.7",
+        "async-timeout==2.0.0",
+        "asyncio==3.4.3",
+        "requests==2.26.0"]
 )
 
 print(r"""
