@@ -26,6 +26,15 @@ class InvalidToken(BaleError):
         super().__init__("Invalid Token" if self._message is not None else self._message)
 
 
+class ApiError(BaleError):
+    __slots__ = ("_message",)
+
+    def __init__(self, message):
+        self._message = message
+
+        super().__init__(self._message)
+
+
 class NetworkError(BaleError):
     __slots__ = ()
 
