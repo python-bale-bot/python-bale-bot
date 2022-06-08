@@ -12,21 +12,25 @@ class AdminPermissions:
         "can_send_messages",
         "can_send_media_messages"
     }
-    
+
     __slots__ = (
-    "can_be_edited",
-    "can_change_info",
-    "can_post_messages",
-    "can_edit_messages",
-    "can_delete_messages",
-    "can_invite_users",
-    "can_restrict_members",
-    "can_pin_messages",
-    "can_promote_members",
-    "can_send_messages",
-    "can_send_media_messages"
+        "can_be_edited",
+        "can_change_info",
+        "can_post_messages",
+        "can_edit_messages",
+        "can_delete_messages",
+        "can_invite_users",
+        "can_restrict_members",
+        "can_pin_messages",
+        "can_promote_members",
+        "can_send_messages",
+        "can_send_media_messages"
     )
-    def __init__(self, can_be_edited : bool = False, can_change_info : bool = False, can_post_messages : bool = False, can_edit_messages : bool = False, can_delete_messages : bool = False, can_invite_users : bool = False, can_restrict_members : bool = False, can_pin_messages : bool = False, can_promote_members : bool = False, can_send_messages : bool = False, can_send_media_messages : bool = False):
+
+    def __init__(self, can_be_edited: bool = False, can_change_info: bool = False, can_post_messages: bool = False,
+                 can_edit_messages: bool = False, can_delete_messages: bool = False, can_invite_users: bool = False,
+                 can_restrict_members: bool = False, can_pin_messages: bool = False, can_promote_members: bool = False,
+                 can_send_messages: bool = False, can_send_media_messages: bool = False):
         """This object shows the permissions and permissions of an admin or a member in a group (or channel).
 
         Args:
@@ -53,13 +57,16 @@ class AdminPermissions:
         self.can_promote_members = can_promote_members
         self.can_send_messages = can_send_messages
         self.can_send_media_messages = can_send_media_messages
-        
+
     @classmethod
-    def from_dict(cls, data : dict):
+    def from_dict(cls, data: dict):
         """
         Args:
             data (dict): Data
         """
-        return cls(can_be_edited = data.get("can_be_edited"), can_change_info = data.get("can_change_info"), can_post_messages = data.get("can_post_messages"), can_edit_messages = data.get("can_edit_messages"), can_delete_messages = data.get("can_delete_messages"), can_invite_users = data.get("can_invite_users"), can_restrict_members = data.get("can_restrict_members"), can_pin_messages = data.get("can_pin_messages"), can_promote_members = data.get("can_promote_members"), can_send_messages = data.get("can_send_messages"), can_send_media_messages = data.get("can_send_media_messages"))
-    
-    
+        return cls(can_be_edited=data.get("can_be_edited"), can_change_info=data.get("can_change_info"),
+                   can_post_messages=data.get("can_post_messages"), can_edit_messages=data.get("can_edit_messages"),
+                   can_delete_messages=data.get("can_delete_messages"), can_invite_users=data.get("can_invite_users"),
+                   can_restrict_members=data.get("can_restrict_members"), can_pin_messages=data.get("can_pin_messages"),
+                   can_promote_members=data.get("can_promote_members"), can_send_messages=data.get("can_send_messages"),
+                   can_send_media_messages=data.get("can_send_media_messages"))

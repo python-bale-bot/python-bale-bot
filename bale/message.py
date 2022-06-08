@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Audio, ContactMessage, Location)
+from bale import (Chat, User, ContactMessage)
 
 
 class Message:
@@ -19,10 +19,6 @@ class Message:
         contact (:class:`bale.ContactMessage`): Defaults to None.
         chat (:class:`bale.Chat`): The chat where the message is sent. Defaults to None.
         reply_to_message (:class:`bale.Message`)
-        document (Any): Documentary that is attached in the message. Defaults to None.
-        photo (Any): Photo sent along with message. Defaults to None.
-        location (:class:`bale.Location`): _description_. Defaults to None.
-        invoice (Any): Defaults to None.
         new_chat_members (:class:`bale.User`): User (An) who entered the chat. Defaults to None.
         left_chat_member (:class:`bale.User`): A user out of chat. Defaults to None.
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
@@ -54,7 +50,7 @@ class Message:
     def author(self):
         if self.chat is not None:
             if self.chat.type == Chat.PRIVATE:
-                return User(id=self.chat.id, first_name=self.chat.first_name, last_name=self.chat.last_name,
+                return User(id=int(self.chat.id), first_name=self.chat.first_name, last_name=self.chat.last_name,
                             username=self.chat.username, bot=self.bot)
             elif self.chat.type == Chat.GROUP:
                 return User(bot=self.bot, id=self.from_user.id, first_name=self.from_user.first_name,
@@ -114,7 +110,7 @@ class Message:
         if self.contact:
             data["contact"] = self.contact.to_dict()
         if self.new_chat_members:
-            data["new_chat_members"] = self.new_chat_member
+            data["new_chat_members"] = self.new_chat_members
         if self.left_chat_member:
             data["left_chat_member"] = self.left_chat_member
         if self.reply_to_message_id:

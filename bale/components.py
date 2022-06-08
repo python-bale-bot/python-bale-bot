@@ -11,8 +11,8 @@ class Components:
     )
 
     def __init__(self, keyboards=None, inlinekeyboards=None):
-        self.keyboards: list = None
-        self.inlinekeyboards: list = None
+        self.keyboards = None
+        self.inlinekeyboards = None
         if keyboards is not None:
             self.keyboards = []
             if isinstance(keyboards, list):
