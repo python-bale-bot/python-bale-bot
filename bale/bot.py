@@ -1,7 +1,6 @@
 from __future__ import annotations
-from typing import Any
 import requests
-from bale import (Message, Update, User, Components, Chat, Price, ChatMember, InvalidToken, NetworkError, TimeOut)
+from bale import (Message, Update, User, Components, Chat, Price, ChatMember, BaleError, InvalidToken, ApiError, NetworkError, TimeOut)
 
 
 class Bot:
@@ -31,24 +30,29 @@ class Bot:
         self._requests = requests
         self._user = self.check_token()
         if not self._user:
-            raise f"Bot is not Ready!"
+            raise InvalidToken(f"Token {token} is Invalid!")
 
-    def check_token(self, timeout=(30, 10)) -> bool:
+    def check_token(self, timeout=(30, 10)) -> bool | BaleError:
         """Check the entered token.
 
         Args:
             timeout (tuple, optional): Defaults to (30, 10).
         Returns:
             bool: If it is "True" it is returned True, if it is "False" it is returned False.
+        Raises:
+            :class:`BaleError`
         """
         if not isinstance(timeout, (tuple, int)):
-            return
+            return False
         result = self.req("get", "getme", timeout=timeout)
-        if result is not None and result.json()["ok"]:
+        result = result.json()
+        if result.json()["ok"]:
             return result.json()["ok"]
-        return False
+        raise ApiError(
+            str(result.get("error_code")) + result.get("description")
+        )
 
-    def get_bot(self, timeout=(30, 10)) -> (User | None):
+    def get_bot(self, timeout=(30, 10)) -> (User | BaleError):
         """Get Bot.
 
         Args:
@@ -56,11 +60,17 @@ class Bot:
 
         Returns:
             :class:`Bale.User`: Bot User information.
+        Raises:
+            :class:`Bale.Error`
         """
-        result = self.req("get", "getme", timeout=timeout)
-        if result is not None and result.json()["ok"]:
-            return User.from_dict(data=result.json()["result"], bot=self)
-        return None
+        result = self.req("GET", "getme", timeout=timeout)
+        result = result.json()
+        if result.get("ok", False):
+            return User.from_dict(data=result["result"], bot=self)
+        else:
+            raise ApiError(
+                str(result.get("error_code")) + result.get("description")
+            )
 
     @property
     def bot(self):
@@ -73,7 +83,7 @@ class Bot:
             self._user = self.get_bot()
         return self._user
 
-    def req(self, method: str, type: str, data: dict = {}, params: dict = {}, timeout=(5, 10)):
+    def req(self, method: str, type: str, data: dict = None, params: dict = None, timeout=(5, 10)) -> requests.Response:
         """
 
         Args:
@@ -84,7 +94,9 @@ class Bot:
             timeout:
 
         Returns:
-
+            :class:`requests.Response`
+        Raises:
+            :class:`bale.Error`
         """
         method = method.upper()
         try:
@@ -99,7 +111,7 @@ class Bot:
         except requests.ConnectionError:
             raise NetworkError("ConnectionError")
 
-    def delete_webhook(self, timeout=(5, 10)) -> bool:
+    def delete_webhook(self, timeout=(5, 10)) -> bool | None:
         """This service is used to remove the web hook set for the arm.
 
         Args:
@@ -109,7 +121,7 @@ class Bot:
             bool: If done "True" If not "False"
         """
         if not isinstance(timeout, (tuple, int)):
-            return
+            return None
         result = self.req("get", "deleteWebhook", timeout=timeout)
         if result is not None and result.json()["ok"]:
             return result.json()["result"]
@@ -154,7 +166,7 @@ class Bot:
     def send_invoice(self, chat_id: str, title: str, description: str, provider_token: str, prices: Price,
                      reply_to_message_id: str = None, photo_url: str = None, need_name: bool = False,
                      need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False,
-                     is_flexible: bool = True, timeout=(5, 10)) -> Any | None:
+                     is_flexible: bool = True, timeout=(5, 10)) -> Message | None:
         """You can use this service to send money request messages.
         Args:
             chat_id (str): Chat ID
@@ -228,10 +240,7 @@ class Bot:
             "text": newtext
         }
         if components:
-            if isinstance(components, Components):
-                data["reply_markup"] = components.to_dict()
-            else:
-                data["reply_markup"] = components
+            data["reply_markup"] = components.to_dict() if isinstance(components, Components) else components
 
         result = self.req("post", "editMessageText", data=data, timeout=timeout)
         return result
@@ -255,7 +264,7 @@ class Bot:
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
-        result = self.req(mode="get", type="deletemessage", params={
+        result = self.req(method="GET", type="deletemessage", params={
             "chat_id": str(chat_id),
             "message_id": message_id
         }, timeout=timeout)
@@ -311,7 +320,7 @@ class Bot:
             return member
         return None
 
-    def get_chat_members_count(self, chat_id: str, timeout=(10, 30)) -> int:
+    def get_chat_members_count(self, chat_id: str, timeout=(10, 30)) -> int | None:
         """
             Args:
                 chat_id (str): Group ID
@@ -334,7 +343,7 @@ class Bot:
             return json_result["result"]
         return None
 
-    def get_chat_administrators(self, chat_id: str, timeout=(10, 30)) -> list["ChatMember"]:
+    def get_chat_administrators(self, chat_id: str, timeout=(10, 30)) -> list["ChatMember"] | None:
         """This service can be used to display admins of a group or channel.
 
         Args:
@@ -357,7 +366,7 @@ class Bot:
                 return members if members != [] else None
         return None
 
-    def get_updates(self, timeout=(10, 30), offset: int = None, limit: int = None) -> list["Update"]:
+    def get_updates(self, timeout=(10, 30), offset: int = None, limit: int = None) -> list["Update"] | None:
         """Use this method to receive incoming updates using long polling. 
 
         Args:
@@ -371,7 +380,6 @@ class Bot:
         Returns:
             List[:class:`bale.Update`]
         """
-
         result = []
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
@@ -392,6 +400,6 @@ class Bot:
                     continue
                 update = Update.from_dict(data=i, bot=self)
                 result.append(update)
-            return result if result != [] else None
+            return result if result is not None else None
 
         return None
