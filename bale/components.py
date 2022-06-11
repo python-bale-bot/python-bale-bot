@@ -2,17 +2,17 @@ class Components:
     """
         Args:
             keyboards (:class:`bale.Keyboards`): Defaults to None.
-            inlinekeyboards (:class:`bale.InlineKeyboards`): Defaults to None.
+            inline_keyboards (:class:`bale.InlineKeyboards`): Defaults to None.
     """
 
     __slots__ = (
         "keyboards",
-        "inlinekeyboards"
+        "inline_keyboards"
     )
 
-    def __init__(self, keyboards=None, inlinekeyboards=None):
-        self.keyboards = None
-        self.inlinekeyboards = None
+    def __init__(self, keyboards=None, inline_keyboards=None):
+        self.keyboards = [] if keyboards is not None else None
+        self.inline_keyboards = [] if inline_keyboards is not None else None
         if keyboards is not None:
             self.keyboards = []
             if isinstance(keyboards, list):
@@ -32,12 +32,12 @@ class Components:
             else:
                 if "name" in keyboards:
                     self.keyboards.append(keyboards)
-        if inlinekeyboards is not None:
-            self.inlinekeyboards = []
-            if type(inlinekeyboards) is list:
-                for i in inlinekeyboards:
+        if inline_keyboards is not None:
+            self.inline_keyboards = []
+            if type(inline_keyboards) is list:
+                for i in inline_keyboards:
                     if type(i) is dict:
-                        self.inlinekeyboards.append([i])
+                        self.inline_keyboards.append([i])
                     elif type(i) is list:
                         key_list = []
                         for i in i:
@@ -45,12 +45,12 @@ class Components:
                                 key_list.append(i.to_dict())
                             else:
                                 key_list.append(i)
-                        self.inlinekeyboards.append(key_list)
+                        self.inline_keyboards.append(key_list)
                     elif type(i) is InlineKeyboard:
-                        self.inlinekeyboards.append([i.to_dict()])
-            elif type(inlinekeyboards) is dict:
-                if "name" in inlinekeyboards and "callback_data" in inlinekeyboards:
-                    self.inlinekeyboards.append(inlinekeyboards)
+                        self.inline_keyboards.append([i.to_dict()])
+            elif type(inline_keyboards) is dict:
+                if "name" in inline_keyboards and "callback_data" in inline_keyboards:
+                    self.inline_keyboards.append(inline_keyboards)
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -58,7 +58,7 @@ class Components:
         Args:
             data (dict): Data
         """
-        return cls(keyboards=data["keyboard"], inlinekeyboards=data["inline_keyboard"])
+        return cls(keyboards=data["keyboard"], inline_keyboards=data["inline_keyboard"])
 
     def to_dict(self):
         """Convert Class to dict
@@ -67,8 +67,8 @@ class Components:
         """
         data = {
             "keyboard": self.keyboards,
-            "inline_keyboard": self.inlinekeyboards
-        }
+            "inline_keyboard": self.inline_keyboards
+        } if self.keyboards or self.inline_keyboards else []
 
         return data
 
@@ -77,25 +77,23 @@ class InlineKeyboard:
     """This object shows an in -line keyboard (within the message).
 
         Args:
-            text (str): _description_
-            callback_data (str, optional): _description_. Defaults to None.
-            url (str, optional): _description_. Defaults to None.
-            switch_inline_query (str, optional): _description_. Defaults to None.
-            switch_inline_query_current_chat (str, optional): _description_. Defaults to None.
-            pay (bool, optional): _description_. Defaults to False.
+            text (str):	Label text on the button.
+            callback_data (str): If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+            url (str): HTTP url to be opened when the button is pressed. Defaults to None.
+            switch_inline_query (str): If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+            switch_inline_query_current_chat (str): If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted. Defaults to None.
     """
     __slots__ = (
-        "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat", "pay"
+        "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
     )
 
     def __init__(self, text: str, callback_data: str = None, url: str = None, switch_inline_query: str = None,
-                 switch_inline_query_current_chat: str = None, pay: bool = False):
+                 switch_inline_query_current_chat: str = None):
         self.text = text
         self.callback_data = callback_data if callback_data is not None else None
         self.url = url if url is not None else None
         self.switch_inline_query = switch_inline_query if switch_inline_query is not None else switch_inline_query
         self.switch_inline_query_current_chat = switch_inline_query_current_chat if switch_inline_query_current_chat is not None else None
-        self.pay = pay if pay else False
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -107,8 +105,7 @@ class InlineKeyboard:
             return None
         return cls(text=data["text"], callback_data=data.get("callback_data"), url=data.get("url"),
                    switch_inline_query=data.get("switch_inline_query"),
-                   switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"),
-                   pay=data.get("pay", False))
+                   switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"))
 
     def to_dict(self):
         """Convert Class to dict
@@ -130,9 +127,6 @@ class InlineKeyboard:
 
         if self.switch_inline_query_current_chat:
             data["switch_inline_query_current_chat"] = self.switch_inline_query_current_chat
-
-        if self.pay:
-            data["pay"] = self.pay
 
         return data
 
