@@ -6,6 +6,14 @@ from bale import User
 
 
 class ContactMessage:
+    """This object shows a Messenge Contact.
+
+        Args:
+            phone_number (int)
+            first_name (str): Defaults to None.
+            last_name (str): Defaults to None.
+            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+    """
     __slots__ = (
         "phone_number",
         "first_name",
@@ -14,25 +22,15 @@ class ContactMessage:
         "bot"
     )
 
-    def __init__(self, phone_number: int, id=None, first_name: str = None, last_name: str = None, bot: "Bot" = None):
-        """This object shows a Messenge Contact.
-
-        Args:
-            phone_number (int)
-            id (int): Defaults to None.
-            first_name (str): Defaults to None.
-            last_name (str): Defaults to None.
-            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
-        """
+    def __init__(self, phone_number: int, first_name: str = None, last_name: str = None, bot: "Bot" = None):
         self.phone_number = phone_number
         self.first_name = first_name
         self.last_name = last_name
-        self.id = id
         self.bot = bot
 
     @property
     def user(self):
-        if self.id.isdigit():
+        if self.id:
             return User(bot=self.bot, id=self.id, first_name=self.first_name, last_name=self.last_name)
         return None
 
@@ -43,11 +41,10 @@ class ContactMessage:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        return cls(username=data["username"], first_name=data["first_name"], last_name=data["last_name"], id=data["id"],
+        return cls(first_name=data["first_name"], last_name=data["last_name"],
                    bot=bot, phone_number=data["phone_number"])
 
     def to_dict(self):
-        data = {"phone_number": self.phone_number, "first_name": self.first_name, "last_name": self.last_name,
-                "id": self.id}
+        data = {"phone_number": self.phone_number, "first_name": self.first_name, "last_name": self.last_name}
 
         return data
