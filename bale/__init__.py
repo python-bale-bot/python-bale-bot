@@ -1,6 +1,7 @@
 from .components import Components, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
+from .attachments.document import Document
 from .payments.price import Price
 from .user import User
 from .attachments.contact import ContactMessage
@@ -25,6 +26,7 @@ __all__ = (
     "InlineKeyboard",
     "Location",
     "Audio",
+    "Document",
     "ContactMessage",
     "Price",
     "BaleError",
