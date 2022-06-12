@@ -4,7 +4,7 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, ContactMessage)
+from bale import (Chat, User, Document, ContactMessage)
 
 
 class Message:
@@ -30,7 +30,7 @@ class Message:
     )
 
     def __init__(self, message_id: str, date: datetime.datetime, text: str = None, caption: str = None,
-                 from_user: "User" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
+                 from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
                  reply_to_message: "Message" = None, new_chat_members: "User" = None,
                  left_chat_member: "User" = None, bot: 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
@@ -41,6 +41,7 @@ class Message:
         self.reply_to_message = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user = from_user if from_user is not None else None
         self.caption = caption if caption is not None else None
+        self.document = document if document is not None else None
         self.contact = contact if contact is not None else None
         self.new_chat_members = new_chat_members if new_chat_members is not None else None
         self.left_chat_member = left_chat_member if left_chat_member is not None else None
@@ -95,6 +96,7 @@ class Message:
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
                        "reply_to_message") else None, date=data.get("date"), text=data.get("text"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
+                   document=Document.from_dict(data=data.get("document")) if data.get("document") else None,
                    new_chat_members=new_chat_members if new_chat_members != [] and new_chat_members is not None else None,
                    left_chat_member=left_chat_member if left_chat_member != [] and left_chat_member is not None else None)
 
@@ -107,6 +109,8 @@ class Message:
             data["from"] = self.from_user.to_dict()
         if self.caption:
             data["caption"] = self.caption
+        if self.document:
+            data["document"] = self.document.to_dict()
         if self.contact:
             data["contact"] = self.contact.to_dict()
         if self.new_chat_members:
