@@ -46,8 +46,8 @@ class Bot:
             return False
         result = self.req("get", "getme", timeout=timeout)
         result = result.json()
-        if result.json()["ok"]:
-            return result.json()["ok"]
+        if result.get("ok"):
+            return result.get("ok")
         raise ApiError(
             str(result.get("error_code")) + result.get("description")
         )
@@ -87,7 +87,7 @@ class Bot:
         """
 
         Args:
-            method:
+            method: 'POST' or 'GET'
             type:
             data:
             params:
@@ -327,7 +327,7 @@ class Bot:
                 timeout (tuple, int) : Defaults to (10, 30).
 
             Returns:
-                :int: Memeber Chat count
+                :int: Member Chat count
             Raises:
                 :class:`bale.Error`
         """
@@ -380,7 +380,6 @@ class Bot:
         Returns:
             List[:class:`bale.Update`]
         """
-        result = []
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
 
@@ -391,15 +390,18 @@ class Bot:
             options["limit"] = limit
 
         updates = self.req("post", "getupdates", options, timeout=timeout)
+        updates = updates.json()
         if updates:
-            if not updates.json()["ok"]:
-                updates = updates.json()
-                raise f"{updates['error_code']} | {updates['description']}"
-            for i in updates.json()["result"]:
-                if offset is not None and i["update_id"] < offset:
+            if not updates.get("ok"):
+                raise ApiError(
+                    updates.get(['error_code']) + updates.get('description')
+                )
+            result = []
+            for i in updates.get("result"):
+                if offset is not None and i.get("update_id") < offset:
                     continue
                 update = Update.from_dict(data=i, bot=self)
                 result.append(update)
-            return result if result is not None else None
+            return result if result is not None and result != [] else None
 
         return None
