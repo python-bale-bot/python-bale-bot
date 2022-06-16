@@ -10,15 +10,14 @@ class Bot:
             token (str): Bot Token.
             base_url (str): API service URL. Defaults to "https://tapi.bale.ai/".
             base_file_url (str): API service file URL. Defaults to "https://tapi.bale.ai/file".
-
         Raises:
             :class:`bale.Error`
     """
     __slots__ = (
-        "_user",
         "token",
         "base_url",
         "base_file_url",
+        "_user",
         "_requests"
     )
 
@@ -28,29 +27,7 @@ class Bot:
         self.base_url = base_url
         self.base_file_url = base_file_url
         self._requests = requests
-        self._user = self.check_token()
-        if not self._user:
-            raise InvalidToken(f"Token {token} is Invalid!")
-
-    def check_token(self, timeout=(30, 10)) -> bool | BaleError:
-        """Check the entered token.
-
-        Args:
-            timeout (tuple, optional): Defaults to (30, 10).
-        Returns:
-            bool: If it is "True" it is returned True, if it is "False" it is returned False.
-        Raises:
-            :class:`BaleError`
-        """
-        if not isinstance(timeout, (tuple, int)):
-            return False
-        result = self.req("get", "getme", timeout=timeout)
-        result = result.json()
-        if result.get("ok"):
-            return result.get("ok")
-        raise ApiError(
-            str(result.get("error_code")) + result.get("description")
-        )
+        self._user = self.get_bot()
 
     def get_bot(self, timeout=(30, 10)) -> (User | BaleError):
         """Get Bot.
@@ -68,16 +45,23 @@ class Bot:
         if result.get("ok", False):
             return User.from_dict(data=result["result"], bot=self)
         else:
-            raise ApiError(
-                str(result.get("error_code")) + result.get("description")
-            )
+            if result.get("description") == "Token not found":
+                raise InvalidToken(
+                    f"Token {self.token} not found!"
+                )
+            else:
+                raise ApiError(
+                    str(result.get("error_code")) + result.get("description")
+                )
 
     @property
-    def bot(self):
+    def user(self) -> User | BaleError:
         """Get Bot User
 
         Returns:
             :class:`bale.User`
+        Raises:
+            :class:`Bale.Error`
         """
         if self._user is None:
             self._user = self.get_bot()
@@ -88,10 +72,10 @@ class Bot:
 
         Args:
             method: 'POST' or 'GET'
-            type:
-            data:
-            params:
-            timeout:
+            type
+            data
+            params
+            timeout (tuple, int): Defaults to (5, 10).
 
         Returns:
             :class:`requests.Response`
