@@ -16,38 +16,38 @@ class Components:
         if keyboards is not None:
             self.keyboards = []
             if isinstance(keyboards, list):
-                for i in keyboards:
-                    if type(i) is dict:
-                        self.keyboards.append([i])
-                    elif type(i) is list:
+                for key in keyboards:
+                    if type(key) is dict:
+                        self.keyboards.append([key])
+                    elif type(key) is list:
                         key_list = []
-                        for i in i:
+                        for i in key:
                             if isinstance(i, Keyboard):
                                 key_list.append(i.to_dict())
                             else:
                                 key_list.append(i)
                         self.keyboards.append(key_list)
-                    elif type(i) is Keyboard:
-                        self.keyboards.append([i.to_dict()])
+                    elif type(key) is Keyboard:
+                        self.keyboards.append([key.to_dict()])
             else:
                 if "name" in keyboards:
                     self.keyboards.append(keyboards)
         if inline_keyboards is not None:
             self.inline_keyboards = []
             if type(inline_keyboards) is list:
-                for i in inline_keyboards:
-                    if type(i) is dict:
-                        self.inline_keyboards.append([i])
-                    elif type(i) is list:
+                for key in inline_keyboards:
+                    if type(key) is dict:
+                        self.inline_keyboards.append([key])
+                    elif type(key) is list:
                         key_list = []
-                        for i in i:
+                        for i in key:
                             if isinstance(i, InlineKeyboard):
                                 key_list.append(i.to_dict())
                             else:
                                 key_list.append(i)
                         self.inline_keyboards.append(key_list)
-                    elif type(i) is InlineKeyboard:
-                        self.inline_keyboards.append([i.to_dict()])
+                    elif type(key) is InlineKeyboard:
+                        self.inline_keyboards.append([key.to_dict()])
             elif type(inline_keyboards) is dict:
                 if "name" in inline_keyboards and "callback_data" in inline_keyboards:
                     self.inline_keyboards.append(inline_keyboards)
