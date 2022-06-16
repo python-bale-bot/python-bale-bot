@@ -122,26 +122,24 @@ class Message:
 
         return data
 
-    def reply(self, text: str, components=None, reply_to_message_id: bool = True, timeout=(10, 30)):
+    def reply(self, text: str, components=None, timeout=(10, 30)):
         """:meth:`bale.Bot.send_message`
 
         Args:
             text (str)
             components (Components, dict): Defaults to None.
-            reply_to_message_id (bool): Defaults to True.
             timeout (tuple): Defaults to (10, 30).
 
         Returns:
             :class:`bale.Message`
         """
         result = self.bot.send_message(chat_id=str(self.chat.id), text=text, components=components,
-                                       reply_to_message_id=str(self.message_id) if reply_to_message_id else None,
+                                       reply_to_message_id=str(self.message_id) if not self.chat.type == Chat.GROUP else None,
                                        timeout=timeout)
         return result
 
     def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
-                      need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True,
-                      reply_to_message_id: bool = True, timeout=(10, 30)):
+                      need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True, timeout=(10, 30)):
         """:meth:`bale.Bot.send_invoice`
 
         Args:
@@ -155,8 +153,7 @@ class Message:
             need_email (bool, optional): Get a Email from "User"?. Defaults to False.
             need_shipping_address (bool, optional): Get a Shipping Address from "User"?. Defaults to False.
             is_flexible (bool, optional): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
-            timeout (tuple, optional): Defaults to (5, 10).            
-            reply_to_message_id (bool, optional): _description_. Defaults to True.
+            timeout (tuple, optional): Defaults to (5, 10).
 
         Returns:
             :class:`Bale.Message`
@@ -165,7 +162,6 @@ class Message:
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
                                         need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible,
-                                        reply_to_message_id=reply_to_message_id if reply_to_message_id else None,
                                         timeout=timeout)
         return message
 
