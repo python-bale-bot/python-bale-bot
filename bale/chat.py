@@ -35,7 +35,7 @@ class Chat:
 
     def __init__(self, id: str, type: str, title: str, username: str, first_name: str, last_name: str,
                  pinned_messages: list["Message"] = [], all_members_are_administrators: bool = True, bot: 'Bot' = None):
-        self.id = id
+        self.id = str(id)
         self.type = type
         self.title = title
         self.username = username
