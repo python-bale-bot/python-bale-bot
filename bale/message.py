@@ -16,6 +16,7 @@ class Message:
         text (str): Message Text. Defaults to None.
         caption (str, optional): Message caption. Defaults to None.
         from_user (:class:`bale.User`): The user who has sent the message. Defaults to None.
+        forward_from (:class:`bale.User`) no description. Defaults to None.
         contact (:class:`bale.ContactMessage`): Defaults to None.
         chat (:class:`bale.Chat`): The chat where the message is sent. Defaults to None.
         reply_to_message (:class:`bale.Message`)
@@ -24,13 +25,13 @@ class Message:
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "date_code", "date", "edit_date",
+        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
         "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
         "reply_to_message", "bot"
     )
 
     def __init__(self, message_id: str, date: datetime.datetime, text: str = None, caption: str = None,
-                 from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
+                 forward_from: "User" = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
                  reply_to_message: "Message" = None, new_chat_members: "User" = None,
                  left_chat_member: "User" = None, bot: 'Bot' = None):
         self.message_id = message_id if message_id is not None else None
@@ -40,6 +41,7 @@ class Message:
         self.chat = chat if chat is not None else None
         self.reply_to_message = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user = from_user if from_user is not None else None
+        self.forward_from = forward_from if forward_from is not None else None
         self.caption = caption if caption is not None else None
         self.document = document if document is not None else None
         self.contact = contact if contact is not None else None
@@ -96,6 +98,7 @@ class Message:
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
                        "reply_to_message") else None, date=data.get("date"), text=data.get("text"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
+                   forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
                    document=Document.from_dict(data=data.get("document")) if data.get("document") else None,
                    new_chat_members=new_chat_members if new_chat_members != [] and new_chat_members is not None else None,
                    left_chat_member=left_chat_member if left_chat_member != [] and left_chat_member is not None else None)
@@ -115,6 +118,8 @@ class Message:
             data["contact"] = self.contact.to_dict()
         if self.new_chat_members:
             data["new_chat_members"] = self.new_chat_members
+        if self.forward_from:
+            data["forward_from"] = self.forward_from.to_dict()
         if self.left_chat_member:
             data["left_chat_member"] = self.left_chat_member
         if self.reply_to_message_id:
