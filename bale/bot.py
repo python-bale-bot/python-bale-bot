@@ -29,7 +29,7 @@ class Bot:
         self._requests = requests
         self._user = self.get_bot()
 
-    def get_bot(self, timeout=(30, 10)) -> (User | BaleError):
+    def get_bot(self, timeout: (tuple, int) = (30, 10)) -> (User | BaleError):
         """Get Bot.
 
         Args:
@@ -94,6 +94,10 @@ class Bot:
             raise TimeOut()
         except requests.ConnectionError:
             raise NetworkError("ConnectionError")
+        except requests.exceptions.InvalidURL:
+            raise ApiError(
+                "Invalid URL : " f"bot" f"{self.token}" "/" f"{type}"
+            )
 
     def delete_webhook(self, timeout=(5, 10)) -> bool | None:
         """This service is used to remove the web hook set for the arm.
@@ -362,7 +366,7 @@ class Bot:
             :class:`bale.Error`
 
         Returns:
-            List[:class:`bale.Update`]
+            List[:class:`bale.Update`] | []
         """
         if not isinstance(timeout, (tuple, int)):
             raise "Time out Not true"
@@ -386,6 +390,6 @@ class Bot:
                     continue
                 update = Update.from_dict(data=i, bot=self)
                 result.append(update)
-            return result if result is not None and result != [] else None
+            return result
 
-        return None
+        return []
