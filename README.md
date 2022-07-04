@@ -61,10 +61,10 @@ pip install python-bale-bot -U
 
 </div>
 
-* [وب سایت بله](https://bale.ai/)
-* [سایت برنامه نویسان بله](https://devbale.ir/)
-* [وب سرویس های بله](https://devbale.ir/api/)
-* [بات ساخت بات در بله](https://ble.ir/@botfather)
+* [Bale WEBSITE](https://bale.ai/)
+* [Bale Developers Portal](https://devbale.ir/)
+* [Bale API](https://devbale.ir/api/)
+* [BotFather in Bale](https://ble.ir/@botfather)
 
 <div align='center'>
 
