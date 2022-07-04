@@ -1,3 +1,5 @@
+from .version import __version__
+from .request.http import HTTPClient
 from .components import Components, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
@@ -11,7 +13,7 @@ from .permissions import AdminPermissions
 from .chatmember import ChatMember, Role
 from .callbackquery import CallbackQuery
 from .update import Update
-from .error import BaleError, InvalidToken, ApiError, NetworkError, TimeOut
+from .error import BaleError, APIError
 from .bot import Bot
 
 __all__ = (
@@ -29,11 +31,9 @@ __all__ = (
     "Document",
     "ContactMessage",
     "Price",
+    "HTTPClient",
     "BaleError",
-    "InvalidToken",
-    "ApiError",
-    "NetworkError",
-    "TimeOut",
+    "APIError",
     "AdminPermissions",
     "ChatMember", 
     "Role"
@@ -41,4 +41,3 @@ __all__ = (
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
-__version__ = '2.1.6.5'
