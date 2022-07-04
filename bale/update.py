@@ -1,14 +1,13 @@
-from typing import TYPE_CHECKING
-
+from __future__ import annotations
+from typing import TYPE_CHECKING, Literal, Dict
+from bale import (Message, CallbackQuery)
 if TYPE_CHECKING:
     from bale import Bot
-
-from bale import Message, CallbackQuery
 
 
 class Update:
     __slots__ = (
-        "id",
+        "update_id",
         "_type",
         "message",
         "callback_query",
@@ -17,19 +16,19 @@ class Update:
         "raw_data"
     )
 
-    def __init__(self, id: int, callback_query: "CallbackQuery" = None, message: "Message" = None,
+    def __init__(self, update_id: int, callback_query: "CallbackQuery" = None, message: "Message" = None,
                  edited_message: "Message" = None, bot: 'Bot' = None, raw_data: dict = None):
         """This object shows an update
 
         Args:
-            id (int): Update ID
+            update_id (int): Update ID
             callback_query (:class:`bale.CallbackQuery`): Defaults to None.
             message (:class:`bale.Message`): Defaults to None.
             edited_message (:class:`bale.Message`): Defaults to None.
             bot (:class:`bale.Bot`): Defaults to None.
             raw_data (dict): Defaults to None.
         """
-        self.id = int(id)
+        self.update_id = int(update_id)
         self.bot = bot
         self.raw_data = raw_data
         self.callback_query = None
@@ -44,7 +43,7 @@ class Update:
             self.edited_message = message
 
     @property
-    def type(self):
+    def type(self) -> Literal['callback_query', 'message', 'unknown']:
         """Chat Type
 
         Returns:
@@ -63,9 +62,7 @@ class Update:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        callback_query = None
-        message = None
-        edited_message = None
+        callback_query, message, edited_message = None, None, None
         if data.get("callback_query"):
             callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot=bot)
             message = callback_query.message
@@ -74,10 +71,10 @@ class Update:
         elif data.get("edited_message"):
             edited_message = Message.from_dict(data=data.get("edited_message"), bot=bot)
 
-        return cls(id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
-                   raw_data=data)
+        return cls(update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
+                   raw_data=data, bot=bot)
 
-    def to_dict(self):
+    def to_dict(self) -> Dict:
         data = {}
 
         if self.type:
