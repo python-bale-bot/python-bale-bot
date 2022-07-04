@@ -6,8 +6,7 @@ def get_readme_file():
     """
         Get Readme File Text
     """
-    with Path("README.md").read_text() as file:
-        return file
+    return Path("./README.md").read_text()
 
 
 if __name__ == "__main__":
