@@ -3,6 +3,9 @@ import aiohttp
 import asyncio
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError)
 
+__all__ = (
+	"HTTPClient"
+)
 
 class Route:
 	"""
