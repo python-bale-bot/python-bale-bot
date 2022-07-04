@@ -1,5 +1,5 @@
 <div align='center'>
-<h1><b> Bale - بله</b></h1>
+<h1><b> Python-Bale-Bot</b></h1>
 
 [![All Contributors](https://img.shields.io/github/contributors/kianahmadian/python-bale-bot)](#contributors-)
 ![Pull Requests](https://img.shields.io/github/issues-pr/kianahmadian/python-bale-bot?)
@@ -34,12 +34,11 @@
 
 ### `⚙` Setup Files 
 * [setup (Python)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.py)
-* [setup (cfd)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.cfd)
 
 
 <div align='center'>
 
-## `⬇` Installing 
+## `⬇` Installing Lib
 
 ### with Git:
 
@@ -57,7 +56,7 @@ pip install python-bale-bot -U
 
 <div align='center'>
 
-## `📡` More Info
+## `📡` Bale Information
 
 </div>
 
