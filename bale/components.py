@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class Components:
     """
         Args:
@@ -60,7 +63,7 @@ class Components:
         """
         return cls(keyboards=data["keyboard"], inline_keyboards=data["inline_keyboard"])
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Convert Class to dict
             Returns:
                 :dict:
@@ -107,7 +110,7 @@ class InlineKeyboard:
                    switch_inline_query=data.get("switch_inline_query"),
                    switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"))
 
-    def to_dict(self):
+    def to_dict(self) -> dict:
         """Convert Class to dict
             Returns:
                 :dict:
@@ -163,3 +166,17 @@ class Keyboard:
             "text": self.text
         }
         return data
+
+
+class RemoveInlineKeyboard:
+    """This object shows a remove keyboard"""
+
+    def __init__(self):
+        pass
+
+    def to_dict(self) -> dict:
+        """Convert Class to dict
+        Returns:
+            :dict:
+        """
+        return {}
