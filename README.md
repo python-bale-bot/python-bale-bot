@@ -25,11 +25,6 @@
 
 ### `📜` License 
 * [MIT License](https://github.com/kianahmadian/python-bale-bot//blob/main/LICENSE)
-
-### `⚙` Setup Files 
-* [setup (Python)](https://github.com/kianahmadian/python-bale-bot//blob/main/setup.py)
-
-
 <div align='center'>
 
 ## `⬇` Installing Lib
@@ -58,11 +53,3 @@ pip install python-bale-bot -U
 * [Bale Developers Portal](https://devbale.ir/)
 * [Bale API](https://devbale.ir/api/)
 * [BotFather in Bale](https://ble.ir/@botfather)
-
-<div align='center'>
-
-## `📚` Social Media
-
-<a href="https://discord.com/users/684748470799958033"> Discord </a>
-
-</div>
