@@ -6,6 +6,16 @@ if TYPE_CHECKING:
 
 
 class Update:
+    """This object shows an update.
+
+    Args:
+        update_id (int): Update ID
+        callback_query (:class:`bale.CallbackQuery`): Defaults to None.
+        message (:class:`bale.Message`): Defaults to None.
+        edited_message (:class:`bale.Message`): Defaults to None.
+        bot (:class:`bale.Bot`): Defaults to None.
+        raw_data (dict): Defaults to None.
+    """
     __slots__ = (
         "update_id",
         "_type",
@@ -18,29 +28,12 @@ class Update:
 
     def __init__(self, update_id: int, callback_query: "CallbackQuery" = None, message: "Message" = None,
                  edited_message: "Message" = None, bot: 'Bot' = None, raw_data: dict = None):
-        """This object shows an update
-
-        Args:
-            update_id (int): Update ID
-            callback_query (:class:`bale.CallbackQuery`): Defaults to None.
-            message (:class:`bale.Message`): Defaults to None.
-            edited_message (:class:`bale.Message`): Defaults to None.
-            bot (:class:`bale.Bot`): Defaults to None.
-            raw_data (dict): Defaults to None.
-        """
         self.update_id = int(update_id)
         self.bot = bot
         self.raw_data = raw_data
-        self.callback_query = None
-        self.message = None
-        self.edited_message = None
-        if callback_query:
-            self.callback_query = callback_query
-            self.message: Message = self.callback_query.message
-        elif message:
-            self.message = message
-        elif edited_message:
-            self.edited_message = message
+        self.callback_query = callback_query if callback_query is not None else None
+        self.message = message if message is not None else None
+        self.edited_message = edited_message if edited_message is not None else None
 
     @property
     def type(self) -> Literal['callback_query', 'message', 'unknown']:
@@ -63,6 +56,7 @@ class Update:
             bot (:class:`bale.Bot`): Bot
         """
         callback_query, message, edited_message = None, None, None
+
         if data.get("callback_query"):
             callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot=bot)
             message = callback_query.message
@@ -70,6 +64,8 @@ class Update:
             message = Message.from_dict(data.get("message"), bot=bot)
         elif data.get("edited_message"):
             edited_message = Message.from_dict(data=data.get("edited_message"), bot=bot)
+        else:
+            raise TypeError("All options are empty.")
 
         return cls(update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
                    raw_data=data, bot=bot)
@@ -80,10 +76,40 @@ class Update:
         if self.type:
             data["type"] = self.type
         if self.callback_query:
-            data["callback_query"] = self.callback_query.to_dict() if self.callback_query is not None else None
+            data["callback_query"] = self.callback_query.to_dict()
         if self.message:
-            data["message"] = self.message.to_dict() if self.message is not None else None
+            data["message"] = self.message.to_dict()
         if self.edited_message:
-            data["edited_message"] = self.edited_message.to_dict() if self.edited_message is not None else None
+            data["edited_message"] = self.edited_message.to_dict()
 
         return data
+
+    def __eq__(self, other):
+        return isinstance(other, Update) and self.update_id == other.update_id
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __le__(self, other):
+        if not isinstance(other, Update):
+            raise NotImplemented
+
+        return self.update_id <= other.update_id
+
+    def __ge__(self, other):
+        if not isinstance(other, Update):
+            raise NotImplemented
+
+        return self.update_id >= other.update_id
+
+    def __lt__(self, other):
+        if not isinstance(other, Update):
+            raise NotImplemented
+
+        return self.update_id < other.update_id
+
+    def __gt__(self, other):
+        return self.__lt__(other)
+
+    def __repr__(self):
+        return f"<Update type={self.type} message={self.message}>"

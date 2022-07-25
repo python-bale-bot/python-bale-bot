@@ -2,10 +2,8 @@ from setuptools import setup, find_packages
 from pathlib import Path
 
 
-def get_readme_file():
-    """
-        Get Readme File Text
-    """
+def get_readme_file() -> str:
+    """Get Readme File"""
     return Path("./README.md").read_text()
 
 
@@ -14,16 +12,16 @@ if __name__ == "__main__":
         name="python-bale-bot",
         version="2.1.6.5",
         platforms=["Windows"],
-        fullname="python-bale-bot-api",
+        fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
         author="Kian Ahmadian",
         license="MIT License",
         project_urls={
-            "Source Code": "https://github.com/kianahmadian/python-bale-bot/blob/main/balebot",
+            "Source Code": "https://github.com/kianahmadian/python-bale-bot/",
             "Documentation": "https://python-bale-bot.readthedocs.io/en/latest/",
             "Bug Tracker": "https://github.com/kianahmadian/python-bale-bot/issues"
         },
-        keywords=["bale", "bot"],
+        keywords=["bale", "bale-bot", "framework"],
         python_requires='>=3.8',
         include_package_data=True,
         url="https://github.com/kianahmadian/python-bale-bot/",

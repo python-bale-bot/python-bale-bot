@@ -1,7 +1,13 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from bale import Components
 if TYPE_CHECKING:
     from bale import Bot, Message
+
+
+__all__ = (
+    "Chat"
+)
 
 
 class Chat:
@@ -14,7 +20,7 @@ class Chat:
             username (str): Chat Username (for DM or PV).
             first_name (str): First name Chat (for DM or PV).
             last_name (str): Last name Chat (for DM or PV).
-            pinned_messages (list[:class:`bale.Message`]): Pinned messages in chat. Defaults to [].
+            pinned_message (:class:`bale.Message`): Pinned messages in chat. Defaults to None.
             all_members_are_administrators (bool): Does everyone have admin access?. Defaults to True. (for Group)
             bot (bale.Bot): Bot Object. Defaults to None.
     """
@@ -28,22 +34,20 @@ class Chat:
         "username",
         "first_name",
         "last_name",
-        "pinned_messages",
+        "pinned_message",
         "all_members_are_administrators",
         "bot"
     )
 
     def __init__(self, chat_id: str, _type: str, title: str, username: str, first_name: str, last_name: str,
-                 pinned_messages=None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
-        if pinned_messages is None:
-            pinned_messages = []
+                 pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
         self.chat_id = str(chat_id)
         self._type = _type
         self.title = title
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
-        self.pinned_messages = pinned_messages
+        self.pinned_message = pinned_message
         self.all_members_are_administrators = all_members_are_administrators
         self.bot = bot
 
@@ -51,16 +55,24 @@ class Chat:
     def type(self):
         return self._type
 
-    def send(self, text: str, components=None):
-        """:meth:`bale.Bot.send_message`.
-
+    async def send(self, text: str, components=None):
+        """Send Message in Chat
+        
         Args:
             text (str): Message Text.
             components (:class:`bale.Components`, dict): Defaults to None.
         Returns:
-            List(:class:`bale.Message`)
+            :class:`bale.Message`
         """
-        return self.bot.send_message(chat_id=self.chat_id, text=text, components=components)
+        if not isinstance(components, Components):
+            raise TypeError(
+                f"components is not a `bale.Components`. this is a {components.__class__}"
+            )
+        
+        if components:
+            components = components.to_dict()
+        response, payload = await self.bot.http.send_message(self.chat_id, text, components=components)
+        return Message.from_dict(data=payload["result"], bot=self.bot)
 
     def get_chat_member(self, user_id: str):
         """:meth:`bale.Bot.get_chat_member`.
@@ -97,13 +109,12 @@ class Chat:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        pinned_messages = []
-        if data.get("pinned_message") and isinstance(data["pinned_message"], list):
-            for i in data["pinned_message"]:
-                pinned_messages.append(Message.from_dict(bot=bot, data=i))
+        pinned_message = None
+        if data.get("pinned_message"):
+            pinned_message = Message.from_dict(bot=bot, data=data.get("pinned_message"))
         return cls(bot=bot, chat_id=data.get("id"), _type=data.get("type"), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
-                   pinned_messages=pinned_messages,
+                   pinned_message=pinned_message,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
 
     def to_dict(self):
@@ -111,23 +122,16 @@ class Chat:
             Returns:
                 :dict:
         """
-        data = {}
-
-        pinned_messages = []
-        if isinstance(data.get("pinned_message"), list):
-            for i in data.get("pinned_message", []):
-                if isinstance(i, Message):
-                    pinned_messages.append(i.to_dict())
-                else:
-                    pinned_messages.append(i)
-
-        data["id"] = self.chat_id
-        data["type"] = self._type
-        data["title"] = self.title
-        data["username"] = self.username
-        data["first_name"] = self.first_name
-        data["last_name"] = self.last_name
-        data["pinned_message"] = pinned_messages
+        data = {
+            "id": self.chat_id,
+            "type": self.type,
+            "title": self.title,
+            "username": self.username,
+            "first_name": self.first_name,
+            "last_name": self.last_name
+        }
+        if self.pinned_message:
+            data["pinned_message"] = self.pinned_message.to_dict()
 
         return data
 
@@ -146,3 +150,6 @@ class Chat:
 
     def __repr__(self):
         return f"<Chat first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username} title={self.title}>"
+
+    async def __aenter__(self):
+        pass

@@ -1,5 +1,5 @@
 ---
-name: Bug report
+name: **Bug reports**
 about: Create a report to help us improve
 title: "<Issus Title> [BUG]"
 labels: ''
@@ -19,6 +19,3 @@ If applicable, add screenshots to help explain your problem.
 💻 **(please complete the following information):**
  - OS: [e.g. Windows 10 64bit]
  - Version [e.g. 2.1.6]
-
-⚙ **Additional context**
-Add any other context about the problem here.

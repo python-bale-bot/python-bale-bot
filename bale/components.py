@@ -1,4 +1,13 @@
 from __future__ import annotations
+from typing import Dict
+
+
+__all__ = (
+    "Components",
+    "Keyboard",
+    "InlineKeyboard",
+    "RemoveComponents"
+)
 
 
 class Components:
@@ -14,46 +23,31 @@ class Components:
     )
 
     def __init__(self, keyboards=None, inline_keyboards=None):
-        self.keyboards = [] if keyboards is not None else None
-        self.inline_keyboards = [] if inline_keyboards is not None else None
-        if keyboards is not None:
-            self.keyboards = []
-            if isinstance(keyboards, list):
-                for key in keyboards:
-                    if type(key) is dict:
-                        self.keyboards.append([key])
-                    elif type(key) is list:
-                        key_list = []
-                        for i in key:
-                            if isinstance(i, Keyboard):
-                                key_list.append(i.to_dict())
-                            else:
-                                key_list.append(i)
-                        self.keyboards.append(key_list)
-                    elif type(key) is Keyboard:
-                        self.keyboards.append([key.to_dict()])
-            else:
-                if "name" in keyboards:
-                    self.keyboards.append(keyboards)
-        if inline_keyboards is not None:
-            self.inline_keyboards = []
-            if type(inline_keyboards) is list:
-                for key in inline_keyboards:
-                    if type(key) is dict:
-                        self.inline_keyboards.append([key])
-                    elif type(key) is list:
-                        key_list = []
-                        for i in key:
-                            if isinstance(i, InlineKeyboard):
-                                key_list.append(i.to_dict())
-                            else:
-                                key_list.append(i)
-                        self.inline_keyboards.append(key_list)
-                    elif type(key) is InlineKeyboard:
-                        self.inline_keyboards.append([key.to_dict()])
-            elif type(inline_keyboards) is dict:
-                if "name" in inline_keyboards and "callback_data" in inline_keyboards:
-                    self.inline_keyboards.append(inline_keyboards)
+
+        if not keyboards and not inline_keyboards:
+            raise TypeError("All params are empty!\nplease use bale.RemoveComponents to remove components")
+
+        if not (isinstance(keyboards, list) or isinstance(inline_keyboards, list)):
+            raise TypeError("The type of parameter entered is incorrect.")
+
+        self.keyboards = []
+        self.inline_keyboards = []
+
+        if keyboards:
+            for obj in keyboards:
+                if not isinstance(obj, Keyboard):
+                    raise TypeError("object is not a Keyboard its a {}".format(obj.__class__))
+
+                keyboard = obj
+                self.keyboards.append(keyboard)
+
+        if inline_keyboards:
+            for obj in inline_keyboards:
+                if not isinstance(obj, InlineKeyboard):
+                    raise TypeError("object is not a InlineKeyboard its a {}".format(obj.__class__))
+
+                inline_keyboard = obj
+                self.inline_keyboards.append(inline_keyboard)
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -63,7 +57,7 @@ class Components:
         """
         return cls(keyboards=data["keyboard"], inline_keyboards=data["inline_keyboard"])
 
-    def to_dict(self) -> dict:
+    def to_dict(self) -> Dict:
         """Convert Class to dict
             Returns:
                 :dict:
@@ -71,7 +65,7 @@ class Components:
         data = {
             "keyboard": self.keyboards,
             "inline_keyboard": self.inline_keyboards
-        } if self.keyboards or self.inline_keyboards else []
+        }
 
         return data
 
@@ -168,11 +162,8 @@ class Keyboard:
         return data
 
 
-class RemoveInlineKeyboard:
+class RemoveComponents:
     """This object shows a remove keyboard"""
-
-    def __init__(self):
-        pass
 
     def to_dict(self) -> dict:
         """Convert Class to dict

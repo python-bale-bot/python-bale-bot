@@ -1,7 +1,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
+from bale import Components
 if TYPE_CHECKING:
-    from bale import Bot
+    from bale import (Bot, Message)
 
 
 class User:
@@ -30,13 +31,17 @@ class User:
         self.bot = bot
 
     @property
+    def mention(self):
+        return f"@{self.user_id}"
+
+    @property
     def link(self):
         if self.username:
             return "https://ble.ir/@{username}".format(username=self.username)
         return None
 
-    def send(self, text: str, components=None):
-        """:meth:`bale.Bot.send_message`
+    async def send(self, text: str, components=None):
+        """Send a Text Message to User
 
         Args:
             text (str): Message Text.
@@ -44,7 +49,15 @@ class User:
         Returns:
             :class:`bale.Message`
         """
-        return self.bot.send_message(chat_id=str(self.user_id), text=text, components=components)
+        if not isinstance(components, Components):
+            raise TypeError(
+                f"components is not a `bale.Components`. this is a {components.__class__}"
+            )
+        
+        if components:
+            components = components.to_dict()
+        response, payload = await self.bot.http.send_message(str(self.user_id), text, components=components)
+        return Message.from_dict(data=payload["result"], bot=self.bot)
 
     @classmethod
     def from_dict(cls, data: dict, bot=None):

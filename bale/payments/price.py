@@ -1,3 +1,6 @@
+from __future__ import annotations
+
+
 class Price:
     """This object shows a Price
 
@@ -24,7 +27,7 @@ class Price:
             Returns:
                 :dict:
         """
-        data = {
+        data: dict[str, int | str] = {
             "label": self.label,
             "amount": self.amount
         }

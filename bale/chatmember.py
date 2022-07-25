@@ -1,4 +1,3 @@
-"""Import `bale.Permissions` and `bale.User`"""
 from bale import (AdminPermissions, User)
 
 
@@ -7,9 +6,6 @@ class Role:
     __slots__ = ()
     OWNER = "creator"
     ADMIN = "administrator"
-
-    def __init__(self):
-        pass
 
 
 class ChatMember:
@@ -21,12 +17,12 @@ class ChatMember:
             permissions (:class:`bale.AdminPermissions`): User Permissions. Defaults to None.
     """
     __slots__ = (
-        "role", "user", "permissions"
+        "role", "_user", "permissions"
     )
 
     def __init__(self, role: str = None, user=None, permissions=None):
         self.role = role
-        self.user = user
+        self._user = user
         self.permissions = permissions
 
     @property
@@ -36,7 +32,7 @@ class ChatMember:
         Returns:
             bool: if the member was the admin, it will be returned "True" and otherwise "False".
         """
-        return True if self.role == Role.ADMIN or self.role == Role.OWNER else False
+        return self.role == Role.ADMIN or self.role == Role.OWNER
 
     @property
     def is_owner(self):
@@ -45,7 +41,7 @@ class ChatMember:
         Returns:
             bool: if the member was the owner, it will be returned "True" and otherwise "False".
         """
-        return True if self.role == Role.OWNER else False
+        return self.role == Role.OWNER
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -57,4 +53,4 @@ class ChatMember:
         for i in AdminPermissions.PERMISSIONS_LIST:
             permissions[i] = data.get(i, False)
 
-        return cls(permissions=permissions, user=User.from_dict(data.get("user")), role=data.get("status"))
+        return cls(permissions=permissions, _user=User.from_dict(data.get("user")), role=data.get("status"))

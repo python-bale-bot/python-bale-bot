@@ -3,13 +3,10 @@ from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
 from bale import User, Message
-import logging
 
 __all__ = (
     "CallbackQuery"
 )
-
-_log = logging.getLogger(__name__)
 
 
 class CallbackQuery:
@@ -48,8 +45,8 @@ class CallbackQuery:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        return cls(bot=bot, data=data["data"], callback_id=data["id"], message=Message.from_dict(data["message"], bot=bot),
-                   inline_message_id=data["inline_message_id"], from_user=User.from_dict(bot=bot, data=data["from"]))
+        return cls(bot=bot, data=data.get("data"), callback_id=data.get("id"), message=Message.from_dict(data.get("message"), bot=bot),
+                   inline_message_id=data.get("inline_message_id"), from_user=User.from_dict(bot=bot, data=data.get("from")))
 
     def to_dict(self):
         """Convert Class to dict

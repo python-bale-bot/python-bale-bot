@@ -7,6 +7,7 @@ __all__ = (
 	"HTTPClient"
 )
 
+
 class Route:
 	"""
 		Args:
@@ -23,7 +24,7 @@ class Route:
 		"token"
 	)
 
-	def __init__(self, method: str, path: str, token: str):
+	def __init__(self, method: str, path: str, token: str = None):
 		self.url = self.BASE
 		if token is not None:
 			self.url += token
@@ -35,10 +36,19 @@ class Route:
 class HTTPClient:
 	"""Send a Request to BALE API Server"""
 
+	__slots__ = (
+		"loop",
+		"connector",
+		"token",
+		"__session",
+		"conn_timeout",
+		"read_timeout"
+	)
+
 	def __init__(self, loop=None, connector=None, token=None, conn_timeout=None, read_timeout=None):
 		self.loop = loop if loop is not None else asyncio.get_event_loop()
-		self.connector = connector if connector is not None else None
-		self.token = token if token is not None else None
+		self.connector = connector
+		self.token = token
 		self.__session = aiohttp.ClientSession(connector=self.connector)
 		self.conn_timeout = conn_timeout if conn_timeout is not None else 300.0
 		self.read_timeout = read_timeout if read_timeout is not None else 300.0
@@ -51,8 +61,8 @@ class HTTPClient:
 		url = route.url
 		method = route.method
 
-		if 'json' in kwargs:
-			kwargs["data"] = kwargs["json"]
+		if "json" in kwargs:
+			kwargs["data"] = kwargs.pop("json")
 
 		if not kwargs.get("conn_timeout"):
 			kwargs["conn_timeout"] = self.conn_timeout
@@ -81,7 +91,7 @@ class HTTPClient:
 		except aiohttp.client_exceptions.ServerTimeoutError:
 			raise TimeOut()
 
-		raise HTTPException(response, response.json())
+		# raise HTTPException(response, response.json())
 
 	def send_message(self, chat_id, text, *, components=None, reply_to_message_id=None):
 		payload = {
