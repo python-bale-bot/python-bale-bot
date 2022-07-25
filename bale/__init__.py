@@ -16,6 +16,7 @@ from .update import Update
 from .error import BaleError, APIError
 from .bot import Bot
 
+
 __all__ = (
     "Bot",
     "CallbackQuery",
