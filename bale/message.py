@@ -1,3 +1,5 @@
+from __future__ import annotations
+
 import datetime
 from typing import TYPE_CHECKING, List
 
@@ -32,22 +34,21 @@ class Message:
 
     def __init__(self, message_id: int, date: datetime.datetime, text: str = None, caption: str = None,
                  forward_from: "User" = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
-                 reply_to_message: "Message" = None, new_chat_members: "User" = None,
-                 left_chat_member: "User" = None, bot: 'Bot' = None, **options):
-        self.message_id : int = message_id if message_id is not None else None
+                 reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
+        self.message_id: int = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
-        self.text : str | None = text if text is not None else None
-        self.chat : Chat | None = chat if chat is not None else None
-        self.reply_to_message : Message | None = reply_to_message if reply_to_message is not None else reply_to_message
-        self.from_user : User | None = from_user if from_user is not None else None
-        self.forward_from : User | None = forward_from if forward_from is not None else None
-        self.caption : str | None = caption if caption is not None else None
+        self.text: str | None = text if text is not None else None
+        self.chat: Chat | None = chat if chat is not None else None
+        self.reply_to_message: Message | None = reply_to_message if reply_to_message is not None else reply_to_message
+        self.from_user: User | None = from_user if from_user is not None else None
+        self.forward_from: User | None = forward_from if forward_from is not None else None
+        self.caption: str | None = caption if caption is not None else None
         self.document = document if document is not None else None
-        self.contact : ContactMessage | None = contact if contact is not None else None
-        self.new_chat_members : List[User] | None = options.get("new_chat_members")
-        self.left_chat_member : User | None = options.get("left_chat_member")
-        self.bot : Bot = bot if bot is not None else None
+        self.contact: ContactMessage | None = contact if contact is not None else None
+        self.new_chat_members: List[User] | None = options.get("new_chat_members")
+        self.left_chat_member: User | None = options.get("left_chat_member")
+        self.bot: Bot = bot if bot is not None else None
 
     @property
     def author(self):
@@ -55,7 +56,7 @@ class Message:
             if self.chat.type == Chat.PRIVATE:
                 return User(user_id=int(self.chat.chat_id), first_name=self.chat.first_name, last_name=self.chat.last_name,
                             username=self.chat.username, bot=self.bot)
-            elif self.chat.type == Chat.GROUP: 
+            elif self.chat.type == Chat.GROUP:
                 return User(bot=self.bot, user_id=self.from_user.user_id, first_name=self.from_user.first_name,
                             last_name=self.from_user.last_name, username=self.from_user.username)
         return None
@@ -184,7 +185,7 @@ class Message:
         Return:
             bool: if done "True" if not "False"
         """
-        message = self.bot.delete_message(chat_id=self.chat.chat_id, message_id=self.message_id)
+        message = self.bot.delete_message(chat_id=self.chat.chat_id, message_id=str(self.message_id))
         return message
 
     def __str__(self):
