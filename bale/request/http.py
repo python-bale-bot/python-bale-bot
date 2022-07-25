@@ -117,7 +117,7 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendInvoice", self.token), json=payload)
 
-	def edit_message_text(self, chat_id, message_id, text, components=None):
+	def edit_message(self, chat_id, message_id, text, components=None):
 		payload = {
 			"chat_id": chat_id,
 			"message_id": message_id,
