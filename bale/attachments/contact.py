@@ -6,7 +6,7 @@ from bale import User
 
 
 class ContactMessage:
-    """This object shows a Messenge Contact.
+    """This object shows a Message Contact.
 
         Args:
             phone_number (int)
@@ -31,7 +31,7 @@ class ContactMessage:
     @property
     def user(self):
         if self.id:
-            return User(bot=self.bot, id=self.id, first_name=self.first_name, last_name=self.last_name)
+            return User(bot=self.bot, user_id=self.id, first_name=self.first_name, last_name=self.last_name)
         return None
 
     @classmethod
