@@ -1,6 +1,29 @@
+"""
+    MIT License
+
+    Copyright (c) 2022 kian Ahmadian
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+"""
+
 from __future__ import annotations
 from typing import TYPE_CHECKING
-from bale import Components
 if TYPE_CHECKING:
     from bale import Bot, Message
 
@@ -39,9 +62,9 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: str, _type: str, title: str, username: str, first_name: str, last_name: str,
+    def __init__(self, chat_id: int | str, _type: str, title: str, username: str, first_name: str, last_name: str,
                  pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
-        self.chat_id = str(chat_id)
+        self.chat_id = chat_id
         self._type = _type
         self.title = title
         self.username = username
@@ -53,6 +76,7 @@ class Chat:
 
     @property
     def type(self):
+        """Get Chat type"""
         return self._type
 
     async def send(self, text: str, components=None):
@@ -64,17 +88,9 @@ class Chat:
         Returns:
             :class:`bale.Message`
         """
-        if not isinstance(components, Components):
-            raise TypeError(
-                f"components is not a `bale.Components`. this is a {components.__class__}"
-            )
-        
-        if components:
-            components = components.to_dict()
-        response, payload = await self.bot.http.send_message(self.chat_id, text, components=components)
-        return Message.from_dict(data=payload["result"], bot=self.bot)
+        return await self.bot.send_message(self.chat_id, text, components=components)
 
-    def get_chat_member(self, user_id: str):
+    async def get_chat_member(self, user_id: str):
         """:meth:`bale.Bot.get_chat_member`.
 
             Args:
@@ -82,17 +98,17 @@ class Chat:
             Returns:
                 :class:`bale.ChatMember`
         """
-        return self.bot.get_chat_member(chat_id=self.chat_id, user_id=user_id)
+        return await self.bot.get_chat_member(chat_id=self.chat_id, user_id=user_id)
 
-    def get_chat_members_count(self):
+    async def get_chat_members_count(self):
         """:meth:`bale.Bot.get_chat_members_count`.
 
             Returns:
                 :int:
         """
-        return self.bot.get_chat_members_count(chat_id=self.chat_id)
+        return await self.bot.get_chat_members_count(chat_id=self.chat_id)
 
-    def chat_administrators(self):
+    async def get_chat_administrators(self):
         """:meth:`bale.Bot.get_chat_administrators`.
 
         Raises:
@@ -100,7 +116,7 @@ class Chat:
         Returns:
             List[:class:`bale.ChatMember`]
         """
-        return self.bot.get_chat_administrators(self.chat_id)
+        return await self.bot.get_chat_administrators(self.chat_id)
 
     @classmethod
     def from_dict(cls, data: dict, bot):
@@ -109,18 +125,15 @@ class Chat:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        pinned_message = None
-        if data.get("pinned_message"):
-            pinned_message = Message.from_dict(bot=bot, data=data.get("pinned_message"))
         return cls(bot=bot, chat_id=data.get("id"), _type=data.get("type"), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
-                   pinned_message=pinned_message,
+                   pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
 
     def to_dict(self):
         """Convert Class to dict
-            Returns:
-                :dict:
+        Returns:
+            :dict:
         """
         data = {
             "id": self.chat_id,
@@ -150,6 +163,3 @@ class Chat:
 
     def __repr__(self):
         return f"<Chat first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username} title={self.title}>"
-
-    async def __aenter__(self):
-        pass

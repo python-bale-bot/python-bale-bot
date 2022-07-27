@@ -1,3 +1,27 @@
+"""
+    MIT License
+
+    Copyright (c) 2022 kian Ahmadian
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+"""
+
 from __future__ import annotations
 
 import datetime
@@ -13,7 +37,7 @@ class Message:
     """This object shows a message
 
     Args:
-        message_id (str): Message ID.
+        message_id (str | int): Message ID.
         date (datetime.datetime): When the message has been sent.
         text (str): Message Text. Defaults to None.
         caption (str, optional): Message caption. Defaults to None.
@@ -32,10 +56,10 @@ class Message:
         "reply_to_message", "bot"
     )
 
-    def __init__(self, message_id: int, date: datetime.datetime, text: str = None, caption: str = None,
+    def __init__(self, message_id: int | str, date: datetime.datetime, text: str = None, caption: str = None,
                  forward_from: "User" = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
                  reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
-        self.message_id: int = message_id if message_id is not None else None
+        self.message_id: int | str = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
         self.text: str | None = text if text is not None else None
@@ -136,7 +160,7 @@ class Message:
         Returns:
             :class:`bale.Message`
         """
-        result = self.bot.send_message(chat_id=str(self.chat.chat_id), text=text, components=components,
+        result = self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
                                        reply_to_message_id=str(self.message_id) if not self.chat.type == Chat.GROUP else None)
         return result
 

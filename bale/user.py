@@ -1,3 +1,27 @@
+"""
+    MIT License
+
+    Copyright (c) 2022 kian Ahmadian
+
+    Permission is hereby granted, free of charge, to any person obtaining a copy
+    of this software and associated documentation files (the "Software"), to deal
+    in the Software without restriction, including without limitation the rights
+    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+    copies of the Software, and to permit persons to whom the Software is
+    furnished to do so, subject to the following conditions:
+
+    The above copyright notice and this permission notice shall be included in all
+    copies or substantial portions of the Software.
+
+    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+    SOFTWARE.
+"""
+
 from __future__ import annotations
 from typing import TYPE_CHECKING
 from bale import Components
@@ -6,6 +30,14 @@ if TYPE_CHECKING:
 
 
 class User:
+    """This object shows a user.
+        Args:
+            user_id (int): User ID.
+            first_name (str): first user name
+            last_name (str): last user name. Defaults to None.
+            username (str): Username of the user. Defaults to None.
+            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+    """
     __slots__ = (
         "first_name",
         "last_name",
@@ -15,15 +47,6 @@ class User:
     )
 
     def __init__(self, user_id: int, first_name: str, last_name: str = None, username: str = None, bot: 'Bot' = None):
-        """This object shows a user.
-
-        Args:
-            user_id (int): User ID.
-            first_name (str): first user name
-            last_name (str): last user name. Defaults to None.
-            username (str): Username of the user. Defaults to None.
-            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
-        """
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -32,10 +55,12 @@ class User:
 
     @property
     def mention(self):
-        return f"@{self.user_id}"
+        """Mention User"""
+        return f"@{self.username}"
 
     @property
     def link(self):
+        """Get user link in bale"""
         if self.username:
             return "https://ble.ir/@{username}".format(username=self.username)
         return None
@@ -70,6 +95,10 @@ class User:
                    user_id=data.get("id"), bot=bot)
 
     def to_dict(self):
+        """Convert Class to dict
+        Returns:
+            :dict:
+        """
         data = {"first_name": self.first_name if self.first_name is not None else None,
                 "last_name": self.last_name if self.last_name is not None else None,
                 "username": self.username if self.username is not None else None,
