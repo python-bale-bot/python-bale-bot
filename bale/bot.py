@@ -24,6 +24,8 @@
 
 from __future__ import annotations
 import asyncio
+from typing import Callable, Dict, Tuple, List
+from builtins import enumerate, reversed
 from bale import (Message, Update, User, Components, Chat, Price, ChatMember, HTTPClient)
 
 
@@ -52,6 +54,8 @@ class Bot:
         "loop",
         "token",
         "loop",
+        "events",
+        "listeners",
         "_user",
         "http",
         "_closed"
@@ -62,7 +66,35 @@ class Bot:
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, connector=kwargs.get("connector"), token=token)
         self._user = None
+        self.events: Dict[str, Callable] = {}
+        self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
+
+    def event(self, function):
+        """Register a Event"""
+        if asyncio.iscoroutinefunction(function):
+            raise TypeError(f"{function.__name__} is a Coroutine Function")
+
+        setattr(self.events, function.__name__, function)
+        return function
+
+    def wait_for(self, event_name: str, check = None, timeout = None):
+        """Wait for an event"""
+        self.loop: asyncio.AbstractEventLoop
+        future = self.loop.create_future()
+        event_name = event_name.lower()
+        if check:
+            def event_check(*args):
+                return True
+            check = event_check
+
+        listeners = self.listeners.get(event_name)
+        if not listeners:
+            listeners = []
+            self.listeners[event_name] = listeners
+
+        listeners.append((future, check))
+        return asyncio.wait_for(future, timeout = timeout)
 
     async def __aenter__(self):
         loop = asyncio.get_running_loop()
@@ -83,6 +115,55 @@ class Bot:
         """:class:`bool`: Connection Status"""
         return self._closed
 
+    async def run_event(self, core, event_name, *args, **kwargs):
+        """Run Core Event"""
+        try:
+            await core(*args, **kwargs)
+        except Exception as ext:
+            await self.on_error(event_name, ext)
+
+    def call_to_run_event(self, core, event_name, *args, **kwargs):
+        """Call to Run Event Method"""
+        task = self.run_event(core, event_name, *args, **kwargs)
+        self.loop: asyncio.AbstractEventLoop
+        return self.loop.create_task(task, name = event_name)
+
+    def dispatch(self, event_name, /, *args, **kwargs):
+        """Dispatching event to all listeners"""
+        method = "on_" + event_name
+        listeners = self.listeners.get(event_name)
+        if listeners:
+            removed = []
+            for index, (future, check) in enumerate(listeners):
+                if future.cancelled():
+                    removed.append(index)
+                    continue
+                try:
+                    result = check(args)
+                except Exception as __exception:
+                    future.set_exception(__exception)
+                    removed.append(index)
+                else:
+                    if result:
+                        if len(args) == 0:
+                            future.set_result(None)
+                        else:
+                            future.set_result(args[0] if len(args) == 1 else args)
+
+            if len(listeners) == len(removed):
+                self.listeners.pop(event_name)
+            else:
+                for index in reversed(removed):
+                    del listeners[index]
+
+        event_core = getattr(self.events, method, None)
+        if event_core:
+            self.call_to_run_event(event_core, method, *args, **kwargs)
+
+    async def on_error(self, event_name, error):
+        """a Event for get errors when exceptions"""
+        print("error", event_name, error)
+
     def _get_bot(self) -> User:
         """Get Bot.
 
@@ -100,11 +181,7 @@ class Bot:
 
         Returns:
             :class:`bale.User`
-        Raises:
-            :class:`Bale.Error`
         """
-        if self._user is None:
-            self._user = self._get_bot()
         return self._user
 
     async def delete_webhook(self) -> bool:
@@ -314,12 +391,12 @@ class Bot:
         """
         if offset and not isinstance(offset, int):
             raise TypeError(
-                f"offset is not a int."
+                f"offset is not a int"
             )
 
         if limit and not isinstance(limit, int):
             raise TypeError(
-                f"limit is not a int."
+                f"limit is not a int"
             )
 
         response, payload = await self.http.get_updates(offset, limit)
