@@ -23,12 +23,12 @@
      required: true
   - type: textarea
     attributes:
+      label: Exception Result
+      description: What did you expect to happen?
+    validations:
+      required: true
+  - type: textarea
+    attributes:
      label: System Information
     validations:
      required: false
-  - type: textarea
-    attributes:
-     label: Exception Result
-     description: What did you expect to happen?
-    validations:
-     required: true
