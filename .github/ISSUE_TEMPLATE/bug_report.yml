@@ -4,13 +4,6 @@
  body:
   - type: input
     attributes:
-     label: Title
-     description: >
-      A short summary of what your feature request is.
-    validations:
-     required: true
-  - type: input
-    attributes:
      label: what is your bale bot version?
     validations:
      required: true
