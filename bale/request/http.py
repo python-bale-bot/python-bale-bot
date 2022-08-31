@@ -41,10 +41,11 @@ class Route:
 		"token"
 	)
 
-	def __init__(self, method: str, path: str, token: str = None):
+	def __init__(self, method: str, path: str, token: str):
+		if not isinstance(token, str):
+			raise TypeError("token is not str!\ntoken is a {}".format(token.__class__))
 		self.url = self.BASE
-		if token is not None:
-			self.url += token
+		self.url += "bot" + token
 		self.url += path
 		self.method = method
 		self.path = path
@@ -71,10 +72,12 @@ class HTTPClient:
 		self.read_timeout = read_timeout if read_timeout is not None else 300.0
 
 	def reload_session(self):
+		"""Reset Session"""
 		if self.__session.closed:
 			self.__session = aiohttp.ClientSession(connector=self.connector)
 
 	async def close(self):
+		"""Close Session connection"""
 		if self.__session:
 			await self.__session.close()
 
