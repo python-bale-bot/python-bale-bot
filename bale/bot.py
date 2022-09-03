@@ -26,7 +26,7 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List
 from builtins import enumerate, reversed
-from bale import (Message, Update, User, Components, Chat, Price, ChatMember, HTTPClient)
+from bale import (Message, Update, User, Components, Chat, Price, ChatMember, HTTPClient, Updater)
 
 
 __all__ = (
@@ -56,6 +56,7 @@ class Bot:
         "loop",
         "events",
         "listeners",
+        "updater",
         "_user",
         "http",
         "_closed"
@@ -66,6 +67,7 @@ class Bot:
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, connector=kwargs.get("connector"), token=token)
         self._user = None
+        self.updater = Updater(self)
         self.events: Dict[str, Callable] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
@@ -164,7 +166,7 @@ class Bot:
         """a Event for get errors when exceptions"""
         print("error", event_name, error)
 
-    def _get_bot(self) -> User:
+    async def _get_bot(self) -> User:
         """Get Bot.
 
         Returns:
@@ -172,7 +174,7 @@ class Bot:
         Raises:
             :class:`Bale.Error`
         """
-        response, payload = self.http.get_bot()
+        response, payload = await self.http.get_bot()
         return User.from_dict(data=payload.get("result"), bot=self)
 
     @property
@@ -402,6 +404,11 @@ class Bot:
         response, payload = await self.http.get_updates(offset, limit)
         return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not (offset is not None and update_payload.get("update_id") < offset)]
 
+    async def connect(self):
+        """Get bot and Start Updater"""
+        self._user = self._get_bot()
+        self.updater.start()
+
     async def run(self):
         """
             run bot and https
@@ -409,6 +416,6 @@ class Bot:
         async def main():
             """a runner for `asyncio.run`"""
             async with self:
-                self._user = self._get_bot()
+                await self.connect()
 
         asyncio.run(main())
