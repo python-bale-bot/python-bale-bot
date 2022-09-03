@@ -24,7 +24,6 @@
 
 from bale.version import BALE_API_BASE_URL
 import aiohttp
-import asyncio
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError)
 
 __all__ = ("HTTPClient",)
@@ -44,11 +43,10 @@ class Route:
 	def __init__(self, method: str, path: str, token: str):
 		if not isinstance(token, str):
 			raise TypeError("token is not str!\ntoken is a {}".format(token.__class__))
-		self.url = self.BASE
-		self.url += "bot" + token
-		self.url += path
+		self.url = self.BASE + "bot" + token + "/" + path
 		self.method = method
 		self.path = path
+		self.token = token
 
 
 class HTTPClient:
@@ -56,25 +54,19 @@ class HTTPClient:
 
 	__slots__ = (
 		"loop",
-		"connector",
 		"token",
-		"__session",
-		"conn_timeout",
-		"read_timeout"
+		"__session"
 	)
 
-	def __init__(self, loop=None, connector=None, token=None, conn_timeout=None, read_timeout=None):
-		self.loop = loop if loop is not None else asyncio.get_event_loop()
-		self.connector = connector
+	def __init__(self, loop, token=None):
+		self.__session = None
+		self.loop = loop
 		self.token = token
-		self.__session = aiohttp.ClientSession(connector=self.connector)
-		self.conn_timeout = conn_timeout if conn_timeout is not None else 300.0
-		self.read_timeout = read_timeout if read_timeout is not None else 300.0
 
 	def reload_session(self):
 		"""Reset Session"""
 		if self.__session.closed:
-			self.__session = aiohttp.ClientSession(connector=self.connector)
+			self.__session = aiohttp.ClientSession(loop=self.loop)
 
 	async def close(self):
 		"""Close Session connection"""
@@ -87,12 +79,6 @@ class HTTPClient:
 
 		if "json" in kwargs:
 			kwargs["data"] = kwargs.pop("json")
-
-		if not kwargs.get("conn_timeout"):
-			kwargs["conn_timeout"] = self.conn_timeout
-
-		if not kwargs.get("read_timeout"):
-			kwargs["read_timeout"] = self.read_timeout
 
 		try:
 			async with self.__session.request(method=method, url=url, **kwargs) as response:
@@ -169,6 +155,7 @@ class HTTPClient:
 		return self.request(Route("GET", "deleteWebhook", self.token))
 
 	def get_bot(self):
+		self.__session = aiohttp.ClientSession(loop=self.loop)
 		return self.request(Route("GET", "getme", self.token))
 
 	def get_chat(self, chat_id):

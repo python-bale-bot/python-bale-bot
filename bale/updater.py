@@ -55,16 +55,16 @@ class Updater:
 		self._last_offset = None
 		self._is_running = False
 
-	def start(self):
+	async def start(self):
 		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
 		self._is_running = True
-		self.poll_event()
+		await self.poll_event()
 
-	def poll_event(self):
+	async def poll_event(self):
 		"""A loop for get updates in dispatch"""
-		if self._is_running:
+		if not self._is_running:
 			raise RuntimeError("Updater is running")
 		while self._is_running:
 			if self.bot.close():
@@ -78,7 +78,7 @@ class Updater:
 			for update in updates:
 				self.bot.dispatch("update", update)
 
-			self._last_offset = updates[0].update_id if bool(updates) else self._last_offset
+			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
 
 	def stop(self):
 		"""Stop running and Stop `poll_event` loop"""

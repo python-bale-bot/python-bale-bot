@@ -114,9 +114,9 @@ class Message:
             new_chat_members = []
             for i in data.get("new_chat_members"):
                 new_chat_members.append(User.from_dict(bot=bot, data=i))
-            options.__setattr__("new_chat_members", new_chat_members)
+            options["new_chat_members"] = new_chat_members
         if data.get("left_chat_member"):
-            options.__setattr__("new_chat_members", User.from_dict(bot=bot, data=data.get("left_chat_member")))
+            options["left_chat_member"] = User.from_dict(bot=bot, data=data.get("left_chat_member"))
 
         return cls(bot=bot, message_id=data.get("message_id"),
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
