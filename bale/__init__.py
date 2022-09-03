@@ -13,6 +13,7 @@ from .permissions import AdminPermissions
 from .chatmember import ChatMember, Role
 from .callbackquery import CallbackQuery
 from .update import Update
+from .updater import Updater
 from .error import BaleError, APIError
 from .bot import Bot
 
@@ -24,6 +25,7 @@ __all__ = (
     "Chat",
     "Message",
     "User",
+    "Updater",
     "Components",
     "Keyboard",
     "InlineKeyboard",
