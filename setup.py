@@ -10,7 +10,7 @@ def get_readme_file() -> str:
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.1.6.5",
+        version="2.2.0",
         platforms=["Windows"],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
