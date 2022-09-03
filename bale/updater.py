@@ -20,10 +20,10 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 """
-from typing import TYPE_CHECKING, List
 import asyncio
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-	from bale import Bot, Update
+	from bale import Bot
 
 __all__ = (
 	"Updater",
@@ -32,9 +32,13 @@ __all__ = (
 class Updater:
 	"""This object represents a Bale Bot.
 
+		Attributes:
+			bot (:class:`telegram.Bot`): The bot used with this Updater.
+            update_queue (:class:`asyncio.Queue`): Queue for the updates.
+            _last_offset (int | None): Last of Offset for get updates.
+            _is_running (bool): get status of updater.
         Args:
             bot (:class:`bale.Bot`): Bot.
-            update_queue (:class:`asyncio.Queue`): Update queue.
         Raises:
             :class:`bale.Error`
     """
@@ -42,40 +46,42 @@ class Updater:
 		"bot",
 		"update_queue",
 		"_last_offset",
-		"__lock",
 		"_is_running"
 	)
 
-	def __init__(self, bot: "Bot", update_queue: asyncio.Queue):
+	def __init__(self, bot: "Bot"):
 		self.bot = bot
-		self.update_queue = update_queue
+		self.update_queue = asyncio.Queue()
 		self._last_offset = None
-		self.__lock = asyncio.Lock()
 		self._is_running = False
 
 	def start(self):
+		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
-
 		self._is_running = True
+		self.poll_event()
 
-	def get_updates(self):
+	def poll_event(self):
+		"""A loop for get updates in dispatch"""
+		if self._is_running:
+			raise RuntimeError("Updater is running")
 		while self._is_running:
-			async with self.__lock:
-				if self.bot.close():
-					raise RuntimeError("Bot is Closed!")
+			if self.bot.close():
+				raise RuntimeError("Bot is Closed!")
 
-				if not self._is_running:
-					raise RuntimeError("Updater is not running")
+			if not self._is_running:
+				raise RuntimeError("Updater is not running")
 
-				updates: List["Update"] = await self.bot.get_updates(offset=self._last_offset)
+			updates = await self.bot.get_updates(offset=self._last_offset)
 
-				for update in updates:
-					self.bot.dispatch("update", update)
+			for update in updates:
+				self.bot.dispatch("update", update)
 
-				self._last_offset = updates[0].update_id if bool(updates) else self._last_offset
+			self._last_offset = updates[0].update_id if bool(updates) else self._last_offset
 
 	def stop(self):
+		"""Stop running and Stop `poll_event` loop"""
 		if not self._is_running:
 			raise RuntimeError("Updater is not running")
 
