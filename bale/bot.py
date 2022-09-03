@@ -46,7 +46,15 @@ class Bot:
 
         Args:
             token (str): Bot Token.
-                
+        Attributes:
+            loop (:class:`asyncio.AbstractEventLoop`)
+            token (str)
+            http (:class:`bale.HTTPClient`)
+            _user (:class:`bale.User` | None)
+            updater (:class:`bale.Updater`)
+            events (Dict[str, Callable])
+            listeners Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]]
+            _closed (bool)
         Raises:
             :class:`bale.Error`
     """
@@ -62,10 +70,10 @@ class Bot:
         "_closed"
     )
 
-    def __init__(self, token: str, **kwargs):
+    def __init__(self, token: str):
         self.loop = _loop
         self.token = token
-        self.http: HTTPClient = HTTPClient(loop=self.loop, connector=kwargs.get("connector"), token=token)
+        self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
         self._user = None
         self.updater = Updater(self)
         self.events: Dict[str, Callable] = {}
@@ -74,10 +82,10 @@ class Bot:
 
     def event(self, function):
         """Register a Event"""
-        if asyncio.iscoroutinefunction(function):
+        if not asyncio.iscoroutinefunction(function):
             raise TypeError(f"{function.__name__} is a Coroutine Function")
 
-        setattr(self.events, function.__name__, function)
+        self.events[function.__name__] = function
         return function
 
     def wait_for(self, event_name: str, check = None, timeout = None):
@@ -105,8 +113,7 @@ class Bot:
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        if not self.is_closed():
-            await self.close()
+        pass
 
     async def close(self):
         """Close http Events and bot"""
@@ -158,7 +165,7 @@ class Bot:
                 for index in reversed(removed):
                     del listeners[index]
 
-        event_core = getattr(self.events, method, None)
+        event_core = self.events.get(method)
         if event_core:
             self.call_to_run_event(event_core, method, *args, **kwargs)
 
@@ -406,10 +413,10 @@ class Bot:
 
     async def connect(self):
         """Get bot and Start Updater"""
-        self._user = self._get_bot()
-        self.updater.start()
+        self._user = await self._get_bot()
+        await self.updater.start()
 
-    async def run(self):
+    def run(self):
         """
             run bot and https
         """
