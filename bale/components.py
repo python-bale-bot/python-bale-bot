@@ -24,9 +24,6 @@ class Components:
 
     def __init__(self, keyboards=None, inline_keyboards=None):
 
-        if not keyboards and not inline_keyboards:
-            raise TypeError("All params are empty!\nplease use bale.RemoveComponents to remove components")
-
         if not (isinstance(keyboards, list) or isinstance(inline_keyboards, list)):
             raise TypeError("The type of parameter entered is incorrect.")
 

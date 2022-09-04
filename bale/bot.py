@@ -26,7 +26,7 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List
 from builtins import enumerate, reversed
-from bale import (Message, Update, User, Components, Chat, Price, ChatMember, HTTPClient, Updater)
+from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater)
 
 
 __all__ = (
@@ -83,7 +83,7 @@ class Bot:
     def event(self, function):
         """Register a Event"""
         if not asyncio.iscoroutinefunction(function):
-            raise TypeError(f"{function.__name__} is a Coroutine Function")
+            raise TypeError(f"{function.__name__} is not a Coroutine Function")
 
         self.events[function.__name__] = function
         return function
@@ -202,7 +202,7 @@ class Bot:
         response, payload = await self.http.delete_webhook()
         return payload["result"]
 
-    async def send_message(self, chat_id: int | str, text: str = None, components=None, reply_to_message_id: str = None) -> Message | None:
+    async def send_message(self, chat_id: int | str, text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
         """This service is used to send text messages.
         
         Args:
@@ -227,7 +227,7 @@ class Bot:
         response, payload = await self.http.send_message(str(chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str, prices: Price, photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
+    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
         Args:
             chat_id (str | int): Chat ID
@@ -248,22 +248,11 @@ class Bot:
             raise TypeError(
                 f"chat_id is not a str or int. this is a {chat_id.__class__} !"
             )
-
-        if isinstance(prices, Price):
-            prices = [prices.to_dict()]
-        # create a function for convert key_lists in message, components
-        elif isinstance(prices, list):
-            key_list = []
-            for i in prices:
-                if type(i) is Price:
-                    key_list.append(i.to_dict())
-                else:
-                    key_list.append(i)
-            prices = key_list
+        prices = [price.to_dict() for price in prices]
         response, payload = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def edit_message(self, chat_id: int | str, message_id: str, text: str, components=None) -> Message:
+    async def edit_message(self, chat_id: int | str, message_id: str, text: str, components: "Components" | "RemoveComponents"=None) -> Message:
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Args:
@@ -282,7 +271,7 @@ class Bot:
             )
 
         if components:
-            components = components.to_dict() if isinstance(components, Components) else components
+            components = components.to_dict()
 
         response, payload = await self.http.edit_message(str(chat_id), message_id, text, components)
         return payload

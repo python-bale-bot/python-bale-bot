@@ -1,6 +1,6 @@
 from .version import __version__
 from .request.http import HTTPClient
-from .components import Components, InlineKeyboard, Keyboard
+from .components import Components, RemoveComponents, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
 from .attachments.document import Document
@@ -27,6 +27,7 @@ __all__ = (
     "User",
     "Updater",
     "Components",
+    "RemoveComponents",
     "Keyboard",
     "InlineKeyboard",
     "Location",

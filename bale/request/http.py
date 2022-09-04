@@ -83,8 +83,8 @@ class HTTPClient:
 		try:
 			async with self.__session.request(method=method, url=url, **kwargs) as response:
 				response: aiohttp.ClientResponse = response
-				payload = await response.json()
 				if response.status == 200:
+					payload = await response.json()
 					if not payload.get("ok"):
 						raise APIError(
 							str(payload.get("error_code")) + payload.get("description")
