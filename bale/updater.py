@@ -67,7 +67,7 @@ class Updater:
 		if not self._is_running:
 			raise RuntimeError("Updater is running")
 		while self._is_running:
-			if self.bot.close():
+			if self.bot.is_closed():
 				raise RuntimeError("Bot is Closed!")
 
 			if not self._is_running:
