@@ -6,6 +6,9 @@ def get_readme_file() -> str:
     """Get Readme File"""
     return Path("./README.md").read_text()
 
+def get_requirements() -> list[str]:
+    """Get requirements file"""
+    return Path("./requirements.txt").read_text().split("\n")
 
 if __name__ == "__main__":
     setup(
@@ -28,7 +31,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',
-        install_requires=["aiohttp<3.8.0,>=3.6.0",]
+        install_requires=get_requirements()
     )
 
 print(r"""
