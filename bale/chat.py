@@ -32,6 +32,10 @@ __all__ = (
     "Chat"
 )
 
+class ChatType:
+    """This object indicates a Chat Type."""
+    PRIVATE = "private"
+    GROUP = "group"
 
 class Chat:
     """This object indicates a chat.
@@ -47,9 +51,6 @@ class Chat:
             all_members_are_administrators (bool): Does everyone have admin access?. Defaults to True. (for Group)
             bot (bale.Bot): Bot Object. Defaults to None.
     """
-    PRIVATE = "private"
-    GROUP = "group"
-
     __slots__ = (
         "chat_id",
         "_type",
