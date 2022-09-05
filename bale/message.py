@@ -51,7 +51,7 @@ class Message:
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
     """
     __slots__ = (
-        "text", "content", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
+        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
         "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
         "reply_to_message", "bot"
     )
@@ -63,7 +63,6 @@ class Message:
         self.date = date if date is not None else None
 
         self.text: str | None = text if text is not None else None
-        self.content: str | None = self.text
         self.chat: Chat | None = chat if chat is not None else None
         self.reply_to_message: Message | None = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user: User | None = from_user if from_user is not None else None
@@ -87,6 +86,17 @@ class Message:
         return None
 
     @property
+    def content(self):
+        return self.text
+
+    @content.setter
+    def content(self, _value):
+        if not isinstance(_value, str):
+            raise TypeError(f"{_value} is not str. this is a {_value.__class__ if _value else _value}")
+
+        self.text = _value
+
+    @property
     def chat_id(self):
         if self.chat is not None:
             return self.chat.chat_id
@@ -100,6 +110,9 @@ class Message:
 
     @reply_to_message_id.setter
     def reply_to_message_id(self, _value):
+        if not isinstance(_value, int):
+            raise TypeError(f"{_value} is not str. this is a {_value.__class__ if _value else _value}")
+
         if self.reply_to_message:
             self.reply_to_message.message_id = _value
 
@@ -195,7 +208,7 @@ class Message:
 
         Args:
             newtext (str): New Content For Message.
-            components (:class:`bale.Components`, optional): Components. Defaults to None.
+            components (:class:`bale.Components`|:class:`bale.Components`): Message Components. Defaults to None.
         Raises:
             :class:`bale.Error`
         Return:

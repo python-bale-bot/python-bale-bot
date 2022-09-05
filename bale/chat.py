@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 __all__ = (
-    "Chat"
+    "Chat",
 )
 
 class ChatType:
@@ -77,7 +77,7 @@ class Chat:
 
     @property
     def type(self):
-        """Get Chat type"""
+        """Get chat type"""
         return self._type
 
     async def send(self, text: str, components=None):
@@ -85,7 +85,7 @@ class Chat:
         
         Args:
             text (str): Message Text.
-            components (:class:`bale.Components`, dict): Defaults to None.
+            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Defaults to None.
         Returns:
             :class:`bale.Message`
         """

@@ -208,7 +208,7 @@ class Bot:
         Args:
             chat_id (int): Chat ID.
             text (str): Message Text. 
-            components (bot.Components, dict): Message Components. 
+            components (:class:`bot.Components`|:class:`bale.RemoveComponents`): Message Components.
             reply_to_message_id (str): Reply Message ID. 
         Raises:
             :class:`bale.Error`
@@ -259,7 +259,7 @@ class Bot:
             chat_id (int | str): Chat Id.
             message_id (str): Message Id.
             text (str): New Content For Message.
-            components (:class:`bale.Components`, optional): Components. Defaults to None.
+            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Components. Defaults to None.
         Raises:
             :class:`bale.Error`
         Return:

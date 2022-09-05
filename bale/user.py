@@ -54,9 +54,9 @@ class User:
         self.bot = bot
 
     @property
-    def mention(self):
+    def mention(self) -> str | None:
         """Mention User"""
-        return f"@{self.username}"
+        return f"@{self.username}" if self.username else None
 
     @property
     def link(self):
@@ -70,15 +70,10 @@ class User:
 
         Args:
             text (str): Message Text.
-            components (Components, dict): Message Components. Defaults to None.
+            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Message Components. Defaults to None.
         Returns:
             :class:`bale.Message`
         """
-        if not isinstance(components, Components):
-            raise TypeError(
-                f"components is not a `bale.Components`. this is a {components.__class__}"
-            )
-        
         if components:
             components = components.to_dict()
         response, payload = await self.bot.http.send_message(str(self.user_id), text, components=components)

@@ -1,7 +1,6 @@
 from __future__ import annotations
 from typing import Dict
 
-
 __all__ = (
     "Components",
     "Keyboard",
@@ -32,18 +31,18 @@ class Components:
 
         if keyboards:
             for obj in keyboards:
-                if not isinstance(obj, Keyboard):
-                    raise TypeError("object is not a Keyboard its a {}".format(obj.__class__))
+                if not isinstance(obj, list):
+                    raise TypeError("object is not a list its a {}".format(obj.__class__))
 
-                keyboard = obj
+                keyboard = [i.to_dict() for i in obj]
                 self.keyboards.append(keyboard)
 
         if inline_keyboards:
             for obj in inline_keyboards:
-                if not isinstance(obj, InlineKeyboard):
-                    raise TypeError("object is not a InlineKeyboard its a {}".format(obj.__class__))
+                if not isinstance(obj, list):
+                    raise TypeError("object is not a list its a {}".format(obj.__class__))
 
-                inline_keyboard = obj
+                inline_keyboard = [i.to_dict() for i in obj]
                 self.inline_keyboards.append(inline_keyboard)
 
     @classmethod
@@ -162,9 +161,12 @@ class Keyboard:
 class RemoveComponents:
     """This object shows a remove keyboard"""
 
+    def __init__(self, **kwargs):
+        self.payload = dict(**kwargs)
+
     def to_dict(self) -> dict:
         """Convert Class to dict
         Returns:
             :dict:
         """
-        return {}
+        return {obj: [] for obj in self.payload}
