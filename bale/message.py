@@ -59,7 +59,7 @@ class Message:
     def __init__(self, message_id: int | str, date: datetime.datetime, text: str = None, caption: str = None,
                  forward_from: "User" = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
                  reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
-        self.message_id: int | str = message_id if message_id is not None else None
+        self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
         self.text: str | None = text if text is not None else None
@@ -132,7 +132,7 @@ class Message:
         if data.get("left_chat_member"):
             options["left_chat_member"] = User.from_dict(bot=bot, data=data.get("left_chat_member"))
 
-        return cls(bot=bot, message_id=data.get("message_id"),
+        return cls(bot=bot, message_id=str(data.get("message_id")),
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
                        "reply_to_message") else None, date=data.get("date"), text=data.get("text"),
