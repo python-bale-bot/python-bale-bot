@@ -398,7 +398,7 @@ class Bot:
             )
 
         response, payload = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not (offset is not None and update_payload.get("update_id") < offset)]
+        return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not offset or (offset and update_payload.get("update_id") > offset)]
 
     async def connect(self):
         """Get bot and Start Updater"""
