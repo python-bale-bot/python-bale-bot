@@ -194,10 +194,10 @@ class Bot:
         return self._user
 
     async def delete_webhook(self) -> bool:
-        """This service is used to remove the web hook set for the arm.
+        """This service is used to remove the webhook set for the bot.
 
         Returns:
-            bool: If done "True" If not "False"
+            bool: If done "True" if not "False"
         """
         response, payload = await self.http.delete_webhook()
         return payload["result"]
@@ -398,7 +398,7 @@ class Bot:
             )
 
         response, payload = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if update_payload.get("update_id") > offset]
+        return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not (offset is not None and update_payload.get("update_id") < offset)]
 
     async def connect(self):
         """Get bot and Start Updater"""
