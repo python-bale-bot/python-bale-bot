@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage)
+from bale import (Chat, ChatType, User, Document, ContactMessage)
 
 
 class Message:
@@ -51,7 +51,7 @@ class Message:
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
+        "text", "content", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
         "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
         "reply_to_message", "bot"
     )
@@ -63,6 +63,7 @@ class Message:
         self.date = date if date is not None else None
 
         self.text: str | None = text if text is not None else None
+        self.content: str | None = self.text
         self.chat: Chat | None = chat if chat is not None else None
         self.reply_to_message: Message | None = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user: User | None = from_user if from_user is not None else None
@@ -77,10 +78,10 @@ class Message:
     @property
     def author(self):
         if self.chat is not None:
-            if self.chat.type == Chat.PRIVATE:
+            if self.chat.type == ChatType.PRIVATE:
                 return User(user_id=int(self.chat.chat_id), first_name=self.chat.first_name, last_name=self.chat.last_name,
                             username=self.chat.username, bot=self.bot)
-            elif self.chat.type == Chat.GROUP:
+            elif self.chat.type == ChatType.GROUP:
                 return User(bot=self.bot, user_id=self.from_user.user_id, first_name=self.from_user.first_name,
                             last_name=self.from_user.last_name, username=self.from_user.username)
         return None
@@ -161,7 +162,7 @@ class Message:
             :class:`bale.Message`
         """
         result = self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
-                                       reply_to_message_id=str(self.message_id) if not self.chat.type == Chat.GROUP else None)
+                                       reply_to_message_id=str(self.message_id) if not self.chat.type == ChatType.GROUP else None)
         return result
 
     def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,

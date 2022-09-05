@@ -66,7 +66,7 @@ class HTTPClient:
 	def reload_session(self):
 		"""Reset Session"""
 		if self.__session.closed:
-			self.__session = aiohttp.ClientSession(loop=self.loop)
+			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(limit=0))
 
 	async def close(self):
 		"""Close Session connection"""
@@ -155,7 +155,7 @@ class HTTPClient:
 		return self.request(Route("GET", "deleteWebhook", self.token))
 
 	def get_bot(self):
-		self.__session = aiohttp.ClientSession(loop=self.loop)
+		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(limit=0))
 		return self.request(Route("GET", "getme", self.token))
 
 	def get_chat(self, chat_id):
