@@ -141,7 +141,7 @@ class HTTPClient:
 			"chat_id": chat_id,
 			"message_id": message_id
 		}
-		return self.request(Route("GET", "deletemessage", self.token), json=payload)
+		return self.request(Route("GET", "deletemessage", self.token), params=payload)
 
 	def get_updates(self, offset=None, limit=None):
 		payload = {}
@@ -159,13 +159,13 @@ class HTTPClient:
 		return self.request(Route("GET", "getme", self.token))
 
 	def get_chat(self, chat_id):
-		return self.request(Route("GET", "getchat", self.token), json=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getchat", self.token), params=dict(chat_id=chat_id))
 
 	def get_chat_administrators(self, chat_id):
-		return self.request(Route("GET", "getChatAdministrators", self.token), json=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
 
 	def get_chat_members_count(self, chat_id):
-		return self.request(Route("GET", "getChatAdministrators", self.token), json=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
 
 	def get_chat_member(self, chat_id, member_id):
-		return self.request(Route("GET", "getChatMember", self.token), json=dict(chat_id=chat_id, user_id=member_id))
+		return self.request(Route("GET", "getChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
