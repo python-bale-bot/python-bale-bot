@@ -7,7 +7,7 @@ from .attachments.document import Document
 from .payments.price import Price
 from .user import User
 from .attachments.contact import ContactMessage
-from .chat import Chat
+from .chat import Chat, ChatType
 from .message import Message
 from .permissions import AdminPermissions
 from .chatmember import ChatMember, Role
@@ -23,6 +23,7 @@ __all__ = (
     "CallbackQuery",
     "Update",
     "Chat",
+    "ChatType",
     "Message",
     "User",
     "Updater",
