@@ -63,10 +63,10 @@ class Components:
         inline_keyboards = self.inline_keyboards
 
         if bool(keyboards):
-            data["keyboard"]: keyboards
+            data["keyboard"] = keyboards
 
         if bool(inline_keyboards):
-            data["inline_keyboard"]: inline_keyboards
+            data["inline_keyboard"] = inline_keyboards
 
         return data
 
