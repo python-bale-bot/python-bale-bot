@@ -77,6 +77,10 @@ class Updater:
 
 			for update in updates:
 				self.bot.dispatch("update", update)
+				if update.type == "callback_query":
+					self.bot.dispatch("callback", update)
+				elif update.type == "message":
+					self.bot.dispatch("message", update)
 
 			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
 
