@@ -24,7 +24,8 @@
 
 from bale.version import BALE_API_BASE_URL
 import aiohttp
-from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError)
+from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError)
+
 
 __all__ = ("HTTPClient",)
 
@@ -94,9 +95,11 @@ class HTTPClient:
 				else:
 					raise HTTPException(response, response.json())
 		except aiohttp.client_exceptions.ClientConnectorError as error:
-			raise NetworkError(error)
+			raise NetworkError(str(error))
 		except aiohttp.client_exceptions.ServerTimeoutError:
 			raise TimeOut()
+		except aiohttp.client_exceptions.ClientOSError as error:
+			raise BaleError(error)
 
 	def send_message(self, chat_id, text, *, components=None, reply_to_message_id=None):
 		payload = {
