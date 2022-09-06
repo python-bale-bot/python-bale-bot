@@ -58,10 +58,15 @@ class Components:
             Returns:
                 :dict:
         """
-        data = {
-            "keyboard": self.keyboards,
-            "inline_keyboard": self.inline_keyboards
-        }
+        data = {}
+        keyboards = self.keyboards
+        inline_keyboards = self.inline_keyboards
+
+        if bool(keyboards):
+            data["keyboard"]: keyboards
+
+        if bool(inline_keyboards):
+            data["inline_keyboard"]: inline_keyboards
 
         return data
 
@@ -161,12 +166,9 @@ class Keyboard:
 class RemoveComponents:
     """This object shows a remove keyboard"""
 
-    def __init__(self, **kwargs):
-        self.payload = dict(**kwargs)
-
     def to_dict(self) -> dict:
         """Convert Class to dict
         Returns:
             :dict:
         """
-        return {obj: [] for obj in self.payload}
+        return {"inline_keyboard": None, "keyboard": None}

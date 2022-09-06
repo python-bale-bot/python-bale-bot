@@ -26,7 +26,7 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 from bale import Components
 if TYPE_CHECKING:
-    from bale import (Bot, Message)
+    from bale import Bot
 
 
 class User:
@@ -74,6 +74,7 @@ class User:
         Returns:
             :class:`bale.Message`
         """
+        from bale import Message
         if components:
             components = components.to_dict()
         response, payload = await self.bot.http.send_message(str(self.user_id), text, components=components)

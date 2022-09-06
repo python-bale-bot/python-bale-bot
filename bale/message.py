@@ -214,8 +214,9 @@ class Message:
         Return:
             :class:`requests.Response`
         """
-        await self.bot.http.edit_message(self.chat.chat_id, self.message_id, newtext, components)
+        result = await self.bot.edit_message(self.chat.chat_id, self.message_id, newtext, components)
         self.text = newtext
+        return result
 
     def delete(self):
         """:meth:`bale.Bot.delete_message`

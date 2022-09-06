@@ -77,9 +77,6 @@ class HTTPClient:
 		url = route.url
 		method = route.method
 
-		if "json" in kwargs:
-			kwargs["data"] = kwargs.pop("json")
-
 		try:
 			async with self.__session.request(method=method, url=url, **kwargs) as response:
 				response: aiohttp.ClientResponse = response
@@ -149,7 +146,7 @@ class HTTPClient:
 			payload["offset"] = offset
 		if limit:
 			payload["limit"] = limit
-		return self.request(Route("POST", "getupdates", self.token), json=payload)
+		return self.request(Route("POST", "getupdates", self.token), data=payload)
 
 	def delete_webhook(self):
 		return self.request(Route("GET", "deleteWebhook", self.token))
