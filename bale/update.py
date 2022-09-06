@@ -5,6 +5,13 @@ if TYPE_CHECKING:
     from bale import Bot
 
 
+class UpdateType:
+    """Update Type"""
+    MESSAGE = "message"
+    CALLBACK = "callback_query"
+    UNKNOWN = "unknown"
+
+
 class Update:
     """This object shows an update.
 
@@ -59,13 +66,10 @@ class Update:
 
         if data.get("callback_query"):
             callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot=bot)
-            message = callback_query.message
-        elif data.get("message"):
+        if data.get("message"):
             message = Message.from_dict(data.get("message"), bot=bot)
-        elif data.get("edited_message"):
+        if data.get("edited_message"):
             edited_message = Message.from_dict(data=data.get("edited_message"), bot=bot)
-        else:
-            raise TypeError("All options are empty.")
 
         return cls(update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
                    raw_data=data, bot=bot)
@@ -109,7 +113,7 @@ class Update:
         return self.update_id < other.update_id
 
     def __gt__(self, other):
-        return self.__lt__(other)
+        return not self.__lt__(other)
 
     def __repr__(self):
         return f"<Update type={self.type} message={self.message}>"
