@@ -156,8 +156,11 @@ class Bot:
                     if result:
                         if len(args) == 0:
                             future.set_result(None)
+                        elif len(args) == 1:
+                            future.set_result(args[0])
                         else:
-                            future.set_result(args[0] if len(args) == 1 else args)
+                            future.set_result(args)
+                        removed.append(index)
 
             if len(listeners) == len(removed):
                 self.listeners.pop(event_name)
