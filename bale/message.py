@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, ChatType, User, Document, ContactMessage)
+from bale import (Chat, ChatType, User, Document, ContactMessage, Photo)
 
 
 class Message:
@@ -51,14 +51,14 @@ class Message:
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "date_code", "date", "edit_date",
-        "audio", "document", "photo", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
+        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_message_id", "date_code", "date", "edit_date",
+        "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
         "reply_to_message", "bot"
     )
 
-    def __init__(self, message_id: int | str, date: datetime.datetime, text: str = None, caption: str = None,
-                 forward_from: "User" = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
-                 reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
+    def __init__(self, message_id: str, date: datetime.datetime, text: str = None, caption: str = None,
+                 forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
+                 photos: List["Photo"] = None, reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
@@ -67,8 +67,10 @@ class Message:
         self.reply_to_message: Message | None = reply_to_message if reply_to_message is not None else reply_to_message
         self.from_user: User | None = from_user if from_user is not None else None
         self.forward_from: User | None = forward_from if forward_from is not None else None
+        self.forward_from_message_id: str = forward_from_message_id if forward_from_message_id is not None else None
         self.caption: str | None = caption if caption is not None else None
         self.document = document if document is not None else None
+        self.photos = photos if photos is not None else None
         self.contact: ContactMessage | None = contact if contact is not None else None
         self.new_chat_members: List[User] | None = options.get("new_chat_members")
         self.left_chat_member: User | None = options.get("left_chat_member")
@@ -138,7 +140,9 @@ class Message:
                        "reply_to_message") else None, date=data.get("date"), text=data.get("text"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
                    forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
-                   document=Document.from_dict(data=data.get("document")) if data.get("document") else None, **options)
+                   forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
+                   document=Document.from_dict(data=data.get("document")) if data.get("document") else None,
+                   photo=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,**options)
 
     def to_dict(self):
         data = {"message_id": self.message_id, "date": self.date, "text": self.text}
@@ -151,6 +155,8 @@ class Message:
             data["caption"] = self.caption
         if self.document:
             data["document"] = self.document.to_dict()
+        if self.photos:
+            data["photo"] = [photo.to_dict() for photo in self.photos]
         if self.contact:
             data["contact"] = self.contact.to_dict()
         if self.new_chat_members:
