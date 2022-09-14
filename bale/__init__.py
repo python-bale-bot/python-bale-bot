@@ -4,6 +4,7 @@ from .components import Components, RemoveComponents, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
 from .attachments.document import Document
+from .attachments.photo import Photo
 from .payments.price import Price
 from .user import User
 from .attachments.contact import ContactMessage
@@ -34,6 +35,7 @@ __all__ = (
     "Location",
     "Audio",
     "Document",
+    "Photo",
     "ContactMessage",
     "Price",
     "HTTPClient",
