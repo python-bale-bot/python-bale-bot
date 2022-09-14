@@ -37,7 +37,7 @@ class Message:
     """This object shows a message
 
     Args:
-        message_id (str | int): Message ID.
+        message_id (str): Message ID.
         date (datetime.datetime): When the message has been sent.
         text (str): Message Text. Defaults to None.
         caption (str, optional): Message caption. Defaults to None.
@@ -89,14 +89,16 @@ class Message:
 
     @property
     def content(self):
-        return self.text
+        return self.caption or self.text
 
     @content.setter
     def content(self, _value):
         if not isinstance(_value, str):
             raise TypeError(f"{_value} is not str. this is a {_value.__class__ if _value else _value}")
-
-        self.text = _value
+        if self.caption:
+            self.caption = _value
+        elif self.text:
+            self.text = _value
 
     @property
     def chat_id(self):
