@@ -30,26 +30,44 @@ if TYPE_CHECKING:
 
 __all__ = (
     "Chat",
+    "ChatType"
 )
 
 class ChatType:
-    """This object indicates a Chat Type."""
+    """This object indicates a Chat Type.
+
+        Args:
+            _type (str): The type of Chat
+    """
     PRIVATE = "private"
     GROUP = "group"
+    __slots__ = (
+        "_type",
+    )
+    def __init__(self, _type: str):
+        self._type = _type
+
+    def is_private_chat(self):
+        """Return True if Chat Type is Private"""
+        return self._type == self.PRIVATE
+
+    def is_group_chat(self):
+        """Return True if Chat Type is Group"""
+        return self._type == self.GROUP
 
 class Chat:
     """This object indicates a chat.
 
         Args:
             chat_id (str): Chat ID.
-            _type (str): Chat Type.
+            _type (:class:`bale.ChatType`): Chat Type.
             title (str): Chat Title.
             username (str): Chat Username (for DM or PV).
             first_name (str): First name Chat (for DM or PV).
             last_name (str): Last name Chat (for DM or PV).
             pinned_message (:class:`bale.Message`): Pinned messages in chat. Defaults to None.
             all_members_are_administrators (bool): Does everyone have admin access?. Defaults to True. (for Group)
-            bot (bale.Bot): Bot Object. Defaults to None.
+            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
     """
     __slots__ = (
         "chat_id",
@@ -63,7 +81,7 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, _type: str, title: str, username: str, first_name: str, last_name: str,
+    def __init__(self, chat_id: int | str, _type: "ChatType", title: str, username: str, first_name: str, last_name: str,
                  pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
         self.chat_id = chat_id
         self._type = _type
@@ -126,7 +144,7 @@ class Chat:
             data (dict): Data
             bot (:class:`bale.Bot`): Bot
         """
-        return cls(bot=bot, chat_id=data.get("id"), _type=data.get("type"), title=data.get("title"),
+        return cls(bot=bot, chat_id=data.get("id"), _type=ChatType(data.get("type")), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
