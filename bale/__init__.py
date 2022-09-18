@@ -5,7 +5,7 @@ from .attachments.audio import Audio
 from .attachments.location import Location
 from .attachments.document import Document
 from .attachments.photo import Photo
-from .payments.price import Price
+from .payments import Price, Invoice
 from .user import User
 from .attachments.contact import ContactMessage
 from .chat import Chat, ChatType
@@ -37,6 +37,7 @@ __all__ = (
     "Document",
     "Photo",
     "ContactMessage",
+    "Invoice",
     "Price",
     "HTTPClient",
     "BaleError",
