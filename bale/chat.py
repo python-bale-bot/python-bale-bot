@@ -44,6 +44,7 @@ class ChatType:
     __slots__ = (
         "_type",
     )
+
     def __init__(self, _type: str):
         self._type = _type
 
@@ -54,6 +55,12 @@ class ChatType:
     def is_group_chat(self):
         """Return True if Chat Type is Group"""
         return self._type == self.GROUP
+
+    def __eq__(self, other):
+        return self._type == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 class Chat:
     """This object indicates a chat.
