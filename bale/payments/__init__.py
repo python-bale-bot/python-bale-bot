@@ -1,5 +1,7 @@
+from .invoice import Invoice
 from .price import Price
 
 __all__ = (
-    "Price",
+    "Invoice",
+    "Price"
 )
