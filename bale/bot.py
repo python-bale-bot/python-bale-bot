@@ -237,13 +237,13 @@ class Bot:
             title (str): Invoice Title
             description (str): Invoice Description
             provider_token (str): You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-            prices (Price, dict)
-            photo_url (str, optional): Photo URL of Invoice. Defaults to None.
-            need_name (bool, optional): Get a name from "User"?. Defaults to False.
-            need_phone_number (bool, optional): Get a Phone number from "User"?. Defaults to False.
-            need_email (bool, optional): Get a Email from "User"?. Defaults to False.
-            need_shipping_address (bool, optional): Get a Shipping Address from "User"?. Defaults to False.
-            is_flexible (bool, optional): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
+            prices (List[:class:`bale.Price`]): A list of prices.
+            photo_url (str): Photo URL of Invoice. Defaults to None.
+            need_name (bool): Get a name from "User"?. Defaults to False.
+            need_phone_number (bool): Get a Phone number from "User"?. Defaults to False.
+            need_email (bool): Get a Email from "User"?. Defaults to False.
+            need_shipping_address (bool): Get a Shipping Address from "User"?. Defaults to False.
+            is_flexible (bool): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
         Returns:
             :class:`Bale.Message`
         """
@@ -291,7 +291,7 @@ class Bot:
         Args:
             chat_id (str | int): Chat ID.
             message_id (str): Message ID
-        Return:
+        Return Type:
             bool: if done "True" if not "False"
         """
         if not isinstance(chat_id, (str, int)):
