@@ -24,13 +24,13 @@
 
 from __future__ import annotations
 
-import datetime
+from datetime import datetime
 from typing import TYPE_CHECKING, List
 
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, ChatType, User, Document, ContactMessage, Photo)
+from bale import (Chat, ChatType, User, Document, ContactMessage, Photo, Invoice)
 
 
 class Message:
@@ -40,7 +40,7 @@ class Message:
         message_id (str): Message ID.
         date (datetime.datetime): When the message has been sent.
         text (str): Message Text. Defaults to None.
-        caption (str, optional): Message caption. Defaults to None.
+        caption (str): Message caption. Defaults to None.
         from_user (:class:`bale.User`): The user who has sent the message. Defaults to None.
         forward_from (:class:`bale.User`) no description. Defaults to None.
         contact (:class:`bale.ContactMessage`): Defaults to None.
@@ -48,17 +48,18 @@ class Message:
         reply_to_message (:class:`bale.Message`)
         new_chat_members (:class:`bale.User`): User (An) who entered the chat. Defaults to None.
         left_chat_member (:class:`bale.User`): A user out of chat. Defaults to None.
+        invoice (:class:`bale.Invoice`): Message invoice.
         bot (:class:`bale.Bot`): Bot object. Defaults to None.
     """
     __slots__ = (
         "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_message_id", "date_code", "date", "edit_date",
         "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
-        "reply_to_message", "bot"
+        "reply_to_message", "invoice", "bot"
     )
 
-    def __init__(self, message_id: str, date: datetime.datetime, text: str = None, caption: str = None,
+    def __init__(self, message_id: str, date: datetime, text: str = None, caption: str = None,
                  forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
-                 photos: List["Photo"] = None, reply_to_message: "Message" = None, bot: 'Bot' = None, **options):
+                 photos: List["Photo"] = None, reply_to_message: "Message" = None, invoice: "Invoice" = None, bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
@@ -74,18 +75,13 @@ class Message:
         self.contact: ContactMessage | None = contact if contact is not None else None
         self.new_chat_members: List[User] | None = options.get("new_chat_members")
         self.left_chat_member: User | None = options.get("left_chat_member")
+        self.invoice = invoice
         self.bot: Bot = bot if bot is not None else None
 
     @property
     def author(self):
-        if self.chat is not None:
-            if self.chat.type == ChatType.PRIVATE:
-                return User(user_id=int(self.chat.chat_id), first_name=self.chat.first_name, last_name=self.chat.last_name,
-                            username=self.chat.username, bot=self.bot)
-            elif self.chat.type == ChatType.GROUP:
-                return User(bot=self.bot, user_id=self.from_user.user_id, first_name=self.from_user.first_name,
-                            last_name=self.from_user.last_name, username=self.from_user.username)
-        return None
+        return User(bot=self.bot, user_id=self.from_user.user_id, first_name=self.from_user.first_name,
+                        last_name=self.from_user.last_name, username=self.from_user.username)
 
     @property
     def content(self):
@@ -129,22 +125,20 @@ class Message:
         """
         options = {}
         if data.get("new_chat_members"):
-            new_chat_members = []
-            for i in data.get("new_chat_members"):
-                new_chat_members.append(User.from_dict(bot=bot, data=i))
-            options["new_chat_members"] = new_chat_members
+            options["new_chat_members"] = [User.from_dict(bot=bot, data=i) for i in data.get("new_chat_members")]
         if data.get("left_chat_member"):
             options["left_chat_member"] = User.from_dict(bot=bot, data=data.get("left_chat_member"))
 
         return cls(bot=bot, message_id=str(data.get("message_id")),
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
-                       "reply_to_message") else None, date=data.get("date"), text=data.get("text"),
+                       "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))), text=data.get("text"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
                    forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
                    forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
                    document=Document.from_dict(data=data.get("document")) if data.get("document") else None,
-                   photo=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,**options)
+                   photo=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,
+                   invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     def to_dict(self):
         data = {"message_id": self.message_id, "date": self.date, "text": self.text}
