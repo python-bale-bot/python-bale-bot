@@ -80,8 +80,7 @@ class Message:
 
     @property
     def author(self):
-        return User(bot=self.bot, user_id=self.from_user.user_id, first_name=self.from_user.first_name,
-                        last_name=self.from_user.last_name, username=self.from_user.username)
+        return self.from_user
 
     @property
     def content(self):
@@ -170,14 +169,14 @@ class Message:
         """:meth:`bale.Bot.send_message`
 
         Args:
-            text (str)
-            components (Components, dict): Defaults to None.
-
+            text (str): Message Text.
+            components (:class:`bot.Components`|:class:`bale.RemoveComponents`): Message Components.
+        Raises:
+            :class:`bale.Error`
         Returns:
-            :class:`bale.Message`
-        """
+            :class:`bale.Message`: On success, the sent Message is returned."""
         result = self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
-                                       reply_to_message_id=str(self.message_id) if not self.chat.type == ChatType.GROUP else None)
+                                       reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
         return result
 
     def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
@@ -188,14 +187,13 @@ class Message:
             title (str): Invoice Title
             description (str): Invoice Description
             provider_token (str): You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-            prices (Price, dict)
-            photo_url (str, optional): Photo URL of Invoice. Defaults to None.
-            need_name (bool, optional): Get a name from "User"?. Defaults to False.
-            need_phone_number (bool, optional): Get a Phone number from "User"?. Defaults to False.
-            need_email (bool, optional): Get a Email from "User"?. Defaults to False.
-            need_shipping_address (bool, optional): Get a Shipping Address from "User"?. Defaults to False.
-            is_flexible (bool, optional): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
-
+            prices (List[:class:`bale.Price`]): A list of prices.
+            photo_url (str): Photo URL of Invoice. Defaults to None.
+            need_name (bool): Get a name from "User"?. Defaults to False.
+            need_phone_number (bool): Get a Phone number from "User"?. Defaults to False.
+            need_email (bool): Get a Email from "User"?. Defaults to False.
+            need_shipping_address (bool): Get a Shipping Address from "User"?. Defaults to False.
+            is_flexible (bool): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
         Returns:
             :class:`Bale.Message`
         """
@@ -205,19 +203,19 @@ class Message:
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible)
         return message
 
-    async def edit(self, newtext: str, components=None):
+    async def edit(self, text: str = None, components=None):
         """:meth:`bale.Bot.edit_message`
 
         Args:
-            newtext (str): New Content For Message.
-            components (:class:`bale.Components`|:class:`bale.Components`): Message Components. Defaults to None.
+            text (str): New Content For Message.
+            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Components.
         Raises:
             :class:`bale.Error`
         Return:
-            :class:`requests.Response`
+            :class:`dict`
         """
-        result = await self.bot.edit_message(self.chat.chat_id, self.message_id, newtext, components)
-        self.text = newtext
+        result = await self.bot.edit_message(self.chat.chat_id, self.message_id, text, components)
+        self.text = text
         return result
 
     def delete(self):

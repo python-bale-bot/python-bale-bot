@@ -88,6 +88,20 @@ class Bot:
         self.events[function.__name__] = function
         return function
 
+    def add_event(self, event: str, function):
+        """Register an Event with event name"""
+        if not asyncio.iscoroutinefunction(function):
+            raise TypeError(f"{function.__name__} is not a Coroutine Function")
+
+        self.events[event] = function
+
+    def remove_event(self, event: str):
+        """Register an Event with event name"""
+        if not event in self.events:
+            raise TypeError(f"{event} not in Events")
+
+        del self.events[event]
+
     def wait_for(self, event_name: str, check = None, timeout = None):
         """Wait for an event"""
         self.loop: asyncio.AbstractEventLoop
