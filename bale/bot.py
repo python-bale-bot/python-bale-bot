@@ -50,7 +50,7 @@ class Bot:
             loop (:class:`asyncio.AbstractEventLoop`)
             token (str)
             http (:class:`bale.HTTPClient`)
-            _user (:class:`bale.User` | None)
+            user (:class:`bale.User` | None)
             updater (:class:`bale.Updater`)
             events (Dict[str, Callable])
             listeners Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]]
@@ -65,7 +65,7 @@ class Bot:
         "events",
         "listeners",
         "updater",
-        "_user",
+        "user",
         "http",
         "_closed"
     )
@@ -74,11 +74,16 @@ class Bot:
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
-        self._user = None
+        self.user = None
         self.updater = Updater(self)
         self.events: Dict[str, Callable] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
+
+    def listen(self, event_name):
+        def decorator(func):
+            self.add_event(event_name, func)
+        return decorator
 
     def event(self, function):
         """Register a Event"""
@@ -190,7 +195,7 @@ class Bot:
         """a Event for get errors when exceptions"""
         print("error", event_name, error)
 
-    async def _get_bot(self) -> User:
+    async def get_bot(self) -> User:
         """Get Bot.
 
         Returns:
@@ -200,15 +205,6 @@ class Bot:
         """
         response, payload = await self.http.get_bot()
         return User.from_dict(data=payload.get("result"), bot=self)
-
-    @property
-    def user(self) -> User:
-        """Get Bot User
-
-        Returns:
-            :class:`bale.User`
-        """
-        return self._user
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
@@ -419,7 +415,8 @@ class Bot:
 
     async def connect(self):
         """Get bot and Start Updater"""
-        self._user = await self._get_bot()
+        await self.http.start()
+        self.user = await self.get_bot()
         await self.updater.start()
 
     def run(self):
