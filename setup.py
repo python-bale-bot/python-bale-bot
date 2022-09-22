@@ -1,19 +1,15 @@
 from setuptools import setup, find_packages
-from pathlib import Path
-
 
 def get_readme_file() -> str:
     """Get Readme File"""
-    return Path("./README.md").read_text()
-
-def get_requirements() -> list[str]:
-    """Get requirements file"""
-    return Path("./requirements.txt").read_text().split("\n")
+    with open("README.md", encoding="utf-8") as f:
+        readme_file = f.read()
+    return readme_file
 
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.2.0",
+        version="2.3.0",
         platforms=["Windows"],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
@@ -31,8 +27,10 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',
-        install_requires=get_requirements()
+        install_requires=["aiohttp<3.8.0,>=3.6.0", "asyncio~=3.4.3", "setuptools~=60.2.0"]
     )
+
+
 
 print(r"""
 ____    __        ____   ____  ____  _____
