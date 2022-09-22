@@ -60,6 +60,7 @@ class Updater:
 		if self._is_running:
 			raise RuntimeError("Updater is running")
 		self._is_running = True
+		self.bot.dispatch("on_ready")
 		await self.poll_event()
 
 	async def poll_event(self):
