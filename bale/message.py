@@ -165,7 +165,7 @@ class Message:
 
         return data
 
-    def reply(self, text: str, components=None):
+    async def reply(self, text: str, components=None):
         """:meth:`bale.Bot.send_message`
 
         Args:
@@ -175,11 +175,11 @@ class Message:
             :class:`bale.Error`
         Returns:
             :class:`bale.Message`: On success, the sent Message is returned."""
-        result = self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
+        result = await self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
                                        reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
         return result
 
-    def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
+    async def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
                       need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
         """:meth:`bale.Bot.send_invoice`
 
@@ -197,7 +197,7 @@ class Message:
         Returns:
             :class:`Bale.Message`
         """
-        message = self.bot.send_invoice(chat_id=self.chat.chat_id, title=title, description=description,
+        message = await self.bot.send_invoice(chat_id=self.chat.chat_id, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
                                         need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible)
@@ -218,13 +218,13 @@ class Message:
         self.text = text
         return result
 
-    def delete(self):
+    async def delete(self):
         """:meth:`bale.Bot.delete_message`
 
         Return:
             bool: if done "True" if not "False"
         """
-        message = self.bot.delete_message(chat_id=self.chat.chat_id, message_id=str(self.message_id))
+        message = await self.bot.delete_message(chat_id=self.chat.chat_id, message_id=str(self.message_id))
         return message
 
     def __str__(self):
