@@ -85,14 +85,6 @@ class Bot:
             self.add_event(event_name, func)
         return decorator
 
-    def event(self, function):
-        """Register a Event"""
-        if not asyncio.iscoroutinefunction(function):
-            raise TypeError(f"{function.__name__} is not a Coroutine Function")
-
-        self.events[function.__name__] = function
-        return function
-
     def add_event(self, event: str, function):
         """Register an Event with event name"""
         if not asyncio.iscoroutinefunction(function):
@@ -116,7 +108,7 @@ class Bot:
         if not function in result:
             raise TypeError(f"{function.__name__} not in Event Functions")
 
-        del result[function]
+        del self.events[event][function]
 
     def wait_for(self, event_name: str, check = None, timeout = None):
         """Wait for an event"""
