@@ -76,7 +76,7 @@ class Bot:
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
         self.user = None
         self.updater = Updater(self)
-        self.events: Dict[str, Callable] = {}
+        self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
 
@@ -98,14 +98,25 @@ class Bot:
         if not asyncio.iscoroutinefunction(function):
             raise TypeError(f"{function.__name__} is not a Coroutine Function")
 
-        self.events[event] = function
+        if not self.events.get(event):
+            self.events[event] = list()
 
-    def remove_event(self, event: str):
+        self.events[event].append(function)
+
+    def remove_event(self, event: str, function = None):
         """Register an Event with event name"""
-        if not event in self.events:
+        result = self.events.get(event)
+        if not result:
             raise TypeError(f"{event} not in Events")
 
-        del self.events[event]
+        if not function:
+            del self.events[event]
+            return
+
+        if not function in result:
+            raise TypeError(f"{function.__name__} not in Event Functions")
+
+        del result[function]
 
     def wait_for(self, event_name: str, check = None, timeout = None):
         """Wait for an event"""
@@ -187,9 +198,10 @@ class Bot:
                 for index in reversed(removed):
                     del listeners[index]
 
-        event_core = self.events.get(method)
-        if event_core:
-            self.call_to_run_event(event_core, method, *args, **kwargs)
+        events_core = self.events.get(method)
+        if events_core:
+            for event_core in events_core:
+                self.call_to_run_event(event_core, method, *args, **kwargs)
 
     async def on_error(self, event_name, error):
         """a Event for get errors when exceptions"""
