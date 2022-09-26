@@ -13,7 +13,7 @@ class ChatMember:
 
         Args:
             role (str): User Role. Defaults to None.
-            user (:class:`bale.user`): User. Defaults to None.
+            user (:class:`bale.User`): User. Defaults to None.
             permissions (:class:`bale.AdminPermissions`): User Permissions. Defaults to None.
     """
     __slots__ = (
@@ -25,7 +25,6 @@ class ChatMember:
         self._user = user
         self.permissions = permissions
 
-    @property
     def is_admin(self):
         """if the member was the admin, it will be returned "True" and otherwise "False".
 
@@ -34,7 +33,6 @@ class ChatMember:
         """
         return self.role == Role.ADMIN or self.role == Role.OWNER
 
-    @property
     def is_owner(self):
         """if the member was the owner, it will be returned "True" and otherwise "False".
 
@@ -49,8 +47,4 @@ class ChatMember:
         Args:
             data (dict): Data
         """
-        permissions = {}
-        for i in AdminPermissions.PERMISSIONS_LIST:
-            permissions[i] = data.get(i, False)
-
-        return cls(permissions=permissions, _user=User.from_dict(data.get("user")), role=data.get("status"))
+        return cls(permissions=AdminPermissions.from_dict(data), user=User.from_dict(data.get("user")), role=data.get("status"))

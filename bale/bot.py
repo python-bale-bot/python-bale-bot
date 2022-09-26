@@ -81,6 +81,7 @@ class Bot:
         self._closed = False
 
     def listen(self, event_name):
+        """Register a Event"""
         def decorator(func):
             self.add_event(event_name, func)
         return decorator
@@ -217,7 +218,7 @@ class Bot:
             bool: If done "True" if not "False"
         """
         response, payload = await self.http.delete_webhook()
-        return payload["result"]
+        return payload.get("result", False)
 
     async def send_message(self, chat_id: int | str, text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
         """This service is used to send text messages.

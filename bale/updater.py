@@ -33,7 +33,7 @@ class Updater:
 	"""This object represents a Bale Bot.
 
 		Attributes:
-			bot (:class:`telegram.Bot`): The bot used with this Updater.
+			bot (:class:`bale.Bot`): The bot used with this Updater.
             update_queue (:class:`asyncio.Queue`): Queue for the updates.
             _last_offset (int | None): Last of Offset for get updates.
             _is_running (bool): get status of updater.
