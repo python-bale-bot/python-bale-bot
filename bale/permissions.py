@@ -1,18 +1,19 @@
 class AdminPermissions:
-    PERMISSIONS_LIST = {
-        "can_be_edited",
-        "can_change_info",
-        "can_post_messages",
-        "can_edit_messages",
-        "can_delete_messages",
-        "can_invite_users",
-        "can_restrict_members",
-        "can_pin_messages",
-        "can_promote_members",
-        "can_send_messages",
-        "can_send_media_messages"
-    }
+    """This object shows the permissions and permissions of an admin or a member in a group (or channel).
 
+        Args:
+            can_be_edited (bool): Can you edit?. Defaults to False.
+            can_change_info (bool): Can you edit group information? Defaults to False.
+            can_post_messages (bool): Can he post a message?. Defaults to False.
+            can_edit_messages (bool): Can you edit your message? Defaults to False.
+            can_delete_messages (bool): Can it erase messages? Defaults to False.
+            can_invite_users (bool): Can it invite users to chat? Defaults to False.
+            can_restrict_members (bool): Defaults to False.
+            can_pin_messages (bool): Can you pin your message? Defaults to False.
+            can_promote_members (bool): Defaults to False.
+            can_send_messages (bool): Can he send a message?. Defaults to False.
+            can_send_media_messages (bool): Can it attach a file with the message? Defaults to False.
+    """
     __slots__ = (
         "can_be_edited",
         "can_change_info",
@@ -31,21 +32,6 @@ class AdminPermissions:
                  can_edit_messages: bool = False, can_delete_messages: bool = False, can_invite_users: bool = False,
                  can_restrict_members: bool = False, can_pin_messages: bool = False, can_promote_members: bool = False,
                  can_send_messages: bool = False, can_send_media_messages: bool = False):
-        """This object shows the permissions and permissions of an admin or a member in a group (or channel).
-
-        Args:
-            can_be_edited (bool): Can you edit?. Defaults to False.
-            can_change_info (bool): Can you edit group information? Defaults to False.
-            can_post_messages (bool): Can he post a message?. Defaults to False.
-            can_edit_messages (bool): Can you edit your message? Defaults to False.
-            can_delete_messages (bool): Can it erase messages? Defaults to False.
-            can_invite_users (bool): Can it invite users to chat? Defaults to False.
-            can_restrict_members (bool): Defaults to False.
-            can_pin_messages (bool): Can you pin your message? Defaults to False.
-            can_promote_members (bool): Defaults to False.
-            can_send_messages (bool): Can he send a message?. Defaults to False.
-            can_send_media_messages (bool): Can it attach a file with the message? Defaults to False.
-        """
         self.can_be_edited = can_be_edited
         self.can_change_info = can_change_info
         self.can_post_messages = can_post_messages
