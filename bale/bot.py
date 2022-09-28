@@ -317,80 +317,88 @@ class Bot:
         response, payload = await self.http.delete_message(str(chat_id), message_id)
         return payload["result"]
 
-    async def get_chat(self, chat_id: str) -> Chat:
+    async def get_chat(self, chat_id: str | int) -> Chat | None:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
         Args:
-            chat_id (str): Chat Id.
+            chat_id (str | int): Chat Id.
         Raises:
             :class:`bale.Error`
         Return:
-            :class:`bale.Chat`: On success, the sent Message is returned.
+            :class:`bale.Chat`: On success, the sent Message is returned. | None
         """
-        if not isinstance(chat_id, str):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                f"chat_id is not a str. this is a {chat_id.__class__} !"
+                f"chat_id is not str or int. this is a {chat_id.__class__} !"
             )
 
-        response, payload = await self.http.get_chat(chat_id)
+        response, payload = await self.http.get_chat(str(chat_id))
+        if not payload:
+            return None
         return Chat.from_dict(payload["result"], bot=self)
 
-    async def get_chat_member(self, chat_id: str, user_id: str) -> "ChatMember":
+    async def get_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember" | None:
         """
             Args:
-                chat_id (str): Group ID
-                user_id (str): Member ID
+                chat_id (str | int): Group ID
+                user_id (str | int): Member ID
             Returns:
-                :class:`bale.ChatMember`
+                :class:`bale.ChatMember` | None
             Raises:
                 :class:`bale.Error`
         """
-        if not isinstance(chat_id, str):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                f"chat_id is not a str. this is a {chat_id.__class__} !"
+                f"chat_id is not str or int. this is a {chat_id.__class__} !"
             )
 
-        if not isinstance(user_id, str):
+        if not isinstance(user_id, (str, int)):
             raise TypeError(
-                f"user_id is not a str. this is a {user_id.__class__} !"
+                f"user_id is not a str or int. this is a {user_id.__class__} !"
             )
 
-        response, payload = await self.http.get_chat_member(chat_id=chat_id, member_id=user_id)
+        response, payload = await self.http.get_chat_member(chat_id=str(chat_id), member_id=str(user_id))
+        if not payload:
+            return None
         return ChatMember.from_dict(payload.get("result"))
 
-    async def get_chat_members_count(self, chat_id: str) -> int:
+    async def get_chat_members_count(self, chat_id: str | int) -> int | None:
         """
             Args:
-                chat_id (str): Group ID
+                chat_id (str | int): Group ID
             Returns:
-                :int: Member Chat count
+                :int: Member Chat count | None
             Raises:
                 :class:`bale.Error`
         """
-        if not isinstance(chat_id, str):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                f"chat_id is not a str. this is a {chat_id.__class__} !"
+                f"chat_id is not str or int. this is a {chat_id.__class__} !"
             )
 
         response, payload = await self.http.get_chat_members_count(chat_id)
+        if not payload:
+            return None
         return payload["result"]
 
-    async def get_chat_administrators(self, chat_id: str) -> list["ChatMember"]:
+    async def get_chat_administrators(self, chat_id: str | int) -> list["ChatMember"] | None:
         """This service can be used to display admins of a group or channel.
 
         Args:
-            chat_id (str): Group ID
+            chat_id (str | int): Group ID
         Raises:
             :class:`bale.Error`
         Returns:
-            List[:class:`bale.ChatMember`]
+            List[:class:`bale.ChatMember`] | None
         """
-        if not isinstance(chat_id, str):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                f"chat_id is not a str. this is a {chat_id.__class__} !"
+                f"chat_id is not str or int. this is a {chat_id.__class__} !"
             )
 
         response, payload = await self.http.get_chat_administrators(chat_id)
+        if not payload:
+            return None
         return [ChatMember.from_dict(data=member_payload) for member_payload in payload["result"]]
 
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
