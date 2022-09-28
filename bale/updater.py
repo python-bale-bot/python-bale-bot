@@ -60,7 +60,7 @@ class Updater:
 		if self._is_running:
 			raise RuntimeError("Updater is running")
 		self._is_running = True
-		self.bot.dispatch("on_ready")
+		self.bot.dispatch("ready")
 		await self.poll_event()
 
 	async def poll_event(self):
@@ -79,9 +79,9 @@ class Updater:
 			for update in updates:
 				self.bot.dispatch("update", update)
 				if update.type == "callback_query":
-					self.bot.dispatch("callback", update, update.callback_query)
+					self.bot.dispatch("callback", update.callback_query)
 				elif update.type == "message":
-					self.bot.dispatch("message", update, update.message)
+					self.bot.dispatch("message", update.message)
 
 			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
 
