@@ -38,6 +38,11 @@ class CallbackQuery:
         self.from_user = from_user
         self.bot = bot
 
+    @property
+    def user(self):
+        """Aliases for self.from_user"""
+        return self.from_user
+
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
         """
