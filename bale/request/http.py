@@ -21,7 +21,6 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 """
-
 from bale.version import BALE_API_BASE_URL
 import aiohttp
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError)
@@ -92,12 +91,17 @@ class HTTPClient:
 							str(payload.get("error_code")) + payload.get("description")
 						)
 					return response, payload
+				elif response.status == 400:
+					payload = await response.json()
+					if payload.get("description") == "no such group or user":
+						payload = None
+						return response, payload
 				elif response.status == 404:
 					raise NotFound()
 				elif response.status == 403:
 					raise Forbidden()
-				else:
-					raise HTTPException(response, response.json())
+				json = await response.json()
+				raise HTTPException(response, json)
 		except aiohttp.client_exceptions.ClientConnectorError as error:
 			raise NetworkError(str(error))
 		except aiohttp.client_exceptions.ServerTimeoutError:
