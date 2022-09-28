@@ -105,6 +105,18 @@ class Chat:
         """Get chat type"""
         return self._type
 
+    @property
+    def mention(self):
+        """Mention Chat"""
+        return ("@" + self.username) if self.username else None
+
+    @property
+    def link(self):
+        """Get Chat Link"""
+        if self.username:
+            return "https://ble.ir/@{username}".format(username=self.username)
+        return None
+
     async def send(self, text: str, components=None):
         """Send Message in Chat
         
