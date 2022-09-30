@@ -83,6 +83,11 @@ class Updater:
 				elif update.type == "message":
 					self.bot.dispatch("message", update.message)
 
+					if update.message.left_chat_member:
+						self.bot.dispatch("member_chat_join", update.message.left_chat_member)
+					for user in update.message.new_chat_members or []:
+						self.bot.dispatch("member_chat_leave", user)
+
 			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
 
 	def stop(self):
