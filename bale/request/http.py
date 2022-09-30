@@ -168,6 +168,9 @@ class HTTPClient:
 	def get_chat(self, chat_id):
 		return self.request(Route("GET", "getchat", self.token), params=dict(chat_id=chat_id))
 
+	def leave_chat(self, chat_id):
+		return self.request(Route("GET", "leaveChat", self.token), json=dict(chat_id=chat_id))
+
 	def get_chat_administrators(self, chat_id):
 		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
 

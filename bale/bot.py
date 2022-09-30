@@ -389,11 +389,25 @@ class Bot:
                 chat (:class:`bale.Chat`): Chat
                 user (:class:`bale.User`): User
             Returns:
-                :int: Member Chat count | None
+                :bool:
             Raises:
                 :class:`bale.Error`
         """
         response, payload = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
+        if not payload:
+            return False
+        return payload.get("result", False)
+
+    async def leave_chat(self, chat: "Chat"):
+        """Leave bot from a Chat
+            Args:
+                chat (:class:`bale.Chat`): Chat
+            Returns:
+                :bool:
+            Raises:
+                :class:`bale.Error`
+        """
+        response, payload = await self.http.leave_chat(str(chat.chat_id))
         if not payload:
             return False
         return payload.get("result", False)
@@ -441,8 +455,8 @@ class Bot:
         """Use this method to receive incoming updates using long polling.
 
         Args:
-            offset (int, optional): Defaults to None.
-            limit (int, optional): Defaults to None.
+            offset (int): Defaults to None.
+            limit (int): Defaults to None.
         Raises:
             :class:`bale.Error`
 
