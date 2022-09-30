@@ -128,6 +128,14 @@ class Chat:
         """
         return await self.bot.send_message(self, text, components=components)
 
+    async def leave(self):
+        """:meth:`bale.Bot.leave_chat`.
+
+        Returns:
+            :bool:
+        """
+        return await self.bot.leave_chat(self)
+
     async def add_user(self, user: "User"):
         """:meth:`bale.Bot.invite_to_chat`.
 
