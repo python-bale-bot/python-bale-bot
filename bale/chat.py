@@ -25,7 +25,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from bale import Bot, Message
+    from bale import Bot, Message, User
 
 
 __all__ = (
@@ -126,17 +126,27 @@ class Chat:
         Returns:
             :class:`bale.Message`
         """
-        return await self.bot.send_message(self.chat_id, text, components=components)
+        return await self.bot.send_message(self, text, components=components)
 
-    async def get_chat_member(self, user_id: str):
+    async def add_user(self, user: "User"):
+        """:meth:`bale.Bot.invite_to_chat`.
+
+        Args:
+            user (:class:`bale.User`)
+        Returns:
+            :class:`bale.Message`
+        """
+        return await self.bot.invite_to_chat(self, user)
+
+    async def get_chat_member(self, user: "User"):
         """:meth:`bale.Bot.get_chat_member`.
 
             Args:
-                user_id (str): User ID.
+                user (:class:`bale.User`): User.
             Returns:
                 :class:`bale.ChatMember`
         """
-        return await self.bot.get_chat_member(chat_id=self.chat_id, user_id=user_id)
+        return await self.bot.get_chat_member(self, user)
 
     async def get_chat_members_count(self):
         """:meth:`bale.Bot.get_chat_members_count`.
@@ -144,7 +154,7 @@ class Chat:
             Returns:
                 :int:
         """
-        return await self.bot.get_chat_members_count(chat_id=self.chat_id)
+        return await self.bot.get_chat_members_count(self)
 
     async def get_chat_administrators(self):
         """:meth:`bale.Bot.get_chat_administrators`.
@@ -154,7 +164,7 @@ class Chat:
         Returns:
             List[:class:`bale.ChatMember`]
         """
-        return await self.bot.get_chat_administrators(self.chat_id)
+        return await self.bot.get_chat_administrators(self)
 
     @classmethod
     def from_dict(cls, data: dict, bot):
