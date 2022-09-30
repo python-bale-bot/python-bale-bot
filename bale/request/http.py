@@ -157,7 +157,7 @@ class HTTPClient:
 			payload["offset"] = offset
 		if limit:
 			payload["limit"] = limit
-		return self.request(Route("POST", "getupdates", self.token), data=payload)
+		return self.request(Route("POST", "getupdates", self.token), json=payload)
 
 	def delete_webhook(self):
 		return self.request(Route("GET", "deleteWebhook", self.token))
@@ -176,3 +176,6 @@ class HTTPClient:
 
 	def get_chat_member(self, chat_id, member_id):
 		return self.request(Route("GET", "getChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
+
+	def invite_to_chat(self, chat_id, user_id):
+		return self.request(Route("GET", "InviteUser", self.token), json=dict(chat_id=chat_id, user_id=user_id))
