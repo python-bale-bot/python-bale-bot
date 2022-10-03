@@ -1,5 +1,5 @@
 from .version import __version__
-from .request.http import HTTPClient
+from .request.http import HTTPClient, Route
 from .components import Components, RemoveComponents, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
@@ -40,6 +40,7 @@ __all__ = (
     "Invoice",
     "Price",
     "HTTPClient",
+    "Route",
     "BaleError",
     "APIError",
     "AdminPermissions",

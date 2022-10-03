@@ -1,6 +1,7 @@
-from .http import HTTPClient
+from .http import HTTPClient, Route
 
 
 __all__ = (
-	"HTTPClient"
+	"HTTPClient",
+	"Route"
 )
