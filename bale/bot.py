@@ -264,11 +264,11 @@ class Bot:
 
         if not isinstance(photo, (bytes, str)):
             raise TypeError(
-                f"photo is not a str or bytes. this is a {chat.__class__} !"
+                f"photo is not a str or bytes. this is a {photo.__class__} !"
             )
 
         response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption)
-        return payload
+        return Message.from_dict(data=payload["result"], bot=self)
 
 
     async def send_invoice(self, chat: "Chat", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
