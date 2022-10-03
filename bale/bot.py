@@ -409,11 +409,12 @@ class Bot:
         """
         try:
             response, payload = await self.http.leave_chat(str(chat.chat_id))
+        except:
+            return False
+        else:
             if not payload:
                 return False
             return payload.get("result", False)
-        except:
-            return False
 
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
         """
