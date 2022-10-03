@@ -26,7 +26,7 @@ import aiohttp
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError)
 
 
-__all__ = ("HTTPClient",)
+__all__ = ("HTTPClient", "Route")
 
 
 class Route:
@@ -120,6 +120,16 @@ class HTTPClient:
 			payload["reply_to_message_id"] = reply_to_message_id
 
 		return self.request(Route("POST", "sendMessage", self.token), json=payload)
+
+	def send_photo(self, chat_id, photo, caption=None):
+		payload = {
+			"chat_id": chat_id,
+			"photo": photo
+		}
+		if caption:
+			payload["caption"] = caption
+
+		return self.request(Route("POST", "SendPhoto", self.token), data=payload)
 
 	def send_invoice(self, chat_id, title, description, provider_token, prices, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
 		payload = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
