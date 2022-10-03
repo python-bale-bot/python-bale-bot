@@ -245,6 +245,32 @@ class Bot:
         response, payload = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
+    async def send_photo(self, chat: "Chat", photo: bytes | str, caption: str = None):
+        """This service is used to send photo.
+
+        Args:
+            chat (:class:`bale.Chat`): Chat.
+            photo (:class:`bytes`|:class:`str`): Photo.
+            caption (:class:`str`): Message caption.
+        Raises:
+            :class:`bale.Error`
+        Returns:
+            :class:`bale.Message`: On success, the sent Message is returned.
+        """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                f"chat is not a Chat object. this is a {chat.__class__} !"
+            )
+
+        if not isinstance(photo, (bytes, str)):
+            raise TypeError(
+                f"photo is not a str or bytes. this is a {chat.__class__} !"
+            )
+
+        response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption)
+        return payload
+
+
     async def send_invoice(self, chat: "Chat", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
         Args:
@@ -264,7 +290,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not a str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
         prices = [price.to_dict() for price in prices]
         response, payload = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
@@ -285,7 +311,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not a str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
         if components:
@@ -311,7 +337,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not a str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
         response, payload = await self.http.delete_message(str(chat.chat_id), message_id)
@@ -354,7 +380,7 @@ class Bot:
 
         chat = await self.get_chat(user_id)
         if chat and chat.type.is_private_chat():
-            return User.from_dict(chat.to_dict())
+            return User.from_dict(chat.to_dict(), self)
 
         return
 
@@ -370,7 +396,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
         if not isinstance(user, User):
@@ -393,6 +419,10 @@ class Bot:
             Raises:
                 :class:`bale.Error`
         """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                f"chat is not a Chat object. this is a {chat.__class__} !"
+            )
         response, payload = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
         if not payload:
             return False
@@ -407,6 +437,10 @@ class Bot:
             Raises:
                 :class:`bale.Error`
         """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                f"chat is not a Chat object. this is a {chat.__class__} !"
+            )
         try:
             response, payload = await self.http.leave_chat(str(chat.chat_id))
         except:
@@ -427,7 +461,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
         response, payload = await self.http.get_chat_members_count(str(chat.chat_id))
@@ -447,7 +481,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat_id is not str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
         response, payload = await self.http.get_chat_administrators(chat.chat_id)
