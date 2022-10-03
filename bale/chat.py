@@ -128,6 +128,19 @@ class Chat:
         """
         return await self.bot.send_message(self, text, components=components)
 
+    async def send_photo(self, photo: bytes | str, caption: str = None):
+        """Send Photo in Chat
+
+        Args:
+            photo (:class:`bytes`|:class:`str`): Photo.
+            caption (:class:`str`): Message caption.
+        Raises:
+            :class:`bale.Error`
+        Returns:
+            :class:`bale.Message`: On success, the sent Message is returned.
+        """
+        return await self.bot.send_photo(self, photo, caption)
+
     async def leave(self):
         """:meth:`bale.Bot.leave_chat`.
 
