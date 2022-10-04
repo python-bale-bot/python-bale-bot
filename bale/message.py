@@ -179,13 +179,12 @@ class Message:
                                        reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
         return result
 
-    async def reply_photo(self, photo: bytes | str, caption: str = None, reply_to_message_id: str = None):
+    async def reply_photo(self, photo: bytes | str, caption: str = None):
         """:meth:`bale.Bot.send_photo`
 
         Args:
             photo (:class:`bytes`|:class:`str`): Photo.
             caption (:class:`str`): Message caption.
-            reply_to_message_id (:class:`str`): Reply Message ID.
         Raises:
             :class:`bale.Error`
         Returns:
