@@ -121,13 +121,15 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendMessage", self.token), json=payload)
 
-	def send_photo(self, chat_id, photo, caption=None):
+	def send_photo(self, chat_id, photo, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"photo": photo
 		}
 		if caption:
 			payload["caption"] = caption
+		if reply_to_message_id:
+			payload["reply_to_message_id"] = reply_to_message_id
 
 		return self.request(Route("POST", "SendPhoto", self.token), data=payload)
 
