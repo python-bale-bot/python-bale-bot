@@ -225,9 +225,9 @@ class Bot:
         
         Args:
             chat (:class:`bale.Chat`): Chat.
-            text (str): Message Text. 
+            text (:class:`str`): Message Text.
             components (:class:`bot.Components`|:class:`bale.RemoveComponents`): Message Components.
-            reply_to_message_id (str): Reply Message ID. 
+            reply_to_message_id (:class:`str`): Reply Message ID.
         Raises:
             :class:`bale.Error`
         Returns:
@@ -245,13 +245,14 @@ class Bot:
         response, payload = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def send_photo(self, chat: "Chat", photo: bytes | str, caption: str = None):
+    async def send_photo(self, chat: "Chat", photo: bytes | str, caption: str = None, reply_to_message_id: str = None):
         """This service is used to send photo.
 
         Args:
             chat (:class:`bale.Chat`): Chat.
             photo (:class:`bytes`|:class:`str`): Photo.
             caption (:class:`str`): Message caption.
+            reply_to_message_id (:class:`str`): Reply Message ID.
         Raises:
             :class:`bale.Error`
         Returns:
@@ -267,9 +268,8 @@ class Bot:
                 f"photo is not a str or bytes. this is a {photo.__class__} !"
             )
 
-        response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption)
+        response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption, reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
-
 
     async def send_invoice(self, chat: "Chat", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
