@@ -30,7 +30,7 @@ from typing import TYPE_CHECKING, List
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, ChatType, User, Document, ContactMessage, Photo, Invoice)
+from bale import (Chat, User, Document, ContactMessage, Photo, Invoice)
 
 
 class Message:
@@ -175,9 +175,23 @@ class Message:
             :class:`bale.Error`
         Returns:
             :class:`bale.Message`: On success, the sent Message is returned."""
-        result = await self.bot.send_message(chat_id=self.chat.chat_id, text=text, components=components,
+        result = await self.bot.send_message(chat=self.chat, text=text, components=components,
                                        reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
         return result
+
+    async def reply_photo(self, photo: bytes | str, caption: str = None, reply_to_message_id: str = None):
+        """:meth:`bale.Bot.send_photo`
+
+        Args:
+            photo (:class:`bytes`|:class:`str`): Photo.
+            caption (:class:`str`): Message caption.
+            reply_to_message_id (:class:`str`): Reply Message ID.
+        Raises:
+            :class:`bale.Error`
+        Returns:
+            :class:`bale.Message`: On success, the sent Message is returned."""
+        message = await self.bot.send_photo(self.chat, photo, caption, reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
+        return message
 
     async def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
                       need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
@@ -197,7 +211,7 @@ class Message:
         Returns:
             :class:`Bale.Message`
         """
-        message = await self.bot.send_invoice(chat_id=self.chat.chat_id, title=title, description=description,
+        message = await self.bot.send_invoice(chat=self.chat, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
                                         need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible)
@@ -214,7 +228,7 @@ class Message:
         Return:
             :class:`dict`
         """
-        result = await self.bot.edit_message(self.chat.chat_id, self.message_id, text, components)
+        result = await self.bot.edit_message(self.chat, self.message_id, text, components)
         self.text = text
         return result
 
@@ -224,7 +238,7 @@ class Message:
         Return:
             bool: if done "True" if not "False"
         """
-        message = await self.bot.delete_message(chat_id=self.chat.chat_id, message_id=str(self.message_id))
+        message = await self.bot.delete_message(chat=self.chat, message_id=str(self.message_id))
         return message
 
     def __str__(self):
