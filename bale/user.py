@@ -25,7 +25,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from bale import Bot
+    from bale import Bot, Photo
 
 
 class User:
@@ -79,11 +79,11 @@ class User:
         response, payload = await self.bot.http.send_message(str(self.user_id), text, components=components)
         return Message.from_dict(data=payload["result"], bot=self.bot)
 
-    async def send_photo(self, photo: bytes | str, caption: str = None):
+    async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
         """This service is used to send photo.
 
         Args:
-            photo (:class:`bytes`|:class:`str`): Photo.
+            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
             caption (:class:`str`): Message caption.
         Raises:
             :class:`bale.Error`
@@ -91,11 +91,13 @@ class User:
             :class:`bale.Message`: On success, the sent Message is returned.
         """
         from bale import Message
-        if not isinstance(photo, (bytes, str)):
+        if not isinstance(photo, (bytes, str, Photo)):
             raise TypeError(
-                f"photo is not a str or bytes. this is a {photo.__class__} !"
+                f"photo is not a str or bytes or bale.Photo. this is a {photo.__class__} !"
             )
 
+        if isinstance(photo, Photo):
+            photo = photo.file_id
         response, payload = await self.bot.http.send_photo(str(self.user_id), photo, caption)
         return Message.from_dict(data=payload["result"], bot=self.bot)
 
