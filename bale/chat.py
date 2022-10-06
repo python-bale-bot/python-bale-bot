@@ -25,7 +25,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from bale import Bot, Message, User
+    from bale import Bot, Message, User, Photo
 
 
 __all__ = (
@@ -128,11 +128,11 @@ class Chat:
         """
         return await self.bot.send_message(self, text, components=components)
 
-    async def send_photo(self, photo: bytes | str, caption: str = None):
+    async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
         """Send Photo in Chat
 
         Args:
-            photo (:class:`bytes`|:class:`str`): Photo.
+            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
             caption (:class:`str`): Message caption.
         Raises:
             :class:`bale.Error`
