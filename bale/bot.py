@@ -26,7 +26,8 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List
 from builtins import enumerate, reversed
-from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater)
+from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
+                  Photo)
 
 
 __all__ = (
@@ -116,7 +117,7 @@ class Bot:
         self.loop: asyncio.AbstractEventLoop
         future = self.loop.create_future()
         event_name = event_name.lower()
-        if check:
+        if not check:
             def event_check(*args):
                 return True
             check = event_check
@@ -171,7 +172,7 @@ class Bot:
                     removed.append(index)
                     continue
                 try:
-                    result = check(args)
+                    result = check(*args)
                 except Exception as __exception:
                     future.set_exception(__exception)
                     removed.append(index)
@@ -245,12 +246,11 @@ class Bot:
         response, payload = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def send_photo(self, chat: "Chat", photo: bytes | str, caption: str = None, reply_to_message_id: str = None):
+    async def send_photo(self, chat: "Chat", photo: bytes | str | "Photo", caption: str = None, reply_to_message_id: str = None):
         """This service is used to send photo.
 
-        Args:
-            chat (:class:`bale.Chat`): Chat.
-            photo (:class:`bytes`|:class:`str`): Photo.
+        Args:            chat (:class:`bale.Chat`): Chat.
+            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
             caption (:class:`str`): Message caption.
             reply_to_message_id (:class:`str`): Reply Message ID.
         Raises:
@@ -263,11 +263,13 @@ class Bot:
                 f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
-        if not isinstance(photo, (bytes, str)):
+        if not isinstance(photo, (bytes, str, Photo)):
             raise TypeError(
                 f"photo is not a str or bytes. this is a {photo.__class__} !"
             )
 
+        if isinstance(photo, Photo):
+            photo = photo.file_id
         response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption, reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
