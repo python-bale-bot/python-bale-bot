@@ -1,3 +1,8 @@
+class HTTPClientError:
+    USER_OR_CHAT_NOT_FOUND = "no such group or user"
+    RATE_LIMIT = "bot limit exceed"
+
+
 class BaleError(Exception):
     __slots__ = (
         "message",
