@@ -11,7 +11,7 @@ from .attachments.contact import ContactMessage
 from .chat import Chat, ChatType
 from .message import Message
 from .permissions import AdminPermissions
-from .chatmember import ChatMember, Role
+from .chatmember import ChatMember, MemberRole
 from .callbackquery import CallbackQuery
 from .update import Update
 from .updater import Updater
@@ -45,7 +45,7 @@ __all__ = (
     "APIError",
     "AdminPermissions",
     "ChatMember", 
-    "Role"
+    "MemberRole"
 )
 
 __title__ = "python-bale-bot"
