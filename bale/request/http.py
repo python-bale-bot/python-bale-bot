@@ -21,7 +21,7 @@
     OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
     SOFTWARE.
 """
-from bale.version import BALE_API_BASE_URL
+from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError)
@@ -33,22 +33,34 @@ __all__ = ("HTTPClient", "Route")
 class Route:
 	"""Route Class for http"""
 	BASE = BALE_API_BASE_URL
+	BASE_FILE = BALE_API_FILE_URL
 
 	__slots__ = (
 		"method",
 		"path",
-		"url",
-		"token"
+		"token",
+		"_base"
 	)
 
 	def __init__(self, method: str, path: str, token: str):
 		if not isinstance(token, str):
 			raise TypeError("token is not str!\ntoken is a {}".format(token.__class__))
-		self.url = self.BASE + "bot" + token + "/" + path
 		self.method = method
 		self.path = path
 		self.token = token
+		self._base = self.BASE
 
+	@property
+	def url(self):
+		"""Export url"""
+		return self.BASE + "bot" + self.token + "/" + self.path
+
+	def set_base(self, _value):
+		"""Set base url for route"""
+		if not _value in (self.BASE, self.BASE_FILE):
+			raise TypeError("_value incorrect!")
+
+		self._base = _value
 
 class HTTPClient:
 	"""Send a Request to BALE API Server"""
@@ -111,6 +123,19 @@ class HTTPClient:
 			raise TimeOut()
 		except aiohttp.client_exceptions.ClientOSError as error:
 			raise BaleError(error)
+
+	async def get_file(self, file_id):
+		async with self.__session.get(BALE_API_FILE_URL + "/" + "bot" + self.token + "/" + file_id) as response:
+			if response.status == 200:
+				return await response.read()
+			elif response.status == 400:
+				raise NotFound()
+			elif response.status == 403:
+				raise Forbidden()
+			else:
+				raise APIError("failed to read file")
+
+		raise RuntimeError("failed to read file")
 
 	def send_message(self, chat_id, text, *, components=None, reply_to_message_id=None):
 		payload = {
