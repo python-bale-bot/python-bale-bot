@@ -135,7 +135,7 @@ class Message:
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
                    forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
                    forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
-                   document=Document.from_dict(data=data.get("document")) if data.get("document") else None,
+                   document=Document.from_dict(bot = bot, data=data.get("document")) if data.get("document") else None,
                    photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
