@@ -7,11 +7,12 @@ if TYPE_CHECKING:
 class ContactMessage:
     """This object shows a Message Contact.
 
-        Args:
-            phone_number (int)
-            first_name (str): Defaults to None.
-            last_name (str): Defaults to None.
-            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+    Attributes
+    ----------
+        phone_number: int
+        first_name: Optional[:class:`str`]
+        last_name: Optional[:class:`str`]
+        user: Optional[:class:`bale.User`]
     """
     __slots__ = (
         "phone_number",
@@ -35,11 +36,6 @@ class ContactMessage:
 
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot" = None):
-        """
-        Args:
-            data (dict): Data
-            bot (:class:`bale.Bot`): Bot
-        """
         return cls(first_name=data["first_name"], last_name=data["last_name"],
                    bot=bot, phone_number=data["phone_number"])
 

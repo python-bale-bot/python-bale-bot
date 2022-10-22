@@ -13,10 +13,10 @@ class Components:
     """
     Parameters
     ----------
-        keyboards: :class:`bale.Keyboard`
-            keyboard
-        inline_keyboards: :class:`bale.InlineKeyboard`
-            inline keyboard
+        keyboards: List[:class:`bale.Keyboard`]
+            keyboards
+        inline_keyboards: List[:class:`bale.InlineKeyboard`]
+            inline keyboards
     """
 
     __slots__ = (
@@ -151,7 +151,7 @@ class Keyboard:
 
 
 class RemoveComponents:
-    """This object shows a remove keyboard"""
+    """This object shows a remove keyboard."""
 
     def to_dict(self) -> dict:
         return {"inline_keyboard": None, "keyboard": None}

@@ -1,4 +1,17 @@
 class Photo:
+	"""This object shows a Photo.
+
+    Attributes
+    ----------
+        file_id: str
+            Audio ID
+        width: int
+            Photo width
+        file_size: int
+            Audio Size.
+        height: str
+            Photo height.
+    """
 	__slots__ = (
 		"file_id",
 		"width",

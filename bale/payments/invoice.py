@@ -4,12 +4,18 @@ from __future__ import annotations
 class Invoice:
 	"""This object shows Invoice
 
-        Args:
-            title (str): Invoice title.
-            description (str): Invoice Description.
-            start_parameter (str)
-            currency (str)
-            total_amount (int)
+    Attributes
+    ----------
+        title: str
+        	Invoice title.
+        description: str
+        	Invoice Description.
+        start_parameter: str
+        	No Description.
+        currency: str
+        	No Description.
+        total_amount: int
+        	No Description.
     """
 	__slots__ = (
 		"title",
