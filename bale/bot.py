@@ -45,19 +45,10 @@ _loop = _Loop()
 class Bot:
     """This object represents a Bale Bot.
 
-        Args:
-            token (str): Bot Token.
-        Attributes:
-            loop (:class:`asyncio.AbstractEventLoop`)
-            token (str)
-            http (:class:`bale.HTTPClient`)
-            user (:class:`bale.User` | None)
-            updater (:class:`bale.Updater`)
-            events (Dict[str, Callable])
-            listeners Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]]
-            _closed (bool)
-        Raises:
-            :class:`bale.Error`
+    Parameters
+    ----------
+        token: str 
+            Bot Token
     """
     __slots__ = (
         "loop",
@@ -66,7 +57,7 @@ class Bot:
         "events",
         "listeners",
         "updater",
-        "user",
+        "_user",
         "http",
         "_closed"
     )
@@ -75,7 +66,7 @@ class Bot:
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
-        self.user = None
+        self._user = None
         self.updater = Updater(self)
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
@@ -130,6 +121,11 @@ class Bot:
         listeners.append((future, check))
         return asyncio.wait_for(future, timeout = timeout)
 
+    @property
+    def user(self) -> "User" or None:
+        """Represents the connected client. ``None`` if not logged in"""
+        return self._user
+
     async def __aenter__(self):
         loop = asyncio.get_running_loop()
         self.loop = loop
@@ -149,20 +145,17 @@ class Bot:
         return self._closed
 
     async def run_event(self, core, event_name, *args, **kwargs):
-        """Run Core Event"""
         try:
             await core(*args, **kwargs)
         except Exception as ext:
             await self.on_error(event_name, ext)
 
     def call_to_run_event(self, core, event_name, *args, **kwargs):
-        """Call to Run Event Method"""
         task = self.run_event(core, event_name, *args, **kwargs)
         self.loop: asyncio.AbstractEventLoop
         return self.loop.create_task(task, name = event_name)
 
     def dispatch(self, event_name, /, *args, **kwargs):
-        """Dispatching event to all listeners"""
         method = "on_" + event_name
         listeners = self.listeners.get(event_name)
         if listeners:
@@ -202,11 +195,13 @@ class Bot:
         print("error", event_name, error)
 
     async def get_bot(self) -> User:
-        """Get Bot.
-
-        Returns:
-            :class:`Bale.User`: Bot User information.
-        Raises:
+        """
+        Returns
+        -------
+            :class:`Bale.User`:
+                Bot User information.
+        Raises
+        ------
             :class:`Bale.Error`
         """
         response, payload = await self.http.get_bot()
@@ -215,24 +210,32 @@ class Bot:
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
 
-        Returns:
-            bool: If done "True" if not "False"
+        Returns
+        -------
+            bool:
+                ``True`` else ``False`` if not done
         """
         response, payload = await self.http.delete_webhook()
         return payload.get("result", False)
 
     async def send_message(self, chat: "Chat", text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
         """This service is used to send text messages.
-        
-        Args:
-            chat (:class:`bale.Chat`): Chat.
-            text (:class:`str`): Message Text.
-            components (:class:`bot.Components`|:class:`bale.RemoveComponents`): Message Components.
-            reply_to_message_id (:class:`str`): Reply Message ID.
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                Chat
+            text: :class:`str`
+                Message Text
+            components: :class:`bot.Components`|:class:`bale.RemoveComponents`
+                Message Components
+            reply_to_message_id: :class:`str`
+                Reply Message ID
         Raises:
             :class:`bale.Error`
         Returns:
-            :class:`bale.Message`: On success, the sent Message is returned.
+            Optional[:class:`bale.Message`]:
+                The Message or ``None`` if message not sent
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -249,14 +252,25 @@ class Bot:
     async def send_photo(self, chat: "Chat", photo: bytes | str | "Photo", caption: str = None, reply_to_message_id: str = None):
         """This service is used to send photo.
 
-        Args:            chat (:class:`bale.Chat`): Chat.
-            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
-            caption (:class:`str`): Message caption.
-            reply_to_message_id (:class:`str`): Reply Message ID.
-        Raises:
+        Parameters
+        ----------
+        chat: :class:`bale.Chat`
+            Chat
+        photo: :class:`bytes`|:class:`str`|:class:`bale.Photo`
+            Photo
+        caption: (:class:`str`):
+            Message caption
+        reply_to_message_id: :class:`str`
+            Reply Message ID
+
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
-            :class:`bale.Message`: On success, the sent Message is returned.
+
+        Returns
+        --------
+            Optional[:class:`bale.Message`]:
+                The Message or ``None`` if message not sent
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -275,19 +289,34 @@ class Bot:
 
     async def send_invoice(self, chat: "Chat", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
-        Args:
-            chat (:class:`bale.Chat`): Chat
-            title (str): Invoice Title
-            description (str): Invoice Description
-            provider_token (str): You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-            prices (List[:class:`bale.Price`]): A list of prices.
-            photo_url (str): Photo URL of Invoice. Defaults to None.
-            need_name (bool): Get a name from "User"?. Defaults to False.
-            need_phone_number (bool): Get a Phone number from "User"?. Defaults to False.
-            need_email (bool): Get a Email from "User"?. Defaults to False.
-            need_shipping_address (bool): Get a Shipping Address from "User"?. Defaults to False.
-            is_flexible (bool): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
-        Returns:
+
+        Parameters
+        ----------
+        chat: :class:`bale.Chat`
+            Chat
+        title: str
+            Invoice Title
+        description: str
+            Invoice Description
+        provider_token: str
+            You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
+        prices: List[:class:`bale.Price`]
+            A list of prices.
+        photo_url: str
+            Photo URL of Invoice. Defaults to None.
+        need_name: bool
+            Get a name from "User"?. Defaults to False.
+        need_phone_number: bool
+            Get a Phone number from "User"?. Defaults to False.
+        need_email: bool
+            Get a Email from "User"?. Defaults to False.
+        need_shipping_address: bool
+            Get a Shipping Address from "User"?. Defaults to False.
+        is_flexible: bool
+            Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
+
+        Returns
+        -------
             :class:`Bale.Message`
         """
         if not isinstance(chat, Chat):
@@ -301,14 +330,21 @@ class Bot:
     async def edit_message(self, chat: "Chat", message_id: str, text: str, components: "Components" | "RemoveComponents"=None) -> Message:
         """You can use this service to edit text messages that you have already sent through the arm.
 
-        Args:
-            chat (:class:`bale.Chat`): Chat
-            message_id (str): Message Id.
-            text (str): New Content For Message.
-            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Components. Defaults to None.
-        Raises:
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                chat
+            message_id: str
+                message id
+            text: str
+                New Content For Message.
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                message components
+        Raises
+        ------
             :class:`bale.Error`
-        Return:
+        Returns
+        -------
             :class:`dict`
         """
         if not isinstance(chat, Chat):
@@ -324,18 +360,23 @@ class Bot:
 
     async def delete_message(self, chat: "Chat", message_id: str) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
-        
+
         In Channel or Group:
             If it is a group or channel Manager, it can delete a message from (group or channel).
 
         In private message (PV):
             If the message was sent by a bot, it can be deleted with this method
 
-        Args:
-            chat (:class:`bale.Chat`): Chat
-            message_id (str): Message ID
-        Return Type:
-            bool: if done "True" if not "False"
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                chat
+            message_id: str
+                message id
+        Returns
+        -------
+            bool:
+                ``True`` if done else ``False``
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -348,12 +389,17 @@ class Bot:
     async def get_chat(self, chat_id: str | int) -> Chat | None:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
-        Args:
-            chat_id (str | int): Chat Id.
-        Raises:
+        Parameters
+        ----------
+            chat_id: str | int
+                chat id
+        Raises
+        ------
             :class:`bale.Error`
-        Return:
-            :class:`bale.Chat`: On success, the Chat is returned. | None
+        Returns
+        -------
+            Optional[:class:`bale.Chat`]
+                The chat or ``None`` if not found.
         """
         if not isinstance(chat_id, (str, int)):
             raise TypeError(
@@ -368,12 +414,17 @@ class Bot:
     async def get_user(self, user_id: str | int) -> "User" | None:
         """This Method almost like "bale.Bot.get_chat", but this a filter that only get users.
 
-            Args:
-                user_id (str | int): User Id.
-            Raises:
-                :class:`bale.Error`
-            Return:
-                :class:`bale.User`: On success, the User is returned. | None
+        Parameters
+        ----------
+            user_id: str | int
+                user id
+        Raises
+        ------
+            :class:`bale.Error`
+        Returns
+        -------
+            Optional[:class:`bale.User`]
+                The user or ``None`` if not found.
         """
         if not isinstance(user_id, (str, int)):
             raise TypeError(
@@ -388,13 +439,21 @@ class Bot:
 
     async def get_chat_member(self, chat: "Chat", user: "User") -> "ChatMember" | None:
         """
-            Args:
-                chat (:class:`bale.Chat`): Chat
-                user (:class:`bale.User`): User
-            Returns:
-                :class:`bale.ChatMember` | None
-            Raises:
-                :class:`bale.Error`
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                chat
+            user: :class:`bale.User`
+                user
+
+        Raises
+        ------
+            :class:`bale.Error`
+
+        Returns
+        -------
+            Optional[:class:`bale.ChatMember`]:
+                The chat member or ``None`` if not found.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -413,13 +472,22 @@ class Bot:
 
     async def invite_to_chat(self, chat: "Chat", user: "User") -> bool:
         """Invite user to the chat
-            Args:
-                chat (:class:`bale.Chat`): Chat
-                user (:class:`bale.User`): User
-            Returns:
-                :bool:
-            Raises:
-                :class:`bale.Error`
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                chat
+            user: :class:`bale.User`
+                user
+
+        Raises
+        ------
+            :class:`bale.Error`
+        
+        Returns
+        -------
+            bool:
+                ``True`` when user added to chat else ``False``
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -432,12 +500,20 @@ class Bot:
 
     async def leave_chat(self, chat: "Chat"):
         """Leave bot from a Chat
-            Args:
-                chat (:class:`bale.Chat`): Chat
-            Returns:
-                :bool:
-            Raises:
-                :class:`bale.Error`
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                chat
+        
+        Raises
+        ------
+            :class:`bale.Error`
+
+        Returns
+        -------
+            bool:
+                ``True`` when bot leaved from chat else ``False``
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -454,12 +530,19 @@ class Bot:
 
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
         """
-            Args:
-                chat (:class:`bale.Chat`): Group ID
-            Returns:
-                :int: Member Chat count | None
-            Raises:
-                :class:`bale.Error`
+        Parameters
+        ----------
+            chat: :class:`bale.Chat` 
+
+        Raises
+        ------
+            :class:`bale.Error`
+                Group ID
+
+        Returns
+        --------
+            Optional[int]:
+                int or ``None`` if chat not found.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -474,12 +557,17 @@ class Bot:
     async def get_chat_administrators(self, chat: "Chat") -> list["ChatMember"] | None:
         """This service can be used to display admins of a group or channel.
 
-        Args:
-            chat (:class:`bale.Chat`): Group ID
-        Raises:
+        Parameters
+        ----------
+            chat: :class:`bale.Chat` 
+                Group id
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
-            List[:class:`bale.ChatMember`] | None
+        Returns
+        -------
+            Optional[List[:class:`bale.ChatMember`]]:
+                list of chat member or ``None`` if chat not found.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -494,14 +582,20 @@ class Bot:
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
         """Use this method to receive incoming updates using long polling.
 
-        Args:
-            offset (int): Defaults to None.
-            limit (int): Defaults to None.
-        Raises:
+        Parameters
+        ----------
+            offset: Optional[int]
+                Offset
+            limit: Optional[int] 
+                updates limit in list
+        Raises
+        ------
             :class:`bale.Error`
 
-        Returns:
-            List[:class:`bale.Update`]
+        Returns
+        -------
+            List[:class:`bale.Update`]:
+                The list of Updates or ``None`` if updates not found.
         """
         if offset and not isinstance(offset, int):
             raise TypeError(
@@ -517,17 +611,13 @@ class Bot:
         return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not offset or (offset and update_payload.get("update_id") > offset)]
 
     async def connect(self):
-        """Get bot and Start Updater"""
         await self.http.start()
-        self.user = await self.get_bot()
+        self._user = await self.get_bot()
         await self.updater.start()
 
     def run(self):
-        """
-            run bot and https
-        """
+        """Run bot and https"""
         async def main():
-            """a runner for `asyncio.run`"""
             async with self:
                 await self.connect()
 

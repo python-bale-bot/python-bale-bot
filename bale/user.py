@@ -30,12 +30,13 @@ if TYPE_CHECKING:
 
 class User:
     """This object shows a user.
-        Args:
-            user_id (int): User ID.
-            first_name (str): first user name
-            last_name (str): last user name. Defaults to None.
-            username (str): Username of the user. Defaults to None.
-            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+
+    Attributes
+    ----------
+        user_id: int
+        first_name: str
+        last_name: str
+        username: Optional[:class:`str`]
     """
     __slots__ = (
         "first_name",
@@ -54,24 +55,22 @@ class User:
 
     @property
     def mention(self) -> str | None:
-        """Mention User"""
+        """Optional[:class:`str`]"""
         return f"@{self.username}" if self.username else None
-
-    @property
-    def link(self):
-        """Get user link in bale"""
-        if self.username:
-            return "https://ble.ir/@{username}".format(username=self.username)
-        return None
 
     async def send(self, text: str, components=None):
         """Send a Text Message to User
 
-        Args:
-            text (str): Message Text.
-            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Message Components. Defaults to None.
-        Returns:
+        Parameters
+        ----------
+            text: str
+                Message Content
+            components: :class:`bale.Components` | :class:`bale.RemoveComponents`
+                Message Components
+        Returns
+        -------
             :class:`bale.Message`
+                On success, the sent Message is returned.
         """
         from bale import Message
         if components:
@@ -82,13 +81,19 @@ class User:
     async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
         """This service is used to send photo.
 
-        Args:
-            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
-            caption (:class:`str`): Message caption.
-        Raises:
+        Parameters
+        ----------
+            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
+                Photo
+            caption: :class:`str`
+                Message caption
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
-            :class:`bale.Message`: On success, the sent Message is returned.
+        Returns
+        -------
+            :class:`bale.Message`
+                On success, the sent Message is returned.
         """
         from bale import Message
         if not isinstance(photo, (bytes, str, Photo)):
@@ -103,19 +108,10 @@ class User:
 
     @classmethod
     def from_dict(cls, data: dict, bot=None):
-        """
-        Args:
-            data (dict): Data
-            bot (:class:`bale.Bot`): Bot
-        """
         return cls(username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    user_id=data.get("id"), bot=bot)
 
     def to_dict(self):
-        """Convert Class to dict
-        Returns:
-            :dict:
-        """
         data = {"first_name": self.first_name if self.first_name is not None else None,
                 "last_name": self.last_name if self.last_name is not None else None,
                 "username": self.username if self.username is not None else None,

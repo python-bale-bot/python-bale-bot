@@ -20,12 +20,16 @@ class MemberRole:
 
 
 class ChatMember:
-    """This object shows a user in chat
+    """This object shows a member in chat
 
-        Args:
-            role (MemberRole): User Role. Defaults to None.
-            user (:class:`bale.User`): User. Defaults to None.
-            permissions (:class:`bale.AdminPermissions`): User Permissions. Defaults to None.
+    Attributes
+    ----------
+        role: :class:`bale.MemberRole`
+            User Role
+        user: :class:`bale.User`
+            User
+        permissions: :class:`bale.AdminPermissions`
+            User Permissions
     """
     __slots__ = (
         "role", "_user", "permissions"
@@ -36,10 +40,11 @@ class ChatMember:
         self._user = user
         self.permissions = permissions
 
+
+    @property
+    def user(self):
+        return self._user
+
     @classmethod
     def from_dict(cls, data: dict):
-        """
-        Args:
-            data (dict): Data
-        """
         return cls(permissions=AdminPermissions.from_dict(data), user=User.from_dict(data.get("user")), role=MemberRole(data.get("status")))

@@ -11,9 +11,12 @@ __all__ = (
 
 class Components:
     """
-        Args:
-            keyboards (:class:`bale.Keyboards`): Defaults to None.
-            inline_keyboards (:class:`bale.InlineKeyboards`): Defaults to None.
+    Parameters
+    ----------
+        keyboards: :class:`bale.Keyboard`
+            keyboard
+        inline_keyboards: :class:`bale.InlineKeyboard`
+            inline keyboard
     """
 
     __slots__ = (
@@ -47,17 +50,9 @@ class Components:
 
     @classmethod
     def from_dict(cls, data: dict):
-        """
-        Args:
-            data (dict): Data
-        """
         return cls(keyboards=data["keyboard"], inline_keyboards=data["inline_keyboard"])
 
     def to_dict(self) -> Dict:
-        """Convert Class to dict
-            Returns:
-                :dict:
-        """
         data = {}
         keyboards = self.keyboards
         inline_keyboards = self.inline_keyboards
@@ -72,14 +67,20 @@ class Components:
 
 
 class InlineKeyboard:
-    """This object shows an in -line keyboard (within the message).
+    """This object shows an inline keyboard (within the message).
 
-        Args:
-            text (str):	Label text on the button.
-            callback_data (str): If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-            url (str): HTTP url to be opened when the button is pressed. Defaults to None.
-            switch_inline_query (str): If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-            switch_inline_query_current_chat (str): If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted. Defaults to None.
+    Attributes
+    ----------
+        text: str
+            Label text on the button.
+        callback_data: str
+            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+        url: str
+            HTTP url to be opened when the button is pressed. Defaults to None.
+        switch_inline_query: str
+            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+        switch_inline_query_current_chat: str
+            If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted. Defaults to None.
     """
     __slots__ = (
         "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
@@ -95,10 +96,6 @@ class InlineKeyboard:
 
     @classmethod
     def from_dict(cls, data: dict):
-        """
-        Args:
-            data (dict): Data
-        """
         if not data.get("text") or not data.get("callback_data"):
             return None
         return cls(text=data["text"], callback_data=data.get("callback_data"), url=data.get("url"),
@@ -106,10 +103,6 @@ class InlineKeyboard:
                    switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"))
 
     def to_dict(self) -> dict:
-        """Convert Class to dict
-            Returns:
-                :dict:
-        """
         data = {
             "text": self.text
         }
@@ -132,8 +125,10 @@ class InlineKeyboard:
 class Keyboard:
     """This object shows a keyboard
 
-        Args:
-            text (str): Keyboard Text.
+    Attributes
+    ----------
+        text: str
+            Keyboard Text.
     """
     __slots__ = (
         "text"
@@ -144,19 +139,11 @@ class Keyboard:
 
     @classmethod
     def from_dict(cls, data: dict):
-        """
-        Args:
-            data (dict): Data
-        """
         if not data.get("text"):
             return None
         return cls(text=data["text"])
 
     def to_dict(self):
-        """Convert Class to dict
-        Returns:
-            :dict:
-        """
         data = {
             "text": self.text
         }
@@ -167,8 +154,4 @@ class RemoveComponents:
     """This object shows a remove keyboard"""
 
     def to_dict(self) -> dict:
-        """Convert Class to dict
-        Returns:
-            :dict:
-        """
         return {"inline_keyboard": None, "keyboard": None}

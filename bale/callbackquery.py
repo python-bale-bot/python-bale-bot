@@ -12,13 +12,20 @@ __all__ = (
 class CallbackQuery:
     """This object represents an incoming callback query from a callback button in an inline keyboard.
 
-        Args:
-            callback_id (int): Callback Query ID
-            data (str): Callback Data
-            message (:class:`bale.Message`): Callback Message
-            inline_message_id (str): Callback inline message id
-            from_user (:class:`bale.User`): Callback The user who gave the callback.
-            bot (:class:`bale.Bot`): Defaults to None.
+    Parameters
+    -----------
+        callback_id: int
+            Callback Query ID
+        data: str
+            Callback Data
+        message: :class:`bale.Message`
+            Callback Message
+        inline_message_id: str
+            Callback inline message id
+        from_user: :class:`bale.User`
+            Callback The user who gave the callback.
+        bot: Optional[:class:`bale.Bot`]
+            Bot object.
     """
     __slots__ = (
         "message",
@@ -40,24 +47,15 @@ class CallbackQuery:
 
     @property
     def user(self):
-        """Aliases for self.from_user"""
+        """Aliases for :attr:`from_user`"""
         return self.from_user
 
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
-        """
-        Args:
-            data (dict): Data
-            bot (:class:`bale.Bot`): Bot
-        """
         return cls(bot=bot, data=data.get("data"), callback_id=data.get("id"), message=Message.from_dict(data.get("message"), bot=bot),
                    inline_message_id=data.get("inline_message_id"), from_user=User.from_dict(bot=bot, data=data.get("from")))
 
     def to_dict(self):
-        """Convert Class to dict
-            Returns:
-                :dict:
-        """
         data = {
             "id": self.callback_id
         }

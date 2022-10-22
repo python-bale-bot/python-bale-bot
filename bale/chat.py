@@ -36,11 +36,15 @@ __all__ = (
 class ChatType:
     """This object indicates a Chat Type.
 
-        Args:
-            _type (str): The type of Chat
+    .. container:: operations
+        .. describe:: x == y
+            Checks if two chat type are equal.
+        .. describe:: x != y
+            Checks if two chat type are not equal.
     """
     PRIVATE = "private"
     GROUP = "group"
+
     __slots__ = (
         "_type",
     )
@@ -49,11 +53,13 @@ class ChatType:
         self._type = _type
 
     def is_private_chat(self):
-        """Return True if Chat Type is Private"""
+        """bool:
+            Return ``True`` if Chat Type is Private"""
         return self._type == self.PRIVATE
 
     def is_group_chat(self):
-        """Return True if Chat Type is Group"""
+        """bool:
+            Return ``True`` if Chat Type is Group"""
         return self._type == self.GROUP
 
     def __eq__(self, other):
@@ -65,16 +71,32 @@ class ChatType:
 class Chat:
     """This object indicates a chat.
 
-        Args:
-            chat_id (str): Chat ID.
-            _type (:class:`bale.ChatType`): Chat Type.
-            title (str): Chat Title.
-            username (str): Chat Username (for DM or PV).
-            first_name (str): First name Chat (for DM or PV).
-            last_name (str): Last name Chat (for DM or PV).
-            pinned_message (:class:`bale.Message`): Pinned messages in chat. Defaults to None.
-            all_members_are_administrators (bool): Does everyone have admin access?. Defaults to True. (for Group)
-            bot (:class:`bale.Bot`): Bot Object. Defaults to None.
+    Attributes
+    ----------
+        chat_id: str
+            Chat ID.
+        type: :class:`bale.ChatType`
+            Chat Type.
+        title: str
+            Chat Title.
+        username: str
+            Chat Username (for DM or PV).
+        first_name: str
+            First name Chat (for DM or PV).
+        last_name: str
+            Last name Chat (for DM or PV).
+        pinned_message: :class:`bale.Message`
+            Pinned messages in chat. Defaults to None.
+        all_members_are_administrators: bool
+            Does everyone have admin access?. Defaults to True. (for Group)
+        bot: :class:`bale.Bot`
+            Bot Object. Defaults to None.
+
+    .. container:: operations
+        .. describe:: x == y
+            Checks if two chat are equal.
+        .. describe:: x != y
+            Checks if two chat are not equal.
     """
     __slots__ = (
         "chat_id",
@@ -106,104 +128,119 @@ class Chat:
         return self._type
 
     @property
-    def mention(self):
-        """Mention Chat"""
+    def mention(self) -> str | None:
+        """Optional[:class:`str`]"""
         return ("@" + self.username) if self.username else None
 
-    @property
-    def link(self):
-        """Get Chat Link"""
-        if self.username:
-            return "https://ble.ir/@{username}".format(username=self.username)
-        return None
-
     async def send(self, text: str, components=None):
-        """Send Message in Chat
-        
-        Args:
-            text (str): Message Text.
-            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Defaults to None.
-        Returns:
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+
+        Parameters
+        -----------
+            text: str
+                Message content
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message components
+        Returns
+        --------
             :class:`bale.Message`
         """
         return await self.bot.send_message(self, text, components=components)
 
     async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
-        """Send Photo in Chat
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
-        Args:
-            photo (:class:`bytes`|:class:`str`|:class:`bale.Photo`): Photo.
-            caption (:class:`str`): Message caption.
-        Raises:
+        Parameters
+        ----------
+            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
+                Photo
+            caption: str
+                Message caption.
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
-            :class:`bale.Message`: On success, the sent Message is returned.
+        Returns
+        -------
+            Optional[:class:`bale.Message`]
+                On success, the sent Message is returned.
         """
         return await self.bot.send_photo(self, photo, caption)
 
     async def leave(self):
-        """:meth:`bale.Bot.leave_chat`.
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.leave_chat`.
 
         Returns:
             :bool:
+                On success, ``True``.
         """
         return await self.bot.leave_chat(self)
 
     async def add_user(self, user: "User"):
-        """:meth:`bale.Bot.invite_to_chat`.
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.invite_to_chat`.
 
-        Args:
-            user (:class:`bale.User`)
-        Returns:
-            :class:`bale.Message`
+        Parameters
+        ----------
+            user: :class:`bale.User`
+                user
+        Returns
+        -------
+            bool
+                One success, ``True``.
         """
         return await self.bot.invite_to_chat(self, user)
 
     async def get_chat_member(self, user: "User"):
-        """:meth:`bale.Bot.get_chat_member`.
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
 
-            Args:
-                user (:class:`bale.User`): User.
-            Returns:
-                :class:`bale.ChatMember`
+        Parameters
+        ----------
+            user: :class:`bale.User`
+                User
+        Returns
+        -------
+            Optional[:class:`bale.ChatMember`]
+                On success, The chat member is retuened.
         """
         return await self.bot.get_chat_member(self, user)
 
     async def get_chat_members_count(self):
-        """:meth:`bale.Bot.get_chat_members_count`.
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
 
-            Returns:
-                :int:
+        Returns
+        -------
+            Optional[:class:`int`]
+                On success, The count of chat members is returned.
         """
         return await self.bot.get_chat_members_count(self)
 
     async def get_chat_administrators(self):
-        """:meth:`bale.Bot.get_chat_administrators`.
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
 
-        Raises:
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
-            List[:class:`bale.ChatMember`]
+        Returns
+        -------
+            Optional[List[:class:`bale.ChatMember`]]
+                On success, The chat members is returned.
         """
         return await self.bot.get_chat_administrators(self)
 
     @classmethod
     def from_dict(cls, data: dict, bot):
-        """
-        Args:
-            data (dict): Data
-            bot (:class:`bale.Bot`): Bot
-        """
         return cls(bot=bot, chat_id=data.get("id"), _type=ChatType(data.get("type")), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
 
     def to_dict(self):
-        """Convert Class to dict
-        Returns:
-            :dict:
-        """
         data = {
             "id": self.chat_id,
             "type": self.type,

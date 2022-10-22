@@ -15,13 +15,18 @@ class UpdateType:
 class Update:
     """This object shows an update.
 
-    Args:
-        update_id (int): Update ID
-        callback_query (:class:`bale.CallbackQuery`): Defaults to None.
-        message (:class:`bale.Message`): Defaults to None.
-        edited_message (:class:`bale.Message`): Defaults to None.
-        bot (:class:`bale.Bot`): Defaults to None.
-        raw_data (dict): Defaults to None.
+    Attributes
+    ----------
+        update_id: int
+            Update ID
+        type: str
+            Chat type
+        callback_query: Optional[:class:`bale.CallbackQuery`]
+            Callback Query
+        message: Optional[:class:`bale.Message`]
+            Message
+        edited_message: Optional[:class:`bale.Message`]
+            Edited Message
     """
     __slots__ = (
         "update_id",
@@ -44,11 +49,6 @@ class Update:
 
     @property
     def type(self) -> Literal['callback_query', 'message', 'unknown']:
-        """Chat Type
-
-        Returns:
-            str: Literal['callback_query', 'message', 'unknown']
-        """
         if self.callback_query is not None:
             return "callback_query"
         elif self.message is not None:
@@ -57,11 +57,6 @@ class Update:
 
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
-        """
-        Args:
-            data (dict): Data
-            bot (:class:`bale.Bot`): Bot
-        """
         callback_query, message, edited_message = None, None, None
 
         if data.get("callback_query"):
