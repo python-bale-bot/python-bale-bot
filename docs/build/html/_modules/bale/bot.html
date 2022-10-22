@@ -1,0 +1,626 @@
+
+<!DOCTYPE html>
+
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>bale.bot &#8212; python-bale-bot 2.2.0 documentation</title>
+    <link rel="stylesheet" type="text/css" href="../../_static/pygments.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/classic.css" />
+    <link rel="stylesheet" type="text/css" href="../../_static/css/footer.css" />
+    
+    <script data-url_root="../../" id="documentation_options" src="../../_static/documentation_options.js"></script>
+    <script src="../../_static/jquery.js"></script>
+    <script src="../../_static/underscore.js"></script>
+    <script src="../../_static/_sphinx_javascript_frameworks_compat.js"></script>
+    <script src="../../_static/doctools.js"></script>
+    <script src="../../_static/js/copy.js"></script>
+    
+    <link rel="shortcut icon" href="../../_static/bale.png"/>
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">python-bale-bot 2.2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" accesskey="U">Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">bale.bot</a></li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for bale.bot</h1><div class="highlight"><pre>
+<span></span><span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    MIT License</span>
+
+<span class="sd">    Copyright (c) 2022 kian Ahmadian</span>
+
+<span class="sd">    Permission is hereby granted, free of charge, to any person obtaining a copy</span>
+<span class="sd">    of this software and associated documentation files (the &quot;Software&quot;), to deal</span>
+<span class="sd">    in the Software without restriction, including without limitation the rights</span>
+<span class="sd">    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell</span>
+<span class="sd">    copies of the Software, and to permit persons to whom the Software is</span>
+<span class="sd">    furnished to do so, subject to the following conditions:</span>
+
+<span class="sd">    The above copyright notice and this permission notice shall be included in all</span>
+<span class="sd">    copies or substantial portions of the Software.</span>
+
+<span class="sd">    THE SOFTWARE IS PROVIDED &quot;AS IS&quot;, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR</span>
+<span class="sd">    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,</span>
+<span class="sd">    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE</span>
+<span class="sd">    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER</span>
+<span class="sd">    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,</span>
+<span class="sd">    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE</span>
+<span class="sd">    SOFTWARE.</span>
+<span class="sd">&quot;&quot;&quot;</span>
+
+<span class="kn">from</span> <span class="nn">__future__</span> <span class="kn">import</span> <span class="n">annotations</span>
+<span class="kn">import</span> <span class="nn">asyncio</span>
+<span class="kn">from</span> <span class="nn">typing</span> <span class="kn">import</span> <span class="n">Callable</span><span class="p">,</span> <span class="n">Dict</span><span class="p">,</span> <span class="n">Tuple</span><span class="p">,</span> <span class="n">List</span>
+<span class="kn">from</span> <span class="nn">builtins</span> <span class="kn">import</span> <span class="nb">enumerate</span><span class="p">,</span> <span class="nb">reversed</span>
+<span class="kn">from</span> <span class="nn">bale</span> <span class="kn">import</span> <span class="p">(</span><span class="n">Message</span><span class="p">,</span> <span class="n">Update</span><span class="p">,</span> <span class="n">User</span><span class="p">,</span> <span class="n">Components</span><span class="p">,</span> <span class="n">RemoveComponents</span><span class="p">,</span> <span class="n">Chat</span><span class="p">,</span> <span class="n">Price</span><span class="p">,</span> <span class="n">ChatMember</span><span class="p">,</span> <span class="n">HTTPClient</span><span class="p">,</span> <span class="n">Updater</span><span class="p">,</span>
+                  <span class="n">Photo</span><span class="p">)</span>
+
+
+<span class="n">__all__</span> <span class="o">=</span> <span class="p">(</span>
+    <span class="s2">&quot;Bot&quot;</span>
+<span class="p">)</span>
+
+
+<span class="k">class</span> <span class="nc">_Loop</span><span class="p">:</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">()</span>
+    
+    
+<span class="n">_loop</span> <span class="o">=</span> <span class="n">_Loop</span><span class="p">()</span>
+
+
+<div class="viewcode-block" id="Bot"><a class="viewcode-back" href="../../index.html#bale.Bot">[docs]</a><span class="k">class</span> <span class="nc">Bot</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;This object represents a Bale Bot.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            token (str): Bot Token.</span>
+<span class="sd">        Attributes:</span>
+<span class="sd">            loop (:class:`asyncio.AbstractEventLoop`)</span>
+<span class="sd">            token (str)</span>
+<span class="sd">            http (:class:`bale.HTTPClient`)</span>
+<span class="sd">            user (:class:`bale.User` | None)</span>
+<span class="sd">            updater (:class:`bale.Updater`)</span>
+<span class="sd">            events (Dict[str, Callable])</span>
+<span class="sd">            listeners Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]]</span>
+<span class="sd">            _closed (bool)</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="vm">__slots__</span> <span class="o">=</span> <span class="p">(</span>
+        <span class="s2">&quot;loop&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;token&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;loop&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;events&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;listeners&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;updater&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;user&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;http&quot;</span><span class="p">,</span>
+        <span class="s2">&quot;_closed&quot;</span>
+    <span class="p">)</span>
+
+    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">token</span><span class="p">:</span> <span class="nb">str</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">_loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">token</span> <span class="o">=</span> <span class="n">token</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="p">:</span> <span class="n">HTTPClient</span> <span class="o">=</span> <span class="n">HTTPClient</span><span class="p">(</span><span class="n">loop</span><span class="o">=</span><span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">,</span> <span class="n">token</span><span class="o">=</span><span class="n">token</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="kc">None</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">updater</span> <span class="o">=</span> <span class="n">Updater</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Callable</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="p">:</span> <span class="n">Dict</span><span class="p">[</span><span class="nb">str</span><span class="p">,</span> <span class="n">List</span><span class="p">[</span><span class="n">Tuple</span><span class="p">[</span><span class="n">asyncio</span><span class="o">.</span><span class="n">Future</span><span class="p">,</span> <span class="n">Callable</span><span class="p">[</span><span class="o">...</span><span class="p">,</span> <span class="nb">bool</span><span class="p">]]]]</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">False</span>
+
+    <span class="k">def</span> <span class="nf">listen</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register a Event&quot;&quot;&quot;</span>
+        <span class="k">def</span> <span class="nf">decorator</span><span class="p">(</span><span class="n">func</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_event</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">func</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">decorator</span>
+
+    <span class="k">def</span> <span class="nf">add_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register an Event with event name&quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">iscoroutinefunction</span><span class="p">(</span><span class="n">function</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> is not a Coroutine Function&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event</span><span class="p">]</span> <span class="o">=</span> <span class="nb">list</span><span class="p">()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event</span><span class="p">]</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">function</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">remove_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">function</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Register an Event with event name&quot;&quot;&quot;</span>
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">event</span><span class="si">}</span><span class="s2"> not in Events&quot;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span><span class="p">:</span>
+            <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event</span><span class="p">]</span>
+            <span class="k">return</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">function</span> <span class="ow">in</span> <span class="n">result</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span><span class="sa">f</span><span class="s2">&quot;</span><span class="si">{</span><span class="n">function</span><span class="o">.</span><span class="vm">__name__</span><span class="si">}</span><span class="s2"> not in Event Functions&quot;</span><span class="p">)</span>
+
+        <span class="k">del</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="p">[</span><span class="n">event</span><span class="p">][</span><span class="n">function</span><span class="p">]</span>
+
+<div class="viewcode-block" id="Bot.wait_for"><a class="viewcode-back" href="../../index.html#bale.Bot.wait_for">[docs]</a>    <span class="k">def</span> <span class="nf">wait_for</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">check</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">timeout</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Wait for an event&quot;&quot;&quot;</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span>
+        <span class="n">future</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_future</span><span class="p">()</span>
+        <span class="n">event_name</span> <span class="o">=</span> <span class="n">event_name</span><span class="o">.</span><span class="n">lower</span><span class="p">()</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">check</span><span class="p">:</span>
+            <span class="k">def</span> <span class="nf">event_check</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">):</span>
+                <span class="k">return</span> <span class="kc">True</span>
+            <span class="n">check</span> <span class="o">=</span> <span class="n">event_check</span>
+
+        <span class="n">listeners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">listeners</span><span class="p">:</span>
+            <span class="n">listeners</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="p">[</span><span class="n">event_name</span><span class="p">]</span> <span class="o">=</span> <span class="n">listeners</span>
+
+        <span class="n">listeners</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">future</span><span class="p">,</span> <span class="n">check</span><span class="p">))</span>
+        <span class="k">return</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">wait_for</span><span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">timeout</span> <span class="o">=</span> <span class="n">timeout</span><span class="p">)</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aenter__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="n">loop</span> <span class="o">=</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">get_running_loop</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">loop</span> <span class="o">=</span> <span class="n">loop</span>
+        <span class="k">return</span> <span class="bp">self</span>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="fm">__aexit__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">exc_type</span><span class="p">,</span> <span class="n">exc_value</span><span class="p">,</span> <span class="n">traceback</span><span class="p">):</span>
+        <span class="k">pass</span>
+
+<div class="viewcode-block" id="Bot.close"><a class="viewcode-back" href="../../index.html#bale.Bot.close">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">close</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Close http Events and bot&quot;&quot;&quot;</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span> <span class="o">=</span> <span class="kc">True</span></div>
+
+<div class="viewcode-block" id="Bot.is_closed"><a class="viewcode-back" href="../../index.html#bale.Bot.is_closed">[docs]</a>    <span class="k">def</span> <span class="nf">is_closed</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;:class:`bool`: Connection Status&quot;&quot;&quot;</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">_closed</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="k">await</span> <span class="n">core</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">ext</span><span class="p">:</span>
+            <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">on_error</span><span class="p">(</span><span class="n">event_name</span><span class="p">,</span> <span class="n">ext</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">call_to_run_event</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">core</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">task</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">run_event</span><span class="p">(</span><span class="n">core</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="p">:</span> <span class="n">asyncio</span><span class="o">.</span><span class="n">AbstractEventLoop</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="n">loop</span><span class="o">.</span><span class="n">create_task</span><span class="p">(</span><span class="n">task</span><span class="p">,</span> <span class="n">name</span> <span class="o">=</span> <span class="n">event_name</span><span class="p">)</span>
+
+    <span class="k">def</span> <span class="nf">dispatch</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="o">/</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">):</span>
+        <span class="n">method</span> <span class="o">=</span> <span class="s2">&quot;on_&quot;</span> <span class="o">+</span> <span class="n">event_name</span>
+        <span class="n">listeners</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">event_name</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">listeners</span><span class="p">:</span>
+            <span class="n">removed</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">index</span><span class="p">,</span> <span class="p">(</span><span class="n">future</span><span class="p">,</span> <span class="n">check</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">listeners</span><span class="p">):</span>
+                <span class="k">if</span> <span class="n">future</span><span class="o">.</span><span class="n">cancelled</span><span class="p">():</span>
+                    <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                    <span class="k">continue</span>
+                <span class="k">try</span><span class="p">:</span>
+                    <span class="n">result</span> <span class="o">=</span> <span class="n">check</span><span class="p">(</span><span class="o">*</span><span class="n">args</span><span class="p">)</span>
+                <span class="k">except</span> <span class="ne">Exception</span> <span class="k">as</span> <span class="n">__exception</span><span class="p">:</span>
+                    <span class="n">future</span><span class="o">.</span><span class="n">set_exception</span><span class="p">(</span><span class="n">__exception</span><span class="p">)</span>
+                    <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="k">if</span> <span class="n">result</span><span class="p">:</span>
+                        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                            <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="kc">None</span><span class="p">)</span>
+                        <span class="k">elif</span> <span class="nb">len</span><span class="p">(</span><span class="n">args</span><span class="p">)</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+                            <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">args</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span>
+                        <span class="k">else</span><span class="p">:</span>
+                            <span class="n">future</span><span class="o">.</span><span class="n">set_result</span><span class="p">(</span><span class="n">args</span><span class="p">)</span>
+                        <span class="n">removed</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">index</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">listeners</span><span class="p">)</span> <span class="o">==</span> <span class="nb">len</span><span class="p">(</span><span class="n">removed</span><span class="p">):</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">listeners</span><span class="o">.</span><span class="n">pop</span><span class="p">(</span><span class="n">event_name</span><span class="p">)</span>
+            <span class="k">else</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">index</span> <span class="ow">in</span> <span class="nb">reversed</span><span class="p">(</span><span class="n">removed</span><span class="p">):</span>
+                    <span class="k">del</span> <span class="n">listeners</span><span class="p">[</span><span class="n">index</span><span class="p">]</span>
+
+        <span class="n">events_core</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">events</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">method</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">events_core</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">event_core</span> <span class="ow">in</span> <span class="n">events_core</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">call_to_run_event</span><span class="p">(</span><span class="n">event_core</span><span class="p">,</span> <span class="n">method</span><span class="p">,</span> <span class="o">*</span><span class="n">args</span><span class="p">,</span> <span class="o">**</span><span class="n">kwargs</span><span class="p">)</span>
+
+<div class="viewcode-block" id="Bot.on_error"><a class="viewcode-back" href="../../index.html#bale.Bot.on_error">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">on_error</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">error</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;a Event for get errors when exceptions&quot;&quot;&quot;</span>
+        <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;error&quot;</span><span class="p">,</span> <span class="n">event_name</span><span class="p">,</span> <span class="n">error</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.get_bot"><a class="viewcode-back" href="../../index.html#bale.Bot.get_bot">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_bot</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">User</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Get Bot.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`Bale.User`: Bot User information.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`Bale.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_bot</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">),</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.delete_webhook"><a class="viewcode-back" href="../../index.html#bale.Bot.delete_webhook">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_webhook</span><span class="p">(</span><span class="bp">self</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This service is used to remove the webhook set for the bot.</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            bool: If done &quot;True&quot; if not &quot;False&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">delete_webhook</span><span class="p">()</span>
+        <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.send_message"><a class="viewcode-back" href="../../index.html#bale.Bot.send_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">components</span><span class="p">:</span> <span class="s2">&quot;Components&quot;</span> <span class="o">|</span> <span class="s2">&quot;RemoveComponents&quot;</span> <span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">reply_to_message_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This service is used to send text messages.</span>
+<span class="sd">        </span>
+<span class="sd">        Args:</span>
+<span class="sd">            chat (:class:`bale.Chat`): Chat.</span>
+<span class="sd">            text (:class:`str`): Message Text.</span>
+<span class="sd">            components (:class:`bot.Components`|:class:`bale.RemoveComponents`): Message Components.</span>
+<span class="sd">            reply_to_message_id (:class:`str`): Reply Message ID.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`bale.Message`: On success, the sent Message is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat_id is not a str or int. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">components</span><span class="p">:</span>
+            <span class="n">components</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+        <span class="k">if</span> <span class="n">reply_to_message_id</span><span class="p">:</span>
+            <span class="n">reply_to_message_id</span> <span class="o">=</span> <span class="n">reply_to_message_id</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">send_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">text</span><span class="p">,</span> <span class="n">components</span><span class="o">=</span><span class="n">components</span><span class="p">,</span> <span class="n">reply_to_message_id</span><span class="o">=</span><span class="n">reply_to_message_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.send_photo"><a class="viewcode-back" href="../../index.html#bale.Bot.send_photo">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_photo</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">photo</span><span class="p">:</span> <span class="nb">bytes</span> <span class="o">|</span> <span class="nb">str</span> <span class="o">|</span> <span class="s2">&quot;Photo&quot;</span><span class="p">,</span> <span class="n">caption</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">reply_to_message_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;|core|</span>
+
+<span class="sd">        This service is used to send photo.</span>
+
+<span class="sd">        Parameters</span>
+<span class="sd">        ----------         </span>
+<span class="sd">        chat: (:class:`bale.Chat`):</span>
+<span class="sd">            Chat.</span>
+<span class="sd">        photo: (:class:`bytes`|:class:`str`|:class:`bale.Photo`): </span>
+<span class="sd">            Photo.</span>
+<span class="sd">        caption: (:class:`str`): </span>
+<span class="sd">            Message caption.</span>
+<span class="sd">        reply_to_message_id: (:class:`str`): </span>
+<span class="sd">            Reply Message ID.</span>
+
+<span class="sd">        Raises</span>
+<span class="sd">        ------</span>
+<span class="sd">        :class:`bale.Error`</span>
+
+<span class="sd">        Returns</span>
+<span class="sd">        --------</span>
+<span class="sd">        Message: :class:`bale.Message`: </span>
+<span class="sd">            On success, the sent Message is returned.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">photo</span><span class="p">,</span> <span class="p">(</span><span class="nb">bytes</span><span class="p">,</span> <span class="nb">str</span><span class="p">,</span> <span class="n">Photo</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;photo is not a str or bytes. this is a </span><span class="si">{</span><span class="n">photo</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">photo</span><span class="p">,</span> <span class="n">Photo</span><span class="p">):</span>
+            <span class="n">photo</span> <span class="o">=</span> <span class="n">photo</span><span class="o">.</span><span class="n">file_id</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">send_photo</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">photo</span><span class="p">,</span> <span class="n">caption</span><span class="p">,</span> <span class="n">reply_to_message_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.send_invoice"><a class="viewcode-back" href="../../index.html#bale.Bot.send_invoice">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">send_invoice</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">title</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">description</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">provider_token</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">prices</span><span class="p">:</span> <span class="n">List</span><span class="p">[</span><span class="n">Price</span><span class="p">],</span> <span class="n">photo_url</span><span class="p">:</span> <span class="nb">str</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">need_name</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">need_phone_number</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">need_email</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">need_shipping_address</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">False</span><span class="p">,</span> <span class="n">is_flexible</span><span class="p">:</span> <span class="nb">bool</span> <span class="o">=</span> <span class="kc">True</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;|core|</span>
+<span class="sd">        You can use this service to send money request messages.</span>
+<span class="sd">        Args:</span>
+<span class="sd">            chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">            title (str): Invoice Title</span>
+<span class="sd">            description (str): Invoice Description</span>
+<span class="sd">            provider_token (str): You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number &quot;Bale&quot;</span>
+<span class="sd">            prices (List[:class:`bale.Price`]): A list of prices.</span>
+<span class="sd">            photo_url (str): Photo URL of Invoice. Defaults to None.</span>
+<span class="sd">            need_name (bool): Get a name from &quot;User&quot;?. Defaults to False.</span>
+<span class="sd">            need_phone_number (bool): Get a Phone number from &quot;User&quot;?. Defaults to False.</span>
+<span class="sd">            need_email (bool): Get a Email from &quot;User&quot;?. Defaults to False.</span>
+<span class="sd">            need_shipping_address (bool): Get a Shipping Address from &quot;User&quot;?. Defaults to False.</span>
+<span class="sd">            is_flexible (bool): Is the Invoice Photo Flexible to the Payment button?. Defaults to True.</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            :class:`Bale.Message`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+        <span class="n">prices</span> <span class="o">=</span> <span class="p">[</span><span class="n">price</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span> <span class="k">for</span> <span class="n">price</span> <span class="ow">in</span> <span class="n">prices</span><span class="p">]</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">send_invoice</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">title</span><span class="p">,</span> <span class="n">description</span><span class="p">,</span> <span class="n">provider_token</span><span class="p">,</span> <span class="n">prices</span><span class="p">,</span> <span class="n">photo_url</span><span class="p">,</span> <span class="n">need_name</span><span class="p">,</span> <span class="n">need_phone_number</span><span class="p">,</span> <span class="n">need_email</span><span class="p">,</span> <span class="n">need_shipping_address</span><span class="p">,</span> <span class="n">is_flexible</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">Message</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.edit_message"><a class="viewcode-back" href="../../index.html#bale.Bot.edit_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">edit_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">message_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">text</span><span class="p">:</span> <span class="nb">str</span><span class="p">,</span> <span class="n">components</span><span class="p">:</span> <span class="s2">&quot;Components&quot;</span> <span class="o">|</span> <span class="s2">&quot;RemoveComponents&quot;</span><span class="o">=</span><span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Message</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;You can use this service to edit text messages that you have already sent through the arm.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">            message_id (str): Message Id.</span>
+<span class="sd">            text (str): New Content For Message.</span>
+<span class="sd">            components (:class:`bale.Components`|:class:`bale.RemoveComponents`): Components. Defaults to None.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+<span class="sd">        Return:</span>
+<span class="sd">            :class:`dict`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">components</span><span class="p">:</span>
+            <span class="n">components</span> <span class="o">=</span> <span class="n">components</span><span class="o">.</span><span class="n">to_dict</span><span class="p">()</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">edit_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">message_id</span><span class="p">,</span> <span class="n">text</span><span class="p">,</span> <span class="n">components</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">payload</span></div>
+
+<div class="viewcode-block" id="Bot.delete_message"><a class="viewcode-back" href="../../index.html#bale.Bot.delete_message">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">delete_message</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">message_id</span><span class="p">:</span> <span class="nb">str</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;You can use this service to delete a message that you have already sent through the arm.</span>
+<span class="sd">        </span>
+<span class="sd">        In Channel or Group:</span>
+<span class="sd">            If it is a group or channel Manager, it can delete a message from (group or channel).</span>
+
+<span class="sd">        In private message (PV):</span>
+<span class="sd">            If the message was sent by a bot, it can be deleted with this method</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">            message_id (str): Message ID</span>
+<span class="sd">        Return Type:</span>
+<span class="sd">            bool: if done &quot;True&quot; if not &quot;False&quot;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">delete_message</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">message_id</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bot.get_chat"><a class="viewcode-back" href="../../index.html#bale.Bot.get_chat">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="n">Chat</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This service can be used to receive personal information that has previously interacted with the arm.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat_id (str | int): Chat Id.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+<span class="sd">        Return:</span>
+<span class="sd">            :class:`bale.Chat`: On success, the Chat is returned. | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat_id</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat_id is not str or int. this is a </span><span class="si">{</span><span class="n">chat_id</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_chat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">Chat</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">],</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.get_user"><a class="viewcode-back" href="../../index.html#bale.Bot.get_user">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_user</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">user_id</span><span class="p">:</span> <span class="nb">str</span> <span class="o">|</span> <span class="nb">int</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;User&quot;</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This Method almost like &quot;bale.Bot.get_chat&quot;, but this a filter that only get users.</span>
+
+<span class="sd">            Args:</span>
+<span class="sd">                user_id (str | int): User Id.</span>
+<span class="sd">            Raises:</span>
+<span class="sd">                :class:`bale.Error`</span>
+<span class="sd">            Return:</span>
+<span class="sd">                :class:`bale.User`: On success, the User is returned. | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user_id</span><span class="p">,</span> <span class="p">(</span><span class="nb">str</span><span class="p">,</span> <span class="nb">int</span><span class="p">)):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;user_id is not a str or int. this is a </span><span class="si">{</span><span class="n">user_id</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">chat</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_chat</span><span class="p">(</span><span class="n">user_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">chat</span> <span class="ow">and</span> <span class="n">chat</span><span class="o">.</span><span class="n">type</span><span class="o">.</span><span class="n">is_private_chat</span><span class="p">():</span>
+            <span class="k">return</span> <span class="n">User</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">to_dict</span><span class="p">(),</span> <span class="bp">self</span><span class="p">)</span>
+
+        <span class="k">return</span></div>
+
+<div class="viewcode-block" id="Bot.get_chat_member"><a class="viewcode-back" href="../../index.html#bale.Bot.get_chat_member">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_chat_member</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="s2">&quot;ChatMember&quot;</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Args:</span>
+<span class="sd">                chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">                user (:class:`bale.User`): User</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                :class:`bale.ChatMember` | None</span>
+<span class="sd">            Raises:</span>
+<span class="sd">                :class:`bale.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">user</span><span class="p">,</span> <span class="n">User</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;user_id is not a str or int. this is a </span><span class="si">{</span><span class="n">user</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_chat_member</span><span class="p">(</span><span class="n">chat_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="n">member_id</span><span class="o">=</span><span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">ChatMember</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="Bot.invite_to_chat"><a class="viewcode-back" href="../../index.html#bale.Bot.invite_to_chat">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">invite_to_chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">,</span> <span class="n">user</span><span class="p">:</span> <span class="s2">&quot;User&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">bool</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Invite user to the chat</span>
+<span class="sd">            Args:</span>
+<span class="sd">                chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">                user (:class:`bale.User`): User</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                :bool:</span>
+<span class="sd">            Raises:</span>
+<span class="sd">                :class:`bale.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">invite_to_chat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">),</span> <span class="nb">str</span><span class="p">(</span><span class="n">user</span><span class="o">.</span><span class="n">user_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.leave_chat"><a class="viewcode-back" href="../../index.html#bale.Bot.leave_chat">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">leave_chat</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;Leave bot from a Chat</span>
+<span class="sd">            Args:</span>
+<span class="sd">                chat (:class:`bale.Chat`): Chat</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                :bool:</span>
+<span class="sd">            Raises:</span>
+<span class="sd">                :class:`bale.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+        <span class="k">try</span><span class="p">:</span>
+            <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">leave_chat</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">))</span>
+        <span class="k">except</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">False</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+                <span class="k">return</span> <span class="kc">False</span>
+            <span class="k">return</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="kc">False</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="Bot.get_chat_members_count"><a class="viewcode-back" href="../../index.html#bale.Bot.get_chat_members_count">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_chat_members_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">int</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            Args:</span>
+<span class="sd">                chat (:class:`bale.Chat`): Group ID</span>
+<span class="sd">            Returns:</span>
+<span class="sd">                :int: Member Chat count | None</span>
+<span class="sd">            Raises:</span>
+<span class="sd">                :class:`bale.Error`</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_chat_members_count</span><span class="p">(</span><span class="nb">str</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">))</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="Bot.get_chat_administrators"><a class="viewcode-back" href="../../index.html#bale.Bot.get_chat_administrators">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_chat_administrators</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">chat</span><span class="p">:</span> <span class="s2">&quot;Chat&quot;</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;ChatMember&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;This service can be used to display admins of a group or channel.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            chat (:class:`bale.Chat`): Group ID</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+<span class="sd">        Returns:</span>
+<span class="sd">            List[:class:`bale.ChatMember`] | None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">chat</span><span class="p">,</span> <span class="n">Chat</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;chat is not a Chat object. this is a </span><span class="si">{</span><span class="n">chat</span><span class="o">.</span><span class="vm">__class__</span><span class="si">}</span><span class="s2"> !&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_chat_administrators</span><span class="p">(</span><span class="n">chat</span><span class="o">.</span><span class="n">chat_id</span><span class="p">)</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">payload</span><span class="p">:</span>
+            <span class="k">return</span> <span class="kc">None</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">ChatMember</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">member_payload</span><span class="p">)</span> <span class="k">for</span> <span class="n">member_payload</span> <span class="ow">in</span> <span class="n">payload</span><span class="p">[</span><span class="s2">&quot;result&quot;</span><span class="p">]]</span></div>
+
+<div class="viewcode-block" id="Bot.get_updates"><a class="viewcode-back" href="../../index.html#bale.Bot.get_updates">[docs]</a>    <span class="k">async</span> <span class="k">def</span> <span class="nf">get_updates</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">offset</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">,</span> <span class="n">limit</span><span class="p">:</span> <span class="nb">int</span> <span class="o">=</span> <span class="kc">None</span><span class="p">)</span> <span class="o">-&gt;</span> <span class="nb">list</span><span class="p">[</span><span class="s2">&quot;Update&quot;</span><span class="p">]</span> <span class="o">|</span> <span class="kc">None</span><span class="p">:</span>
+        <span class="sd">&quot;&quot;&quot;Use this method to receive incoming updates using long polling.</span>
+
+<span class="sd">        Args:</span>
+<span class="sd">            offset (int): Defaults to None.</span>
+<span class="sd">            limit (int): Defaults to None.</span>
+<span class="sd">        Raises:</span>
+<span class="sd">            :class:`bale.Error`</span>
+
+<span class="sd">        Returns:</span>
+<span class="sd">            List[:class:`bale.Update`]</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">if</span> <span class="n">offset</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;offset is not a int&quot;</span>
+            <span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">limit</span> <span class="ow">and</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">limit</span><span class="p">,</span> <span class="nb">int</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="sa">f</span><span class="s2">&quot;limit is not a int&quot;</span>
+            <span class="p">)</span>
+
+        <span class="n">response</span><span class="p">,</span> <span class="n">payload</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">get_updates</span><span class="p">(</span><span class="n">offset</span><span class="p">,</span> <span class="n">limit</span><span class="p">)</span>
+        <span class="k">return</span> <span class="p">[</span><span class="n">Update</span><span class="o">.</span><span class="n">from_dict</span><span class="p">(</span><span class="n">data</span><span class="o">=</span><span class="n">update_payload</span><span class="p">,</span> <span class="n">bot</span><span class="o">=</span><span class="bp">self</span><span class="p">)</span> <span class="k">for</span> <span class="n">update_payload</span> <span class="ow">in</span> <span class="n">payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;result&quot;</span><span class="p">,</span> <span class="p">[])</span> <span class="k">if</span> <span class="ow">not</span> <span class="n">offset</span> <span class="ow">or</span> <span class="p">(</span><span class="n">offset</span> <span class="ow">and</span> <span class="n">update_payload</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="s2">&quot;update_id&quot;</span><span class="p">)</span> <span class="o">&gt;</span> <span class="n">offset</span><span class="p">)]</span></div>
+
+    <span class="k">async</span> <span class="k">def</span> <span class="nf">connect</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">http</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">user</span> <span class="o">=</span> <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_bot</span><span class="p">()</span>
+        <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">updater</span><span class="o">.</span><span class="n">start</span><span class="p">()</span>
+
+<div class="viewcode-block" id="Bot.run"><a class="viewcode-back" href="../../index.html#bale.Bot.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">            run bot and https</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="k">async</span> <span class="k">def</span> <span class="nf">main</span><span class="p">():</span>
+            <span class="sd">&quot;&quot;&quot;a runner for `asyncio.run`&quot;&quot;&quot;</span>
+            <span class="k">async</span> <span class="k">with</span> <span class="bp">self</span><span class="p">:</span>
+                <span class="k">await</span> <span class="bp">self</span><span class="o">.</span><span class="n">connect</span><span class="p">()</span>
+
+        <span class="n">asyncio</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">main</span><span class="p">())</span></div></div>
+</pre></div>
+
+            <div class="clearer"></div>
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../../index.html">
+              <img class="logo" src="../../_static/bale.png" alt="Logo"/>
+            </a></p>
+<div id="searchbox" style="display: none" role="search">
+  <h3 id="searchlabel">Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../search.html" method="get">
+      <input type="text" name="q" aria-labelledby="searchlabel" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <input type="submit" value="Go" />
+    </form>
+    </div>
+</div>
+<script>document.getElementById('searchbox').style.display = "block"</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="nav-item nav-item-0"><a href="../../index.html">python-bale-bot 2.2.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../index.html" >Module code</a> &#187;</li>
+        <li class="nav-item nav-item-this"><a href="">bale.bot</a></li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2022, Kian Ahmadian.
+    </div>
+  </body>
+</html>
