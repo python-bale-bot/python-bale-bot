@@ -6,6 +6,15 @@ def get_readme_file() -> str:
         readme_file = f.read()
     return readme_file
 
+extras_require = {
+    'docs': [
+        'sphinx==4.4.0',
+        'sphinxcontrib_trio==1.1.2',
+        'sphinxcontrib-websupport',
+        'typing-extensions>=4.3,<5',
+    ],
+}
+
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
@@ -22,6 +31,7 @@ if __name__ == "__main__":
         },
         keywords=["bale", "bale-bot", "framework"],
         python_requires='>=3.8',
+        extras_require=extras_require,
         include_package_data=True,
         url="https://github.com/kian-ahmadian/python-bale-bot/",
         packages=find_packages(),
