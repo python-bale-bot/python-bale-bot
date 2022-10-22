@@ -42,6 +42,7 @@ extensions = [
     'resourcelinks',
     'nitpick_file_ignorer',
 ]
+master_doc = 'index'
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'none'
 gettext_compact = False
