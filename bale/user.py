@@ -59,7 +59,8 @@ class User:
         return f"@{self.username}" if self.username else None
 
     async def send(self, text: str, components=None):
-        """Send a Text Message to User
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
         Parameters
         ----------
@@ -72,14 +73,10 @@ class User:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        from bale import Message
-        if components:
-            components = components.to_dict()
-        response, payload = await self.bot.http.send_message(str(self.user_id), text, components=components)
-        return Message.from_dict(data=payload["result"], bot=self.bot)
+        return await self.bot.send_message(self, text, components)
 
     async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
-        """This service is used to send photo.
+        """For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
         Parameters
         ----------
@@ -95,16 +92,7 @@ class User:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        from bale import Message
-        if not isinstance(photo, (bytes, str, Photo)):
-            raise TypeError(
-                f"photo is not a str or bytes or bale.Photo. this is a {photo.__class__} !"
-            )
-
-        if isinstance(photo, Photo):
-            photo = photo.file_id
-        response, payload = await self.bot.http.send_photo(str(self.user_id), photo, caption)
-        return Message.from_dict(data=payload["result"], bot=self.bot)
+        return await self.bot.send_photo(self, photo, caption)
 
     @classmethod
     def from_dict(cls, data: dict, bot=None):

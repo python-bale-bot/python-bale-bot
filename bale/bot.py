@@ -198,7 +198,7 @@ class Bot:
         """
         Returns
         -------
-            :class:`Bale.User`:
+            :class:`Bale.User` :
                 Bot User information.
         Raises
         ------
@@ -218,28 +218,30 @@ class Bot:
         response, payload = await self.http.delete_webhook()
         return payload.get("result", False)
 
-    async def send_message(self, chat: "Chat", text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
+    async def send_message(self, chat: "Chat" | "User", text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
         """This service is used to send text messages.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
+            chat: :class:`bale.Chat` | :class:`bale.User`
                 Chat
             text: :class:`str`
                 Message Text
-            components: :class:`bot.Components`|:class:`bale.RemoveComponents`
+            components: :class:`bot.Components` | :class:`bale.RemoveComponents`
                 Message Components
             reply_to_message_id: :class:`str`
                 Reply Message ID
-        Raises:
+        Raises
+        ------
             :class:`bale.Error`
-        Returns:
+        Returns
+        -------
             Optional[:class:`bale.Message`]:
                 The Message or ``None`` if message not sent
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat_id is not a str or int. this is a {chat.__class__} !"
+                f"chat is not a Chat Object or user object. this is a {chat.__class__} !"
             )
 
         if components:
@@ -249,16 +251,16 @@ class Bot:
         response, payload = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def send_photo(self, chat: "Chat", photo: bytes | str | "Photo", caption: str = None, reply_to_message_id: str = None):
+    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", caption: str = None, reply_to_message_id: str = None):
         """This service is used to send photo.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat`
+        chat: :class:`bale.Chat` | :class:`bale.User`
             Chat
-        photo: :class:`bytes`|:class:`str`|:class:`bale.Photo`
+        photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
             Photo
-        caption: (:class:`str`):
+        caption: :class:`str`
             Message caption
         reply_to_message_id: :class:`str`
             Reply Message ID
@@ -274,7 +276,7 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                f"chat is not a Chat object or a User object. this is a {chat.__class__} !"
             )
 
         if not isinstance(photo, (bytes, str, Photo)):
@@ -287,12 +289,12 @@ class Bot:
         response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption, reply_to_message_id)
         return Message.from_dict(data=payload["result"], bot=self)
 
-    async def send_invoice(self, chat: "Chat", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
+    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat`
+        chat: :class:`bale.Chat` | :class:`bale.User`
             Chat
         title: str
             Invoice Title
@@ -319,9 +321,9 @@ class Bot:
         -------
             :class:`Bale.Message`
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                f"chat is not a Chat object or User Object. this is a {chat.__class__} !"
             )
         prices = [price.to_dict() for price in prices]
         response, payload = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
