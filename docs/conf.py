@@ -7,16 +7,16 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 import os
 import sys
+import re
 
-sys.path.insert(0, os.path.abspath(''))
+sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('extensions'))
 
 project = 'python-bale-bot'
 copyright = '2022, Kian Ahmadian'
 author = 'Kian Ahmadian'
-version = '2.0.0'
-# with open('../bale/version.py') as f:
-#     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
+with open('../bale/version.py') as f:
+    version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
 
 # The full version, including alpha/beta/rc tags.
 release = version
@@ -43,6 +43,7 @@ extensions = [
     'nitpick_file_ignorer',
 ]
 master_doc = 'index'
+source_suffix = '.rst'
 autodoc_member_order = 'bysource'
 autodoc_typehints = 'none'
 gettext_compact = False
