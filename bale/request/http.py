@@ -25,7 +25,7 @@ from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError)
-
+from . import ResponseParser, ResponseStatusCode
 
 __all__ = ("HTTPClient", "Route")
 
@@ -97,26 +97,23 @@ class HTTPClient:
 		try:
 			async with self.__session.request(method=method, url=url, **kwargs) as response:
 				response: aiohttp.ClientResponse = response
-				if response.status == 200:
-					payload = await response.json()
-					return response, payload
-				elif response.status == 400:
-					payload = await response.json()
-					if payload.get("description") == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
-						payload = None
-						return response, payload
-					elif payload.get("description") == HTTPClientError.RATE_LIMIT:
+				parsed_response = await ResponseParser.from_response(response)
+				if response.status == ResponseStatusCode.OK:
+					return response, parsed_response.result
+				elif response.status == ResponseStatusCode.NOT_INCORRECT:
+					if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
+						return response, None
+					elif parsed_response.description == HTTPClientError.RATE_LIMIT:
 						await asyncio.sleep(1)
 						return await self.request(route, **kwargs)
+					elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
+						raise Forbidden()
 					raise APIError(
-							str(payload.get("error_code")) + payload.get("description")
+							str(parsed_response.error_code), parsed_response.description
 						)
-				elif response.status == 404:
+				elif response.status == ResponseStatusCode.NOT_FOUND:
 					raise NotFound()
-				elif response.status == 403:
-					raise Forbidden()
-				json = await response.json()
-				raise HTTPException(response, json)
+				raise HTTPException(response)
 		except aiohttp.client_exceptions.ClientConnectorError as error:
 			raise NetworkError(str(error))
 		except aiohttp.client_exceptions.ServerTimeoutError:
@@ -133,7 +130,7 @@ class HTTPClient:
 			elif response.status == 403:
 				raise Forbidden()
 			else:
-				raise APIError("failed to read file")
+				raise APIError(0, "failed to read file")
 
 		raise RuntimeError("failed to read file")
 
