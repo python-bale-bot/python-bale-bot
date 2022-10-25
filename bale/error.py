@@ -1,7 +1,7 @@
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
     RATE_LIMIT = "bot limit exceed"
-
+    PERMISSION_DENIED = "permission_denied"
 
 class BaleError(Exception):
     __slots__ = (
@@ -32,12 +32,13 @@ class InvalidToken(BaleError):
 
 
 class APIError(BaleError):
-    __slots__ = ("_message",)
+    __slots__ = ("_message", "_error_code")
 
-    def __init__(self, message):
+    def __init__(self, error_code, message):
         self._message = message
+        self._error_code = error_code
 
-        super().__init__(self._message)
+        super().__init__("{}: {}".format(error_code, message))
 
 
 class NetworkError(BaleError):
@@ -68,5 +69,5 @@ class Forbidden(BaleError):
 class HTTPException(BaleError):
     __slots__ = ()
 
-    def __init__(self, response, data):
-        super().__init__(str(response) + str(data))
+    def __init__(self, response):
+        super().__init__(str(response))
