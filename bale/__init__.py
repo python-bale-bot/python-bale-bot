@@ -1,5 +1,5 @@
 from .version import __version__
-from .request.http import HTTPClient, Route
+from .request import HTTPClient, Route, ResponseStatusCode, ResponseParser
 from .components import Components, RemoveComponents, InlineKeyboard, Keyboard
 from .attachments.audio import Audio
 from .attachments.location import Location
