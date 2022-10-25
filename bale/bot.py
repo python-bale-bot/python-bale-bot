@@ -109,9 +109,7 @@ class Bot:
         future = self.loop.create_future()
         event_name = event_name.lower()
         if not check:
-            def event_check(*args):
-                return True
-            check = event_check
+            check = lambda: True
 
         listeners = self.listeners.get(event_name)
         if not listeners:
@@ -130,6 +128,7 @@ class Bot:
         loop = asyncio.get_running_loop()
         self.loop = loop
         self.http.loop = loop
+        await self.http.start()
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
@@ -227,7 +226,7 @@ class Bot:
                 Chat
             text: :class:`str`
                 Message Text
-            components: :class:`bot.Components` | :class:`bale.RemoveComponents`
+            components: :class:`bale.Components` | :class:`bale.RemoveComponents`
                 Message Components
             reply_to_message_id: :class:`str`
                 Reply Message ID
@@ -388,12 +387,12 @@ class Bot:
         response, payload = await self.http.delete_message(str(chat.chat_id), message_id)
         return payload["result"]
 
-    async def get_chat(self, chat_id: str | int) -> Chat | None:
+    async def get_chat(self, chat_id: int) -> Chat | None:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
         Parameters
         ----------
-            chat_id: str | int
+            chat_id: int
                 chat id
         Raises
         ------
@@ -403,7 +402,7 @@ class Bot:
             Optional[:class:`bale.Chat`]
                 The chat or ``None`` if not found.
         """
-        if not isinstance(chat_id, (str, int)):
+        if not isinstance(chat_id, int):
             raise TypeError(
                 f"chat_id is not str or int. this is a {chat_id.__class__} !"
             )
@@ -413,12 +412,12 @@ class Bot:
             return None
         return Chat.from_dict(payload["result"], bot=self)
 
-    async def get_user(self, user_id: str | int) -> "User" | None:
-        """This Method almost like "bale.Bot.get_chat", but this a filter that only get users.
+    async def get_user(self, user_id: int) -> "User" | None:
+        """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         Parameters
         ----------
-            user_id: str | int
+            user_id: int
                 user id
         Raises
         ------
@@ -428,24 +427,24 @@ class Bot:
             Optional[:class:`bale.User`]
                 The user or ``None`` if not found.
         """
-        if not isinstance(user_id, (str, int)):
+        if not isinstance(user_id, int):
             raise TypeError(
-                f"user_id is not a str or int. this is a {user_id.__class__} !"
+                f"user_id is not a int. this is a {user_id.__class__} !"
             )
 
         chat = await self.get_chat(user_id)
         if chat and chat.type.is_private_chat():
             return User.from_dict(chat.to_dict(), self)
 
-        return
+        return None
 
-    async def get_chat_member(self, chat: "Chat", user: "User") -> "ChatMember" | None:
+    async def get_chat_member(self, chat: "Chat", user_id: int) -> "ChatMember" | None:
         """
         Parameters
         ----------
             chat: :class:`bale.Chat`
                 chat
-            user: :class:`bale.User`
+            user_id: int
                 user
 
         Raises
@@ -462,12 +461,12 @@ class Bot:
                 f"chat is not a Chat object. this is a {chat.__class__} !"
             )
 
-        if not isinstance(user, User):
+        if not isinstance(user_id, int):
             raise TypeError(
-                f"user_id is not a str or int. this is a {user.__class__} !"
+                f"user is not a int. this is a {user_id.__class__} !"
             )
 
-        response, payload = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=str(user.user_id))
+        response, payload = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=str(user_id))
         if not payload:
             return None
         return ChatMember.from_dict(payload.get("result"))
@@ -582,23 +581,6 @@ class Bot:
         return [ChatMember.from_dict(data=member_payload) for member_payload in payload["result"]]
 
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
-        """Use this method to receive incoming updates using long polling.
-
-        Parameters
-        ----------
-            offset: Optional[int]
-                Offset
-            limit: Optional[int] 
-                updates limit in list
-        Raises
-        ------
-            :class:`bale.Error`
-
-        Returns
-        -------
-            List[:class:`bale.Update`]:
-                The list of Updates or ``None`` if updates not found.
-        """
         if offset and not isinstance(offset, int):
             raise TypeError(
                 f"offset is not a int"
@@ -613,7 +595,6 @@ class Bot:
         return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not offset or (offset and update_payload.get("update_id") > offset)]
 
     async def connect(self):
-        await self.http.start()
         self._user = await self.get_bot()
         await self.updater.start()
 
