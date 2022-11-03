@@ -99,10 +99,10 @@ class HTTPClient:
 				response: aiohttp.ClientResponse = response
 				parsed_response = await ResponseParser.from_response(response)
 				if response.status == ResponseStatusCode.OK:
-					return response, parsed_response.result
+					return parsed_response
 				elif response.status == ResponseStatusCode.NOT_INCORRECT:
 					if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
-						return response, None
+						raise NotFound()
 					elif parsed_response.description == HTTPClientError.RATE_LIMIT:
 						await asyncio.sleep(1)
 						return await self.request(route, **kwargs)
@@ -123,16 +123,17 @@ class HTTPClient:
 
 	async def get_file(self, file_id):
 		async with self.__session.get(BALE_API_FILE_URL + "/" + "bot" + self.token + "/" + file_id) as response:
-			if response.status == 200:
+			if response.status == ResponseStatusCode.OK:
 				return await response.read()
-			elif response.status == 400:
+			elif response.status == ResponseStatusCode.NOT_FOUND:
 				raise NotFound()
-			elif response.status == 403:
+			elif response.status == ResponseStatusCode.PERMISSION_DENIED:
 				raise Forbidden()
 			else:
-				raise APIError(0, "failed to read file")
+				error_payload = await response.json()
+				raise APIError(0, "UNKNOWN ERROR: {}".format(error_payload))
 
-		raise RuntimeError("failed to read file")
+		raise RuntimeError("failed to get file")
 
 	def send_message(self, chat_id, text, *, components=None, reply_to_message_id=None):
 		payload = {
@@ -146,7 +147,17 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendMessage", self.token), json=payload)
 
-	def send_photo(self, chat_id, photo, caption=None, reply_to_message_id=None):
+	def send_document(self, chat_id, document, *, caption=None):
+		payload = {
+			"chat_id": chat_id,
+			"document": document
+		}
+		if caption:
+			payload["caption"] = caption
+
+		return self.request(Route("POST", "Senddocument", self.token), data=payload)
+
+	def send_photo(self, chat_id, photo, *, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"photo": photo
@@ -170,7 +181,7 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendInvoice", self.token), json=payload)
 
-	def edit_message(self, chat_id, message_id, text, components=None):
+	def edit_message(self, chat_id, message_id, text, *, components=None):
 		payload = {
 			"chat_id": chat_id,
 			"message_id": message_id,
