@@ -26,8 +26,9 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List
 from builtins import enumerate, reversed
+from error import NotFound
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
-                  Photo)
+                  Photo, Document)
 
 
 __all__ = (
@@ -194,7 +195,8 @@ class Bot:
         print("error", event_name, error)
 
     async def get_bot(self) -> User:
-        """
+        """Get bot information
+
         Returns
         -------
             :class:`Bale.User` :
@@ -203,8 +205,8 @@ class Bot:
         ------
             :class:`Bale.Error`
         """
-        response, payload = await self.http.get_bot()
-        return User.from_dict(data=payload.get("result"), bot=self)
+        response = await self.http.get_bot()
+        return User.from_dict(data=response.result, bot=self)
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
@@ -214,8 +216,8 @@ class Bot:
             bool:
                 ``True`` else ``False`` if not done
         """
-        response, payload = await self.http.delete_webhook()
-        return payload.get("result", False)
+        response = await self.http.delete_webhook()
+        return response.result or False
 
     async def send_message(self, chat: "Chat" | "User", text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message_id: str = None) -> Message | None:
         """This service is used to send text messages.
@@ -240,15 +242,70 @@ class Bot:
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat Object or user object. this is a {chat.__class__} !"
+                "chat param must be type of Chat or User"
+            )
+
+        if not isinstance(components, (Components, RemoveComponents)):
+            raise TypeError(
+                "components param must be type of Components or RemoveComponents"
+            )
+
+        if not isinstance(reply_to_message_id, (int, str)):
+            raise TypeError(
+                "reply_to_message_id param must be type of int or str"
             )
 
         if components:
             components = components.to_dict()
         if reply_to_message_id:
             reply_to_message_id = reply_to_message_id
-        response, payload = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=payload["result"], bot=self)
+
+        response = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
+        return Message.from_dict(data=response.result, bot=self)
+
+    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", caption: str = None, reply_to_message_id: str = None):
+        """This service is used to send document.
+
+        Parameters
+        ----------
+        chat: :class:`bale.Chat` | :class:`bale.User`
+            Chat
+        document: :class:`bytes` | :class:`str` | :class:`bale.Document`
+            Photo
+        caption: :class:`str`
+            Message caption
+        reply_to_message_id: :class:`str`
+            Reply Message ID
+
+        Raises
+        ------
+            :class:`bale.Error`
+
+        Returns
+        --------
+            Optional[:class:`bale.Message`]:
+                The Message or ``None`` if message not sent
+        """
+        if not isinstance(chat, (Chat, User)):
+            raise TypeError(
+                "chat param must be type of Chat or User"
+            )
+
+        if not isinstance(document, (bytes, str, Document)):
+            raise TypeError(
+                "document param must be type of bytes, str or Document"
+            )
+
+        if not isinstance(reply_to_message_id, (int, str)):
+            raise TypeError(
+                "reply_to_message_id param must be type of int or str"
+            )
+
+        if isinstance(document, Document):
+            document = document.file_id
+
+        response = await self.http.send_document(chat.chat_id, document, caption=caption)
+        return Message.from_dict(data=response.result, bot=self)
 
     async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", caption: str = None, reply_to_message_id: str = None):
         """This service is used to send photo.
@@ -273,20 +330,21 @@ class Bot:
             Optional[:class:`bale.Message`]:
                 The Message or ``None`` if message not sent
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat object or a User object. this is a {chat.__class__} !"
+                "chat param must be type of Chat or User"
             )
 
         if not isinstance(photo, (bytes, str, Photo)):
             raise TypeError(
-                f"photo is not a str or bytes. this is a {photo.__class__} !"
+                "photo param must be type of bytes, str or Photo"
             )
 
         if isinstance(photo, Photo):
             photo = photo.file_id
-        response, payload = await self.http.send_photo(str(chat.chat_id), photo, caption, reply_to_message_id)
-        return Message.from_dict(data=payload["result"], bot=self)
+
+        response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message_id)
+        return Message.from_dict(data=response.result, bot=self)
 
     async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List[Price], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
         """You can use this service to send money request messages.
@@ -322,13 +380,14 @@ class Bot:
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat object or User Object. this is a {chat.__class__} !"
+                "chat param must be type of Chat or User"
             )
-        prices = [price.to_dict() for price in prices]
-        response, payload = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
-        return Message.from_dict(data=payload["result"], bot=self)
 
-    async def edit_message(self, chat: "Chat", message_id: str, text: str, components: "Components" | "RemoveComponents"=None) -> Message:
+        prices = [price.to_dict() for price in prices if isinstance(price, Price)]
+        response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
+        return Message.from_dict(data=response.result, bot=self)
+
+    async def edit_message(self, chat: "Chat" | "User", message_id: str, text: str, components: "Components" | "RemoveComponents"=None) -> Message:
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
@@ -348,18 +407,28 @@ class Bot:
         -------
             :class:`dict`
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat or User"
+            )
+
+        if not isinstance(components, (Components, RemoveComponents)):
+            raise TypeError(
+                "components param must be type of Components or RemoveComponents"
+            )
+
+        if not isinstance(message_id, (int, str)):
+            raise TypeError(
+                "message_id param must be type of int or str"
             )
 
         if components:
             components = components.to_dict()
 
-        response, payload = await self.http.edit_message(str(chat.chat_id), message_id, text, components)
-        return payload
+        response = await self.http.edit_message(str(chat.chat_id), message_id, text, components=components)
+        return response.result
 
-    async def delete_message(self, chat: "Chat", message_id: str) -> bool:
+    async def delete_message(self, chat: "Chat" | "User", message_id: str | int) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
 
         In Channel or Group:
@@ -372,27 +441,32 @@ class Bot:
         ----------
             chat: :class:`bale.Chat`
                 chat
-            message_id: str
+            message_id: str | int
                 message id
         Returns
         -------
             bool:
                 ``True`` if done else ``False``
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat, (Chat, User)):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat or User"
             )
 
-        response, payload = await self.http.delete_message(str(chat.chat_id), message_id)
-        return payload["result"]
+        if not isinstance(message_id, (str, int)):
+            raise TypeError(
+                "message_id param must be type of str or int"
+            )
 
-    async def get_chat(self, chat_id: int) -> Chat | None:
+        response = await self.http.delete_message(str(chat.chat_id), message_id)
+        return response.result or False
+
+    async def get_chat(self, chat_id: int | str) -> Chat | None:
         """This service can be used to receive personal information that has previously interacted with the arm.
 
         Parameters
         ----------
-            chat_id: int
+            chat_id: int | str
                 chat id
         Raises
         ------
@@ -402,17 +476,19 @@ class Bot:
             Optional[:class:`bale.Chat`]
                 The chat or ``None`` if not found.
         """
-        if not isinstance(chat_id, int):
+        if not isinstance(chat_id, (int, str)):
             raise TypeError(
-                f"chat_id is not str or int. this is a {chat_id.__class__} !"
+                "chat_id param must be type of int or str"
             )
 
-        response, payload = await self.http.get_chat(str(chat_id))
-        if not payload:
+        try:
+            response = await self.http.get_chat(str(chat_id))
+        except NotFound:
             return None
-        return Chat.from_dict(payload["result"], bot=self)
+        else:
+            return Chat.from_dict(response.result, bot=self)
 
-    async def get_user(self, user_id: int) -> "User" | None:
+    async def get_user(self, user_id: int | str) -> "User" | None:
         """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         Parameters
@@ -427,9 +503,9 @@ class Bot:
             Optional[:class:`bale.User`]
                 The user or ``None`` if not found.
         """
-        if not isinstance(user_id, int):
+        if not isinstance(user_id, (int, str)):
             raise TypeError(
-                f"user_id is not a int. this is a {user_id.__class__} !"
+                "user_id param must be type of int or str"
             )
 
         chat = await self.get_chat(user_id)
@@ -458,18 +534,20 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat"
             )
 
         if not isinstance(user_id, int):
             raise TypeError(
-                f"user is not a int. this is a {user_id.__class__} !"
+                "user_id param must be type of int"
             )
 
-        response, payload = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=str(user_id))
-        if not payload:
+        try:
+            response = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=str(user_id))
+        except NotFound:
             return None
-        return ChatMember.from_dict(payload.get("result"))
+        else:
+            return ChatMember.from_dict(response.result)
 
     async def invite_to_chat(self, chat: "Chat", user: "User") -> bool:
         """Invite user to the chat
@@ -494,10 +572,13 @@ class Bot:
             raise TypeError(
                 f"chat is not a Chat object. this is a {chat.__class__} !"
             )
-        response, payload = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
-        if not payload:
-            return False
-        return payload.get("result", False)
+
+        if not isinstance(user, User):
+            raise TypeError(
+                "user param must be type of User"
+            )
+        response = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
+        return response.result or False
 
     async def leave_chat(self, chat: "Chat"):
         """Leave bot from a Chat
@@ -518,16 +599,10 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat"
             )
-        try:
-            response, payload = await self.http.leave_chat(str(chat.chat_id))
-        except:
-            return False
-        else:
-            if not payload:
-                return False
-            return payload.get("result", False)
+        response = await self.http.leave_chat(str(chat.chat_id))
+        return response.result or False
 
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
         """
@@ -547,13 +622,11 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat"
             )
 
-        response, payload = await self.http.get_chat_members_count(str(chat.chat_id))
-        if not payload:
-            return None
-        return payload["result"]
+        response = await self.http.get_chat_members_count(str(chat.chat_id))
+        return response.result
 
     async def get_chat_administrators(self, chat: "Chat") -> list["ChatMember"] | None:
         """This service can be used to display admins of a group or channel.
@@ -572,27 +645,25 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat"
             )
 
-        response, payload = await self.http.get_chat_administrators(chat.chat_id)
-        if not payload:
-            return None
-        return [ChatMember.from_dict(data=member_payload) for member_payload in payload["result"]]
+        response = await self.http.get_chat_administrators(chat.chat_id)
+        return [ChatMember.from_dict(data=member_payload) for member_payload in response.result or list()]
 
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
         if offset and not isinstance(offset, int):
             raise TypeError(
-                f"offset is not a int"
+                "offset param must be int"
             )
 
         if limit and not isinstance(limit, int):
             raise TypeError(
-                f"limit is not a int"
+                "limit param must be int"
             )
 
-        response, payload = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in payload.get("result", []) if not offset or (offset and update_payload.get("update_id") > offset)]
+        response = await self.http.get_updates(offset, limit)
+        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result or list() if not offset or (offset and update_payload.get("update_id") > offset)]
 
     async def connect(self):
         self._user = await self.get_bot()
