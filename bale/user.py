@@ -25,7 +25,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
-    from bale import Bot, Photo
+    from bale import Bot, Photo, Document
 
 
 class User:
@@ -58,6 +58,11 @@ class User:
         """Optional[:class:`str`]"""
         return f"@{self.username}" if self.username else None
 
+    @property
+    def chat_id(self) -> str:
+        """:class:`str`"""
+        return str(self.user_id)
+
     async def send(self, text: str, components=None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
@@ -74,6 +79,25 @@ class User:
                 On success, the sent Message is returned.
         """
         return await self.bot.send_message(self, text, components)
+
+    async def send_document(self, document: bytes | str | "Document", caption: str = None):
+        """For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        Parameters
+        ----------
+            document: :class:`bytes` | :class:`str` | :class:`bale.Document`
+                Photo
+            caption: :class:`str`
+                Message caption
+        Raises
+        ------
+            :class:`bale.Error`
+        Returns
+        -------
+            :class:`bale.Message`
+                On success, the sent Message is returned.
+        """
+        return await self.bot.send_document(self, document, caption)
 
     async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
         """For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
