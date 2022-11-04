@@ -25,7 +25,8 @@ from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError)
-from . import ResponseParser, ResponseStatusCode
+from .parser import ResponseParser
+from .utils import ResponseStatusCode
 
 __all__ = ("HTTPClient", "Route")
 
@@ -147,13 +148,16 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendMessage", self.token), json=payload)
 
-	def send_document(self, chat_id, document, *, caption=None):
+	def send_document(self, chat_id, document, *, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"document": document
 		}
 		if caption:
 			payload["caption"] = caption
+
+		if reply_to_message_id:
+			payload["reply_to_message_id"] = reply_to_message_id
 
 		return self.request(Route("POST", "Senddocument", self.token), data=payload)
 
