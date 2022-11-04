@@ -49,13 +49,13 @@ class Message:
         from_user: Optional[:class:`bale.User`]
             The user who has sent the message.
         forward_from: Optional[:class:`bale.User`]
-            The user who has sent the message originaly.
+            The user who has sent the message originally.
         contact: Optional[:class:`bale.ContactMessage`]
             Contact
         chat: :class:`bale.Chat`
             The chat where the message is sent.
         reply_to_message: Optional[:class:`bale.Message`]
-            The message Replyed to who message.
+            The message Replayed to who message.
         new_chat_members: Optional[List[:class:`bale.User`]]
             User (An) who entered the chat.
         left_chat_member: Optional[:class:`bale.User`]
@@ -190,9 +190,9 @@ class Message:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        result = await self.bot.send_message(chat=self.chat, text=text, components=components,
-                                       reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
-        return result
+        message = await self.bot.send_message(chat=self.chat, text=text, components=components,
+                                       reply_to_message=self if not self.chat.type.is_group_chat() else None)
+        return message
 
     async def reply_photo(self, photo: bytes | str, caption: str = None):
         """
@@ -201,9 +201,9 @@ class Message:
         Parameters
         ----------
             photo: :class:`bytes` | :class:`str`
-                Photo.
-            caption: :class:`str`
-                Message caption.
+                Photo
+            caption: Optional[:class:`str`]
+                Message caption
         Raises
         ------
             :class:`bale.Error`
@@ -212,7 +212,7 @@ class Message:
             :class:`bale.Message`:
                 On success, the sent Message is returned.
         """
-        message = await self.bot.send_photo(self.chat, photo, caption, reply_to_message_id=str(self.message_id) if not self.chat.type.is_group_chat() else None)
+        message = await self.bot.send_photo(self.chat, photo, caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
         return message
 
     async def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
@@ -265,7 +265,7 @@ class Message:
         ----------
             text: str
                 New Content for message.
-            components: :class:`bale.Components` | :class:`bale.RemoveComponents`
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
                 New Message Components for message.
         Raises
         ------
@@ -274,7 +274,7 @@ class Message:
         ------
             :class:`dict`
         """
-        result = await self.bot.edit_message(self.chat, self.message_id, text, components)
+        result = await self.bot.edit_message(self.chat, self, text, components)
         self.text = text
         return result
 
@@ -287,7 +287,7 @@ class Message:
             bool:
                 ``True`` when user added to chat else ``False``
         """
-        message = await self.bot.delete_message(chat=self.chat, message_id=str(self.message_id))
+        message = await self.bot.delete_message(self.chat, self)
         return message
 
     def __str__(self):
