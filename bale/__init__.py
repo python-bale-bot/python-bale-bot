@@ -39,6 +39,8 @@ __all__ = (
     "ContactMessage",
     "Invoice",
     "Price",
+    "ResponseParser",
+    "ResponseStatusCode",
     "HTTPClient",
     "Route",
     "BaleError",
