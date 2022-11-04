@@ -15,7 +15,7 @@ from .chatmember import ChatMember, MemberRole
 from .callbackquery import CallbackQuery
 from .update import Update
 from .updater import Updater
-from .error import BaleError, APIError
+from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken
 from .bot import Bot
 
 
@@ -39,15 +39,22 @@ __all__ = (
     "ContactMessage",
     "Invoice",
     "Price",
-    "ResponseParser",
-    "ResponseStatusCode",
-    "HTTPClient",
-    "Route",
+    "AdminPermissions",
+    "ChatMember",
+    "MemberRole",
     "BaleError",
     "APIError",
-    "AdminPermissions",
-    "ChatMember", 
-    "MemberRole"
+    "InvalidToken",
+    "Forbidden",
+    "NetworkError",
+    "TimeOut",
+    "NotFound",
+    "HTTPException",
+    "HTTPClientError",
+    "HTTPClient",
+    "Route",
+    "ResponseParser",
+    "ResponseStatusCode",
 )
 
 __title__ = "python-bale-bot"

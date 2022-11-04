@@ -26,7 +26,7 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List
 from builtins import enumerate, reversed
-from error import NotFound
+from .error import NotFound
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
                   Photo, Document)
 
