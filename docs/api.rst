@@ -171,8 +171,26 @@ Price
 .. autoclass:: bale.Price()
    :members:
 
+
+
 Event Reference
 ---------------
+
+Event Types
+~~~~~~~~~~~
+
+.. note::
+    You can use `bale.EventType` for Events.
+
+.. code-block:: python3
+
+    from bale import Bale, EventType
+
+    bot = bale.Bot(token="Your Token")
+
+    @bot.listen(EventType.Update)
+    async def when_receive_update(update):
+        ...
 
 Update
 ~~~~~~~
