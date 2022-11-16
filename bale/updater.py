@@ -31,6 +31,7 @@ __all__ = (
 )
 
 class EventType:
+	READY = "on_ready"
 	UPDATE = "on_update"
 	MESSAGE = "on_message"
 	CALLBACK = "on_callback"
