@@ -1,17 +1,17 @@
-import bale
+from bale import Bot, Update, Message, EventType
 
-bot = bale.Bot(token="Your Token")
+client = Bot(token="Your Token")
 
-@bot.listen("on_ready")
-async def on_ready():
-	print(bot.user, "is Ready!")
+@client.listen(EventType.READY)
+async def when_bot_is_ready():
+	print(client.user, "is Ready!")
 
-@bot.listen("on_update")
-async def on_update(update: bale.Update):
-	print(update.update_id)
+@client.listen(EventType.UPDATE)
+async def when_receive_update(update: Update):
+	print(update.update_id, update.type)
 
-@bot.listen("on_message")
-async def on_message(message: bale.Message):
+@client.listen(EventType.MESSAGE)
+async def when_receive_message(message: Message):
 	await message.reply(text="Hi!")
 
-bot.run()
+client.run()

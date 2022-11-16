@@ -1,17 +1,28 @@
-import bale
+from bale import Bot, CallbackQuery, Message, Components, InlineKeyboard, EventType
 
-bot = bale.Bot(token="Your Token")
+client = Bot(token="Your Token")
 
-@bot.listen("on_update")
-async def on_update(update: bale.Update):
-	print(update.update_id)
+@client.listen(EventType.READY)
+async def when_bot_is_ready():
+	print(client.user, "is Ready!")
 
-@bot.listen("on_message")
-async def on_message(message: bale.Message):
-	await message.reply(text="Hi {}\nThis is a Components!".format(message.author.first_name), components=bale.Components(inline_keyboards=[[bale.InlineKeyboard(text="Test", callback_data="test_component")]]))
+@client.listen(EventType.MESSAGE)
+async def when_receive_message(message: Message):
+	if message.content == "/start":
+		await message.reply(
+			"Hey!",
+			components=[
+				Components(inline_keyboards=[[
+					InlineKeyboard("Send Hi", callback_data="send_hi")
+				]])
+			]
+		)
 
-@bot.listen("on_callback")
-async def on_callback(callback: bale.CallbackQuery):
-	await callback.from_user.send("Button Clicked!")
+@client.listen(EventType.CALLBACK)
+async def when_receive_callback(callback: CallbackQuery):
+	if callback.data == "send_hi":
+		await callback.message.reply(
+			f"Hi {callback.user.first_name}"
+		)
 
-bot.run()
+client.run()
