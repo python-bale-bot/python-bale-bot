@@ -37,7 +37,7 @@ class Components:
                 if not isinstance(obj, list):
                     raise TypeError("object is not a list its a {}".format(obj.__class__))
 
-                keyboard = [i.to_dict() for i in obj]
+                keyboard = [i.to_dict() for i in obj if isinstance(i, Keyboard)]
                 self.keyboards.append(keyboard)
 
         if inline_keyboards:
@@ -45,7 +45,7 @@ class Components:
                 if not isinstance(obj, list):
                     raise TypeError("object is not a list its a {}".format(obj.__class__))
 
-                inline_keyboard = [i.to_dict() for i in obj]
+                inline_keyboard = [i.to_dict() for i in obj if isinstance(i, InlineKeyboard)]
                 self.inline_keyboards.append(inline_keyboard)
 
     @classmethod
@@ -86,7 +86,7 @@ class InlineKeyboard:
         "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
     )
 
-    def __init__(self, text: str, callback_data: str = None, url: str = None, switch_inline_query: str = None,
+    def __init__(self, text: str, *, callback_data: str = None, url: str = None, switch_inline_query: str = None,
                  switch_inline_query_current_chat: str = None):
         self.text = text
         self.callback_data = callback_data if callback_data is not None else None
