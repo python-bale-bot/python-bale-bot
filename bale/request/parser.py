@@ -1,5 +1,8 @@
 from aiohttp import ClientResponse
 from typing import Any
+from json import loads
+from json.decoder import JSONDecodeError
+from ..error import HTTPClientError
 
 class ResponseParser:
 	"""a Parser for parse http response.
@@ -44,6 +47,12 @@ class ResponseParser:
 	async def from_response(cls, data: "ClientResponse"):
 		if data.status == 404:
 			return cls(False, raw=dict())
-		data = await data.json()
-		return cls(data.get("ok", False), data.get("result"), data.get("error_code"), data.get("description"), data)
 
+		_data = await data.text()
+
+		try:
+			data = loads(_data)
+		except JSONDecodeError:
+			return cls(False, description=_data, raw=dict(description=HTTPClientError.RATE_LIMIT))
+		else:
+			return cls(data.get("ok", False), data.get("result"), data.get("error_code"), data.get("description"), data)
