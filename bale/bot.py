@@ -24,7 +24,7 @@
 
 from __future__ import annotations
 import asyncio
-from typing import Callable, Dict, Tuple, List
+from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
 from .error import NotFound
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
@@ -104,7 +104,7 @@ class Bot:
 
         del self.events[event][function]
 
-    def wait_for(self, event_name: str, check = None, timeout = None):
+    def wait_for(self, event_name: str, *, check = None, timeout = None):
         """Wait for an event"""
         self.loop: asyncio.AbstractEventLoop
         future = self.loop.create_future()
@@ -219,7 +219,7 @@ class Bot:
         response = await self.http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat: "Chat" | "User", text: str = None, components: "Components" | "RemoveComponents" =None, reply_to_message: "Message" = None) -> Message | None:
+    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] =None, reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send text messages.
 
         Parameters
@@ -246,23 +246,25 @@ class Bot:
                 "chat param must be type of Chat or User"
             )
 
-        if components and not isinstance(components, (Components, RemoveComponents)):
-            raise TypeError(
-                "components param must be type of Components or RemoveComponents"
-            )
-
-        if reply_to_message and not isinstance(reply_to_message, Message):
-            raise TypeError(
-                "reply_to_message param must be type of Message"
-            )
-
         if components:
+            if not isinstance(components, (Components, RemoveComponents)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
             components = components.to_dict()
 
-        response = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message.message_id)
+
+        if reply_to_message:
+            if not isinstance(reply_to_message, Message):
+                raise TypeError(
+                    "reply_to_message param must be type of Message"
+                )
+            reply_to_message = reply_to_message.message_id
+
+        response = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", caption: str = None, reply_to_message: "Message" = None):
+    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None, reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send document.
 
         Parameters
@@ -281,8 +283,8 @@ class Bot:
 
         Returns
         --------
-            Optional[:class:`bale.Message`]:
-                The Message or ``None`` if message not sent
+            :class:`bale.Message`
+                The Message.
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -294,18 +296,20 @@ class Bot:
                 "document param must be type of bytes, str or Document"
             )
 
-        if reply_to_message and not isinstance(reply_to_message, Message):
-            raise TypeError(
-                "reply_to_message param must be type of Message"
-            )
+        if reply_to_message:
+            if not isinstance(reply_to_message, Message):
+                raise TypeError(
+                    "reply_to_message param must be type of Message"
+                )
+            reply_to_message = reply_to_message.message_id
 
         if isinstance(document, Document):
             document = document.file_id
 
-        response = await self.http.send_document(chat.chat_id, document, caption=caption, reply_to_message_id=reply_to_message.message_id)
+        response = await self.http.send_document(chat.chat_id, document, caption=caption, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", caption: str = None, reply_to_message: "Message" = None):
+    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None, reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send photo.
 
         Parameters
@@ -324,8 +328,8 @@ class Bot:
 
         Returns
         --------
-            Optional[:class:`bale.Message`]:
-                The Message or ``None`` if message not sent
+            :class:`bale.Message`
+                The Message.
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -340,20 +344,22 @@ class Bot:
         if isinstance(photo, Photo):
             photo = photo.file_id
 
-        if reply_to_message and not isinstance(reply_to_message, Message):
-            raise TypeError(
-                "reply_to_message param must be type of Message"
-            )
+        if reply_to_message:
+            if not isinstance(reply_to_message, Message):
+                raise TypeError(
+                    "reply_to_message param must be type of Message"
+                )
+            reply_to_message = reply_to_message.message_id
 
         if caption and not isinstance(caption, str):
             raise TypeError(
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message.message_id)
+        response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], photo_url: str = None, need_name: bool = False, need_phone_number: bool = False, need_email: bool = False, need_shipping_address: bool = False, is_flexible: bool = True) -> Message | None:
+    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
 
         Parameters
@@ -383,18 +389,48 @@ class Bot:
 
         Returns
         -------
-            :class:`Bale.Message`
+            :class:`bale.Message`
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
                 "chat param must be type of Chat or User"
             )
 
+        if not isinstance(photo_url, str):
+            raise TypeError(
+                "photo_url param must be type of str"
+            )
+
+        if not isinstance(need_name, bool):
+            raise TypeError(
+                "need_name param must be type of boolean"
+            )
+
+        if not isinstance(need_phone_number, bool):
+            raise TypeError(
+                "need_phone_number param must be type of boolean"
+            )
+
+        if not isinstance(need_email, bool):
+            raise TypeError(
+                "need_email param must be type of boolean"
+            )
+
+        if not isinstance(need_shipping_address, bool):
+            raise TypeError(
+                "need_shipping_address param must be type of boolean"
+            )
+
+        if not isinstance(is_flexible, bool):
+            raise TypeError(
+                "is_flexible param must be type of boolean"
+            )
+
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
         response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, components: "Components" | "RemoveComponents"=None) -> "Message":
+    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
@@ -438,11 +474,12 @@ class Bot:
     async def delete_message(self, chat: "Chat" | "User", message: "Message") -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
 
-        In Channel or Group:
-            If it is a group or channel Manager, it can delete a message from (group or channel).
+        .. warning::
+            In Channel or Group:
+                If it is a group or channel Manager, it can delete a message from (group or channel).
 
-        In private message (PV):
-            If the message was sent by a bot, it can be deleted with this method
+            In private message (PV):
+                If the message was sent by a bot, it can be deleted with this method
 
         Parameters
         ----------
@@ -576,13 +613,14 @@ class Bot:
         """
         if not isinstance(chat, Chat):
             raise TypeError(
-                f"chat is not a Chat object. this is a {chat.__class__} !"
+                "chat param must be type of Chat"
             )
 
         if not isinstance(user, User):
             raise TypeError(
                 "user param must be type of User"
             )
+
         response = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
         return response.result or False
 
