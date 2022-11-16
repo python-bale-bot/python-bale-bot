@@ -1,6 +1,7 @@
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
     RATE_LIMIT = "bot limit exceed"
+    LOCAL_RATE_LIMIT = "local_rate_limited"
     PERMISSION_DENIED = "permission_denied"
 
 class BaleError(Exception):
@@ -32,12 +33,9 @@ class InvalidToken(BaleError):
 
 
 class APIError(BaleError):
-    __slots__ = ("_message", "_error_code")
+    __slots__ = ()
 
     def __init__(self, error_code, message):
-        self._message = message
-        self._error_code = error_code
-
         super().__init__("{}: {}".format(error_code, message))
 
 
@@ -55,8 +53,8 @@ class TimeOut(BaleError):
 class NotFound(BaleError):
     __slots__ = ()
 
-    def __init__(self):
-        super().__init__("Not Found")
+    def __init__(self, message=None):
+        super().__init__(message if message else "Not Found")
 
 
 class Forbidden(BaleError):
