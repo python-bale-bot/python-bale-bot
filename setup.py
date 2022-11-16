@@ -12,14 +12,14 @@ extras_require = {
         'sphinxcontrib_trio==1.1.2',
         'sphinxcontrib-websupport',
         'typing-extensions>=4.3,<5',
-    ],
+    ]
 }
 
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.3.2",
-        platforms=["Windows"],
+        version="2.3.3",
+        platforms=["Windows", ],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
         author="Kian Ahmadian",
@@ -29,7 +29,7 @@ if __name__ == "__main__":
             "Documentation": "https://python-bale-bot.readthedocs.io/en/latest/",
             "Bug Tracker": "https://github.com/kian-ahmadian/python-bale-bot/issues"
         },
-        keywords=["bale", "bale-bot", "framework"],
+        keywords=["bale", "bale-bot", "framework", "bot"],
         python_requires='>=3.8',
         extras_require=extras_require,
         include_package_data=True,
