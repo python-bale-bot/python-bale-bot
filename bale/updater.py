@@ -27,7 +27,15 @@ if TYPE_CHECKING:
 
 __all__ = (
 	"Updater",
+	"EventType"
 )
+
+class EventType:
+	UPDATE = "on_update"
+	MESSAGE = "on_message"
+	CALLBACK = "on_callback"
+	MEMBER_CHAT_JOIN = "on_member_chat_join"
+	MEMBER_CHAT_LEAVE = "on_member_chat_leave"
 
 class Updater:
 	"""This object represents a Bale Bot.

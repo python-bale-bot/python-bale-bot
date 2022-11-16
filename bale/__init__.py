@@ -14,7 +14,7 @@ from .permissions import AdminPermissions
 from .chatmember import ChatMember, MemberRole
 from .callbackquery import CallbackQuery
 from .update import Update
-from .updater import Updater
+from .updater import Updater, EventType
 from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken
 from .bot import Bot
 
@@ -28,6 +28,7 @@ __all__ = (
     "Message",
     "User",
     "Updater",
+    "EventType",
     "Components",
     "RemoveComponents",
     "Keyboard",
