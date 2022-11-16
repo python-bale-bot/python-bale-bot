@@ -7,17 +7,23 @@ Create a Mini Bot
 .. code-block:: python3
     :caption: This is a Example (normal level)
 
-    import bale
+    from bale import Bot, Update, Message, EventType
 
-    bot = bale.Bot(token="Your Token")
+    client = Bot(token="Your Token")
 
-    @bot.listen("on_update")
-    async def update(update):
-        print(update.update_id)
+    @client.listen(EventType.READY)
+    async def when_bot_is_ready():
+        print(client.user, "is Ready!")
 
-    @bot.listen("on_message")
-    async def message(message):
-        await message.reply("Hi!")
+    @client.listen(EventType.UPDATE)
+    async def when_receive_update(update: Update):
+        print(update.update_id, update.type)
+
+    @client.listen(EventType.MESSAGE)
+    async def when_receive_message(message: Message):
+        await message.reply(text="Hi!")
+
+    client.run()
 
 .. code-block:: python3
     :caption: This is a Example (class level)
@@ -27,9 +33,8 @@ Create a Mini Bot
     class BaleBot(bale.Bot):
         def __init__(self):
             super().__init__(token="Your Token")
-            self.add_event("on_message", self.on_message)
-            self.add_event("on_update", self.on_update)
-
+            self.add_event(bale.EventType.MESSAGE, self.on_message)
+            self.add_event(bale.EventType.UPDATE, self.on_update)
 
         async def on_message(self, message):
             if message.chat.type.is_private_chat():
@@ -37,7 +42,6 @@ Create a Mini Bot
 
         async def on_update(self, update):
             print(update.type, update.update_id)
-
 
     bot = BaleBot()
     bot.run()
