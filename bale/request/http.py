@@ -24,7 +24,7 @@
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
-from ..error import (NetworkError, HTTPException, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError)
+from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode
 
@@ -45,7 +45,7 @@ class Route:
 
 	def __init__(self, method: str, path: str, token: str):
 		if not isinstance(token, str):
-			raise TypeError("token is not str!\ntoken is a {}".format(token.__class__))
+			raise TypeError("token param must be str.")
 		self.method = method
 		self.path = path
 		self.token = token
@@ -58,9 +58,6 @@ class Route:
 
 	def set_base(self, _value):
 		"""Set base url for route"""
-		if not _value in (self.BASE, self.BASE_FILE):
-			raise TypeError("_value incorrect!")
-
 		self._base = _value
 
 class HTTPClient:
@@ -99,22 +96,23 @@ class HTTPClient:
 			async with self.__session.request(method=method, url=url, **kwargs) as response:
 				response: aiohttp.ClientResponse = response
 				parsed_response = await ResponseParser.from_response(response)
-				if response.status == ResponseStatusCode.OK:
-					return parsed_response
-				elif response.status == ResponseStatusCode.NOT_INCORRECT:
+				if response.status == ResponseStatusCode.NOT_FOUND:
+					raise NotFound()
+				elif not parsed_response.ok or response.status == ResponseStatusCode.NOT_INCORRECT:
 					if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
-						raise NotFound()
-					elif parsed_response.description == HTTPClientError.RATE_LIMIT:
+						raise NotFound("User or Chat not Found")
+					elif parsed_response.description == HTTPClientError.RATE_LIMIT or parsed_response.description == HTTPClientError.LOCAL_RATE_LIMIT:
 						await asyncio.sleep(1)
 						return await self.request(route, **kwargs)
 					elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
 						raise Forbidden()
+
 					raise APIError(
 							str(parsed_response.error_code), parsed_response.description
 						)
-				elif response.status == ResponseStatusCode.NOT_FOUND:
-					raise NotFound()
-				raise HTTPException(response)
+
+				elif response.status == ResponseStatusCode.OK:
+					return parsed_response
 		except aiohttp.client_exceptions.ClientConnectorError as error:
 			raise NetworkError(str(error))
 		except aiohttp.client_exceptions.ServerTimeoutError:
@@ -127,7 +125,7 @@ class HTTPClient:
 			if response.status == ResponseStatusCode.OK:
 				return await response.read()
 			elif response.status == ResponseStatusCode.NOT_FOUND:
-				raise NotFound()
+				raise NotFound("Document is not Found")
 			elif response.status == ResponseStatusCode.PERMISSION_DENIED:
 				raise Forbidden()
 			else:
