@@ -69,7 +69,7 @@ class Message:
         "reply_to_message", "invoice", "bot"
     )
 
-    def __init__(self, message_id: str, date: datetime, text: str = None, caption: str = None,
+    def __init__(self, message_id: str, date: datetime, *, text: str = None, caption: str = None,
                  forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
                  photos: List["Photo"] = None, reply_to_message: "Message" = None, invoice: "Invoice" = None, bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
@@ -172,7 +172,7 @@ class Message:
 
         return data
 
-    async def reply(self, text: str, components=None):
+    async def reply(self, text: str, *, components=None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
