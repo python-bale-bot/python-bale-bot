@@ -707,14 +707,14 @@ class Bot:
         response = await self.http.get_updates(offset, limit)
         return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result or list() if not offset or (offset and update_payload.get("update_id") > offset)]
 
-    async def connect(self):
+    async def connect(self, sleep_after_every_get_updates):
         self._user = await self.get_bot()
-        await self.updater.start()
+        await self.updater.start(sleep_after_every_get_updates = sleep_after_every_get_updates)
 
-    def run(self):
+    def run(self, sleep_after_every_get_updates = None):
         """Run bot and https"""
         async def main():
             async with self:
-                await self.connect()
+                await self.connect(sleep_after_every_get_updates = sleep_after_every_get_updates)
 
         asyncio.run(main())

@@ -55,7 +55,8 @@ class Updater:
 		"bot",
 		"update_queue",
 		"_last_offset",
-		"_is_running"
+		"_is_running",
+		"sleep_after_get_updates"
 	)
 
 	def __init__(self, bot: "Bot"):
@@ -63,11 +64,14 @@ class Updater:
 		self.update_queue = asyncio.Queue()
 		self._last_offset = None
 		self._is_running = False
+		self.sleep_after_get_updates = None
 
-	async def start(self):
+	async def start(self, sleep_after_every_get_updates: int = None):
 		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
+		if sleep_after_every_get_updates is not None:
+			self.sleep_after_get_updates = sleep_after_every_get_updates
 		self._is_running = True
 		self.bot.dispatch("ready")
 		await self.poll_event()
@@ -101,6 +105,9 @@ class Updater:
 						self.bot.dispatch("member_chat_join", update.message.chat, user)
 
 			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
+
+			if self.sleep_after_get_updates is not None:
+				await asyncio.sleep(self.sleep_after_get_updates)
 
 	def stop(self):
 		"""Stop running and Stop `poll_event` loop"""
