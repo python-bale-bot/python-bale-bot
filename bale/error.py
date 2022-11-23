@@ -17,7 +17,7 @@ class BaleError(Exception):
         return self.message
 
     def __repr__(self):
-        return f"{self.__class__.__name__}('{self.message}')"
+        return f"{self.__class__.__name__}\n('{self.message}')"
 
     def __reduce__(self):
         return self.__class__, (self.message,)
@@ -61,8 +61,13 @@ class Forbidden(BaleError):
     __slots__ = ()
 
     def __init__(self):
-        super(self).__init__("Forbidden")
+        super().__init__("Forbidden")
 
+class RateLimited(BaleError):
+    __slots__ = ()
+
+    def __init__(self):
+        super(self).__init__("We are Rate Limited")
 
 class HTTPException(BaleError):
     __slots__ = ()
