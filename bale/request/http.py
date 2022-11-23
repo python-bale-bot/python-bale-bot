@@ -200,7 +200,7 @@ class HTTPClient:
 				except aiohttp.client_exceptions.ServerTimeoutError:
 					raise TimeOut()
 				except aiohttp.client_exceptions.ClientOSError as error:
-					raise BaleError(error)
+					raise BaleError(str(error))
 
 	async def get_file(self, file_id):
 		async with self.__session.get(BALE_API_FILE_URL + "/" + "bot" + self.token + "/" + file_id) as response:

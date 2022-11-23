@@ -78,7 +78,7 @@ class User:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        return await self.bot.send_message(self, text, components)
+        return await self.bot.send_message(self, text, components=components)
 
     async def send_document(self, document: bytes | str | "Document", caption: str = None):
         """For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
@@ -97,7 +97,7 @@ class User:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        return await self.bot.send_document(self, document, caption)
+        return await self.bot.send_document(self, document, caption=caption)
 
     async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
         """For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
@@ -116,7 +116,7 @@ class User:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        return await self.bot.send_photo(self, photo, caption)
+        return await self.bot.send_photo(self, photo, caption=caption)
 
     @classmethod
     def from_dict(cls, data: dict, bot=None):

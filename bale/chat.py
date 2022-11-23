@@ -110,10 +110,10 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, _type: "ChatType", title: str, username: str, first_name: str, last_name: str,
+    def __init__(self, chat_id: int | str, type: "ChatType", title: str, username: str, first_name: str, last_name: str,
                  pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
         self.chat_id = chat_id
-        self._type = _type
+        self._type = type
         self.title = title
         self.username = username
         self.first_name = first_name
@@ -166,7 +166,7 @@ class Chat:
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
         """
-        return await self.bot.send_photo(self, photo, caption)
+        return await self.bot.send_photo(self, photo, caption=caption)
 
     async def leave(self):
         """
@@ -193,7 +193,7 @@ class Chat:
         """
         return await self.bot.invite_to_chat(self, user)
 
-    async def get_chat_member(self, user: "User"):
+    async def get_chat_member(self, user: "User" | str):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
 
@@ -203,10 +203,14 @@ class Chat:
                 User
         Returns
         -------
-            Optional[:class:`bale.ChatMember`]
+            :class:`bale.ChatMember` | :class:`str`
                 On success, The chat member is retuened.
         """
-        return await self.bot.get_chat_member(self, user)
+
+        if isinstance(user, User):
+            user = user.user_id
+
+        return await self.bot.get_chat_member(self, user_id=user)
 
     async def get_chat_members_count(self):
         """
@@ -235,7 +239,7 @@ class Chat:
 
     @classmethod
     def from_dict(cls, data: dict, bot):
-        return cls(bot=bot, chat_id=data.get("id"), _type=ChatType(data.get("type")), title=data.get("title"),
+        return cls(bot=bot, chat_id=data.get("id"), type=ChatType(data.get("type")), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
