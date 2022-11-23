@@ -39,9 +39,8 @@ __all__ = (
 class _Loop:
     __slots__ = ()
     
-    
-_loop = _Loop()
 
+_loop = _Loop()
 
 class Bot:
     """This object represents a Bale Bot.
@@ -75,9 +74,7 @@ class Bot:
 
     def listen(self, event_name):
         """Register a Event"""
-        def decorator(func):
-            self.add_event(event_name, func)
-        return decorator
+        return lambda func: self.add_event(event_name, func)
 
     def add_event(self, event: str, function):
         """Register an Event with event name"""
@@ -193,6 +190,7 @@ class Bot:
     async def on_error(self, event_name, error):
         """a Event for get errors when exceptions"""
         print("error", event_name, error)
+
 
     async def get_bot(self) -> User:
         """Get bot information
