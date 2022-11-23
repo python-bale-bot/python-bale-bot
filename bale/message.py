@@ -212,7 +212,7 @@ class Message:
             :class:`bale.Message`:
                 On success, the sent Message is returned.
         """
-        message = await self.bot.send_photo(self.chat, photo, caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
+        message = await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
         return message
 
     async def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
@@ -274,7 +274,7 @@ class Message:
         ------
             :class:`dict`
         """
-        result = await self.bot.edit_message(self.chat, self, text, components)
+        result = await self.bot.edit_message(self.chat, self, text, components=components)
         self.text = text
         return result
 
