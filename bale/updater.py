@@ -78,10 +78,13 @@ class Updater:
 			raise RuntimeError("Updater is running")
 		while self._is_running:
 			if self.bot.is_closed():
-				raise RuntimeError("Bot is Closed!")
+				raise RuntimeError("Bot is Closed")
+
+			if self.bot.http.is_closed():
+				raise RuntimeError("HTTPClient is Closed")
 
 			if not self._is_running:
-				raise RuntimeError("Updater is not running")
+				break
 
 			updates = await self.bot.get_updates(offset=self._last_offset)
 
