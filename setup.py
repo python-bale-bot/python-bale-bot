@@ -18,7 +18,7 @@ extras_require = {
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.3.3",
+        version="2.3.3.1",
         platforms=["Windows", ],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
@@ -26,7 +26,7 @@ if __name__ == "__main__":
         license="MIT License",
         project_urls={
             "Source Code": "https://github.com/kian-ahmadian/python-bale-bot/",
-            "Documentation": "https://python-bale-bot.readthedocs.io/en/latest/",
+            "Documentation": "https://python-bale-bot.readthedocs.io/en/master/",
             "Bug Tracker": "https://github.com/kian-ahmadian/python-bale-bot/issues"
         },
         keywords=["bale", "bale-bot", "framework", "bot"],
