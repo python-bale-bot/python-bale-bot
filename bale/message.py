@@ -25,12 +25,12 @@
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage, Photo, Invoice)
+from bale import (Chat, User, Document, ContactMessage, Photo, Invoice, Components, RemoveComponents, Price)
 
 
 class Message:
@@ -139,7 +139,7 @@ class Message:
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
                        "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))), text=data.get("text"),
-                   from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
+                   caption=data.get("caption"), from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
                    forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
                    forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
                    document=Document.from_dict(bot = bot, data=data.get("document")) if data.get("document") else None,
@@ -172,7 +172,7 @@ class Message:
 
         return data
 
-    async def reply(self, text: str, *, components=None):
+    async def reply(self, text: str, *, components: Optional[Components | RemoveComponents] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -190,17 +190,37 @@ class Message:
             :class:`bale.Message`
                 On success, the sent Message is returned.
         """
-        message = await self.bot.send_message(chat=self.chat, text=text, components=components,
+        return await self.bot.send_message(chat=self.chat, text=text, components=components,
                                        reply_to_message=self if not self.chat.type.is_group_chat() else None)
-        return message
 
-    async def reply_photo(self, photo: bytes | str, caption: str = None):
+    async def reply_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        Parameters
+        ----------
+            document: :class:`bytes` | :class:`str` | :class:`bale.Document`
+                Document
+            caption: Optional[:class:`str`]
+                Message caption
+        Raises
+        ------
+            :class:`bale.Error`
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+        """
+        return await self.bot.send_document(self.chat, document, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
+
+    async def reply_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
         Parameters
         ----------
-            photo: :class:`bytes` | :class:`str`
+            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
                 Photo
             caption: Optional[:class:`str`]
                 Message caption
@@ -212,11 +232,9 @@ class Message:
             :class:`bale.Message`:
                 On success, the sent Message is returned.
         """
-        message = await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
-        return message
+        return await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
 
-    async def reply_invoice(self, title: str, description: str, provider_token: str, prices, photo_url=None, need_name=False,
-                      need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
+    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
 
@@ -251,13 +269,12 @@ class Message:
             :class:`Bale.Message`:
                 On success, the message sent returned.
         """
-        message = await self.bot.send_invoice(chat=self.chat, title=title, description=description,
+        return await self.bot.send_invoice(chat=self.chat, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
                                         need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible)
-        return message
 
-    async def edit(self, text: str = None, components=None):
+    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
 
@@ -287,8 +304,7 @@ class Message:
             bool:
                 ``True`` when user added to chat else ``False``
         """
-        message = await self.bot.delete_message(self.chat, self)
-        return message
+        return await self.bot.delete_message(self.chat, self)
 
     def __str__(self):
         return str(self.message_id)

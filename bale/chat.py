@@ -23,9 +23,9 @@
 """
 
 from __future__ import annotations
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, Photo
+    from bale import Bot, Message, User, Photo, Document, Components, RemoveComponents, Price
 
 
 __all__ = (
@@ -132,7 +132,7 @@ class Chat:
         """Optional[:class:`str`]"""
         return ("@" + self.username) if self.username else None
 
-    async def send(self, text: str, components=None):
+    async def send(self, text: str, components: Optional["Components" | "RemoveComponents"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -148,14 +148,14 @@ class Chat:
         """
         return await self.bot.send_message(self, text, components=components)
 
-    async def send_photo(self, photo: bytes | str | "Photo", caption: str = None):
+    async def send_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
         Parameters
         ----------
-            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo
+            document: :class:`bytes` | :class:`str` | :class:`bale.Document`
+                Document
             caption: str
                 Message caption.
         Raises
@@ -166,7 +166,67 @@ class Chat:
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
         """
+        return await self.bot.send_document(self, document, caption=caption)
+
+    async def send_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+
+        Parameters
+        ----------
+            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
+                Photo
+            caption: Optional[:class:`str`]
+                Message caption
+        Raises
+        ------
+            :class:`bale.Error`
+        Returns
+        -------
+            Optional[:class:`bale.Message`]
+                On success, the sent Message is returned.
+        """
         return await self.bot.send_photo(self, photo, caption=caption)
+
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
+
+        Parameters
+        ----------
+            title: str
+                Invoice Title
+            description: str
+                Invoice Description
+            provider_token: str
+                .. note::
+                    You can use 3 methods to receive money:
+                        * Card number
+                        * Port number and acceptor number
+                        * Wallet number "Bale"
+            prices: List[:class:`bale.Price`]
+                A list of prices.
+            photo_url: Optional[:class:`str`]
+                Photo URL of Invoice.
+            need_name: Optional[:class:`bool`]
+                Get a name from "User"?
+            need_phone_number: Optional[:class:`bool`]
+                Get a Phone number from "User"?.
+            need_email: Optional[bool]
+                Get a Email from "User"?.
+            need_shipping_address: Optional[bool]
+                Get a Shipping Address from "User"?.
+            is_flexible: Optional[bool]
+                Is the Invoice Photo Flexible to the Payment button?
+        Returns
+        -------
+            :class:`Bale.Message`:
+                On success, the message sent returned.
+        """
+        return await self.bot.send_invoice(chat=self, title=title, description=description,
+                                        provider_token=provider_token, prices=prices, photo_url=photo_url,
+                                        need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
+                                        need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
     async def leave(self):
         """

@@ -217,7 +217,7 @@ class Bot:
         response = await self.http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] =None, reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None, reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send text messages.
 
         Parameters
@@ -312,14 +312,14 @@ class Bot:
 
         Parameters
         ----------
-        chat: :class:`bale.Chat` | :class:`bale.User`
-            Chat
-        photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-            Photo
-        caption: Optional[:class:`str`]
-            Message caption
-        reply_to_message: Optional[:class:`bale.Message`]
-            Reply to a Message
+            chat: :class:`bale.Chat` | :class:`bale.User`
+                Chat
+            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
+                Photo
+            caption: Optional[:class:`str`]
+                Message caption
+            reply_to_message: Optional[:class:`bale.Message`]
+                Reply to a Message
         Raises
         ------
             :class:`bale.Error`
