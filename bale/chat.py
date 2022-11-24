@@ -145,6 +145,15 @@ class Chat:
         Returns
         --------
             :class:`bale.Message`
+            
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Message to this chat.
+            APIError
+                Send Message Failed.
         """
         return await self.bot.send_message(self, text, components=components)
 
@@ -158,13 +167,19 @@ class Chat:
                 Document
             caption: str
                 Message caption.
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Document to this chat.
+            APIError
+                Send Document Failed.  
         """
         return await self.bot.send_document(self, document, caption=caption)
 
@@ -178,13 +193,19 @@ class Chat:
                 Photo
             caption: Optional[:class:`str`]
                 Message caption
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Photo to chat.
+            APIError
+                Send Photo Failed.  
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
@@ -222,6 +243,15 @@ class Chat:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Invoice to this chat.
+            APIError
+                Send Invoice Failed.  
         """
         return await self.bot.send_invoice(chat=self, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
@@ -232,11 +262,14 @@ class Chat:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.leave_chat`.
 
-        Returns:
-            :bool:
-                On success, ``True``.
+        Raises
+        ------
+            Forbidden
+                You do not have permission to Leave from chat.
+            APIError
+                Leave from chat Failed.
         """
-        return await self.bot.leave_chat(self)
+        await self.bot.leave_chat(self)
 
     async def add_user(self, user: "User"):
         """
@@ -246,12 +279,16 @@ class Chat:
         ----------
             user: :class:`bale.User`
                 user
-        Returns
-        -------
-            bool
-                One success, ``True``.
+        Raises
+        ------
+            NotFound
+                Invalid User.
+            Forbidden
+                You do not have permission to Add user to Chat.
+            APIError
+                Invite user Failed.
         """
-        return await self.bot.invite_to_chat(self, user)
+        await self.bot.invite_to_chat(self, user)
 
     async def get_chat_member(self, user: "User" | str):
         """
@@ -261,11 +298,23 @@ class Chat:
         ----------
             user: :class:`bale.User`
                 User
+
         Returns
         -------
-            :class:`bale.ChatMember` | :class:`str`
-                On success, The chat member is retuened.
+            Optional[:class:`bale.ChatMember`]:
+                The chat member or ``None`` if not found.
+
+        Raises
+        ------
+            NotFound
+                Invalid User.
+            Forbidden
+                You do not have permission to get Chat Member.
+            APIError
+                Get chat member Failed.
         """
+        if not isinstance(user, (User, str)):
+            raise TypeError("user must be type of user or str")
 
         if isinstance(user, User):
             user = user.user_id
@@ -278,8 +327,17 @@ class Chat:
 
         Returns
         -------
-            Optional[:class:`int`]
-                On success, The count of chat members is returned.
+            :class:`int`
+                The members count of the chat.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to get Members count of the Chat.
+            APIError
+                get Members count of the Chat Failed.
         """
         return await self.bot.get_chat_members_count(self)
 
@@ -289,7 +347,12 @@ class Chat:
 
         Raises
         ------
-            :class:`bale.Error`
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to get Administrators of the Chat.
+            APIError
+                get Administrators of the Chat from chat Failed.
         Returns
         -------
             Optional[List[:class:`bale.ChatMember`]]

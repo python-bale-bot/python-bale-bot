@@ -1,4 +1,4 @@
-class AdminPermissions:
+class Permissions:
     """This object shows the permissions and permissions of an admin or a member in a group (or channel).
 
         Args:
@@ -50,9 +50,9 @@ class AdminPermissions:
         Args:
             data (dict): Data
         """
-        return cls(can_be_edited=data.get("can_be_edited"), can_change_info=data.get("can_change_info"),
-                   can_post_messages=data.get("can_post_messages"), can_edit_messages=data.get("can_edit_messages"),
-                   can_delete_messages=data.get("can_delete_messages"), can_invite_users=data.get("can_invite_users"),
-                   can_restrict_members=data.get("can_restrict_members"), can_pin_messages=data.get("can_pin_messages"),
-                   can_promote_members=data.get("can_promote_members"), can_send_messages=data.get("can_send_messages"),
-                   can_send_media_messages=data.get("can_send_media_messages"))
+        return cls(can_be_edited=data.get("can_be_edited", False), can_change_info=data.get("can_change_info", False),
+                   can_post_messages=data.get("can_post_messages", False), can_edit_messages=data.get("can_edit_messages", False),
+                   can_delete_messages=data.get("can_delete_messages", False), can_invite_users=data.get("can_invite_users", False),
+                   can_restrict_members=data.get("can_restrict_members", False), can_pin_messages=data.get("can_pin_messages", False),
+                   can_promote_members=data.get("can_promote_members", False), can_send_messages=data.get("can_send_messages", False),
+                   can_send_media_messages=data.get("can_send_media_messages", False))

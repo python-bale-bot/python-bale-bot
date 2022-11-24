@@ -92,6 +92,7 @@ class Message:
 
     @property
     def author(self):
+        """An alias for :attr:`from_user`"""
         return self.from_user
 
     @property
@@ -182,13 +183,19 @@ class Message:
                 Message Content.
             components: Optional[:class:`bot.Components` | :class:`bale.RemoveComponents`]
                 Message Components.
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Message to this chat.
+            APIError
+                Send Message Failed.
         """
         return await self.bot.send_message(chat=self.chat, text=text, components=components,
                                        reply_to_message=self if not self.chat.type.is_group_chat() else None)
@@ -203,14 +210,20 @@ class Message:
                 Document
             caption: Optional[:class:`str`]
                 Message caption
-        Raises
-        ------
-            :class:`bale.Error`
 
         Returns
         --------
             :class:`bale.Message`
                 The Message.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Document to this chat.
+            APIError
+                Send Document Failed.  
         """
         return await self.bot.send_document(self.chat, document, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
 
@@ -224,13 +237,19 @@ class Message:
                 Photo
             caption: Optional[:class:`str`]
                 Message caption
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bale.Message`:
                 On success, the sent Message is returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Photo to chat.
+            APIError
+                Send Photo Failed.  
         """
         return await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
 
@@ -268,13 +287,22 @@ class Message:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Invoice to this chat.
+            APIError
+                Send Invoice Failed.  
         """
         return await self.bot.send_invoice(chat=self.chat, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
                                         need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
                                         need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
-    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None):
+    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
 
@@ -286,25 +314,30 @@ class Message:
                 New Message Components for message.
         Raises
         ------
-            :class:`bale.Error`
-        Return
-        ------
-            :class:`dict`
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Edit Message.
+            APIError
+                Edit Message Failed.
         """
-        result = await self.bot.edit_message(self.chat, self, text, components=components)
+        await self.bot.edit_message(self.chat, self, text, components=components)
         self.text = text
-        return result
 
     async def delete(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
 
-        Return
+        Raises
         ------
-            bool:
-                ``True`` when user added to chat else ``False``
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Delete Message.
+            APIError
+                Delete Message Failed.
         """
-        return await self.bot.delete_message(self.chat, self)
+        await self.bot.delete_message(self.chat, self)
 
     def __str__(self):
         return str(self.message_id)

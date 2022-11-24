@@ -201,7 +201,8 @@ class Bot:
                 Bot User information.
         Raises
         ------
-            :class:`Bale.Error`
+            APIError
+                Get bot Failed.
         """
         response = await self.http.get_bot()
         return User.from_dict(data=response.result, bot=self)
@@ -213,6 +214,12 @@ class Bot:
         -------
             bool:
                 ``True`` else ``False`` if not done
+        Raises
+        ------
+            Forbidden
+                You do not have permission to delete Webhook.
+            APIError
+                Delete webhook Failed.
         """
         response = await self.http.delete_webhook()
         return response.result or False
@@ -230,14 +237,19 @@ class Bot:
                 Message Components
             reply_to_message: Optional[:class:`bale.Message`]
                 Reply to a Message
-
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bale.Message`
                 The Message
+        
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Message to this chat.
+            APIError
+                Send Message Failed.   
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -275,14 +287,20 @@ class Bot:
             Message caption
         reply_to_message: Optional[:class:`bale.Message`]
             Reply to a Message
-        Raises
-        ------
-            :class:`bale.Error`
 
         Returns
         --------
             :class:`bale.Message`
                 The Message.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Document to this chat.
+            APIError
+                Send Document Failed.        
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -320,14 +338,20 @@ class Bot:
                 Message caption
             reply_to_message: Optional[:class:`bale.Message`]
                 Reply to a Message
-        Raises
-        ------
-            :class:`bale.Error`
 
         Returns
         --------
             :class:`bale.Message`
                 The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Send Photo to chat.
+            APIError
+                Send photo Failed.
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -388,6 +412,15 @@ class Bot:
         Returns
         -------
             :class:`bale.Message`
+            
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Invoice to this chat.
+            APIError
+                Send Invoice Failed.  
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -428,7 +461,7 @@ class Bot:
         response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> "Message":
+    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
@@ -443,10 +476,12 @@ class Bot:
                 message components
         Raises
         ------
-            :class:`bale.Error`
-        Returns
-        -------
-            :class:`dict`
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Edit Message.
+            APIError
+                Edit Message Failed.
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -466,8 +501,7 @@ class Bot:
         if components:
             components = components.to_dict()
 
-        response = await self.http.edit_message(chat.chat_id, message.message_id, text, components=components)
-        return response.result
+        await self.http.edit_message(chat.chat_id, message.message_id, text, components=components)
 
     async def delete_message(self, chat: "Chat" | "User", message: "Message") -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
@@ -485,10 +519,14 @@ class Bot:
                 chat
             message: :class:`bale.Message`
                 message
-        Returns
-        -------
-            bool:
-                ``True`` if done else ``False``
+        Raises
+        ------
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Delete Message.
+            APIError
+                Delete Message Failed.
         """
         if not isinstance(chat, (Chat, User)):
             raise TypeError(
@@ -509,13 +547,16 @@ class Bot:
         ----------
             chat_id: int | str
                 chat id
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             Optional[:class:`bale.Chat`]
                 The chat or ``None`` if not found.
+        Raises
+        ------
+            Forbidden
+                You do not have permission to get Chat.
+            APIError
+                Get chat Failed.
         """
         if not isinstance(chat_id, (int, str)):
             raise TypeError(
@@ -536,13 +577,16 @@ class Bot:
         ----------
             user_id: int
                 user id
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             Optional[:class:`bale.User`]
                 The user or ``None`` if not found.
+        Raises
+        ------
+            Forbidden
+                You do not have permission to get User.
+            APIError
+                Get user Failed.
         """
         if not isinstance(user_id, (int, str)):
             raise TypeError(
@@ -564,14 +608,19 @@ class Bot:
             user_id: int
                 user
 
-        Raises
-        ------
-            :class:`bale.Error`
-
         Returns
         -------
             Optional[:class:`bale.ChatMember`]:
                 The chat member or ``None`` if not found.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to get Chat Member.
+            APIError
+                Get chat member Failed.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -590,7 +639,7 @@ class Bot:
         else:
             return ChatMember.from_dict(response.result)
 
-    async def invite_to_chat(self, chat: "Chat", user: "User") -> bool:
+    async def invite_to_chat(self, chat: "Chat", user: "User"):
         """Invite user to the chat
 
         Parameters
@@ -599,15 +648,15 @@ class Bot:
                 chat
             user: :class:`bale.User`
                 user
-
+        
         Raises
         ------
-            :class:`bale.Error`
-        
-        Returns
-        -------
-            bool:
-                ``True`` when user added to chat else ``False``
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to Add user to Chat.
+            APIError
+                Invite user Failed.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -619,8 +668,7 @@ class Bot:
                 "user param must be type of User"
             )
 
-        response = await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
-        return response.result or False
+        await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
 
     async def leave_chat(self, chat: "Chat"):
         """Leave bot from a Chat
@@ -632,19 +680,16 @@ class Bot:
         
         Raises
         ------
-            :class:`bale.Error`
-
-        Returns
-        -------
-            bool:
-                ``True`` when bot leaved from chat else ``False``
+            Forbidden
+                You do not have permission to Leave from chat.
+            APIError
+                Leave from chat Failed.
         """
         if not isinstance(chat, Chat):
             raise TypeError(
                 "chat param must be type of Chat"
             )
-        response = await self.http.leave_chat(str(chat.chat_id))
-        return response.result or False
+        await self.http.leave_chat(str(chat.chat_id))
 
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
         """
@@ -654,13 +699,17 @@ class Bot:
 
         Raises
         ------
-            :class:`bale.Error`
-                Group ID
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to get Members count of the Chat.
+            APIError
+                get Members count of the Chat Failed.
 
         Returns
         --------
-            Optional[int]:
-                int or ``None`` if chat not found.
+            :class:`int`:
+                The members count of the chat
         """
         if not isinstance(chat, Chat):
             raise TypeError(
@@ -677,13 +726,18 @@ class Bot:
         ----------
             chat: :class:`bale.Chat` 
                 Group id
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             Optional[List[:class:`bale.ChatMember`]]:
                 list of chat member or ``None`` if chat not found.
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to get Administrators of the Chat.
+            APIError
+                get Administrators of the Chat from chat Failed.
         """
         if not isinstance(chat, Chat):
             raise TypeError(

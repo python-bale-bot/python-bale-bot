@@ -77,6 +77,15 @@ class User:
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Message to this chat.
+            APIError
+                Send Message Failed.
         """
         return await self.bot.send_message(self, text, components=components)
 
@@ -89,13 +98,18 @@ class User:
                 Photo
             caption: :class:`str`
                 Message caption
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Document to this chat.
+            APIError
+                Send Document Failed.  
         """
         return await self.bot.send_document(self, document, caption=caption)
 
@@ -108,13 +122,19 @@ class User:
                 Photo
             caption: Optional[:class:`str`]
                 Message caption
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
+        
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Photo to chat.
+            APIError
+                Send Photo Failed.  
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
@@ -152,6 +172,15 @@ class User:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
+                
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Invoice to this chat.
+            APIError
+                Send Invoice Failed.  
         """
         return await self.bot.send_invoice(chat=self, title=title, description=description,
                                            provider_token=provider_token, prices=prices, photo_url=photo_url,
