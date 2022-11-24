@@ -19,8 +19,6 @@ class Update:
     ----------
         update_id: int
             Update ID
-        type: str
-            Chat type
         callback_query: Optional[:class:`bale.CallbackQuery`]
             Callback Query
         message: Optional[:class:`bale.Message`]
