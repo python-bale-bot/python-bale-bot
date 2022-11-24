@@ -10,22 +10,8 @@ __all__ = (
 
 
 class CallbackQuery:
-    """This object represents an incoming callback query from a callback button in an inline keyboard.
-
-    Parameters
-    -----------
-        callback_id: int
-            Callback Query ID
-        data: str
-            Callback Data
-        message: :class:`bale.Message`
-            Callback Message
-        inline_message_id: str
-            Callback inline message id
-        from_user: :class:`bale.User`
-            Callback The user who gave the callback.
-        bot: Optional[:class:`bale.Bot`]
-            Bot object.
+    """
+    This object represents an incoming callback query from a callback button in an inline keyboard.
     """
     __slots__ = (
         "message",
