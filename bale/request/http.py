@@ -172,7 +172,7 @@ class HTTPClient:
 						response: aiohttp.ClientResponse = response
 						parsed_response = await ResponseParser.from_response(response)
 						if response.status == ResponseStatusCode.NOT_FOUND:
-							raise NotFound()
+							raise NotFound(parsed_response.description)
 						elif not parsed_response.ok or response.status == ResponseStatusCode.NOT_INCORRECT:
 							if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
 								raise NotFound("User or Chat not Found")
