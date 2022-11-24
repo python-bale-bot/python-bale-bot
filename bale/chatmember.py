@@ -1,4 +1,4 @@
-from bale import (AdminPermissions, User)
+from bale import (Permissions, User)
 
 
 class MemberRole:
@@ -40,11 +40,13 @@ class ChatMember:
         self._user = user
         self.permissions = permissions
 
-
     @property
     def user(self):
         return self._user
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(permissions=AdminPermissions.from_dict(data), user=User.from_dict(data.get("user")), role=MemberRole(data.get("status")))
+        return cls(permissions=Permissions.from_dict(data), user=User.from_dict(data.get("user")), role=MemberRole(data.get("status")))
+
+    def __repr__(self):
+        return f"<ChatMember role={self.role} user={self._user} permissions={self.permissions}>"

@@ -10,7 +10,7 @@ from .user import User
 from .attachments.contact import ContactMessage
 from .chat import Chat, ChatType
 from .message import Message
-from .permissions import AdminPermissions
+from .permissions import Permissions
 from .chatmember import ChatMember, MemberRole
 from .callbackquery import CallbackQuery
 from .update import Update
@@ -40,7 +40,7 @@ __all__ = (
     "ContactMessage",
     "Invoice",
     "Price",
-    "AdminPermissions",
+    "Permissions",
     "ChatMember",
     "MemberRole",
     "BaleError",
