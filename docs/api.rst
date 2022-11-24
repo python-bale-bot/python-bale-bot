@@ -221,3 +221,27 @@ Callback
 
    :param callback: The callback
    :type callback: :class:`bale.CallbackQuery`
+
+Exceptions
+------------
+
+The following exceptions are thrown by the library.
+
+.. autoexception:: BaleError
+    :members:
+
+.. autoexception:: InvalidToken
+
+.. autoexception:: APIError
+
+.. autoexception:: NetworkError
+
+.. autoexception:: TimeOut
+
+.. autoexception:: NotFound
+
+.. autoexception:: Forbidden
+
+.. autoexception:: RateLimited
+
+.. autoexception:: HTTPException

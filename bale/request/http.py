@@ -25,7 +25,7 @@ from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from typing import Any
-from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited)
+from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode
 from collections import deque
@@ -201,6 +201,8 @@ class HTTPClient:
 					raise TimeOut()
 				except aiohttp.client_exceptions.ClientOSError as error:
 					raise BaleError(str(error))
+				except Exception as error:
+					raise HTTPException(error)
 
 	async def get_file(self, file_id):
 		async with self.__session.get(BALE_API_FILE_URL + "/" + "bot" + self.token + "/" + file_id) as response:
