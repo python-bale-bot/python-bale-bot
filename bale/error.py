@@ -67,7 +67,7 @@ class RateLimited(BaleError):
     __slots__ = ()
 
     def __init__(self):
-        super(self).__init__("We are Rate Limited")
+        super().__init__("We are Rate Limited")
 
 class HTTPException(BaleError):
     __slots__ = ()
