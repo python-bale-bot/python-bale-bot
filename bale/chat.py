@@ -395,4 +395,4 @@ class Chat:
         return hash(self.__str__())
 
     def __repr__(self):
-        return f"<Chat first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username} title={self.title}>"
+        return f"<Chat type={self._type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username} title={self.title}>"
