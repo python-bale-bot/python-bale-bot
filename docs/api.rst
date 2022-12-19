@@ -40,6 +40,11 @@ Chat
 .. autoclass:: bale.Chat()
    :members:
 
+Chat Type
+~~~~~~~~~~~
+.. autoclass:: bale.ChatType()
+   :members:
+
 User
 ~~~~~
 
@@ -71,6 +76,11 @@ Update
 
 .. autoclass:: bale.Update()
    :members:   
+
+Update Type
+~~~~~~~~~~~
+.. autoclass:: bale.UpdateType()
+   :members:
 
 Components
 ~~~~~~~~~~
