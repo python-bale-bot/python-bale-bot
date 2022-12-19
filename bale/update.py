@@ -1,16 +1,45 @@
 from __future__ import annotations
-from typing import TYPE_CHECKING, Literal, Dict
+from typing import TYPE_CHECKING, Dict
 from bale import (Message, CallbackQuery)
 if TYPE_CHECKING:
     from bale import Bot
 
 
 class UpdateType:
-    """Update Type"""
+    """This object indicates an Update Type.
+
+    .. container:: operations
+        .. describe:: x == y
+            Checks if two update type are equal.
+        .. describe:: x != y
+            Checks if two update type are not equal.
+    """
     MESSAGE = "message"
     CALLBACK = "callback_query"
     UNKNOWN = "unknown"
 
+    __slots__ = (
+        "_type",
+    )
+
+    def __init__(self, _type: str):
+        self._type = _type
+
+    def is_message_update(self):
+        """bool:
+			Return ``True`` if Update Type is Message"""
+        return self._type == self.MESSAGE
+
+    def is_callback_update(self):
+        """bool:
+			Return ``True`` if Update Type is Callback"""
+        return self._type == self.CALLBACK
+
+    def __eq__(self, other):
+        return self._type == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 class Update:
     """This object shows an update.
@@ -46,12 +75,8 @@ class Update:
         self.edited_message = edited_message if edited_message is not None else None
 
     @property
-    def type(self) -> Literal['callback_query', 'message', 'unknown']:
-        if self.callback_query is not None:
-            return "callback_query"
-        elif self.message is not None:
-            return "message"
-        return "unknown"
+    def type(self) -> UpdateType:
+        return UpdateType(self._type)
 
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
@@ -71,7 +96,7 @@ class Update:
         data = {}
 
         if self.type:
-            data["type"] = self.type
+            data["type"] = self._type
         if self.callback_query:
             data["callback_query"] = self.callback_query.to_dict()
         if self.message:
@@ -109,4 +134,4 @@ class Update:
         return not self.__lt__(other)
 
     def __repr__(self):
-        return f"<Update type={self.type} message={self.message}>"
+        return f"<Update type={self._type} message={self.message}>"
