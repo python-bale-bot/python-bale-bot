@@ -13,7 +13,7 @@ from .message import Message
 from .permissions import Permissions
 from .chatmember import ChatMember, MemberRole
 from .callbackquery import CallbackQuery
-from .update import Update
+from .update import Update, UpdateType
 from .updater import Updater, EventType
 from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken, RateLimited
 from .bot import Bot
@@ -23,6 +23,7 @@ __all__ = (
     "Bot",
     "CallbackQuery",
     "Update",
+    "UpdateType",
     "Chat",
     "ChatType",
     "Message",
