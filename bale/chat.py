@@ -75,7 +75,7 @@ class Chat:
     ----------
         chat_id: str
             Chat ID.
-        type: :class:`bale.ChatType`
+        _type: :class:`bale.ChatType`
             Chat Type.
         title: str
             Chat Title.
@@ -110,10 +110,10 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, type: "ChatType", title: str, username: str, first_name: str, last_name: str,
+    def __init__(self, chat_id: int | str, _type: "ChatType", title: str, username: str, first_name: str, last_name: str,
                  pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
         self.chat_id = chat_id
-        self._type = type
+        self._type = _type
         self.title = title
         self.username = username
         self.first_name = first_name
@@ -145,7 +145,6 @@ class Chat:
         Returns
         --------
             :class:`bale.Message`
-            
         Raises
         ------
             NotFound
@@ -171,7 +170,6 @@ class Chat:
         -------
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
-                
         Raises
         ------
             NotFound
@@ -197,7 +195,6 @@ class Chat:
         -------
             Optional[:class:`bale.Message`]
                 On success, the sent Message is returned.
-                
         Raises
         ------
             NotFound
@@ -209,7 +206,9 @@ class Chat:
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
-    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
+                   photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
+                       need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
 
@@ -243,7 +242,6 @@ class Chat:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
-                
         Raises
         ------
             NotFound
@@ -362,7 +360,7 @@ class Chat:
 
     @classmethod
     def from_dict(cls, data: dict, bot):
-        return cls(bot=bot, chat_id=data.get("id"), type=ChatType(data.get("type")), title=data.get("title"),
+        return cls(bot=bot, chat_id=data.get("id"), _type=ChatType(data.get("type")), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True))
@@ -395,4 +393,5 @@ class Chat:
         return hash(self.__str__())
 
     def __repr__(self):
-        return f"<Chat type={self._type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username} title={self.title}>"
+        return (f"<Chat type={self._type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username}"
+            f"title={self.title}>")

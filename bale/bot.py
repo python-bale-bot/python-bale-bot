@@ -224,7 +224,8 @@ class Bot:
         response = await self.http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None, reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
+                    reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send text messages.
 
         Parameters
@@ -241,7 +242,6 @@ class Bot:
         -------
             :class:`bale.Message`
                 The Message
-        
         Raises
         ------
             NotFound
@@ -274,7 +274,8 @@ class Bot:
         response = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None, reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None,
+                    reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send document.
 
         Parameters
@@ -325,7 +326,8 @@ class Bot:
         response = await self.http.send_document(chat.chat_id, document, caption=caption, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None, reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None,
+                 reply_to_message: Optional["Message"] = None) -> "Message":
         """This service is used to send photo.
 
         Parameters
@@ -381,7 +383,9 @@ class Bot:
         response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
+    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *,
+                   photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
+                   need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
 
         Parameters
@@ -458,7 +462,8 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
-        response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name, need_phone_number, need_email, need_shipping_address, is_flexible)
+        response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name,
+                    need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
     async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
@@ -759,7 +764,8 @@ class Bot:
             )
 
         response = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result or list() if not offset or (offset and update_payload.get("update_id") > offset)]
+        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result or list()
+                if not offset or (offset and update_payload.get("update_id") > offset)]
 
     async def connect(self, sleep_after_every_get_updates):
         self._user = await self.get_bot()

@@ -60,7 +60,7 @@ class ResponseParser:
 
 		data = await json_or_text(data)
 
-		if type(data) == str:
+		if isinstance(data, str):
 			return cls(False, description=data, raw=dict(description=data))
 		else:
 			return cls(data.get("ok", False), data.get("result"), data.get("error_code"), data.get("description"), data)

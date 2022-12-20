@@ -64,14 +64,15 @@ class Message:
             Message invoice.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_message_id", "date_code", "date", "edit_date",
-        "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member",
-        "reply_to_message", "invoice", "bot"
+        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_message_id", "date_code", "date",
+        "edit_date", "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "reply_to_message",
+        "invoice", "bot"
     )
 
     def __init__(self, message_id: str, date: datetime, text: str = None, caption: str = None,
-                 forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None, contact: "ContactMessage" = None, chat: "Chat" = None,
-                 photos: List["Photo"] = None, reply_to_message: "Message" = None, invoice: "Invoice" = None, bot: 'Bot' = None, **options):
+                 forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None,
+                 contact: "ContactMessage" = None, chat: "Chat" = None, photos: List["Photo"] = None, reply_to_message: "Message" = None, invoice: "Invoice" = None,
+                 bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
 
@@ -187,7 +188,6 @@ class Message:
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
-                
         Raises
         ------
             NotFound
@@ -210,12 +210,10 @@ class Message:
                 Document
             caption: Optional[:class:`str`]
                 Message caption
-
         Returns
         --------
             :class:`bale.Message`
                 The Message.
-                
         Raises
         ------
             NotFound
@@ -241,7 +239,6 @@ class Message:
         -------
             :class:`bale.Message`:
                 On success, the sent Message is returned.
-                
         Raises
         ------
             NotFound
@@ -253,7 +250,9 @@ class Message:
         """
         return await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
 
-    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None,
+                need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
+                need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
 
@@ -287,7 +286,6 @@ class Message:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
-                
         Raises
         ------
             NotFound

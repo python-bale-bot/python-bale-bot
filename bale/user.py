@@ -77,7 +77,6 @@ class User:
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
-                
         Raises
         ------
             NotFound
@@ -126,7 +125,6 @@ class User:
         -------
             :class:`bale.Message`
                 On success, the sent Message is returned.
-        
         Raises
         ------
             NotFound
@@ -138,7 +136,9 @@ class User:
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
-    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None,
+               need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
+               need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
 
@@ -172,7 +172,6 @@ class User:
         -------
             :class:`Bale.Message`:
                 On success, the message sent returned.
-                
         Raises
         ------
             NotFound

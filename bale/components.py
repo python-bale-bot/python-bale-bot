@@ -74,13 +74,16 @@ class InlineKeyboard:
         text: str
             Label text on the button.
         callback_data: str
-            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
+            inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
         url: str
             HTTP url to be opened when the button is pressed. Defaults to None.
         switch_inline_query: str
-            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
+            If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
+            inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
         switch_inline_query_current_chat: str
-            If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty, in which case only the bot's username will be inserted. Defaults to None.
+            If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty,
+            in which case only the bot's username will be inserted. Defaults to None.
     """
     __slots__ = (
         "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
