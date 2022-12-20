@@ -25,15 +25,15 @@ if __name__ == "__main__":
         author="Kian Ahmadian",
         license="MIT License",
         project_urls={
-            "Source Code": "https://github.com/kian-ahmadian/python-bale-bot/",
+            "Source Code": "https://github.com/python-bale-bot/python-bale-bot/",
             "Documentation": "https://python-bale-bot.readthedocs.io/en/master/",
-            "Bug Tracker": "https://github.com/kian-ahmadian/python-bale-bot/issues"
+            "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues"
         },
         keywords=["bale", "bale-bot", "framework", "bot"],
         python_requires='>=3.8',
         extras_require=extras_require,
         include_package_data=True,
-        url="https://github.com/kian-ahmadian/python-bale-bot/",
+        url="https://github.com/python-bale-bot/python-bale-bot/",
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',

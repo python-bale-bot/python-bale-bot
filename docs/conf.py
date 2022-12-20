@@ -79,7 +79,7 @@ html_context = {
 }
 resource_links = {
   'discord': 'https://discord.gg/bYHEzyDe2j',
-  'issues': 'https://github.com/kian-ahmadian/python-bale-bot/issues',
-  'discussions': 'https://github.com/kian-ahmadian/python-bale-bot/discussions',
-  'examples': f'https://github.com/kian-ahmadian/python-bale-bot/tree/{branch}/examples',
+  'issues': 'https://github.com/python-bale-bot/python-bale-bot/issues',
+  'discussions': 'https://github.com/python-bale-bot/python-bale-bot/discussions',
+  'examples': f'https://github.com/python-bale-bot/python-bale-bot/tree/{branch}/examples',
 }
