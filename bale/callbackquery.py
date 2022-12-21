@@ -1,8 +1,8 @@
 from __future__ import annotations
+from bale import User, Message
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
-from bale import User, Message
 
 __all__ = (
     "CallbackQuery"
@@ -22,8 +22,8 @@ class CallbackQuery:
         "callback_id"
     )
 
-    def __init__(self, callback_id: int = None, data: str = None, message: "Message" = None, inline_message_id: str = None,
-                 from_user: "User" = None, bot: "Bot" = None):
+    def __init__(self, callback_id: int = None, data: str = None, message: "Message" = None,
+                 inline_message_id: str = None, from_user: "User" = None, bot: "Bot" = None):
         self.data = data
         self.callback_id = callback_id
         self.message = message
@@ -39,7 +39,8 @@ class CallbackQuery:
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
         return cls(bot=bot, data=data.get("data"), callback_id=data.get("id"), message=Message.from_dict(data.get("message"), bot=bot),
-                   inline_message_id=data.get("inline_message_id"), from_user=User.from_dict(bot=bot, data=data.get("from")))
+                   inline_message_id=data.get("inline_message_id"),
+                   from_user=User.from_dict(bot=bot, data=data.get("from")))
 
     def to_dict(self):
         data = {

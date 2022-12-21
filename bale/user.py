@@ -46,7 +46,8 @@ class User:
         "bot"
     )
 
-    def __init__(self, user_id: int, first_name: str, last_name: str = None, username: str = None, bot: 'Bot' = None):
+    def __init__(self, user_id: int, first_name: str, last_name: str = None, username: str = None,
+            bot: 'Bot' = None):
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -88,7 +89,8 @@ class User:
         """
         return await self.bot.send_message(self, text, components=components)
 
-    async def send_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
+    async def send_document(self, document: bytes | str | "Document", *,
+            caption: Optional[str] = None):
         """For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
         Parameters
