@@ -62,12 +62,14 @@ class Bot:
         "_closed"
     )
 
-    def __init__(self, token: str):
+    def __init__(self, token: str, updater: "Updater" = None):
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
         self._user = None
-        self.updater = Updater(self)
+        if updater and not isinstance(updater, Updater):
+            raise TypeError("updater param must be type of bale.Updater")
+        self.updater = (updater or Updater)(self)
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
