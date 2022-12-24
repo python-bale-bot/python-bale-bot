@@ -36,3 +36,6 @@ $ python setup.py install
 ## Documentation
 <p><b>The <a href="https://python-bale-bot.readthedocs.io/en/">package documentation</a> is the technical reference for python-bale-bot. It contains descriptions of all available classes, modules, methods and arguments as well as the changelog.</b></p>
 
+
+## Contact to Developers
+[![Email](https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white)](mailto:python-bale-bot@googlegroups.com)
