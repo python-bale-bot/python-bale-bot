@@ -182,7 +182,7 @@ class Message:
         ----------
             text: str
                 Message Content.
-            components: Optional[:class:`bot.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
                 Message Components.
         Returns
         -------

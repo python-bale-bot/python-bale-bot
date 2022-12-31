@@ -409,7 +409,7 @@ class Bot:
         need_phone_number: bool
             Get a Phone number from "User"?. Defaults to False.
         need_email: bool
-            Get a Email from "User"?. Defaults to False.
+            Get an Email from "User"?. Defaults to False.
         need_shipping_address: bool
             Get a Shipping Address from "User"?. Defaults to False.
         is_flexible: bool
