@@ -65,9 +65,10 @@ class Update:
         "raw_data"
     )
 
-    def __init__(self, update_id: int, callback_query: "CallbackQuery" = None, message: "Message" = None,
+    def __init__(self, update_id: int, _type: str, callback_query: "CallbackQuery" = None, message: "Message" = None,
                  edited_message: "Message" = None, bot: 'Bot' = None, raw_data: dict = None):
         self.update_id = int(update_id)
+        self._type = _type
         self.bot = bot
         self.raw_data = raw_data
         self.callback_query = callback_query if callback_query is not None else None
@@ -89,7 +90,7 @@ class Update:
         if data.get("edited_message"):
             edited_message = Message.from_dict(data=data.get("edited_message"), bot=bot)
 
-        return cls(update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
+        return cls(_type = UpdateType.CALLBACK if callback_query else UpdateType.MESSAGE, update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
                    raw_data=data, bot=bot)
 
     def to_dict(self) -> Dict:
