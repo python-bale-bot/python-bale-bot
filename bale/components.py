@@ -26,6 +26,9 @@ class Components:
 
     def __init__(self, keyboards=None, inline_keyboards=None):
 
+        if keyboards and inline_keyboards:
+            raise TypeError("Your can't use keyboard and inline_keyboards params together.")
+
         if not (isinstance(keyboards, list) or isinstance(inline_keyboards, list)):
             raise TypeError("The type of parameter entered is incorrect.")
 
