@@ -18,7 +18,7 @@ extras_require = {
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.4.1",
+        version="2.4.2a",
         platforms=["Windows", ],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
@@ -37,7 +37,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',
-        install_requires=["aiohttp<3.8.0,>=3.6.0", "asyncio~=3.4.3", "setuptools~=60.2.0"]
+        install_requires=["aiohttp<3.8.0,>=3.6.0", "asyncio~=3.4.3", "setuptools~=65.5.1"]
     )
 
 
