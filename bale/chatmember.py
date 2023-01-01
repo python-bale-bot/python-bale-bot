@@ -1,5 +1,10 @@
 from bale import (Permissions, User)
 
+__all__ = (
+    "MemberRole",
+    "ChatMember"
+)
+
 
 class MemberRole:
     """This object shows member's role in chat.

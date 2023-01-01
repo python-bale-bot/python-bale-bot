@@ -4,6 +4,11 @@ from bale import (Message, CallbackQuery)
 if TYPE_CHECKING:
     from bale import Bot
 
+__all__ = (
+    "UpdateType",
+    "Update"
+)
+
 
 class UpdateType:
     """This object indicates an Update Type.
