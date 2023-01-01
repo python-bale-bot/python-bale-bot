@@ -50,6 +50,8 @@ class Message:
             The user who has sent the message.
         forward_from: Optional[:class:`bale.User`]
             The user who has sent the message originally.
+        forward_from_chat: Optional[:class:`bale.Chat`]
+            The chat from which the message was forwarded.
         contact: Optional[:class:`bale.ContactMessage`]
             Contact
         chat: :class:`bale.Chat`
@@ -64,13 +66,13 @@ class Message:
             Message invoice.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_message_id", "date_code", "date",
+        "text", "caption", "from_user", "_author", "contact", "chat", "message_id", "forward_from", "forward_from_chat", "forward_from_message_id", "date_code", "date",
         "edit_date", "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "reply_to_message",
         "invoice", "bot"
     )
 
     def __init__(self, message_id: str, date: datetime, text: str = None, caption: str = None,
-                 forward_from: "User" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None,
+                 forward_from: "User" = None, forward_from_chat: "Chat" = None, forward_from_message_id: str = None, from_user: "User" = None, document: "Document" = None,
                  contact: "ContactMessage" = None, chat: "Chat" = None, photos: List["Photo"] = None, reply_to_message: "Message" = None, invoice: "Invoice" = None,
                  bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
@@ -82,6 +84,7 @@ class Message:
         self.from_user: User | None = from_user if from_user is not None else None
         self.forward_from: User | None = forward_from if forward_from is not None else None
         self.forward_from_message_id: str = forward_from_message_id if forward_from_message_id is not None else None
+        self.forward_from_chat: Chat | None = forward_from_chat if forward_from_chat is not None else None
         self.caption: str | None = caption if caption is not None else None
         self.document = document if document is not None else None
         self.photos = photos if photos is not None else None
@@ -143,6 +146,7 @@ class Message:
                        "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))), text=data.get("text"),
                    caption=data.get("caption"), from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
                    forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
+                   forward_from_chat=Chat.from_dict(bot=bot, data=data.get("forward_from_chat")) if data.get("forward_from_chat") else None,
                    forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
                    document=Document.from_dict(bot = bot, data=data.get("document")) if data.get("document") else None,
                    photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,
@@ -167,6 +171,8 @@ class Message:
             data["new_chat_members"] = self.new_chat_members
         if self.forward_from:
             data["forward_from"] = self.forward_from.to_dict()
+        if self.forward_from_chat:
+            data["forward_from"] = self.forward_from_chat.to_dict()
         if self.left_chat_member:
             data["left_chat_member"] = self.left_chat_member.to_dict()
         if self.reply_to_message_id:
@@ -277,7 +283,7 @@ class Message:
             need_phone_number: Optional[:class:`bool`]
                 Get a Phone number from "User"?.
             need_email: Optional[bool]
-                Get a Email from "User"?.
+                Get an Email from "User"?.
             need_shipping_address: Optional[bool]
                 Get a Shipping Address from "User"?.
             is_flexible: Optional[bool]
