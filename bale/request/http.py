@@ -309,7 +309,7 @@ class HTTPClient:
 		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
 
 	def get_chat_members_count(self, chat_id):
-		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChatMemberCount", self.token), params=dict(chat_id=chat_id))
 
 	def get_chat_member(self, chat_id, member_id):
 		return self.request(Route("GET", "getChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
