@@ -2,21 +2,45 @@ from bale import (Permissions, User)
 
 
 class MemberRole:
-    """Member Role"""
+    """This object shows member's role in chat.
+
+    .. container:: operations
+        .. describe:: x == y
+            Checks if two members role are equal.
+        .. describe:: x != y
+            Checks if two members role are not equal.
+    """
+
     OWNER = "creator"
+    CREATOR = OWNER
     ADMIN = "administrator"
-    __slots__ = ("_role",)
+    __slots__ = ("_role", )
 
     def __init__(self, _role: str):
         self._role = _role
 
+    @property
+    def role(self) -> str:
+        return self._role
+
     def is_owner(self):
-        """Member have owner role?"""
+        """bool:
+			Return ``True`` if Member is chat creator"""
         return self._role == self.OWNER
 
     def is_admin(self):
-        """Member have admin role?"""
+        """bool:
+			Return ``True`` if Member have admin role"""
         return self._role == self.ADMIN
+
+    def __repr__(self):
+        return f"<MemberRole role={self.role}>"
+
+    def __eq__(self, other):
+        return self._role == other
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
 
 class ChatMember:
@@ -35,13 +59,13 @@ class ChatMember:
         "role", "_user", "permissions"
     )
 
-    def __init__(self, role: "MemberRole" = None, user=None, permissions=None):
+    def __init__(self, role: "MemberRole", user, permissions):
         self.role = role
         self._user = user
         self.permissions = permissions
 
     @property
-    def user(self):
+    def user(self) -> "User":
         return self._user
 
     @classmethod

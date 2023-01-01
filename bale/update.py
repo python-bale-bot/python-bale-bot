@@ -25,6 +25,10 @@ class UpdateType:
     def __init__(self, _type: str):
         self._type = _type
 
+    @property
+    def type(self) -> str:
+        return self._type
+
     def is_message_update(self):
         """bool:
 			Return ``True`` if Update Type is Message"""
@@ -34,6 +38,9 @@ class UpdateType:
         """bool:
 			Return ``True`` if Update Type is Callback"""
         return self._type == self.CALLBACK
+
+    def __repr__(self):
+        return f"<UpdateType type={self.type}>"
 
     def __eq__(self, other):
         return self._type == other

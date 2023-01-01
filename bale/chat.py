@@ -52,6 +52,10 @@ class ChatType:
     def __init__(self, _type: str):
         self._type = _type
 
+    @property
+    def type(self) -> str:
+        return self._type
+
     def is_private_chat(self):
         """bool:
             Return ``True`` if Chat Type is Private"""
@@ -61,6 +65,9 @@ class ChatType:
         """bool:
             Return ``True`` if Chat Type is Group"""
         return self._type == self.GROUP
+
+    def __repr__(self):
+        return f"<ChatType type={self.type}>"
 
     def __eq__(self, other):
         return self._type == other
