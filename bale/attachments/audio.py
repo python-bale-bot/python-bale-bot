@@ -7,7 +7,7 @@ class Audio:
             Audio ID
         duration: int
             Audio duration
-        file_size: unt
+        file_size: int
             Audio Size.
         mime_type: Optional[:class:`str`]
             Audio Mime type.

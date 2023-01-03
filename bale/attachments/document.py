@@ -33,12 +33,18 @@ class Document:
 	async def read(self):
 		"""Read the Document.
 
-        Raises
-        ------
-            :class:`bale.Error`
         Returns
         -------
             :class:`bytes`
+                Document
+        Raises
+        ------
+            NotFound
+                Document not found.
+            Forbidden
+                You do not have permission to read document.
+            APIError
+                Read document Failed.
 
         """
 		return await self.bot.http.get_file(self.file_id)
@@ -52,8 +58,14 @@ class Document:
 
         Raises
         ------
-            :class:`bale.Error`
-
+            NotFound
+                Document not found.
+            Forbidden
+                You do not have permission to read document.
+            APIError
+                Read document Failed.
+            OSError
+                Open or write into file Failed.
         """
 		data = await self.read()
 		with open(file_name, 'wb') as file:
