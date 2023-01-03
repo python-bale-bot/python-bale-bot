@@ -20,8 +20,8 @@ class Components:
     """
 
     __slots__ = (
-        "keyboards",
-        "inline_keyboards"
+        "_keyboards",
+        "_inline_keyboards"
     )
 
     def __init__(self, keyboards=None, inline_keyboards=None):
@@ -32,24 +32,20 @@ class Components:
         if not (isinstance(keyboards, list) or isinstance(inline_keyboards, list)):
             raise TypeError("The type of parameter entered is incorrect.")
 
-        self.keyboards = []
-        self.inline_keyboards = []
+        self._keyboards = []
+        self._inline_keyboards = []
 
         if keyboards:
             for obj in keyboards:
-                if not isinstance(obj, list):
-                    raise TypeError("object is not a list its a {}".format(obj.__class__))
-
-                keyboard = [i.to_dict() for i in obj if isinstance(i, Keyboard)]
-                self.keyboards.append(keyboard)
+                if not isinstance(obj, (list, Keyboard)):
+                    raise TypeError("object in keyboards param must be type of the list of Keyboard or a Keyboard.")
+                self._keyboards.append(obj if isinstance(obj, list) else [obj])
 
         if inline_keyboards:
             for obj in inline_keyboards:
-                if not isinstance(obj, list):
-                    raise TypeError("object is not a list its a {}".format(obj.__class__))
-
-                inline_keyboard = [i.to_dict() for i in obj if isinstance(i, InlineKeyboard)]
-                self.inline_keyboards.append(inline_keyboard)
+                if not isinstance(obj, (list, InlineKeyboard)):
+                    raise TypeError("object in inline_keyboards param must be type of the list of Keyboard or a InlineKeyboard.")
+                self._inline_keyboards.append(obj if isinstance(obj, list) else [obj])
 
     @classmethod
     def from_dict(cls, data: dict):
@@ -57,14 +53,14 @@ class Components:
 
     def to_dict(self) -> Dict:
         data = {}
-        keyboards = self.keyboards
-        inline_keyboards = self.inline_keyboards
+        keyboards = self._keyboards
+        inline_keyboards = self._inline_keyboards
 
         if bool(keyboards):
-            data["keyboard"] = keyboards
+            data["keyboard"] = [[k.to_dict() for k in obj] for obj in keyboards]
 
         if bool(inline_keyboards):
-            data["inline_keyboard"] = inline_keyboards
+            data["inline_keyboard"] = [[ik.to_dict() for ik in obj] for obj in inline_keyboards]
 
         return data
 
