@@ -109,7 +109,7 @@ class Bot:
         future = self.loop.create_future()
         event_name = event_name.lower()
         if not check:
-            check = lambda: True
+            check = lambda *args: True
 
         listeners = self.listeners.get(event_name)
         if not listeners:
