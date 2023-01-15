@@ -24,3 +24,10 @@ Manuals
   :maxdepth: 1
 
   api
+
+Meta
+====
+.. toctree::
+  :maxdepth: 1
+
+  whats_new
