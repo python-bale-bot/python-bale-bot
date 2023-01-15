@@ -49,7 +49,7 @@ class Bot:
     ----------
         token: str 
             Bot Token
-        updater: Optional[:class:`object`]
+        updater: Optional[:class:`bale.Updater`]
     """
     __slots__ = (
         "loop",
@@ -63,12 +63,14 @@ class Bot:
         "_closed"
     )
 
-    def __init__(self, token: str, updater: Optional[object] = None):
+    def __init__(self, token: str, updater: Optional["Updater"] = None):
+        if updater and not isinstance(updater, Updater):
+            raise TypeError("updater param must be type of bale.Updater")
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
         self._user = None
-        self.updater: object = (updater or Updater)(self)
+        self.updater: Updater = (updater or Updater)(self)
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
