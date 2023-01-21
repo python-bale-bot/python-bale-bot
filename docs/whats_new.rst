@@ -5,6 +5,15 @@ Change Log
 
 Project changes are shown on this page.
 
+v2.4.2
+------
+
+Bug Fixes
+~~~~~~~~~~
+
+- Changes in some functions and commands
+- Improve Code Quality
+
 v2.4.1
 ------
 
