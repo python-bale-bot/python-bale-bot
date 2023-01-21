@@ -26,7 +26,7 @@ from __future__ import annotations
 import asyncio
 from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
-from .error import NotFound
+from .error import NotFound, InvalidToken
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
                   Photo, Document)
 
@@ -64,8 +64,8 @@ class Bot:
     )
 
     def __init__(self, token: str, updater: Optional["Updater"] = None):
-        if updater and not isinstance(updater, Updater):
-            raise TypeError("updater param must be type of bale.Updater")
+        if isinstance(token, str):
+            raise InvalidToken("token must be type of the str")
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
@@ -607,14 +607,16 @@ class Bot:
 
         return None
 
-    async def get_chat_member(self, chat: "Chat", user_id: int) -> "ChatMember" | None:
+    async def get_chat_member(self, chat: "Chat", user: "User" = None, user_id: str | int = None) -> "ChatMember" | None:
         """
         Parameters
         ----------
             chat: :class:`bale.Chat`
                 chat
-            user_id: int
+            user: Optional[:class:`bale.User`]
                 user
+            user_id: Optional[:class:`int` | :class:`str`]
+                user id
 
         Returns
         -------
@@ -635,13 +637,28 @@ class Bot:
                 "chat param must be type of Chat"
             )
 
-        if not isinstance(user_id, int):
+        if user is None and user_id is None:
             raise TypeError(
-                "user_id param must be type of int"
+                "you must enter user or user_id"
+            )
+
+        if user and user_id:
+            raise TypeError(
+                "You can't use user & user_id together"
+            )
+
+        if user and not isinstance(user, User):
+            raise TypeError(
+                "user must be type of bale.User"
+            )
+
+        if user_id and not isinstance(user_id, (str, int)):
+            raise TypeError(
+                "user_id must be type of str or int"
             )
 
         try:
-            response = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=str(user_id))
+            response = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=user.user_id if user else str(user_id))
         except NotFound:
             return None
         else:

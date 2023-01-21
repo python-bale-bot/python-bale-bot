@@ -153,7 +153,7 @@ class Keyboard:
 
 
 class RemoveComponents:
-    """This object shows a remove keyboard."""
+    """This object shows a remove keyboard(s)."""
 
     def to_dict(self) -> dict:
         return {"keyboard": None}
