@@ -64,7 +64,7 @@ class Bot:
     )
 
     def __init__(self, token: str, updater: Optional["Updater"] = None):
-        if isinstance(token, str):
+        if not isinstance(token, str):
             raise InvalidToken("token must be type of the str")
         self.loop = _loop
         self.token = token
