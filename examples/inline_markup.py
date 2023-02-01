@@ -11,11 +11,9 @@ async def when_receive_message(message: Message):
 	if message.content == "/start":
 		await message.reply(
 			"Hey!",
-			components=[
-				Components(inline_keyboards=[[
+			components=Components(inline_keyboards=[[
 					InlineKeyboard("Send Hi", callback_data="send_hi")
 				]])
-			]
 		)
 
 @client.listen(EventType.CALLBACK)
