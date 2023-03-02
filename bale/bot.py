@@ -772,6 +772,37 @@ class Bot:
         response = await self.http.get_chat_administrators(chat.chat_id)
         return [ChatMember.from_dict(data=member_payload) for member_payload in response.result or list()]
 
+    async def download_file(self, file_id: str):
+        """
+        .. warning::
+            You must be entered `chat` or `chat_id`
+
+        Parameters
+        ----------
+            file_id: :class:`str`
+                    file id
+
+        Returns
+        -------
+            Optional[:class:`bytes`]:
+                The content of the file
+
+        Raises
+        ------
+            NotFound
+                Invalid file ID.
+            Forbidden
+                You do not have permission to download File.
+            APIError
+                download File Failed.
+        """
+        if not isinstance(file_id, str):
+            raise TypeError(
+                "file_id must be type of str"
+            )
+
+        return await self.http.get_file(file_id)
+
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
         if offset and not isinstance(offset, int):
             raise TypeError(
