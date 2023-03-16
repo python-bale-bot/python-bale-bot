@@ -1,25 +1,25 @@
 """
-    MIT License
+MIT License
 
-    Copyright (c) 2022 kian Ahmadian
+Copyright (c) 2023 Kian Ahmadian
 
-    Permission is hereby granted, free of charge, to any person obtaining a copy
-    of this software and associated documentation files (the "Software"), to deal
-    in the Software without restriction, including without limitation the rights
-    to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-    copies of the Software, and to permit persons to whom the Software is
-    furnished to do so, subject to the following conditions:
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
 
-    The above copyright notice and this permission notice shall be included in all
-    copies or substantial portions of the Software.
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
 
-    THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-    IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-    FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-    AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-    LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-    OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-    SOFTWARE.
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
 """
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
@@ -37,18 +37,17 @@ class RateLimit:
 	__slots__ = (
 		"_loop",
 		"_requests",
-		"_sleeping",
 		"_has_rate_limit"
 	)
 	def __init__(self, loop):
+		self._has_rate_limit = None
+		self._requests = deque()
 		self._loop = loop
-		self._requests: deque[asyncio.Future[Any]] = deque()
-		self._has_rate_limit = False
 
 	def enable(self):
 		self._has_rate_limit = True
 
-	def _wake_next(self):
+	def _next(self):
 		while self._requests:
 			future = self._requests.popleft()
 
@@ -62,8 +61,8 @@ class RateLimit:
 			if not future.done():
 				future.set_result(None)
 
-	async def new_requests(self):
-		while self._has_rate_limit:
+	async def new_request(self):
+		if self._has_rate_limit:
 			future = self._loop.create_future()
 			self._requests.append(future)
 
@@ -72,20 +71,15 @@ class RateLimit:
 			except:
 				future.cancel()
 				if not self._has_rate_limit:
-					self._wake_next()
+					self._next()
 
 	async def __aenter__(self):
-		await self.new_requests()
+		await self.new_request()
 		return self
 
 	async def __aexit__(self, exc_type, exc_val, exc_tb):
-		has_error = (True if exc_type or exc_val or exc_type else False)
-
-		if (self._has_rate_limit and not has_error) or (self._has_rate_limit and has_error and len(self._requests) <= 0):
-			self._has_rate_limit = False
-
 		if len(self._requests) > 0:
-			self._wake_next()
+			self._next()
 
 	def __bool__(self):
 		return self._has_rate_limit
@@ -173,18 +167,18 @@ class HTTPClient:
 						parsed_response = await ResponseParser.from_response(response)
 						if response.status == ResponseStatusCode.NOT_FOUND:
 							raise NotFound(parsed_response.description)
-						elif not parsed_response.ok or response.status == ResponseStatusCode.NOT_INCORRECT:
+						elif not parsed_response.ok or response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
 							if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
 								raise NotFound("User or Chat not Found")
-							elif parsed_response.description == HTTPClientError.RATE_LIMIT or parsed_response.description == HTTPClientError.LOCAL_RATE_LIMIT:
+							elif response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description == HTTPClientError.RATE_LIMIT or parsed_response.description == HTTPClientError.LOCAL_RATE_LIMIT:
 								if tries >= 4:
 									raise RateLimited()
 
 								if bool(self.rate_limit):
-									await self.rate_limit.new_requests()
+									await self.rate_limit.new_request()
 								else:
 									self.rate_limit.enable()
-									await asyncio.sleep(tries + 1)
+									await asyncio.sleep(tries * 2 + 1)
 								continue
 							elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
 								raise Forbidden()
@@ -192,7 +186,6 @@ class HTTPClient:
 							raise APIError(
 									str(parsed_response.error_code), parsed_response.description
 								)
-
 						elif response.status == ResponseStatusCode.OK:
 							return parsed_response
 				except aiohttp.client_exceptions.ClientConnectorError as error:
