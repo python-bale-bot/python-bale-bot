@@ -56,6 +56,9 @@ class Bot:
         token: str 
             Bot Token
         updater: Optional[:class:`bale.Updater`]
+
+    .. note::
+        When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_ready` event.
     """
     __slots__ = (
         "loop",
