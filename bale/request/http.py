@@ -24,7 +24,6 @@ SOFTWARE.
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
-from typing import Any
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode
@@ -86,9 +85,6 @@ class RateLimit:
 
 class Route:
 	"""Route Class for http"""
-	BASE = BALE_API_BASE_URL
-	BASE_FILE = BALE_API_FILE_URL
-
 	__slots__ = (
 		"method",
 		"path",
@@ -102,12 +98,12 @@ class Route:
 		self.method = method
 		self.path = path
 		self.token = token
-		self._base = self.BASE
+		self._base = BALE_API_BASE_URL
 
 	@property
 	def url(self):
-		"""Export url"""
-		return self.BASE + "bot" + self.token + "/" + self.path
+		"""finally url"""
+		return self._base + "bot" + self.token + "/" + self.path
 
 	def set_base(self, _value):
 		"""Set base url for route"""
@@ -120,14 +116,16 @@ class HTTPClient:
 		"_loop",
 		"token",
 		"__session",
-		"rate_limit"
+		"rate_limit",
+		"base_url"
 	)
 
-	def __init__(self, loop, token=None):
+	def __init__(self, loop, token=None, base_url = None):
 		self.__session = None
 		self._loop: asyncio.AbstractEventLoop = loop
 		self.token = token
 		self.rate_limit = RateLimit(self.loop)
+		self.base_url: str = base_url
 
 	def is_closed(self):
 		return self.__session is None
@@ -144,11 +142,11 @@ class HTTPClient:
 	def reload_session(self):
 		"""Reset Session"""
 		if self.__session and self.__session.closed:
-			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(limit=5, keepalive_timeout=20.0))
+			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def start(self):
 		"""Start Http client"""
-		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(limit=5, keepalive_timeout=20.0))
+		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def close(self):
 		"""Close Session connection"""
@@ -157,6 +155,8 @@ class HTTPClient:
 			self.__session = None
 
 	async def request(self, route: Route, **kwargs):
+		if self.base_url:
+			route.set_base(self.base_url)
 		url = route.url
 		method = route.method
 		async with self.rate_limit:
@@ -165,7 +165,9 @@ class HTTPClient:
 					async with self.__session.request(method=method, url=url, **kwargs) as response:
 						response: aiohttp.ClientResponse = response
 						parsed_response = await ResponseParser.from_response(response)
-						if response.status == ResponseStatusCode.NOT_FOUND:
+						if response.status == ResponseStatusCode.OK:
+							return parsed_response
+						elif response.status == ResponseStatusCode.NOT_FOUND:
 							raise NotFound(parsed_response.description)
 						elif not parsed_response.ok or response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
 							if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
@@ -186,13 +188,11 @@ class HTTPClient:
 							raise APIError(
 									str(parsed_response.error_code), parsed_response.description
 								)
-						elif response.status == ResponseStatusCode.OK:
-							return parsed_response
-				except aiohttp.client_exceptions.ClientConnectorError as error:
+				except aiohttp.ClientConnectorError as error:
 					raise NetworkError(str(error))
-				except aiohttp.client_exceptions.ServerTimeoutError:
+				except aiohttp.ServerTimeoutError:
 					raise TimeOut()
-				except aiohttp.client_exceptions.ClientOSError as error:
+				except aiohttp.ClientOSError as error:
 					raise BaleError(str(error))
 				except Exception as error:
 					raise HTTPException(error)
