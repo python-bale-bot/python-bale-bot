@@ -1,9 +1,20 @@
-.. currentmodule::discord
+.. currentmodule::bale
 
 Change Log
 ==========
 
 Project changes are shown on this page.
+
+v2.4.3
+------
+
+Bug Fixes
+~~~~~~~~~~
+
+- Changes in some functions and commands
+- Add :meth:`bale.Bot.download_file` for Download files with `file_id`
+- Update `LICENSE`
+- Improve Code Quality
 
 v2.4.2
 ------
