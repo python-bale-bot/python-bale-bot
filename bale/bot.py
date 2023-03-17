@@ -37,6 +37,13 @@ __all__ = (
 
 class _Loop:
     __slots__ = ()
+
+    def __getattr__(self, key):
+        raise AttributeError((
+            'loop attribute cannot be accessed in non-async contexts. '
+            'Consider using either an asynchronous main function and passing it to asyncio.run or '
+            'using asynchronous initialisation hooks such as Bot.setup_hook'
+        ))
     
 
 _loop = _Loop()
@@ -124,11 +131,14 @@ class Bot:
         """Represents the connected client. ``None`` if not logged in"""
         return self._user
 
-    async def __aenter__(self):
+    async def setup_hook(self):
         loop = asyncio.get_running_loop()
         self.loop = loop
         self.http.loop = loop
         await self.http.start()
+
+    async def __aenter__(self):
+        await self.setup_hook()
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
@@ -826,5 +836,7 @@ class Bot:
         async def main():
             async with self:
                 await self.connect(sleep_after_every_get_updates = sleep_after_every_get_updates)
-
-        asyncio.run(main())
+        try:
+            asyncio.run(main())
+        except KeyboardInterrupt: # Control-C
+            pass
