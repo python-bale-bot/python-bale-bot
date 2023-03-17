@@ -56,26 +56,26 @@ class Updater:
 		"bot",
 		"_last_offset",
 		"_is_running",
-		"sleep_after_get_updates"
+		"interval"
 	)
 
 	def __init__(self, bot: "Bot"):
 		self.bot = bot
 		self._last_offset = None
 		self._is_running = False
-		self.sleep_after_get_updates = None
+		self.interval = None
 
 	async def start(self, sleep_after_every_get_updates: int = None):
 		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
 		if sleep_after_every_get_updates is not None:
-			self.sleep_after_get_updates = sleep_after_every_get_updates
+			self.interval = sleep_after_every_get_updates
 		self._is_running = True
 		self.bot.dispatch("ready")
-		await self._start()
+		await self._polling()
 
-	async def _start(self):
+	async def _polling(self):
 		"""A loop for get updates in dispatch"""
 		if not self._is_running:
 			raise RuntimeError("Updater is running")
@@ -89,15 +89,18 @@ class Updater:
 			if not self._is_running:
 				break
 
-			updates = await self.bot.get_updates(offset=self._last_offset)
+			try:
+				updates = await self.bot.get_updates(offset=self._last_offset)
+			except Exception as exc:
+				await self.bot.on_error("getUpdates", exc)
+			else:
+				for update in updates:
+					await self.call_to_dispatch(update)
 
-			for update in updates:
-				await self.call_to_dispatch(update)
+				self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
 
-			self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
-
-			if self.sleep_after_get_updates is not None:
-				await asyncio.sleep(self.sleep_after_get_updates)
+			if self.interval is not None:
+				await asyncio.sleep(self.interval)
 
 	async def call_to_dispatch(self, update: "Update"):
 		self.bot.dispatch("update", update)
