@@ -55,7 +55,9 @@ class Bot:
     ----------
         token: str 
             Bot Token
+
         updater: Optional[:class:`bale.Updater`]
+        base_url: Optional[:class:`str`]
 
     .. note::
         When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_ready` event.
@@ -66,23 +68,24 @@ class Bot:
         "loop",
         "events",
         "listeners",
-        "updater",
         "_user",
         "http",
-        "_closed"
+        "_closed",
+        "updater"
     )
 
-    def __init__(self, token: str, updater: Optional["Updater"] = None):
+    def __init__(self, token: str, **kwargs):
         if not isinstance(token, str):
             raise InvalidToken("token must be type of the str")
         self.loop = _loop
         self.token = token
-        self.http: HTTPClient = HTTPClient(loop=self.loop, token=token)
+        self.http: HTTPClient = HTTPClient(self.loop, token, kwargs.get("base_url"))
         self._user = None
-        self.updater: Updater = (updater or Updater)(self)
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed = False
+
+        self.updater: Updater = kwargs.get("updater", Updater)(self)
 
     def listen(self, event_name):
         """Register a Event"""
