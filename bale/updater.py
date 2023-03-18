@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 if TYPE_CHECKING:
 	from bale import Bot, Update
 
@@ -33,6 +33,7 @@ __all__ = (
 
 class EventType:
 	READY = "on_ready"
+	BEFORE_READY = "before_ready"
 	UPDATE = "on_update"
 	MESSAGE = "on_message"
 	CALLBACK = "on_callback"
@@ -57,8 +58,7 @@ class Updater:
 		"_last_offset",
 		"_is_running",
 		"__lock",
-		"interval",
-		"__polling_task"
+		"interval"
 	)
 
 	def __init__(self, bot: "Bot"):
