@@ -79,7 +79,7 @@ class Updater:
 
 	async def polling(self):
 		async with self.__lock:
-			if not self._is_running:
+			if self._is_running:
 				raise RuntimeError("Updater is running")
 
 			if self.bot.http.is_closed():
@@ -91,6 +91,7 @@ class Updater:
 				await self._polling()
 			except Exception as exc:
 				self._is_running = False
+				raise exc
 
 	async def _polling(self):
 		self.__polling_task = asyncio.create_task(self.action_getupdates(), name = "getUpdates")
