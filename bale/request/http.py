@@ -39,7 +39,7 @@ class RateLimit:
 		"_has_rate_limit"
 	)
 	def __init__(self, loop):
-		self._has_rate_limit = None
+		self._has_rate_limit = False
 		self._requests = deque()
 		self._loop = loop
 
@@ -71,6 +71,7 @@ class RateLimit:
 				future.cancel()
 				if not self._has_rate_limit:
 					self._next()
+				raise
 
 	async def __aenter__(self):
 		await self.new_request()
@@ -79,6 +80,8 @@ class RateLimit:
 	async def __aexit__(self, exc_type, exc_val, exc_tb):
 		if len(self._requests) > 0:
 			self._next()
+		else:
+			self._has_rate_limit = False
 
 	def __bool__(self):
 		return self._has_rate_limit
