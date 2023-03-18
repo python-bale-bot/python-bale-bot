@@ -94,6 +94,7 @@ class Updater:
 
 	async def _polling(self):
 		self.__polling_task = asyncio.create_task(self.action_getupdates(), name = "getUpdates")
+		self.bot.dispatch("ready")
 
 	async def action_getupdates(self):
 		while self._is_running:
