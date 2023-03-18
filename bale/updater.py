@@ -67,9 +67,8 @@ class Updater:
 		self._is_running = False
 		self.__lock = asyncio.Lock()
 		self.interval = None
-		self.__polling_task: Optional[asyncio.Task] = None
 
-	async def start(self, sleep_after_every_get_updates: int = 0.0):
+	async def start(self, sleep_after_every_get_updates: int = None):
 		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
@@ -94,18 +93,19 @@ class Updater:
 				raise exc
 
 	async def _polling(self):
-		self.__polling_task = asyncio.create_task(self.action_getupdates(), name = "getUpdates")
+		await self.action_getupdates()
 		self.bot.dispatch("ready")
 
 	async def action_getupdates(self):
 		while self._is_running:
 			try:
-				updates = await self.bot.get_updates()
+				updates = await self.bot.get_updates(offset = self._last_offset)
 				for update in updates:
 					await self.call_to_dispatch(update)
 
 				self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
-				await asyncio.sleep(self.interval)
+				if self.interval:
+					await asyncio.sleep(self.interval)
 			except Exception as exc:
 				await self.bot.on_error("getUpdates", exc)
 
