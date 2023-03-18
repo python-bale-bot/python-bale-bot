@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Optional
 if TYPE_CHECKING:
 	from bale import Bot, Update
 
@@ -56,51 +56,56 @@ class Updater:
 		"bot",
 		"_last_offset",
 		"_is_running",
-		"interval"
+		"__lock",
+		"interval",
+		"__polling_task"
 	)
 
 	def __init__(self, bot: "Bot"):
 		self.bot = bot
 		self._last_offset = None
 		self._is_running = False
+		self.__lock = asyncio.Lock()
 		self.interval = None
+		self.__polling_task: Optional[asyncio.Task] = None
 
-	async def start(self, sleep_after_every_get_updates: int = None):
+	async def start(self, sleep_after_every_get_updates: int = 0.0):
 		"""Start poll event function"""
 		if self._is_running:
 			raise RuntimeError("Updater is running")
-		if sleep_after_every_get_updates is not None:
-			self.interval = sleep_after_every_get_updates
-		self._is_running = True
-		self.bot.dispatch("ready")
-		await self._polling()
+		self.interval = sleep_after_every_get_updates
+		self.bot.dispatch("before_ready")
+		await self.polling()
 
-	async def _polling(self):
-		"""A loop for get updates in dispatch"""
-		if not self._is_running:
-			raise RuntimeError("Updater is running")
-		while self._is_running:
-			if self.bot.is_closed():
-				raise RuntimeError("Bot is Closed")
+	async def polling(self):
+		async with self.__lock:
+			if not self._is_running:
+				raise RuntimeError("Updater is running")
 
 			if self.bot.http.is_closed():
 				raise RuntimeError("HTTPClient is Closed")
 
-			if not self._is_running:
-				break
+			self._is_running = True
 
 			try:
-				updates = await self.bot.get_updates(offset=self._last_offset)
+				await self._polling()
 			except Exception as exc:
-				await self.bot.on_error("getUpdates", exc)
-			else:
+				self._is_running = False
+
+	async def _polling(self):
+		self.__polling_task = asyncio.create_task(self.action_getupdates(), name = "getUpdates")
+
+	async def action_getupdates(self):
+		while self._is_running:
+			try:
+				updates = await self.bot.get_updates()
 				for update in updates:
 					await self.call_to_dispatch(update)
 
 				self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
-
-			if self.interval is not None:
 				await asyncio.sleep(self.interval)
+			except Exception as exc:
+				await self.bot.on_error("getUpdates", exc)
 
 	async def call_to_dispatch(self, update: "Update"):
 		self.bot.dispatch("update", update)
