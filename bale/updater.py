@@ -33,7 +33,7 @@ __all__ = (
 
 class EventType:
 	READY = "on_ready"
-	BEFORE_READY = "before_ready"
+	BEFORE_READY = "on_before_ready"
 	UPDATE = "on_update"
 	MESSAGE = "on_message"
 	CALLBACK = "on_callback"
