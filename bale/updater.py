@@ -93,8 +93,8 @@ class Updater:
 				raise exc
 
 	async def _polling(self):
-		await self.action_getupdates()
 		self.bot.dispatch("ready")
+		await self.action_getupdates()
 
 	async def action_getupdates(self):
 		while self._is_running:
