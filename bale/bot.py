@@ -152,6 +152,7 @@ class Bot:
 
     async def close(self):
         """Close http Events and bot"""
+        await self.updater.stop()
         await self.http.close()
         self._closed = True
 
