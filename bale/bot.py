@@ -27,7 +27,7 @@ from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
-                  Photo, Document)
+                  Photo, Document, Location, ContactMessage)
 
 
 __all__ = (
@@ -212,7 +212,9 @@ class Bot:
 
 
     async def get_bot(self) -> User:
-        """Get bot information
+        """
+        |core|
+        Get bot information
 
         Returns
         -------
@@ -227,7 +229,9 @@ class Bot:
         return User.from_dict(data=response.result, bot=self)
 
     async def delete_webhook(self) -> bool:
-        """This service is used to remove the webhook set for the bot.
+        """
+        |core|
+        This service is used to remove the webhook set for the bot.
 
         Returns
         -------
@@ -245,7 +249,9 @@ class Bot:
 
     async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
                     reply_to_message: Optional["Message"] = None) -> "Message":
-        """This service is used to send text messages.
+        """
+        |core|
+        This service is used to send text messages.
 
         Parameters
         ----------
@@ -295,7 +301,9 @@ class Bot:
 
     async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None,
                     reply_to_message: Optional["Message"] = None) -> "Message":
-        """This service is used to send document.
+        """
+        |core|
+        This service is used to send document.
 
         Parameters
         ----------
@@ -347,7 +355,9 @@ class Bot:
 
     async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None,
                  reply_to_message: Optional["Message"] = None) -> "Message":
-        """This service is used to send photo.
+        """
+        |core|
+        This service is used to send photo.
 
         Parameters
         ----------
@@ -402,10 +412,90 @@ class Bot:
         response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message)
         return Message.from_dict(data=response.result, bot=self)
 
+    async def send_location(self, chat: "Chat" | "User", location: "Location") -> "Message":
+        """
+        |core|
+        This service is used to send location.
+
+        Parameters
+        ----------
+        chat: :class:`bale.Chat` | :class:`bale.User`
+            Chat
+        location: :class:`bale.Location`
+            Location
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Location to this chat.
+            APIError
+                Send Location Failed.
+        """
+        if not isinstance(chat, (Chat, User)):
+            raise TypeError(
+                "chat param must be type of Chat or User"
+            )
+
+        if not isinstance(location, Location):
+            raise TypeError(
+                "location param must be type of Location"
+            )
+
+        response = await self.http.send_location(str(chat.chat_id), location.latitude, location.longitude)
+        return Message.from_dict(data=response.result, bot=self)
+
+    async def send_contact(self, chat: "Chat" | "User", contact: "ContactMessage") -> "Message":
+        """
+        |core|
+        This service is used to send contact.
+
+        Parameters
+        ----------
+        chat: :class:`bale.Chat` | :class:`bale.User`
+            Chat
+        contact: :class:`bale.ContactMessage`
+            Contact Message
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Contact Message to this chat.
+            APIError
+                Send Contact Message Failed.
+        """
+        if not isinstance(chat, (Chat, User)):
+            raise TypeError(
+                "chat param must be type of Chat or User"
+            )
+
+        if not isinstance(contact, ContactMessage):
+            raise TypeError(
+                "contact param must be type of ContactMessage"
+            )
+
+        response = await self.http.send_contact(str(chat.chat_id), contact.phone_number, contact.first_name, last_name=contact.last_name)
+        return Message.from_dict(data=response.result, bot=self)
+
     async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *,
                    photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
                    need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
-        """You can use this service to send money request messages.
+        """
+        |core|
+        You can use this service to send money request messages.
 
         Parameters
         ----------
@@ -486,7 +576,9 @@ class Bot:
         return Message.from_dict(data=response.result, bot=self)
 
     async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
-        """You can use this service to edit text messages that you have already sent through the arm.
+        """
+        |core|
+        You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
         ----------
@@ -528,7 +620,9 @@ class Bot:
         await self.http.edit_message(chat.chat_id, message.message_id, text, components=components)
 
     async def delete_message(self, chat: "Chat" | "User", message: "Message") -> bool:
-        """You can use this service to delete a message that you have already sent through the arm.
+        """
+        |core|
+        You can use this service to delete a message that you have already sent through the arm.
 
         .. warning::
             In Channel or Group:
@@ -565,7 +659,9 @@ class Bot:
         return response.result or False
 
     async def get_chat(self, chat_id: int | str) -> Chat | None:
-        """This service can be used to receive personal information that has previously interacted with the arm.
+        """
+        |core|
+        This service can be used to receive personal information that has previously interacted with the arm.
 
         Parameters
         ----------
@@ -595,7 +691,9 @@ class Bot:
             return Chat.from_dict(response.result, bot=self)
 
     async def get_user(self, user_id: int | str) -> "User" | None:
-        """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
+        """
+        |core|
+        This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         Parameters
         ----------
@@ -761,7 +859,9 @@ class Bot:
         return response.result
 
     async def get_chat_administrators(self, chat: "Chat") -> list["ChatMember"] | None:
-        """This service can be used to display admins of a group or channel.
+        """
+        |core|
+        This service can be used to display admins of a group or channel.
 
         Parameters
         ----------

@@ -57,6 +57,8 @@ class Message:
             The chat where the message is sent.
         reply_to_message: Optional[:class:`bale.Message`]
             The message Replayed to who message.
+        document: Optional[:class:`bale.Document`]
+            The document sent with the message.
         new_chat_members: Optional[List[:class:`bale.User`]]
             User (An) who entered the chat.
         left_chat_member: Optional[:class:`bale.User`]
@@ -105,7 +107,7 @@ class Message:
     @content.setter
     def content(self, _value):
         if not isinstance(_value, str):
-            raise TypeError(f"{_value} is not str. this is a {_value.__class__ if _value else _value}")
+            raise TypeError("content must be type of str")
         if self.caption:
             self.caption = _value
         elif self.text:
@@ -148,6 +150,7 @@ class Message:
                    forward_from_chat=Chat.from_dict(bot=bot, data=data.get("forward_from_chat")) if data.get("forward_from_chat") else None,
                    forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
                    document=Document.from_dict(bot = bot, data=data.get("document")) if data.get("document") else None,
+                   contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
                    photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 

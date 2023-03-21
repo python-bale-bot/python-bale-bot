@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, Photo, Document, Components, RemoveComponents, Price
+    from bale import Bot, Message, User, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage
 
 
 __all__ = (
@@ -211,6 +211,52 @@ class Chat:
                 Send Photo Failed.  
         """
         return await self.bot.send_photo(self, photo, caption=caption)
+
+    async def send_location(self, location: "Location"):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
+
+        Parameters
+        ----------
+            location: :class:`bale.Location`
+                Location
+        Returns
+        -------
+            Optional[:class:`bale.Message`]
+                On success, the sent Message is returned.
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Location to chat.
+            APIError
+                Send Location Failed.
+        """
+        return await self.bot.send_location(self, location)
+
+    async def send_contact(self, contact: "ContactMessage") -> "Message":
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+
+        Parameters
+        ----------
+            contact: :class:`bale.ContactMessage`
+                contact Message
+        Returns
+        -------
+            Optional[:class:`bale.Message`]
+                On success, the sent Message is returned.
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Contact message to chat.
+            APIError
+                Send Contact message Failed.
+        """
+        return await self.bot.send_contact(self, contact)
 
     async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
                    photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
