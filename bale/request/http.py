@@ -251,6 +251,33 @@ class HTTPClient:
 
 		return self.request(Route("POST", "SendPhoto", self.token), data=payload)
 
+	def send_audio(self, chat_id, audio, *, caption=None, duration=None, title=None, reply_to_message_id=None):
+		payload = {
+			"chat_id": chat_id,
+			"audio": audio
+		}
+		if caption:
+			payload["caption"] = caption
+		if duration:
+			payload["duration"] = duration
+		if title:
+			payload["title"] = title
+		if reply_to_message_id:
+			payload["reply_to_message_id"] = reply_to_message_id
+
+		return self.request(Route("POST", "SendAudio", self.token), data=payload)
+
+	def send_contact(self, chat_id, phone_number, first_name, *, last_name):
+		payload = {
+			"chat_id": chat_id,
+			"phone_number": phone_number,
+			"first_name": first_name
+		}
+		if last_name:
+			payload["last_name"] = last_name
+
+		return self.request(Route("POST", "SendContact", self.token), data=payload)
+
 	def send_invoice(self, chat_id, title, description, provider_token, prices, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
 		payload = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
 		if photo_url:
@@ -262,6 +289,11 @@ class HTTPClient:
 		payload["is_flexible"] = is_flexible
 
 		return self.request(Route("POST", "sendInvoice", self.token), json=payload)
+
+	def send_location(self, chat_id, latitude, longitude):
+		payload = { "chat_id": chat_id, "latitude": latitude, "longitude": longitude}
+
+		return self.request(Route("POST", "sendLocation", self.token), json=payload)
 
 	def edit_message(self, chat_id, message_id, text, *, components=None):
 		payload = {
