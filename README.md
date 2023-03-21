@@ -1,8 +1,7 @@
 # python-bale-bot
 
 <div align='center'>
-
-<img width=200 src="https://python-bale-bot.readthedocs.io/en/master/_static/bale.png" alt="python-bale-bot image">
+<img width="600" src="https://media.discordapp.net/attachments/943584615841554463/1087119645850468352/banner.png?width=691&height=109" alt="python-bale-bot image">
 <br>
 <b style='margin-bottom:20px;'>An API wrapper for Bale written in Python. </b>
 <br>
@@ -39,3 +38,5 @@ $ python setup.py install
 
 ## Contact to Developers
 [![Email](https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white)](mailto:python-bale-bot@googlegroups.com)
+[![Discord](https://img.shields.io/badge/Support_Server-bYHEzyDe2j-green?logo=Discord&logoColor=white)](https://discord.gg/bYHEzyDe2j)
+[![Our Site](https://img.shields.io/badge/Our_site-python--bale--bot.ir-green?logo=GitHub&logoColor=white)](https://python-bale-bot.ir)
