@@ -9,6 +9,7 @@
 [![Python Version](https://img.shields.io/badge/Python-3.8_|_3.9_|_3.10_|_3.11_-red?logo=python&style=plastic)](https://pypi.org/p/python-bale-bot)
 [![PyPi Version](https://img.shields.io/pypi/v/python-bale-bot?color=blue&label=pypi&style=plastic)](https://pypi.org/p/python-bale-bot)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/deacf2bc3f13492d944e329ac19ac0d1)](https://www.codacy.com/gh/python-bale-bot/python-bale-bot/dashboard)
+[![python-bale-bot score](https://snyk.io/advisor/python/python-bale-bot/badge.svg)](https://snyk.io/advisor/python/python-bale-bot)
 [![Project License](https://img.shields.io/github/license/python-bale-bot/python-bale-bot?style=plastic)](https://opensource.org/licenses/MIT)
 [![API Version](https://img.shields.io/badge/Bale%20API-1.0-blue?style=plastic)](https://dev.bale.ai/api)
 [![Documentation Status](https://readthedocs.org/projects/python-telegram-bot/badge/?version=stable)](https://python-bale-bot.rtfd.org/)
