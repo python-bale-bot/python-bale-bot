@@ -212,6 +212,20 @@ Event Types
     async def when_receive_update(update):
         ...
 
+Before Ready
+~~~~~~~~~~~~
+
+.. function:: on_before_ready()
+
+   Called Before the :class:`bale.Updater` stars.
+
+Ready
+~~~~~
+
+.. function:: on_ready()
+
+   Called when a bot is ready.
+
 Update
 ~~~~~~~
 
@@ -241,6 +255,30 @@ Callback
 
    :param callback: The callback
    :type callback: :class:`bale.CallbackQuery`
+
+Member Chat Join
+~~~~~~~~~~~~~~~~
+
+.. function:: on_member_chat_join(chat, user)
+
+   When a user joins the chat.
+
+   :param callback: The Chat
+   :type callback: :class:`bale.Chat`
+   :param callback: The user who entered the chat
+   :type callback: :class:`bale.User`
+
+Member Chat Leave
+~~~~~~~~~~~~~~~~
+
+.. function:: on_member_chat_leave(chat, user)
+
+   When a user leaves the chat.
+
+   :param callback: The Chat
+   :type callback: :class:`bale.Chat`
+   :param callback: The user who leaved the chat
+   :type callback: :class:`bale.User`
 
 Exceptions
 ------------
