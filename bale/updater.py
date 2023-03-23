@@ -32,6 +32,16 @@ __all__ = (
 )
 
 class EventType:
+	"""This object represents an Event Type.
+	Attributes:
+		READY (:class:`str`): :meth:`bale.on_ready`
+        BEFORE_READY (:class:`str`): :meth:`bale.on_before_ready`
+        UPDATE (:class:`str`): :meth:`bale.on_update`
+        MESSAGE (:class:`str`): :meth:`bale.on_message`
+        CALLBACK (:class:`str`): :meth:`bale.on_callback`
+        MEMBER_CHAT_JOIN (:class:`str`): :meth:`bale.on_member_chat_join`
+        MEMBER_CHAT_LEAVE (:class:`str`): :meth:`bale.on_member_chat_leave`
+	"""
 	READY = "on_ready"
 	BEFORE_READY = "on_before_ready"
 	UPDATE = "on_update"
