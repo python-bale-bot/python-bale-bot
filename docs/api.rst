@@ -194,8 +194,13 @@ Event Reference
 Event Types
 ~~~~~~~~~~~
 
+.. attributetable:: bale.EventType
+
+.. autoclass:: bale.EventType()
+   :members:
+
 .. note::
-    You can use `bale.EventType` for Events.
+    You can use :class:`bale.EventType` for Events.
 
 .. code-block:: python3
 
