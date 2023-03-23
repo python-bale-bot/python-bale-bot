@@ -263,9 +263,9 @@ Member Chat Join
 
    When a user joins the chat.
 
-   :param callback: The Chat
+   :param chat: The Chat
    :type callback: :class:`bale.Chat`
-   :param callback: The user who entered the chat
+   :param user: The user who entered the chat
    :type callback: :class:`bale.User`
 
 Member Chat Leave
@@ -275,9 +275,9 @@ Member Chat Leave
 
    When a user leaves the chat.
 
-   :param callback: The Chat
+   :param chat: The Chat
    :type callback: :class:`bale.Chat`
-   :param callback: The user who leaved the chat
+   :param user: The user who leaved the chat
    :type callback: :class:`bale.User`
 
 Exceptions
