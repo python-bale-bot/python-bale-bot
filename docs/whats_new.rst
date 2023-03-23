@@ -5,6 +5,24 @@ Change Log
 
 Project changes are shown on this page.
 
+v2.4.4
+------
+
+New Features
+~~~~~~~~~~~~
+
+- Improve the :class:`bale.RateLimit` object
+- Add new :class:`bale.Updater`
+- Adding the method of :meth:`bale.Bot.send_location` and :meth:`bale.Bot.send_contact`
+- Update Readme file
+
+Bug Fixes
+~~~~~~~~~~
+
+- Fix `http` error
+- Fix `bale.EventType.BEFORE_READY` and :meth:`bale.on_before_ready` bug
+- Fix bot closing problem
+
 v2.4.3
 ------
 
