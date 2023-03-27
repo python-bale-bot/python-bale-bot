@@ -77,38 +77,32 @@ class UpdateType:
         return not self.__eq__(other)
 
 class Update:
-    """This object shows an update.
+    """This object represents an incoming update.
 
     Attributes
     ----------
         update_id: int
-            Update ID
+            The update’s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
         callback_query: Optional[:class:`bale.CallbackQuery`]
-            Callback Query
+            New incoming callback query.
         message: Optional[:class:`bale.Message`]
-            Message
-        edited_message: Optional[:class:`bale.Message`]
-            Edited Message
+            New incoming message of any kind - text, photo, sticker, etc.
     """
     __slots__ = (
         "update_id",
         "_type",
         "message",
         "callback_query",
-        "edited_message",
-        "bot",
-        "raw_data"
+        "bot"
     )
 
     def __init__(self, update_id: int, _type: str, callback_query: "CallbackQuery" = None, message: "Message" = None,
-                 edited_message: "Message" = None, bot: 'Bot' = None, raw_data: dict = None):
+                 bot: 'Bot' = None):
         self.update_id = int(update_id)
         self._type = _type
         self.bot = bot
-        self.raw_data = raw_data
         self.callback_query = callback_query if callback_query is not None else None
         self.message = message if message is not None else None
-        self.edited_message = edited_message if edited_message is not None else None
 
     @property
     def type(self) -> UpdateType:
@@ -122,11 +116,8 @@ class Update:
             callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot=bot)
         if data.get("message"):
             message = Message.from_dict(data.get("message"), bot=bot)
-        if data.get("edited_message"):
-            edited_message = Message.from_dict(data=data.get("edited_message"), bot=bot)
 
-        return cls(_type = UpdateType.CALLBACK if callback_query else UpdateType.MESSAGE, update_id=data["update_id"], message=message, callback_query=callback_query, edited_message=edited_message,
-                   raw_data=data, bot=bot)
+        return cls(_type = UpdateType.CALLBACK if callback_query else UpdateType.MESSAGE, update_id=data["update_id"], message=message, callback_query=callback_query, bot=bot)
 
     def to_dict(self) -> Dict:
         data = {}
@@ -137,8 +128,6 @@ class Update:
             data["callback_query"] = self.callback_query.to_dict()
         if self.message:
             data["message"] = self.message.to_dict()
-        if self.edited_message:
-            data["edited_message"] = self.edited_message.to_dict()
 
         return data
 
@@ -170,4 +159,4 @@ class Update:
         return not self.__lt__(other)
 
     def __repr__(self):
-        return f"<Update type={self._type} message={self.message}>"
+        return f"<Update update_id={self.update_id} type={self._type}>"

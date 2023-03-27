@@ -80,23 +80,23 @@ class Chat:
     Attributes
     ----------
         chat_id: str
-            Chat ID.
-        _type: :class:`bale.ChatType`
-            Chat Type.
-        title: str
-            Chat Title.
-        username: str
-            Chat Username (for DM or PV).
-        first_name: str
-            First name Chat (for DM or PV).
-        last_name: str
-            Last name Chat (for DM or PV).
-        pinned_message: :class:`bale.Message`
+            Unique identifier for this chat.
+        type: :class:`bale.ChatType`
+            Type of chat.
+        title: Optional[:class:`str`]
+            Title, for channels and group chats.
+        username: Optional[:class:`str`]
+            Username, for private chats, supergroups and channels if available.
+        first_name: Optional[:class:`str`]
+            First name of the other party in a private chat.
+        last_name: Optional[:class:`str`]
+            Last name of the other party in a private chat.
+        pinned_message: Optional[:class:`bale.Message`]
             Pinned messages in chat. Defaults to None.
+        invite_link: Optional[:class:`str`]
+            Primary invite link, for groups and channel. Returned only in bale.Bot.get_chat().
         all_members_are_administrators: bool
             Does everyone have admin access?. Defaults to True. (for Group)
-        bot: :class:`bale.Bot`
-            Bot Object. Defaults to None.
 
     .. container:: operations
         .. describe:: x == y
@@ -106,32 +106,29 @@ class Chat:
     """
     __slots__ = (
         "chat_id",
-        "_type",
+        "type",
         "title",
         "username",
         "first_name",
         "last_name",
         "pinned_message",
         "all_members_are_administrators",
+        "invite_link",
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, _type: "ChatType", title: str, username: str, first_name: str, last_name: str,
-                 pinned_message: Message | None = None, all_members_are_administrators: bool = True, bot: 'Bot' = None):
+    def __init__(self, chat_id: int | str, type: "ChatType", title: Optional[str] = None, username: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None,
+                 pinned_message: Optional["Message"] = None, all_members_are_administrators: Optional[bool] = None, invite_link: Optional[str] = None, bot: 'Bot' = None):
         self.chat_id = chat_id
-        self._type = _type
+        self.type = type
         self.title = title
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.pinned_message = pinned_message
         self.all_members_are_administrators = all_members_are_administrators
+        self.invite_link = invite_link
         self.bot = bot
-
-    @property
-    def type(self):
-        """Get chat type"""
-        return self._type
 
     @property
     def mention(self) -> str | None:
@@ -141,120 +138,30 @@ class Chat:
     async def send(self, text: str, components: Optional["Components" | "RemoveComponents"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
-
-        Parameters
-        -----------
-            text: str
-                Message content
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
-                Message components
-        Returns
-        --------
-            :class:`bale.Message`
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Message to this chat.
-            APIError
-                Send Message Failed.
         """
         return await self.bot.send_message(self, text, components=components)
 
     async def send_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
-
-        Parameters
-        ----------
-            document: :class:`bytes` | :class:`str` | :class:`bale.Document`
-                Document
-            caption: str
-                Message caption.
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Document to this chat.
-            APIError
-                Send Document Failed.  
         """
         return await self.bot.send_document(self, document, caption=caption)
 
     async def send_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
-
-        Parameters
-        ----------
-            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo
-            caption: Optional[:class:`str`]
-                Message caption
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Photo to chat.
-            APIError
-                Send Photo Failed.  
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
     async def send_location(self, location: "Location"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
-
-        Parameters
-        ----------
-            location: :class:`bale.Location`
-                Location
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Location to chat.
-            APIError
-                Send Location Failed.
         """
         return await self.bot.send_location(self, location)
 
     async def send_contact(self, contact: "ContactMessage") -> "Message":
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
-
-        Parameters
-        ----------
-            contact: :class:`bale.ContactMessage`
-                contact Message
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to Contact message to chat.
-            APIError
-                Send Contact message Failed.
         """
         return await self.bot.send_contact(self, contact)
 
@@ -263,45 +170,6 @@ class Chat:
                        need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
-
-        Parameters
-        ----------
-            title: str
-                Invoice Title
-            description: str
-                Invoice Description
-            provider_token: str
-                .. note::
-                    You can use 3 methods to receive money:
-                        * Card number
-                        * Port number and acceptor number
-                        * Wallet number "Bale"
-            prices: List[:class:`bale.Price`]
-                A list of prices.
-            photo_url: Optional[:class:`str`]
-                Photo URL of Invoice.
-            need_name: Optional[:class:`bool`]
-                Get a name from "User"?
-            need_phone_number: Optional[:class:`bool`]
-                Get a Phone number from "User"?.
-            need_email: Optional[bool]
-                Get a Email from "User"?.
-            need_shipping_address: Optional[bool]
-                Get a Shipping Address from "User"?.
-            is_flexible: Optional[bool]
-                Is the Invoice Photo Flexible to the Payment button?
-        Returns
-        -------
-            :class:`Bale.Message`:
-                On success, the message sent returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Invoice to this chat.
-            APIError
-                Send Invoice Failed.  
         """
         return await self.bot.send_invoice(chat=self, title=title, description=description,
                                         provider_token=provider_token, prices=prices, photo_url=photo_url,
@@ -310,58 +178,19 @@ class Chat:
 
     async def leave(self):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.leave_chat`.
-
-        Raises
-        ------
-            Forbidden
-                You do not have permission to Leave from chat.
-            APIError
-                Leave from chat Failed.
+        For the documentation of the method, please see :meth:`bale.Bot.leave_chat`.
         """
         await self.bot.leave_chat(self)
 
     async def add_user(self, user: "User"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.invite_to_chat`.
-
-        Parameters
-        ----------
-            user: :class:`bale.User`
-                user
-        Raises
-        ------
-            NotFound
-                Invalid User.
-            Forbidden
-                You do not have permission to Add user to Chat.
-            APIError
-                Invite user Failed.
         """
         await self.bot.invite_to_chat(self, user)
 
     async def get_chat_member(self, user: "User" | str):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
-
-        Parameters
-        ----------
-            user: :class:`bale.User`
-                User
-
-        Returns
-        -------
-            Optional[:class:`bale.ChatMember`]:
-                The chat member or ``None`` if not found.
-
-        Raises
-        ------
-            NotFound
-                Invalid User.
-            Forbidden
-                You do not have permission to get Chat Member.
-            APIError
-                Get chat member Failed.
         """
         if not isinstance(user, (User, str)):
             raise TypeError("user must be type of user or str")
@@ -374,48 +203,22 @@ class Chat:
     async def get_chat_members_count(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
-
-        Returns
-        -------
-            :class:`int`
-                The members count of the chat.
-
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to get Members count of the Chat.
-            APIError
-                get Members count of the Chat Failed.
         """
         return await self.bot.get_chat_members_count(self)
 
     async def get_chat_administrators(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
-
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to get Administrators of the Chat.
-            APIError
-                get Administrators of the Chat from chat Failed.
-        Returns
-        -------
-            Optional[List[:class:`bale.ChatMember`]]
-                On success, The chat members is returned.
         """
         return await self.bot.get_chat_administrators(self)
 
     @classmethod
     def from_dict(cls, data: dict, bot):
-        return cls(bot=bot, chat_id=data.get("id"), _type=ChatType(data.get("type")), title=data.get("title"),
+        return cls(bot=bot, chat_id=data.get("id"), type=ChatType(data.get("type")), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
-                   all_members_are_administrators=data.get("all_members_are_administrators", True))
+                   all_members_are_administrators=data.get("all_members_are_administrators", True),
+                   invite_link=data.get("invite_link", True))
 
     def to_dict(self):
         data = {
@@ -426,8 +229,6 @@ class Chat:
             "first_name": self.first_name,
             "last_name": self.last_name
         }
-        if self.pinned_message:
-            data["pinned_message"] = self.pinned_message.to_dict()
 
         return data
 
@@ -445,5 +246,5 @@ class Chat:
         return hash(self.__str__())
 
     def __repr__(self):
-        return (f"<Chat type={self._type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username}"
+        return (f"<Chat type={self.type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username}"
             f"title={self.title}>")

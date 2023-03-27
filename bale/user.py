@@ -28,16 +28,23 @@ if TYPE_CHECKING:
 
 
 class User:
-    """This object shows a user.
+    """This object represents a Bale user or bot.
 
     Attributes
     ----------
         user_id: int
+            Unique identifier for this user or bot.
+        is_bot: bool
+            ``True``, if this user is a bot.
         first_name: str
-        last_name: str
+            User’s or bot’s first name.
+        last_name: Optional[:class:`str`]
+            User’s or bot’s last name.
         username: Optional[:class:`str`]
+            User’s or bot’s username.
     """
     __slots__ = (
+        "is_bot",
         "first_name",
         "last_name",
         "username",
@@ -45,8 +52,9 @@ class User:
         "bot"
     )
 
-    def __init__(self, user_id: int, first_name: str, last_name: str = None, username: str = None,
+    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None, username: Optional[str] = None,
             bot: 'Bot' = None):
+        self.is_bot = is_bot
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
@@ -66,120 +74,31 @@ class User:
     async def send(self, text: str, components: Optional["Components" | "RemoveComponents"] =None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
-
-        Parameters
-        ----------
-            text: str
-                Message Content
-            components: :class:`bale.Components` | :class:`bale.RemoveComponents`
-                Message Components
-        Returns
-        -------
-            :class:`bale.Message`
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Message to this chat.
-            APIError
-                Send Message Failed.
         """
         return await self.bot.send_message(self, text, components=components)
 
     async def send_document(self, document: bytes | str | "Document", *,
             caption: Optional[str] = None):
-        """For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
-
-        Parameters
-        ----------
-            document: :class:`bytes` | :class:`str` | :class:`bale.Document`
-                Photo
-            caption: :class:`str`
-                Message caption
-        Returns
-        -------
-            :class:`bale.Message`
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Document to this chat.
-            APIError
-                Send Document Failed.  
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
         return await self.bot.send_document(self, document, caption=caption)
 
     async def send_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
-        """For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
-
-        Parameters
-        ----------
-            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo
-            caption: Optional[:class:`str`]
-                Message caption
-        Returns
-        -------
-            :class:`bale.Message`
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Photo to chat.
-            APIError
-                Send Photo Failed.  
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
         return await self.bot.send_photo(self, photo, caption=caption)
 
     async def send_location(self, location: "Location"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
-
-        Parameters
-        ----------
-            location: :class:`bale.Location`
-                Location
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Location to chat.
-            APIError
-                Send Location Failed.
         """
         return await self.bot.send_location(self, location)
 
     async def send_contact(self, contact: "ContactMessage"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
-
-        Parameters
-        ----------
-            contact: :class:`bale.ContactMessage`
-                contact Message
-        Returns
-        -------
-            Optional[:class:`bale.Message`]
-                On success, the sent Message is returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to Contact message to chat.
-            APIError
-                Send Contact message Failed.
         """
         return await self.bot.send_contact(self, contact)
 
@@ -188,45 +107,6 @@ class User:
                need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
-
-        Parameters
-        ----------
-            title: str
-                Invoice Title
-            description: str
-                Invoice Description
-            provider_token: str
-                .. note::
-                    You can use 3 methods to receive money:
-                        * Card number
-                        * Port number and acceptor number
-                        * Wallet number "Bale"
-            prices: List[:class:`bale.Price`]
-                A list of prices.
-            photo_url: Optional[:class:`str`]
-                Photo URL of Invoice.
-            need_name: Optional[:class:`bool`]
-                Get a name from "User"?
-            need_phone_number: Optional[:class:`bool`]
-                Get a Phone number from "User"?.
-            need_email: Optional[bool]
-                Get an Email from "User"?.
-            need_shipping_address: Optional[bool]
-                Get a Shipping Address from "User"?.
-            is_flexible: Optional[bool]
-                Is the Invoice Photo Flexible to the Payment button?
-        Returns
-        -------
-            :class:`Bale.Message`:
-                On success, the message sent returned.
-        Raises
-        ------
-            NotFound
-                Invalid Chat ID.
-            Forbidden
-                You do not have permission to send Invoice to this chat.
-            APIError
-                Send Invoice Failed.  
         """
         return await self.bot.send_invoice(chat=self, title=title, description=description,
                                            provider_token=provider_token, prices=prices, photo_url=photo_url,
@@ -236,11 +116,12 @@ class User:
 
     @classmethod
     def from_dict(cls, data: dict, bot=None):
-        return cls(username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
+        return cls(is_bot=data.get("is_bot"), username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    user_id=data.get("id"), bot=bot)
 
     def to_dict(self):
-        data = {"first_name": self.first_name if self.first_name is not None else None,
+        data = {"is_bot": self.is_bot,
+                "first_name": self.first_name if self.first_name is not None else None,
                 "last_name": self.last_name if self.last_name is not None else None,
                 "username": self.username if self.username is not None else None,
                 "id": self.user_id if self.user_id is not None else None}
@@ -261,4 +142,4 @@ class User:
         return hash(self.__str__())
 
     def __repr__(self):
-        return f"<User first_name={self.first_name} last_name={self.last_name} user_id={self.user_id} username={self.username}>"
+        return f"<User is_bot={self.is_bot} first_name={self.first_name} last_name={self.last_name} user_id={self.user_id} username={self.username}>"

@@ -55,7 +55,6 @@ class Bot:
     ----------
         token: str 
             Bot Token
-
         updater: Optional[:class:`bale.Updater`]
         base_url: Optional[:class:`str`]
 
@@ -212,9 +211,7 @@ class Bot:
 
 
     async def get_bot(self) -> User:
-        """
-        |core|
-        Get bot information
+        """Get bot information
 
         Returns
         -------
@@ -229,9 +226,7 @@ class Bot:
         return User.from_dict(data=response.result, bot=self)
 
     async def delete_webhook(self) -> bool:
-        """
-        |core|
-        This service is used to remove the webhook set for the bot.
+        """This service is used to remove the webhook set for the bot.
 
         Returns
         -------
@@ -249,20 +244,18 @@ class Bot:
 
     async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
                     reply_to_message: Optional["Message"] = None) -> "Message":
-        """
-        |core|
-        This service is used to send text messages.
+        """This service is used to send text messages.
 
         Parameters
         ----------
             chat: :class:`bale.Chat` | :class:`bale.User`
-                Chat
+                the target chat or username of the target channel (in the format @channelusername).
             text: :class:`str`
-                Message Text
+                Text of the message to be sent. Max 4096 characters after entities parsing.
             components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
                 Message Components
             reply_to_message: Optional[:class:`bale.Message`]
-                Reply to a Message
+                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
         Returns
         -------
             :class:`bale.Message`
@@ -301,20 +294,18 @@ class Bot:
 
     async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None,
                     reply_to_message: Optional["Message"] = None) -> "Message":
-        """
-        |core|
-        This service is used to send document.
+        """This service is used to send document.
 
         Parameters
         ----------
         chat: :class:`bale.Chat` | :class:`bale.User`
-            Chat
+            the target chat or username of the target channel (in the format @channelusername).
         document: :class:`bytes` | :class:`str` | :class:`bale.Document`
-            Document
+            File to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
         caption: Optional[:class:`str`]
-            Message caption
+            Document caption.
         reply_to_message: Optional[:class:`bale.Message`]
-            Reply to a Message
+            If the message is a reply, the original message.
 
         Returns
         --------
@@ -355,20 +346,18 @@ class Bot:
 
     async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None,
                  reply_to_message: Optional["Message"] = None) -> "Message":
-        """
-        |core|
-        This service is used to send photo.
+        """This service is used to send photo.
 
         Parameters
         ----------
             chat: :class:`bale.Chat` | :class:`bale.User`
-                Chat
+                the target chat or username of the target channel (in the format @channelusername).
             photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo
+                Photo to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
             caption: Optional[:class:`str`]
-                Message caption
+                Photo caption.
             reply_to_message: Optional[:class:`bale.Message`]
-                Reply to a Message
+                If the message is a reply, the original message.
 
         Returns
         --------
@@ -413,16 +402,14 @@ class Bot:
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_location(self, chat: "Chat" | "User", location: "Location") -> "Message":
-        """
-        |core|
-        This service is used to send location.
+        """Use this method to send point on the map.
 
         Parameters
         ----------
         chat: :class:`bale.Chat` | :class:`bale.User`
-            Chat
+            the target chat or username of the target channel (in the format @channelusername).
         location: :class:`bale.Location`
-            Location
+            The Location.
 
         Returns
         --------
@@ -452,16 +439,14 @@ class Bot:
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_contact(self, chat: "Chat" | "User", contact: "ContactMessage") -> "Message":
-        """
-        |core|
-        This service is used to send contact.
+        """This service is used to send contact.
 
         Parameters
         ----------
         chat: :class:`bale.Chat` | :class:`bale.User`
-            Chat
+            the target chat or username of the target channel (in the format @channelusername).
         contact: :class:`bale.ContactMessage`
-            Contact Message
+            The Contact.
 
         Returns
         --------
@@ -493,34 +478,32 @@ class Bot:
     async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *,
                    photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
                    need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
-        """
-        |core|
-        You can use this service to send money request messages.
+        """You can use this service to send money request messages.
 
         Parameters
         ----------
         chat: :class:`bale.Chat` | :class:`bale.User`
-            Chat
+            the target chat or username of the target channel (in the format @channelusername).
         title: str
-            Invoice Title
+            Product name. 1- 32 characters.
         description: str
-            Invoice Description
+            Product description. 1- 255 characters.
         provider_token: str
             You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
         prices: List[:class:`bale.Price`]
             A list of prices.
-        photo_url: str
-            Photo URL of Invoice. Defaults to None.
-        need_name: bool
-            Get a name from "User"?. Defaults to False.
-        need_phone_number: bool
-            Get a Phone number from "User"?. Defaults to False.
-        need_email: bool
-            Get an Email from "User"?. Defaults to False.
-        need_shipping_address: bool
-            Get a Shipping Address from "User"?. Defaults to False.
-        is_flexible: bool
-            Is the Invoice Photo Flexible to the Payment button?. Defaults to True.
+        photo_url: Optional[:class:`str`]
+            URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
+        need_name: Optional[bool]
+            Pass True, if you require the user’s full name to complete the order.
+        need_phone_number: Optional[bool]
+            Pass True, if you require the user’s phone number to complete the order.
+        need_email: Optional[bool]
+            Pass True, if you require the user’s email to complete the order.
+        need_shipping_address: Optional[bool]
+            Pass True, if you require the user’s shipping address to complete the order.
+        is_flexible: Optional[bool]
+            Pass True, if the final price depends on the shipping method.
 
         Returns
         -------
@@ -575,21 +558,19 @@ class Bot:
                     need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
-        """
-        |core|
-        You can use this service to edit text messages that you have already sent through the arm.
+    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: Optional["Components" | "RemoveComponents"]=None) -> "Message":
+        """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
         ----------
             chat: :class:`bale.Chat`
-                chat
+                the target chat or username of the target channel (in the format @channelusername).
             message: :class:`bale.Message`
-                message
+                the message to edit.
             text: str
-                new content for message.
+                New text of the message, 1- 4096 characters after entities parsing.
             components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
-                message components
+                An object for an inline keyboard.
         Raises
         ------
             NotFound
@@ -618,11 +599,11 @@ class Bot:
             components = components.to_dict()
 
         await self.http.edit_message(chat.chat_id, message.message_id, text, components=components)
+        message.content = text
+        return message
 
     async def delete_message(self, chat: "Chat" | "User", message: "Message") -> bool:
-        """
-        |core|
-        You can use this service to delete a message that you have already sent through the arm.
+        """You can use this service to delete a message that you have already sent through the arm.
 
         .. warning::
             In Channel or Group:
@@ -634,9 +615,9 @@ class Bot:
         Parameters
         ----------
             chat: :class:`bale.Chat`
-                chat
+                the target chat or username of the target channel (in the format @channelusername).
             message: :class:`bale.Message`
-                message
+                the message to delete.
         Raises
         ------
             NotFound
@@ -659,14 +640,12 @@ class Bot:
         return response.result or False
 
     async def get_chat(self, chat_id: int | str) -> Chat | None:
-        """
-        |core|
-        This service can be used to receive personal information that has previously interacted with the arm.
+        """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
 
         Parameters
         ----------
             chat_id: int | str
-                chat id
+                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         Returns
         -------
             Optional[:class:`bale.Chat`]
@@ -691,9 +670,7 @@ class Bot:
             return Chat.from_dict(response.result, bot=self)
 
     async def get_user(self, user_id: int | str) -> "User" | None:
-        """
-        |core|
-        This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
+        """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         Parameters
         ----------
@@ -722,15 +699,16 @@ class Bot:
         return None
 
     async def get_chat_member(self, chat: "Chat", user: "User" = None, user_id: str | int = None) -> "ChatMember" | None:
-        """
+        """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
+
         Parameters
         ----------
             chat: :class:`bale.Chat`
-                chat
+                the target chat or username of the target channel (in the format @channelusername).
             user: Optional[:class:`bale.User`]
-                user
+                the target user.
             user_id: Optional[:class:`int` | :class:`str`]
-                user id
+                Unique identifier of the target user.
 
         Returns
         -------
@@ -778,63 +756,13 @@ class Bot:
         else:
             return ChatMember.from_dict(response.result)
 
-    async def invite_to_chat(self, chat: "Chat", user: "User"):
-        """Invite user to the chat
-
-        Parameters
-        ----------
-            chat: :class:`bale.Chat`
-                chat
-            user: :class:`bale.User`
-                user
-        
-        Raises
-        ------
-            NotFound
-                Invalid Chat or User ID.
-            Forbidden
-                You do not have permission to Add user to Chat.
-            APIError
-                Invite user Failed.
-        """
-        if not isinstance(chat, Chat):
-            raise TypeError(
-                "chat param must be type of Chat"
-            )
-
-        if not isinstance(user, User):
-            raise TypeError(
-                "user param must be type of User"
-            )
-
-        await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
-
-    async def leave_chat(self, chat: "Chat"):
-        """Leave bot from a Chat
-
-        Parameters
-        ----------
-            chat: :class:`bale.Chat`
-                chat
-        
-        Raises
-        ------
-            Forbidden
-                You do not have permission to Leave from chat.
-            APIError
-                Leave from chat Failed.
-        """
-        if not isinstance(chat, Chat):
-            raise TypeError(
-                "chat param must be type of Chat"
-            )
-        await self.http.leave_chat(str(chat.chat_id))
-
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
-        """
+        """Use this method to get the number of members in a chat.
+
         Parameters
         ----------
-            chat: :class:`bale.Chat` 
+            chat: :class:`bale.Chat`
+                the target chat or username of the target channel (in the format @channelusername).
 
         Raises
         ------
@@ -859,14 +787,12 @@ class Bot:
         return response.result
 
     async def get_chat_administrators(self, chat: "Chat") -> list["ChatMember"] | None:
-        """
-        |core|
-        This service can be used to display admins of a group or channel.
+        """Use this method to get a list of administrators in a chat.
 
         Parameters
         ----------
             chat: :class:`bale.Chat` 
-                Group id
+                the target chat or username of the target channel (in the format @channelusername).
         Returns
         -------
             Optional[List[:class:`bale.ChatMember`]]:
@@ -918,6 +844,58 @@ class Bot:
             )
 
         return await self.http.get_file(file_id)
+
+    async def invite_to_chat(self, chat: "Chat", user: "User"):
+        """Invite user to the chat
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                the target chat or username of the target channel (in the format @channelusername).
+            user: :class:`bale.User`
+                the target user.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to Add user to Chat.
+            APIError
+                Invite user Failed.
+        """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                "chat param must be type of Chat"
+            )
+
+        if not isinstance(user, User):
+            raise TypeError(
+                "user param must be type of User"
+            )
+
+        await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
+
+    async def leave_chat(self, chat: "Chat"):
+        """Use this method for your bot to leave a group, channel.
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                the target chat or username of the target channel (in the format @channelusername).
+
+        Raises
+        ------
+            Forbidden
+                You do not have permission to Leave from chat.
+            APIError
+                Leave from chat Failed.
+        """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                "chat param must be type of Chat"
+            )
+        await self.http.leave_chat(str(chat.chat_id))
 
     async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
         if offset and not isinstance(offset, int):

@@ -35,20 +35,33 @@ __all__ = (
 class CallbackQuery:
     """
     This object represents an incoming callback query from a callback button in an inline keyboard.
+
+    Attributes
+    ----------
+        callback_id: :class:`str`
+            Unique identifier for this query.
+        from_user: :class:`bale.User`
+            Sender.
+        message: :class:`bale.Message`
+            Message with the callback button that originated the query. Note that message content and message date will not be available if the message is too old.
+        inline_message_id: :class:`str`
+            Identifier of the message sent via the bot in inline mode, that originated the query.
+        data: :class:`str`
+             Data associated with the callback button. Be aware that the message, which originated the query, can contain no callback buttons with this data.
     """
     __slots__ = (
+        "callback_id",
+        "from_user",
         "message",
         "inline_message_id",
-        "from_user",
         "data",
-        "bot",
-        "callback_id"
+        "bot"
     )
 
     def __init__(self, callback_id: int = None, data: str = None, message: "Message" = None,
                  inline_message_id: str = None, from_user: "User" = None, bot: "Bot" = None):
-        self.data = data
         self.callback_id = callback_id
+        self.data = data
         self.message = message
         self.inline_message_id = inline_message_id
         self.from_user = from_user
