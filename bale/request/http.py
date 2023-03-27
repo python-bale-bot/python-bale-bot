@@ -342,5 +342,8 @@ class HTTPClient:
 	def get_chat_member(self, chat_id, member_id):
 		return self.request(Route("GET", "getChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
 
+	def ban_chat_member(self, chat_id, member_id):
+		return self.request(Route("POST", "banChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
+
 	def invite_to_chat(self, chat_id, user_id):
 		return self.request(Route("GET", "InviteUser", self.token), json=dict(chat_id=chat_id, user_id=user_id))

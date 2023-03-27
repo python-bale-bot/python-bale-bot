@@ -756,6 +756,60 @@ class Bot:
         else:
             return ChatMember.from_dict(response.result)
 
+    async def ban_chat_member(self, chat: "Chat", user: "User" = None, user_id: str | int = None) -> "ChatMember" | None:
+        """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+
+        Parameters
+        ----------
+            chat: :class:`bale.Chat`
+                the target chat or username of the target channel (in the format @channelusername).
+            user: Optional[:class:`bale.User`]
+                the target user.
+            user_id: Optional[:class:`int` | :class:`str`]
+                Unique identifier of the target user.
+
+        Returns
+        -------
+            Optional[:class:`bool`]:
+                On success, ``True`` is returned.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to ban Chat Member.
+            APIError
+                ban chat member Failed.
+        """
+        if not isinstance(chat, Chat):
+            raise TypeError(
+                "chat param must be type of Chat"
+            )
+
+        if user is None and user_id is None:
+            raise TypeError(
+                "you must enter user or user_id"
+            )
+
+        if user and user_id:
+            raise TypeError(
+                "You can't use user & user_id together"
+            )
+
+        if user and not isinstance(user, User):
+            raise TypeError(
+                "user must be type of bale.User"
+            )
+
+        if user_id and not isinstance(user_id, (str, int)):
+            raise TypeError(
+                "user_id must be type of str or int"
+            )
+
+        response = await self.http.ban_chat_member(chat_id=str(chat.chat_id), member_id=user.user_id if user else str(user_id))
+        return response.result
+
     async def get_chat_members_count(self, chat: "Chat") -> int | None:
         """Use this method to get the number of members in a chat.
 

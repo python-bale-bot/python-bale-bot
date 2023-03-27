@@ -200,6 +200,18 @@ class Chat:
 
         return await self.bot.get_chat_member(self, user_id=user)
 
+    async def ban_chat_member(self, user: "User" | str):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+        """
+        if not isinstance(user, (User, str)):
+            raise TypeError("user must be type of user or str")
+
+        if isinstance(user, User):
+            user = user.user_id
+
+        return await self.bot.ban_chat_member(self, user_id=user)
+
     async def get_chat_members_count(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
