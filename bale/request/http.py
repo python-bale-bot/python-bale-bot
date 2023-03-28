@@ -226,6 +226,15 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendMessage", self.token), json=payload)
 
+	def forward_message(self, chat_id, from_chat_id, message_id):
+		payload = {
+			"chat_id": chat_id,
+			"from_chat_id": from_chat_id,
+			"message_id": message_id
+		}
+
+		return self.request(Route("POST", "forwardMessage", self.token), json=payload)
+
 	def send_document(self, chat_id, document, *, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
