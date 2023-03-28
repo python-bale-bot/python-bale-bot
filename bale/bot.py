@@ -242,19 +242,19 @@ class Bot:
         response = await self.http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat: "Chat" | "User", text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
-                    reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_message(self, chat_id: str | int, text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
+                    reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send text messages.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat` | :class:`bale.User`
-                the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             text: :class:`str`
                 Text of the message to be sent. Max 4096 characters after entities parsing.
             components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
                 Message Components
-            reply_to_message: Optional[:class:`bale.Message`]
+            reply_to_message_id: Optional[:class:`str` | :class:`int`]
                 Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
         Returns
         -------
@@ -269,9 +269,9 @@ class Bot:
             APIError
                 Send Message Failed.   
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
         if components:
@@ -282,30 +282,70 @@ class Bot:
             components = components.to_dict()
 
 
-        if reply_to_message:
-            if not isinstance(reply_to_message, Message):
-                raise TypeError(
-                    "reply_to_message param must be type of Message"
-                )
-            reply_to_message = reply_to_message.message_id
+        if reply_to_message_id and not isinstance(reply_to_message_id, (int, str)):
+            raise TypeError(
+                "reply_to_message_id param must be type of Message"
+            )
 
-        response = await self.http.send_message(str(chat.chat_id), text, components=components, reply_to_message_id=reply_to_message)
+        response = await self.http.send_message(str(chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_document(self, chat: "Chat" | "User", document: bytes | str | "Document", *, caption: Optional[str] = None,
-                    reply_to_message: Optional["Message"] = None) -> "Message":
+    async def forward_message(self, chat_id: int | str, from_chat_id: int | str, message_id: int | str):
+        """This service is used to send text messages.
+
+        Parameters
+        ----------
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            from_chat_id: :class:`str` | :class:`int`
+                the chat where the original message was sent (or channel username in the format @channelusername).
+            message_id: :class:`int` | :class:`str`
+                Message in the chat specified in :paramref:`from_chat_id`.
+        Returns
+        -------
+            :class:`bale.Message`
+                The Message
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to send Message to this chat.
+            APIError
+                Forward Message Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(from_chat_id, (Chat, User)):
+            raise TypeError(
+                "from_chat_id param must be type of str or int"
+            )
+
+        if not isinstance(message_id, Message):
+            raise TypeError(
+                "message_id param must be type of str or int"
+            )
+
+        response = await self.http.forward_message(str(chat_id), str(from_chat_id), str(message_id))
+        return Message.from_dict(data=response.result, bot=self)
+
+    async def send_document(self, chat_id: str | int, document: bytes | str | "Document", *, caption: Optional[str] = None,
+                    reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat` | :class:`bale.User`
-            the target chat or username of the target channel (in the format @channelusername).
+        chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         document: :class:`bytes` | :class:`str` | :class:`bale.Document`
             File to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
         caption: Optional[:class:`str`]
             Document caption.
-        reply_to_message: Optional[:class:`bale.Message`]
-            If the message is a reply, the original message.
+        reply_to_message_id: Optional[:class:`str` | :class:`int`]
+                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 
         Returns
         --------
@@ -321,9 +361,9 @@ class Bot:
             APIError
                 Send Document Failed.        
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (Chat, User)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of Chat or User"
             )
 
         if not isinstance(document, (bytes, str, Document)):
@@ -331,33 +371,31 @@ class Bot:
                 "document param must be type of bytes, str or Document"
             )
 
-        if reply_to_message:
-            if not isinstance(reply_to_message, Message):
-                raise TypeError(
-                    "reply_to_message param must be type of Message"
-                )
-            reply_to_message = reply_to_message.message_id
+        if reply_to_message_id and not isinstance(reply_to_message_id, Message):
+            raise TypeError(
+                "reply_to_message_id param must be type of Message"
+            )
 
         if isinstance(document, Document):
             document = document.file_id
 
-        response = await self.http.send_document(chat.chat_id, document, caption=caption, reply_to_message_id=reply_to_message)
+        response = await self.http.send_document(chat_id, document, caption=caption, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_photo(self, chat: "Chat" | "User", photo: bytes | str | "Photo", *, caption: Optional[str] = None,
-                 reply_to_message: Optional["Message"] = None) -> "Message":
+    async def send_photo(self, chat_id: str | int, photo: bytes | str | "Photo", *, caption: Optional[str] = None,
+                 reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send photo.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat` | :class:`bale.User`
-                the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
                 Photo to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
             caption: Optional[:class:`str`]
                 Photo caption.
-            reply_to_message: Optional[:class:`bale.Message`]
-                If the message is a reply, the original message.
+            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
 
         Returns
         --------
@@ -373,9 +411,9 @@ class Bot:
             APIError
                 Send photo Failed.
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
         if not isinstance(photo, (bytes, str, Photo)):
@@ -386,28 +424,26 @@ class Bot:
         if isinstance(photo, Photo):
             photo = photo.file_id
 
-        if reply_to_message:
-            if not isinstance(reply_to_message, Message):
-                raise TypeError(
-                    "reply_to_message param must be type of Message"
-                )
-            reply_to_message = reply_to_message.message_id
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
 
         if caption and not isinstance(caption, str):
             raise TypeError(
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat.chat_id), photo, caption=caption, reply_to_message_id=reply_to_message)
+        response = await self.http.send_photo(str(chat_id), photo, caption=caption, reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_location(self, chat: "Chat" | "User", location: "Location") -> "Message":
+    async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
         """Use this method to send point on the map.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat` | :class:`bale.User`
-            the target chat or username of the target channel (in the format @channelusername).
+        chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         location: :class:`bale.Location`
             The Location.
 
@@ -425,9 +461,9 @@ class Bot:
             APIError
                 Send Location Failed.
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
         if not isinstance(location, Location):
@@ -435,16 +471,16 @@ class Bot:
                 "location param must be type of Location"
             )
 
-        response = await self.http.send_location(str(chat.chat_id), location.latitude, location.longitude)
+        response = await self.http.send_location(str(chat_id), location.latitude, location.longitude)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_contact(self, chat: "Chat" | "User", contact: "ContactMessage") -> "Message":
+    async def send_contact(self, chat_id: str | int, contact: "ContactMessage") -> "Message":
         """This service is used to send contact.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat` | :class:`bale.User`
-            the target chat or username of the target channel (in the format @channelusername).
+        chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         contact: :class:`bale.ContactMessage`
             The Contact.
 
@@ -462,9 +498,9 @@ class Bot:
             APIError
                 Send Contact Message Failed.
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat param must be type of str or int"
             )
 
         if not isinstance(contact, ContactMessage):
@@ -472,18 +508,18 @@ class Bot:
                 "contact param must be type of ContactMessage"
             )
 
-        response = await self.http.send_contact(str(chat.chat_id), contact.phone_number, contact.first_name, last_name=contact.last_name)
+        response = await self.http.send_contact(str(chat_id), contact.phone_number, contact.first_name, last_name=contact.last_name)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_invoice(self, chat: "Chat" | "User", title: str, description: str, provider_token: str, prices: List["Price"], *,
+    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str, prices: List["Price"], *,
                    photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
                    need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
 
         Parameters
         ----------
-        chat: :class:`bale.Chat` | :class:`bale.User`
-            the target chat or username of the target channel (in the format @channelusername).
+        chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         title: str
             Product name. 1- 32 characters.
         description: str
@@ -518,9 +554,9 @@ class Bot:
             APIError
                 Send Invoice Failed.  
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat param must be type of str or int"
             )
 
         if not isinstance(photo_url, str):
@@ -554,19 +590,19 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
-        response = await self.http.send_invoice(str(chat.chat_id), title, description, provider_token, prices, photo_url, need_name,
+        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, photo_url, need_name,
                     need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def edit_message(self, chat: "Chat" | "User", message: "Message", text: str, *, components: Optional["Components" | "RemoveComponents"]=None) -> "Message":
+    async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *, components: Optional["Components" | "RemoveComponents"]=None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
-            message: :class:`bale.Message`
-                the message to edit.
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            message_id: :class:`str` | :class:`int`
+                Unique identifier for the message to edit.
             text: str
                 New text of the message, 1- 4096 characters after entities parsing.
             components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
@@ -580,14 +616,14 @@ class Bot:
             APIError
                 Edit Message Failed.
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
-        if not isinstance(message, Message):
+        if not isinstance(message_id, (str, int)):
             raise TypeError(
-                "message_id param must be type of Message or str"
+                "message_id param must be type of str or int"
             )
 
         if components and not isinstance(components, (Components, RemoveComponents)):
@@ -598,11 +634,10 @@ class Bot:
         if components:
             components = components.to_dict()
 
-        await self.http.edit_message(chat.chat_id, message.message_id, text, components=components)
-        message.content = text
-        return message
+        response = await self.http.edit_message(chat_id, message_id, text, components=components)
+        return response.result
 
-    async def delete_message(self, chat: "Chat" | "User", message: "Message") -> bool:
+    async def delete_message(self, chat_id: str | int, message_id: str | int) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
 
         .. warning::
@@ -614,10 +649,10 @@ class Bot:
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
-            message: :class:`bale.Message`
-                the message to delete.
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            message_id: :class:`bale.Message`
+                Unique identifier for the message to delete.
         Raises
         ------
             NotFound
@@ -627,16 +662,16 @@ class Bot:
             APIError
                 Delete Message Failed.
         """
-        if not isinstance(chat, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
-        if not isinstance(message, Message):
+        if not isinstance(message_id, (str, int)):
             raise TypeError(
-                "message param must be type of str or Message"
+                "message_id param must be type of str or int"
             )
-        response = await self.http.delete_message(str(chat.chat_id), message.message_id)
+        response = await self.http.delete_message(str(chat_id), message_id)
         return response.result or False
 
     async def get_chat(self, chat_id: int | str) -> Chat | None:
@@ -698,22 +733,20 @@ class Bot:
 
         return None
 
-    async def get_chat_member(self, chat: "Chat", user: "User" = None, user_id: str | int = None) -> "ChatMember" | None:
+    async def get_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember" | None:
         """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
-            user: Optional[:class:`bale.User`]
-                the target user.
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             user_id: Optional[:class:`int` | :class:`str`]
                 Unique identifier of the target user.
 
         Returns
         -------
-            Optional[:class:`bale.ChatMember`]:
-                The chat member or ``None`` if not found.
+            Optional[:class:`bale.ChatMember`]
+                The chat member of ``None`` if not found.
 
         Raises
         ------
@@ -724,53 +757,36 @@ class Bot:
             APIError
                 Get chat member Failed.
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
                 "chat param must be type of Chat"
             )
 
-        if user is None and user_id is None:
-            raise TypeError(
-                "you must enter user or user_id"
-            )
-
-        if user and user_id:
-            raise TypeError(
-                "You can't use user & user_id together"
-            )
-
-        if user and not isinstance(user, User):
-            raise TypeError(
-                "user must be type of bale.User"
-            )
-
-        if user_id and not isinstance(user_id, (str, int)):
+        if not isinstance(user_id, (str, int)):
             raise TypeError(
                 "user_id must be type of str or int"
             )
 
         try:
-            response = await self.http.get_chat_member(chat_id=str(chat.chat_id), member_id=user.user_id if user else str(user_id))
+            response = await self.http.get_chat_member(chat_id=str(chat_id), member_id=str(user_id))
         except NotFound:
             return None
         else:
             return ChatMember.from_dict(response.result)
 
-    async def ban_chat_member(self, chat: "Chat", user: "User" = None, user_id: str | int = None) -> "ChatMember" | None:
+    async def ban_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
-            user: Optional[:class:`bale.User`]
-                the target user.
-            user_id: Optional[:class:`int` | :class:`str`]
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            user_id: :class:`int` | :class:`str`
                 Unique identifier of the target user.
 
         Returns
         -------
-            Optional[:class:`bool`]:
+            :class:`bool`
                 On success, ``True`` is returned.
 
         Raises
@@ -782,41 +798,26 @@ class Bot:
             APIError
                 ban chat member Failed.
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat"
+                "chat_id param must be type of str or int"
             )
 
-        if user is None and user_id is None:
-            raise TypeError(
-                "you must enter user or user_id"
-            )
-
-        if user and user_id:
-            raise TypeError(
-                "You can't use user & user_id together"
-            )
-
-        if user and not isinstance(user, User):
-            raise TypeError(
-                "user must be type of bale.User"
-            )
-
-        if user_id and not isinstance(user_id, (str, int)):
+        if not isinstance(user_id, (str, int)):
             raise TypeError(
                 "user_id must be type of str or int"
             )
 
-        response = await self.http.ban_chat_member(chat_id=str(chat.chat_id), member_id=user.user_id if user else str(user_id))
+        response = await self.http.ban_chat_member(chat_id=str(chat_id), member_id=str(user_id))
         return response.result
 
-    async def get_chat_members_count(self, chat: "Chat") -> int | None:
+    async def get_chat_members_count(self, chat_id: str | int) -> int:
         """Use this method to get the number of members in a chat.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
 
         Raises
         ------
@@ -832,25 +833,25 @@ class Bot:
             :class:`int`:
                 The members count of the chat
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat"
+                "chat_id param must be type of str or int"
             )
 
-        response = await self.http.get_chat_members_count(str(chat.chat_id))
+        response = await self.http.get_chat_members_count(str(chat_id))
         return response.result
 
-    async def get_chat_administrators(self, chat: "Chat") -> list["ChatMember"] | None:
+    async def get_chat_administrators(self, chat_id: str | int) -> list["ChatMember"] | None:
         """Use this method to get a list of administrators in a chat.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat` 
-                the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         Returns
         -------
-            Optional[List[:class:`bale.ChatMember`]]:
-                list of chat member or ``None`` if chat not found.
+            List[:class:`bale.ChatMember`]
+                list of chat member.
         Raises
         ------
             NotFound
@@ -860,27 +861,25 @@ class Bot:
             APIError
                 get Administrators of the Chat from chat Failed.
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat"
+                "chat_id param must be type of str or int"
             )
 
-        response = await self.http.get_chat_administrators(chat.chat_id)
+        response = await self.http.get_chat_administrators(chat_id)
         return [ChatMember.from_dict(data=member_payload) for member_payload in response.result or list()]
 
-    async def download_file(self, file_id: str):
-        """
-        .. warning::
-            You must be entered `chat` or `chat_id`
+    async def get_file(self, file_id: str):
+        """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
 
         Parameters
         ----------
             file_id: :class:`str`
-                    file id
+                Either the file identifier to get file information about.
 
         Returns
         -------
-            Optional[:class:`bytes`]:
+            :class:`bytes`
                 The content of the file
 
         Raises
@@ -899,15 +898,15 @@ class Bot:
 
         return await self.http.get_file(file_id)
 
-    async def invite_to_chat(self, chat: "Chat", user: "User"):
+    async def invite_user(self, chat_id: str | int, user_id: str | int) -> bool:
         """Invite user to the chat
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
-            user: :class:`bale.User`
-                the target user.
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            user_id: :class:`str` | :class:`int`
+                Unique identifier for the target user.
 
         Raises
         ------
@@ -918,25 +917,26 @@ class Bot:
             APIError
                 Invite user Failed.
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat"
+                "chat_id param must be type of str or int"
             )
 
-        if not isinstance(user, User):
+        if not isinstance(user, (str, int)):
             raise TypeError(
-                "user param must be type of User"
+                "user_id param must be type of str or int"
             )
 
-        await self.http.invite_to_chat(str(chat.chat_id), str(user.user_id))
+        response = await self.http.invite_to_chat(str(chat_id), str(user_id))
+        return response.result or False
 
-    async def leave_chat(self, chat: "Chat"):
+    async def leave_chat(self, chat_id: str | int) -> bool:
         """Use this method for your bot to leave a group, channel.
 
         Parameters
         ----------
-            chat: :class:`bale.Chat`
-                the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
 
         Raises
         ------
@@ -945,13 +945,14 @@ class Bot:
             APIError
                 Leave from chat Failed.
         """
-        if not isinstance(chat, Chat):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat param must be type of Chat"
+                "chat_id param must be type of str or int"
             )
-        await self.http.leave_chat(str(chat.chat_id))
+        response = await self.http.leave_chat(str(chat_id))
+        return response.result or False
 
-    async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"] | None:
+    async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"]:
         if offset and not isinstance(offset, int):
             raise TypeError(
                 "offset param must be int"

@@ -139,31 +139,31 @@ class Chat:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
-        return await self.bot.send_message(self, text, components=components)
+        return await self.bot.send_message(self.chat_id, text, components=components)
 
     async def send_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_document(self, document, caption=caption)
+        return await self.bot.send_document(self.chat_id, document, caption=caption)
 
     async def send_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_photo(self, photo, caption=caption)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption)
 
     async def send_location(self, location: "Location"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
         """
-        return await self.bot.send_location(self, location)
+        return await self.bot.send_location(self.chat_id, location)
 
     async def send_contact(self, contact: "ContactMessage") -> "Message":
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
         """
-        return await self.bot.send_contact(self, contact)
+        return await self.bot.send_contact(self.chat_id, contact)
 
     async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
                    photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
@@ -171,34 +171,33 @@ class Chat:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
         """
-        return await self.bot.send_invoice(chat=self, title=title, description=description,
-                                        provider_token=provider_token, prices=prices, photo_url=photo_url,
-                                        need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
-                                        need_shipping_address=need_shipping_address, is_flexible=is_flexible)
+        return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
+                                        photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                        need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
     async def leave(self):
         """
         For the documentation of the method, please see :meth:`bale.Bot.leave_chat`.
         """
-        await self.bot.leave_chat(self)
+        await self.bot.leave_chat(self.chat_id)
 
     async def add_user(self, user: "User"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.invite_to_chat`.
         """
-        await self.bot.invite_to_chat(self, user)
+        await self.bot.invite_user(self.chat_id, user.chat_id)
 
     async def get_chat_member(self, user: "User" | str):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
         """
         if not isinstance(user, (User, str)):
-            raise TypeError("user must be type of user or str")
+            raise TypeError("user must be type of User or str")
 
         if isinstance(user, User):
             user = user.user_id
 
-        return await self.bot.get_chat_member(self, user_id=user)
+        return await self.bot.get_chat_member(self.chat_id, user_id=user)
 
     async def ban_chat_member(self, user: "User" | str):
         """
@@ -210,19 +209,19 @@ class Chat:
         if isinstance(user, User):
             user = user.user_id
 
-        return await self.bot.ban_chat_member(self, user_id=user)
+        return await self.bot.ban_chat_member(self.chat_id, user_id=user)
 
     async def get_chat_members_count(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
         """
-        return await self.bot.get_chat_members_count(self)
+        return await self.bot.get_chat_members_count(self.chat_id)
 
     async def get_chat_administrators(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
         """
-        return await self.bot.get_chat_administrators(self)
+        return await self.bot.get_chat_administrators(self.chat_id)
 
     @classmethod
     def from_dict(cls, data: dict, bot):

@@ -192,20 +192,26 @@ class Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
-        return await self.bot.send_message(chat=self.chat, text=text, components=components,
-                                       reply_to_message=self if not self.chat.type.is_group_chat() else None)
+        return await self.bot.send_message(self.chat_id, text, components=components,
+                                       reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+
+    async def forward(self, chat_id: str | int):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.forward_message`.
+        """
+        return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
 
     async def reply_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
-        return await self.bot.send_document(self.chat, document, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
+        return await self.bot.send_document(self.chat_id, document, caption=caption, reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
     async def reply_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_photo(self.chat, photo, caption=caption, reply_to_message=self if not self.chat.type.is_group_chat() else None)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption, reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
     async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None,
                 need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
@@ -213,23 +219,21 @@ class Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
         """
-        return await self.bot.send_invoice(chat=self.chat, title=title, description=description,
-                                        provider_token=provider_token, prices=prices, photo_url=photo_url,
-                                        need_name=need_name, need_email=need_email, need_phone_number=need_phone_number,
-                                        need_shipping_address=need_shipping_address, is_flexible=is_flexible)
+        return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
+                                        photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                        need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
-    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None) -> None:
+    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
         """
-        await self.bot.edit_message(self.chat, self, text, components=components)
-        self.text = text
+        return await self.bot.edit_message(self.chat_id, self.message_id, text, components=components)
 
     async def delete(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
         """
-        await self.bot.delete_message(self.chat, self)
+        await self.bot.delete_message(self.chat_id, self.message_id)
 
     def __str__(self):
         return str(self.message_id)
