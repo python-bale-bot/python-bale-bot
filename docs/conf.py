@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath('..'))
 sys.path.append(os.path.abspath('extensions'))
 
 project = 'python-bale-bot'
-copyright = '2022, Kian Ahmadian'
+copyright = '2023, Kian Ahmadian'
 author = 'Kian Ahmadian'
 with open('../bale/version.py') as f:
     version = re.search(r'^__version__\s*=\s*[\'"]([^\'"]*)[\'"]', f.read(), re.MULTILINE).group(1)
