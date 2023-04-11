@@ -21,7 +21,11 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from bale import (Permissions, User)
+from __future__ import annotations
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from bale import Bot
+from bale import Permissions, User
 
 __all__ = (
     "MemberRole",
@@ -42,7 +46,7 @@ class MemberRole:
     OWNER = "creator"
     CREATOR = OWNER
     ADMIN = "administrator"
-    __slots__ = ("_role", )
+    __slots__ = ("_role",)
 
     def __init__(self, _role: str):
         self._role = _role
@@ -78,27 +82,30 @@ class ChatMember:
     ----------
         role: :class:`bale.MemberRole`
             User Role
-        user: :class:`bale.User`
-            User
         permissions: :class:`bale.AdminPermissions`
             User Permissions
     """
     __slots__ = (
-        "role", "_user", "permissions"
+        "chat_id", "role", "user", "permissions", "bot"
     )
 
-    def __init__(self, role: "MemberRole", user, permissions):
+    def __init__(self, chat_id: int, role: "MemberRole", user: "User", permissions: "Permissions", bot: "Bot"):
+        self.chat_id = chat_id
         self.role = role
-        self._user = user
+        self.user = user
         self.permissions = permissions
+        self.bot = bot
 
-    @property
-    def user(self) -> "User":
-        return self._user
+    async def ban(self):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+        """
+        return await self.bot.ban_chat_member(self.chat_id, self.user.user_id)
 
     @classmethod
-    def from_dict(cls, data: dict):
-        return cls(permissions=Permissions.from_dict(data), user=User.from_dict(data.get("user")), role=MemberRole(data.get("status")))
+    def from_dict(cls, chat_id: int, data: dict, bot: "Bot"):
+        return cls(chat_id=chat_id, permissions=Permissions.from_dict(data), user=User.from_dict(data.get("user")),
+                   role=MemberRole(data.get("status")), bot=bot)
 
     def __repr__(self):
-        return f"<ChatMember role={self.role} user={self._user} permissions={self.permissions}>"
+        return f"<ChatMember chat_id={self.chat_id} role={self.role} user={self.user} permissions={self.permissions}>"

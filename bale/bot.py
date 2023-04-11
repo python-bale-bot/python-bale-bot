@@ -836,7 +836,7 @@ class Bot:
         except NotFound:
             return None
         else:
-            return ChatMember.from_dict(response.result)
+            return ChatMember.from_dict(chat_id, response.result, self)
 
     async def ban_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
