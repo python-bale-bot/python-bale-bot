@@ -78,6 +78,7 @@ class Updater:
         self.bot = bot
         self._last_offset = None
         self._is_running = False
+        self.__lock = asyncio.Lock()
         self.interval = None
 
     async def start(self, sleep_after_every_get_updates: int = None):
