@@ -262,6 +262,18 @@ class HTTPClient:
 
 		return self.request(Route("POST", "SendPhoto", self.token), data=payload)
 
+	def send_video(self, chat_id, video, *, caption=None, reply_to_message_id=None):
+		payload = {
+			"chat_id": chat_id,
+			"video": video
+		}
+		if caption:
+			payload["caption"] = caption
+		if reply_to_message_id:
+			payload["reply_to_message_id"] = reply_to_message_id
+
+		return self.request(Route("POST", "sendVideo", self.token), data=payload)
+
 	def send_audio(self, chat_id, audio, *, caption=None, duration=None, title=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,

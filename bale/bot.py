@@ -27,8 +27,7 @@ from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
-                  Photo, Document, Location, ContactMessage)
-
+                  Photo, Document, Location, ContactMessage, Video)
 
 __all__ = (
     "Bot"
@@ -44,9 +43,9 @@ class _Loop:
             'Consider using either an asynchronous main function and passing it to asyncio.run or '
             'using asynchronous initialisation hooks such as Bot.setup_hook'
         ))
-    
 
 _loop = _Loop()
+
 
 class Bot:
     """This object represents a Bale Bot.
@@ -100,7 +99,7 @@ class Bot:
 
         self.events[event].append(function)
 
-    def remove_event(self, event: str, function = None):
+    def remove_event(self, event: str, function=None):
         """Register an Event with event name"""
         result = self.events.get(event)
         if not result:
@@ -115,7 +114,7 @@ class Bot:
 
         del self.events[event][function]
 
-    def wait_for(self, event_name: str, *, check = None, timeout = None):
+    def wait_for(self, event_name: str, *, check=None, timeout=None):
         """Wait for an event"""
         self.loop: asyncio.AbstractEventLoop
         future = self.loop.create_future()
@@ -129,7 +128,7 @@ class Bot:
             self.listeners[event_name] = listeners
 
         listeners.append((future, check))
-        return asyncio.wait_for(future, timeout = timeout)
+        return asyncio.wait_for(future, timeout=timeout)
 
     @property
     def user(self) -> "User" or None:
@@ -168,7 +167,7 @@ class Bot:
     def call_to_run_event(self, core, event_name, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
         self.loop: asyncio.AbstractEventLoop
-        return self.loop.create_task(task, name = event_name)
+        return self.loop.create_task(task, name=event_name)
 
     def dispatch(self, event_name, /, *args, **kwargs):
         method = "on_" + event_name
@@ -209,7 +208,6 @@ class Bot:
         """a Event for get errors when exceptions"""
         print("error", event_name, error)
 
-
     async def get_bot(self) -> User:
         """Get bot information
 
@@ -242,8 +240,9 @@ class Bot:
         response = await self.http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat_id: str | int, text: str, *, components: Optional["Components" | "RemoveComponents"] = None,
-                    reply_to_message_id: Optional[str | int] = None) -> "Message":
+    async def send_message(self, chat_id: str | int, text: str, *,
+                           components: Optional["Components" | "RemoveComponents"] = None,
+                           reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send text messages.
 
         Parameters
@@ -281,13 +280,13 @@ class Bot:
                 )
             components = components.to_dict()
 
-
         if reply_to_message_id and not isinstance(reply_to_message_id, (int, str)):
             raise TypeError(
                 "reply_to_message_id param must be type of Message"
             )
 
-        response = await self.http.send_message(str(chat_id), text, components=components, reply_to_message_id=reply_to_message_id)
+        response = await self.http.send_message(str(chat_id), text, components=components,
+                                                reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def forward_message(self, chat_id: int | str, from_chat_id: int | str, message_id: int | str):
@@ -300,7 +299,7 @@ class Bot:
             from_chat_id: :class:`str` | :class:`int`
                 the chat where the original message was sent (or channel username in the format @channelusername).
             message_id: :class:`int` | :class:`str`
-                Message in the chat specified in :paramref:`from_chat_id`.
+                Message in the chat specified in :param:`from_chat_id`.
         Returns
         -------
             :class:`bale.Message`
@@ -332,8 +331,9 @@ class Bot:
         response = await self.http.forward_message(str(chat_id), str(from_chat_id), str(message_id))
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_document(self, chat_id: str | int, document: bytes | str | "Document", *, caption: Optional[str] = None,
-                    reply_to_message_id: Optional[str | int] = None) -> "Message":
+    async def send_document(self, chat_id: str | int, document: bytes | str | "Document", *,
+                            caption: Optional[str] = None,
+                            reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
 
         Parameters
@@ -379,11 +379,12 @@ class Bot:
         if isinstance(document, Document):
             document = document.file_id
 
-        response = await self.http.send_document(chat_id, document, caption=caption, reply_to_message_id=reply_to_message_id)
+        response = await self.http.send_document(chat_id, document, caption=caption,
+                                                 reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_photo(self, chat_id: str | int, photo: bytes | str | "Photo", *, caption: Optional[str] = None,
-                 reply_to_message_id: Optional[str | int] = None) -> "Message":
+                         reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send photo.
 
         Parameters
@@ -434,7 +435,64 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat_id), photo, caption=caption, reply_to_message_id=reply_to_message_id)
+        response = await self.http.send_photo(str(chat_id), photo, caption=caption,
+                                              reply_to_message_id=reply_to_message_id)
+        return Message.from_dict(data=response.result, bot=self)
+
+    async def send_video(self, chat_id: str | int, video: bytes | str | "Photo", *, caption: Optional[str] = None,
+                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+        """This service is used to send Video.
+
+        Parameters
+        ----------
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            video: :class:`bytes` | :class:`str` | :class:`bale.Photo`
+                Video to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
+            caption: Optional[:class:`str`]
+                Video caption.
+            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Send Video to chat.
+            APIError
+                Send Video Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(video, (bytes, str, Video)):
+            raise TypeError(
+                "video param must be type of bytes, str or Video"
+            )
+
+        if isinstance(video, Video):
+            video = video.file_id
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        if caption and not isinstance(caption, str):
+            raise TypeError(
+                "caption param must be type of str"
+            )
+
+        response = await self.http.send_video(str(chat_id), video, caption=caption,
+                                              reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
@@ -508,12 +566,16 @@ class Bot:
                 "contact param must be type of ContactMessage"
             )
 
-        response = await self.http.send_contact(str(chat_id), contact.phone_number, contact.first_name, last_name=contact.last_name)
+        response = await self.http.send_contact(str(chat_id), contact.phone_number, contact.first_name,
+                                                last_name=contact.last_name)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str, prices: List["Price"], *,
-                   photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
-                   need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True) -> Message:
+    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str,
+                           prices: List["Price"], *,
+                           photo_url: Optional[str] = None, need_name: Optional[bool] = False,
+                           need_phone_number: Optional[bool] = False,
+                           need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
+                           is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
 
         Parameters
@@ -590,11 +652,13 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
-        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, photo_url, need_name,
-                    need_phone_number, need_email, need_shipping_address, is_flexible)
+        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, photo_url,
+                                                need_name,
+                                                need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *, components: Optional["Components" | "RemoveComponents"]=None) -> "Message":
+    async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *,
+                           components: Optional["Components" | "RemoveComponents"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
@@ -922,7 +986,7 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(user, (str, int)):
+        if not isinstance(user_id, (str, int)):
             raise TypeError(
                 "user_id param must be type of str or int"
             )
@@ -969,14 +1033,16 @@ class Bot:
 
     async def connect(self, sleep_after_every_get_updates):
         self._user = await self.get_bot()
-        await self.updater.start(sleep_after_every_get_updates = sleep_after_every_get_updates)
+        await self.updater.start(sleep_after_every_get_updates=sleep_after_every_get_updates)
 
-    def run(self, sleep_after_every_get_updates = None):
+    def run(self, sleep_after_every_get_updates=None):
         """Run bot and https"""
+
         async def main():
             async with self:
-                await self.connect(sleep_after_every_get_updates = sleep_after_every_get_updates)
+                await self.connect(sleep_after_every_get_updates=sleep_after_every_get_updates)
+
         try:
             asyncio.run(main())
-        except KeyboardInterrupt: # Control-C
+        except KeyboardInterrupt:  # Control-C
             pass

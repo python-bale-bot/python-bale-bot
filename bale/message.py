@@ -29,7 +29,8 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents, Price)
+from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents, Price,
+                  Video)
 
 
 class Message:
@@ -69,14 +70,20 @@ class Message:
             Message is an invoice for a payment, information about the invoice.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "location","chat", "message_id", "forward_from", "forward_from_chat", "forward_from_message_id", "date_code", "date",
-        "edit_date", "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members", "left_chat_member", "reply_to_message",
+        "text", "caption", "from_user", "_author", "contact", "location", "chat", "message_id", "forward_from",
+        "forward_from_chat", "forward_from_message_id", "date_code", "date",
+        "edit_date", "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members",
+        "left_chat_member", "reply_to_message",
         "invoice", "bot"
     )
 
     def __init__(self, message_id: str, date: datetime, text: Optional[str] = None, caption: Optional[str] = None,
-                 forward_from: Optional["User"] = None, forward_from_chat: Optional["Chat"] = None, forward_from_message_id: Optional[str] = None, from_user: Optional["User"] = None, document: Optional["Document"] = None,
-                 contact: Optional["ContactMessage"] = None, location: Optional["Location"] = None, chat: Optional["Chat"] = None, photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None, invoice: Optional["Invoice"] = None,
+                 forward_from: Optional["User"] = None, forward_from_chat: Optional["Chat"] = None,
+                 forward_from_message_id: Optional[str] = None, from_user: Optional["User"] = None,
+                 document: Optional["Document"] = None,
+                 contact: Optional["ContactMessage"] = None, location: Optional["Location"] = None,
+                 chat: Optional["Chat"] = None, photos: Optional[List["Photo"]] = None,
+                 reply_to_message: Optional["Message"] = None, invoice: Optional["Invoice"] = None,
                  bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
@@ -147,15 +154,21 @@ class Message:
         return cls(bot=bot, message_id=str(data.get("message_id")),
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
-                       "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))), text=data.get("text"),
-                   caption=data.get("caption"), from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
-                   forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get("forward_from") else None,
-                   forward_from_chat=Chat.from_dict(bot=bot, data=data.get("forward_from_chat")) if data.get("forward_from_chat") else None,
-                   forward_from_message_id=str(data.get("forward_from_message_id")) if data.get("forward_from_message_id") else None,
-                   document=Document.from_dict(bot = bot, data=data.get("document")) if data.get("document") else None,
+                       "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))),
+                   text=data.get("text"),
+                   caption=data.get("caption"),
+                   from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
+                   forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get(
+                       "forward_from") else None,
+                   forward_from_chat=Chat.from_dict(bot=bot, data=data.get("forward_from_chat")) if data.get(
+                       "forward_from_chat") else None,
+                   forward_from_message_id=str(data.get("forward_from_message_id")) if data.get(
+                       "forward_from_message_id") else None,
+                   document=Document.from_dict(bot=bot, data=data.get("document")) if data.get("document") else None,
                    contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
                    location=Location.from_dict(data=data.get("location")) if data.get("location") else None,
-                   photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get("photo") else None,
+                   photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get(
+                       "photo") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     def to_dict(self):
@@ -193,7 +206,7 @@ class Message:
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
         return await self.bot.send_message(self.chat_id, text, components=components,
-                                       reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                           reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
     async def forward(self, chat_id: str | int):
         """
@@ -205,25 +218,37 @@ class Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption, reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+        return await self.bot.send_document(self.chat_id, document, caption=caption,
+                                            reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
     async def reply_photo(self, photo: bytes | str | "Photo", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption, reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption,
+                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
-    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, photo_url: Optional[str] = None,
-                need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
-                need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+    async def reply_video(self, video: bytes | str | "Video", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+        """
+        return await self.bot.send_video(self.chat_id, video, caption=caption,
+                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+
+    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
+                            photo_url: Optional[str] = None,
+                            need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
+                            need_email: Optional[bool] = False,
+                            need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
         """
         return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
-                                        photo_url=photo_url, need_name=need_name, need_email=need_email,
-                                        need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible)
+                                           photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                           need_phone_number=need_phone_number,
+                                           need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
-    async def edit(self, text: str, *, components: "Components" | "RemoveComponents"=None) -> Message:
+    async def edit(self, text: str, *, components: "Components" | "RemoveComponents" = None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
         """
