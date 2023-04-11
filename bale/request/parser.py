@@ -55,9 +55,6 @@ class ResponseParser:
 
 	@classmethod
 	async def from_response(cls, data: "ClientResponse"):
-		if data.status == 404:
-			return cls(False, raw=dict())
-
 		data = await json_or_text(data)
 
 		if isinstance(data, str):
