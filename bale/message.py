@@ -233,7 +233,7 @@ class Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
         """
-        await self.bot.delete_message(self.chat_id, self.message_id)
+        return await self.bot.delete_message(self.chat_id, self.message_id)
 
     def __str__(self):
         return str(self.message_id)
