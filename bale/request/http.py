@@ -172,10 +172,12 @@ class HTTPClient:
 							return parsed_response
 						elif response.status == ResponseStatusCode.NOT_FOUND:
 							raise NotFound(parsed_response.description)
+						elif response.status == ResponseStatusCode.PERMISSION_DENIED:
+							raise Forbidden()
 						elif not parsed_response.ok or response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
 							if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
 								raise NotFound("User or Chat not Found")
-							elif response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description == HTTPClientError.RATE_LIMIT or parsed_response.description == HTTPClientError.LOCAL_RATE_LIMIT:
+							elif response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
 								if tries >= 4:
 									raise RateLimited()
 
