@@ -246,6 +246,16 @@ Message
    :param message: The message
    :type message: :class:`bale.Message`
 
+Edited Message
+~~~~~~~~~~~~~~
+
+.. function:: on_edited_message(message)
+
+   Called when a Message Edited.
+
+   :param message: The message
+   :type message: :class:`bale.Message`
+
 Callback
 ~~~~~~~~
 
@@ -259,10 +269,12 @@ Callback
 Member Chat Join
 ~~~~~~~~~~~~~~~~
 
-.. function:: on_member_chat_join(chat, user)
+.. function:: on_member_chat_join(message, chat, user)
 
    When a user joins the chat.
 
+   :param message: The user joins Message
+   :type message: :class:`bale.Message`
    :param chat: The Chat
    :type chat: :class:`bale.Chat`
    :param user: The user who entered the chat
@@ -271,10 +283,12 @@ Member Chat Join
 Member Chat Leave
 ~~~~~~~~~~~~~~~~
 
-.. function:: on_member_chat_leave(chat, user)
+.. function:: on_member_chat_leave(message, chat, user)
 
    When a user leaves the chat.
 
+   :param message: The user leaved Message
+   :type message: :class:`bale.Message`
    :param chat: The Chat
    :type chat: :class:`bale.Chat`
    :param user: The user who leaved the chat
