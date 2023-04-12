@@ -129,9 +129,9 @@ class Updater:
         elif update.type.is_message_update():
             self.bot.dispatch("message", update.message)
             if update.message.left_chat_member:
-                self.bot.dispatch("member_chat_leave", update.message.chat, update.message.left_chat_member)
+                self.bot.dispatch("member_chat_leave", update.message, update.message.chat, update.message.left_chat_member)
             for user in update.message.new_chat_members or []:
-                self.bot.dispatch("member_chat_join", update.message.chat, user)
+                self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
         elif update.type.is_edited_message():
             self.bot.dispatch("edited_message", update.edited_message)
 
