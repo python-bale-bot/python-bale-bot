@@ -35,11 +35,13 @@ __all__ = (
 
 class EventType:
     """This object represents an Event Type.
+
     Attributes:
         READY (:class:`str`): :meth:`bale.on_ready`
         BEFORE_READY (:class:`str`): :meth:`bale.on_before_ready`
         UPDATE (:class:`str`): :meth:`bale.on_update`
         MESSAGE (:class:`str`): :meth:`bale.on_message`
+        EDITED_MESSAGE (:class:`str`): :meth:`bale.on_edited_message`
         CALLBACK (:class:`str`): :meth:`bale.on_callback`
         MEMBER_CHAT_JOIN (:class:`str`): :meth:`bale.on_member_chat_join`
         MEMBER_CHAT_LEAVE (:class:`str`): :meth:`bale.on_member_chat_leave`
@@ -62,9 +64,7 @@ class Updater:
             _last_offset (int | None): Last of Offset for get updates.
             _is_running (bool): get status of updater.
         Args:
-            bot (:class:`bale.Bot`): Bot.
-        Raises:
-            :class:`bale.Error`
+            bot (:class:`bale.Bot`): The Bot Object.
     """
     __slots__ = (
         "bot",
