@@ -131,8 +131,8 @@ class Bot:
         return asyncio.wait_for(future, timeout=timeout)
 
     @property
-    def user(self) -> "User" or None:
-        """Represents the connected client. ``None`` if not logged in"""
+    def user(self) -> Optional["User"]:
+        """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
         return self._user
 
     async def setup_hook(self):
@@ -931,7 +931,7 @@ class Bot:
             )
 
         response = await self.http.get_chat_administrators(chat_id)
-        return [ChatMember.from_dict(data=member_payload) for member_payload in response.result or list()]
+        return [ChatMember.from_dict(chat_id=chat_id, data=member_payload, bot=self) for member_payload in response.result or list()]
 
     async def get_file(self, file_id: str):
         """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
