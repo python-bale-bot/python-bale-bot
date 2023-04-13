@@ -32,7 +32,7 @@ from .attachments.contact import ContactMessage
 from .chat import Chat, ChatType
 from .message import Message
 from .permissions import Permissions
-from .chatmember import ChatMember, MemberRole
+from .chatmember import ChatMember, ChatMemberStatus
 from .callbackquery import CallbackQuery
 from .update import Update, UpdateType
 from .updater import Updater, EventType

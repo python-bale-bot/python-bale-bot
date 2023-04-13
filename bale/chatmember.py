@@ -28,13 +28,13 @@ if TYPE_CHECKING:
 from bale import Permissions, User
 
 __all__ = (
-    "MemberRole",
+    "ChatMemberStatus",
     "ChatMember"
 )
 
 
-class MemberRole:
-    """This object shows member's role in chat.
+class ChatMemberStatus:
+    """This object shows member's status in chat.
 
     .. container:: operations
         .. describe:: x == y
@@ -44,32 +44,39 @@ class MemberRole:
     """
 
     OWNER = "creator"
-    CREATOR = OWNER
     ADMIN = "administrator"
-    __slots__ = ("_role",)
+    MEMBER = "member"
+    CREATOR = OWNER
+    __slots__ = ("_status",)
 
-    def __init__(self, _role: str):
-        self._role = _role
+    def __init__(self, _status: str):
+        self._status = _status
 
     @property
-    def role(self) -> str:
-        return self._role
+    def status(self) -> str:
+        """"""
+        return self._status
 
     def is_owner(self):
         """bool:
 			Return ``True`` if Member is chat creator"""
-        return self._role == self.OWNER
+        return self._status == self.OWNER
 
     def is_admin(self):
         """bool:
-			Return ``True`` if Member have admin role"""
-        return self._role == self.ADMIN
+			Return ``True`` if Member have admin status"""
+        return self._status == self.ADMIN
+
+    def is_member(self):
+        """bool:
+            Return ``True`` if Member haven't any status"""
+        return self._status == self.MEMBER
 
     def __repr__(self):
-        return f"<MemberRole role={self.role}>"
+        return f"<MemberRole role={self.status}>"
 
     def __eq__(self, other):
-        return self._role == other
+        return self._status == other
 
     def __ne__(self, other):
         return not self.__eq__(other)
@@ -80,18 +87,20 @@ class ChatMember:
 
     Attributes
     ----------
-        role: :class:`bale.MemberRole`
-            User Role
-        permissions: :class:`bale.AdminPermissions`
-            User Permissions
+        user: :class:`bale.User`
+            Information about the user.
+        status: :class:`bale.ChatMemberStatus`
+            The member’s status in the chat.
+        permissions: :class:`bale.Permissions`
+            The member’s permissions in the chat.
     """
     __slots__ = (
-        "chat_id", "role", "user", "permissions", "bot"
+        "chat_id", "status", "user", "permissions", "bot"
     )
 
-    def __init__(self, chat_id: int, role: "MemberRole", user: "User", permissions: "Permissions", bot: "Bot"):
+    def __init__(self, chat_id: int, status: "ChatMemberStatus", user: "User", permissions: "Permissions", bot: "Bot"):
         self.chat_id = chat_id
-        self.role = role
+        self.status = status
         self.user = user
         self.permissions = permissions
         self.bot = bot
@@ -105,7 +114,7 @@ class ChatMember:
     @classmethod
     def from_dict(cls, chat_id: int, data: dict, bot: "Bot"):
         return cls(chat_id=chat_id, permissions=Permissions.from_dict(data), user=User.from_dict(data.get("user")),
-                   role=MemberRole(data.get("status")), bot=bot)
+                   status=ChatMemberStatus(data.get("status")), bot=bot)
 
     def __repr__(self):
-        return f"<ChatMember chat_id={self.chat_id} role={self.role} user={self.user} permissions={self.permissions}>"
+        return f"<ChatMember chat_id={self.chat_id} status={self.status} user={self.user} permissions={self.permissions}>"
