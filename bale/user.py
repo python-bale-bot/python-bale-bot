@@ -63,7 +63,7 @@ class User:
 
     @property
     def mention(self) -> str | None:
-        """Optional[:class:`str`]"""
+        """Optional[:class:`str`]: User’s or bot’s mention with username."""
         return f"@{self.username}" if self.username else None
 
     @property
