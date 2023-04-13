@@ -262,3 +262,12 @@ class Message:
 
     def __str__(self):
         return str(self.message_id)
+
+    def __eq__(self, other):
+        return isinstance(other, Message) and self.message_id == other.message_id
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return f"<Message message_id={self.message_id} from={self.from_user} chat={self.chat}>"
