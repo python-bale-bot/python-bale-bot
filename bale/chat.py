@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
+from bale import User
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
     from bale import Bot, Message, User, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage, Video
@@ -235,7 +236,7 @@ class Chat:
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True),
-                   invite_link=data.get("invite_link", True))
+                   invite_link=data.get("invite_link"))
 
     def to_dict(self):
         data = {
