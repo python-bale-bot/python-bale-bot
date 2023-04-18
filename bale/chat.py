@@ -44,6 +44,7 @@ class ChatType:
     """
     PRIVATE = "private"
     GROUP = "group"
+    CHANNEL = "channel"
 
     __slots__ = (
         "_type",
@@ -65,6 +66,11 @@ class ChatType:
         """bool:
             Return ``True`` if Chat Type is Group"""
         return self._type == self.GROUP
+
+    def is_channel_chat(self):
+        """bool:
+            Return ``True`` if Chat Type is Channel"""
+        return self._type == self.CHANNEL
 
     def __repr__(self):
         return f"<ChatType type={self.type}>"
