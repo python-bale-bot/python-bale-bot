@@ -5,6 +5,26 @@ Change Log
 
 Project changes are shown on this page.
 
+v2.4.5
+------
+
+New Features
+~~~~~~~~~~~~
+
+- Improve documentation
+- Add new methods (:meth:`bale.Bot.forward_message`, :meth:`bale.Bot.ban_chat_member`, :meth:`bale.Bot.send_video`)
+- Add new event :meth:`bale.Bot.on_edited_message`
+
+Bug Fixes
+~~~~~~~~~~
+
+- Fix bugs in parse Updates
+- Updater.__lock bug
+- :attr:`bale.Update.type` bugs
+- Fix :attr:`bale.Chat.invite_link` bugs
+- Improving the :class:`bale.Message` class (`__eq__`, `__ne__`, `__repr__`)
+- Add new type `channel` to :class:`bale.ChatType`
+
 v2.4.4
 ------
 
