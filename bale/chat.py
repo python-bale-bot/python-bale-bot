@@ -257,8 +257,7 @@ class Chat:
         return data
 
     def __str__(self):
-        return (str(self.username) + "#" + str(self.chat_id) if self.username else str(self.first_name) + " " + str(
-            self.last_name))
+        return str(self.first_name) + str(self.last_name)
 
     def __eq__(self, other):
         return isinstance(other, Chat) and self.chat_id == other.chat_id
