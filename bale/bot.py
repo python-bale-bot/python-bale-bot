@@ -621,32 +621,32 @@ class Bot:
                 "chat param must be type of str or int"
             )
 
-        if not isinstance(photo_url, str):
+        if photo_url and not isinstance(photo_url, str):
             raise TypeError(
                 "photo_url param must be type of str"
             )
 
-        if not isinstance(need_name, bool):
+        if need_name is not None and not isinstance(need_name, bool):
             raise TypeError(
                 "need_name param must be type of boolean"
             )
 
-        if not isinstance(need_phone_number, bool):
+        if need_phone_number is not None and not isinstance(need_phone_number, bool):
             raise TypeError(
                 "need_phone_number param must be type of boolean"
             )
 
-        if not isinstance(need_email, bool):
+        if need_email is not None and not isinstance(need_email, bool):
             raise TypeError(
                 "need_email param must be type of boolean"
             )
 
-        if not isinstance(need_shipping_address, bool):
+        if need_shipping_address is not None and not isinstance(need_shipping_address, bool):
             raise TypeError(
                 "need_shipping_address param must be type of boolean"
             )
 
-        if not isinstance(is_flexible, bool):
+        if is_flexible is not None and not isinstance(is_flexible, bool):
             raise TypeError(
                 "is_flexible param must be type of boolean"
             )
@@ -1028,8 +1028,8 @@ class Bot:
             )
 
         response = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result or list()
-                if not offset or (offset and update_payload.get("update_id") > offset)]
+        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
+                if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
 
     async def connect(self, sleep_after_every_get_updates):
         self._user = await self.get_bot()
