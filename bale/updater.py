@@ -113,14 +113,16 @@ class Updater:
         while self._is_running:
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
-                for update in updates:
-                    await self.call_to_dispatch(update)
-
-                self._last_offset = updates[-1].update_id if bool(updates) else self._last_offset
-                if self.interval:
-                    await asyncio.sleep(self.interval)
             except Exception as exc:
                 await self.bot.on_error("getUpdates", exc)
+            else:
+                if updates:
+                    for update in updates:
+                        await self.call_to_dispatch(update)
+
+                    self._last_offset = updates[-1].update_id + 1 if bool(updates) else self._last_offset
+                if self.interval:
+                    await asyncio.sleep(self.interval)
 
     async def call_to_dispatch(self, update: "Update"):
         self.bot.dispatch("update", update)
@@ -135,9 +137,10 @@ class Updater:
         elif update.type.is_edited_message():
             self.bot.dispatch("edited_message", update.edited_message)
 
-    def stop(self):
+    async def stop(self):
         """Stop running and Stop `poll_event` loop"""
-        if not self._is_running:
-            raise RuntimeError("Updater is not running")
+        async with self.__lock:
+            if not self._is_running:
+                raise RuntimeError("Updater is not running")
 
-        self._is_running = False
+            self._is_running = False
