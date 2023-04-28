@@ -41,4 +41,5 @@ from .bot import Bot
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
+__copyright__ = 'Copyright 2021-present Kian Ahmadian'
 __license__ = 'MIT'
