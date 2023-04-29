@@ -90,27 +90,21 @@ class Route:
 	"""Route Class for http"""
 	__slots__ = (
 		"method",
-		"path",
-		"token",
-		"_base"
+		"endpoint",
+		"token"
 	)
 
-	def __init__(self, method: str, path: str, token: str):
+	def __init__(self, method: str, endpoint: str, token: str):
 		if not isinstance(token, str):
 			raise TypeError("token param must be str.")
 		self.method = method
-		self.path = path
+		self.endpoint = endpoint
 		self.token = token
-		self._base = BALE_API_BASE_URL
 
 	@property
 	def url(self):
-		"""finally url"""
-		return self._base + "bot" + self.token + "/" + self.path
-
-	def set_base(self, _value):
-		"""Set base url for route"""
-		self._base = _value
+		"""export url for request"""
+		return "{base_url}bot{token}/{endpoint}".format(base_url = BALE_API_BASE_URL, token = self.token, endpoint = self.endpoint)
 
 class HTTPClient:
 	"""Send a Request to BALE API Server"""
@@ -119,16 +113,14 @@ class HTTPClient:
 		"_loop",
 		"token",
 		"__session",
-		"rate_limit",
-		"base_url"
+		"rate_limit"
 	)
 
-	def __init__(self, loop, token=None, base_url = None):
+	def __init__(self, loop, token):
 		self.__session = None
 		self._loop: asyncio.AbstractEventLoop = loop
 		self.token = token
 		self.rate_limit = RateLimit(self.loop)
-		self.base_url: str = base_url
 
 	def is_closed(self):
 		return self.__session is None
@@ -149,6 +141,8 @@ class HTTPClient:
 
 	async def start(self):
 		"""Start Http client"""
+		if self.__session:
+			raise RuntimeError("HTTPClient started ")
 		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def close(self):
@@ -158,8 +152,6 @@ class HTTPClient:
 			self.__session = None
 
 	async def request(self, route: Route, **kwargs):
-		if self.base_url:
-			route.set_base(self.base_url)
 		url = route.url
 		method = route.method
 		async with self.rate_limit:
@@ -181,11 +173,7 @@ class HTTPClient:
 								if tries >= 4:
 									raise RateLimited()
 
-								if bool(self.rate_limit):
-									await self.rate_limit.new_request()
-								else:
-									self.rate_limit.enable()
-									await asyncio.sleep(tries * 2 + 1)
+								await asyncio.sleep((1 + tries) * 2)
 								continue
 							elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
 								raise Forbidden()
@@ -203,7 +191,7 @@ class HTTPClient:
 					raise HTTPException(error)
 
 	async def get_file(self, file_id):
-		async with self.__session.get(BALE_API_FILE_URL + "/" + "bot" + self.token + "/" + file_id) as response:
+		async with self.__session.get("{base_file_url}/bot{token}/{file_id}".format(base_file_url = BALE_API_FILE_URL, token = self.token, file_id = file_id)) as response:
 			if response.status == ResponseStatusCode.OK:
 				return await response.read()
 			elif response.status == ResponseStatusCode.NOT_FOUND:
