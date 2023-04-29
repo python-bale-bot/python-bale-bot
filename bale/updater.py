@@ -120,7 +120,7 @@ class Updater:
                     for update in updates:
                         await self.call_to_dispatch(update)
 
-                    self._last_offset = updates[-1].update_id + 1 if bool(updates) else self._last_offset
+                    self._last_offset = updates[-1].update_id
                 if self.interval:
                     await asyncio.sleep(self.interval)
 
