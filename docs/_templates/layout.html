@@ -1,11 +1,10 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>{{ title|striptags|e }}{{ titlesuffix }}</title>
+  <title>{{ titlesuffix }} | python-bale-bot Documention</title>
   {%- block extrahead %} {% endblock %}
-  <!-- end extra head -->
   <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
   {%- block css %}
   {%- for css in css_files %}
@@ -69,10 +68,8 @@
     <header class="grid-item">
       <nav>
         <a href="{{ pathto(master_doc)|e }}" class="main-heading">python-bale-bot</a>
-        <a href="https://github.com/kian-ahmadian/python-bale-bot" title="GitHub"><span class="material-icons custom-icons">github</span></a>
+        <a href="https://github.com/python-bale-bot/python-bale-bot" title="GitHub"><span class="material-icons custom-icons">github</span></a>
         <a href="{{ discord_invite }}" title="{{ _('Discord') }}"><span class="material-icons custom-icons">discord</span></a>
-        <a href="{{ pathto('faq') }}" title="{{ _('FAQ') }}"><span class="material-icons">help_center</span></a>
-        {#- If we have more links we can put them here #}
         <a onclick="mobileSearch.open();" title="{{ _('Search') }}" id="open-search" class="mobile-only"><span class="material-icons">search</span></a>
         <a onclick="mobileSearch.close();" title="{{ _('Close') }}" id="close-search" class="mobile-only" hidden><span class="material-icons">close</span></a>
       </nav>
@@ -87,19 +84,7 @@
         </form>
       </nav>
     </header>
-    {#- The sub-header with search and extension related selection #}
-    <div class="sub-header grid-item">
-      <label for="documentation_select">{{ _('View Documentation For') }}</label>
-      <select id="documentation_select" onchange="window.location = this.value;">
-        {%- if pagename is prefixedwith 'ext/' %}
-        <option value="{{ pathto(master_doc)|e }}">bale</option>
-        {%- else %}
-        <option value="{{ pathto(pagename) }}" selected>bale</option>
-        {%- endif %}
-        {%- for ext, p in bale_extensions %}
-        <option value="{{ pathto(p + '/index')|e }}" {% if pagename is prefixedwith p %}selected{% endif %}>{{ ext }}</option>
-        {%- endfor %}
-      </select>
+    <div class="sub-header grid-item align-center">
       <form id="search-form" role="search" class="search" action="{{ pathto('search') }}" method="get">
         <div class="search-wrapper">
           <input type="search" name="q" placeholder="{{ _('Search documentation') }}" />
@@ -121,14 +106,6 @@
         <span class="material-icons">settings</span>
       </span>
       <div id="sidebar">
-        <form id="sidebar-form" role="search" class="search" action="{{ pathto('search') }}" method="get">
-        <div class="search-wrapper search-sidebar">
-          <input type="search" name="q" placeholder="{{ _('Search documentation') }}" />
-          <button type="submit" onmousedown="searchBarClick(event, document.getElementById('sidebar-form'));">
-            <span class="material-icons">search</span>
-          </button>
-        </div>
-      </form>
         {%- include "localtoc.html" %}
       </div>
     </aside>
