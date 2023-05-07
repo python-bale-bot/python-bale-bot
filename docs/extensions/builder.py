@@ -1,7 +1,7 @@
 from sphinx.builders.html import StandaloneHTMLBuilder
 from sphinx.builders.gettext import MessageCatalogBuilder, I18nBuilder, timestamp, ltz, should_write, GettextRenderer
 from sphinx.locale import __
-from sphinx.util.display import status_iterator
+from sphinx.util import status_iterator
 from sphinx.util.osutil import ensuredir
 from sphinx.environment.adapters.indexentries import IndexEntries
 from sphinx.writers.html5 import HTML5Translator
