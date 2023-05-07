@@ -58,7 +58,7 @@ class CallbackQuery:
         "bot"
     )
 
-    def __init__(self, callback_id: int = None, data: str = None, message: "Message" = None,
+    def __init__(self, callback_id: int, data: str = None, message: "Message" = None,
                  inline_message_id: str = None, from_user: "User" = None, bot: "Bot" = None):
         self.callback_id = callback_id
         self.data = data
@@ -93,6 +93,12 @@ class CallbackQuery:
             data["from_user"] = self.from_user.to_dict()
 
         return data
+
+    def __eq__(self, other):
+        return isinstance(other, CallbackQuery) and self.callback_id == other.callback_id
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __repr__(self):
         return f"<CallbackQuery inline_message_id={self.inline_message_id} message={self.message} from_user={self.from_user} data={self.data}>"
