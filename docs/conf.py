@@ -68,7 +68,7 @@ rst_prolog = """
 
 html_theme = 'basic'
 html_static_path = ['_static']
-html_show_sphinx = True
+html_show_sphinx = False
 html_logo = "_static/images/bale.png"
 html_favicon = "_static/images/bale.png"
 html_css_files = ["css/style.css", "css/codeblocks.css"]
