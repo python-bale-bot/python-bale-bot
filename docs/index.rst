@@ -12,12 +12,6 @@ Getting Started
 ---------------
 * :doc:`quickstart`
 
-
-Indices and tables
-==================
-* :ref:`search`
-
-
 Manuals
 =======
 .. toctree::
