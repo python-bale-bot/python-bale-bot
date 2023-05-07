@@ -298,7 +298,7 @@ class Bot:
             from_chat_id: :class:`str` | :class:`int`
                 the chat where the original message was sent (or channel username in the format @channelusername).
             message_id: :class:`int` | :class:`str`
-                Message in the chat specified in :param:`from_chat_id`.
+                Message in the chat specified in ``from_chat_id``.
         Returns
         -------
             :class:`bale.Message`
