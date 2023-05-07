@@ -53,16 +53,16 @@ User
 .. autoclass:: bale.User()
    :members:
 
-ChatMember
-~~~~~~~~~~
+Chat Member
+~~~~~~~~~~~
 
 .. attributetable:: bale.ChatMember
 
 .. autoclass:: bale.ChatMember()
    :members:
 
-MemberRole
-~~~~~~~~~~
+Member Role
+~~~~~~~~~~~
 .. autoclass:: bale.MemberRole()
    :members:
 
@@ -200,7 +200,7 @@ Event Types
    :members:
 
 .. note::
-    You can use :class:`bale.EventType` for Events.
+    You must be use :class:`bale.EventType` for general events
 
 .. code-block:: python3
 
