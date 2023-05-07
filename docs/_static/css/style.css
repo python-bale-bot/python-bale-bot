@@ -30,7 +30,7 @@ Historically however, thanks to:
   --grey-4: #b1b1b3;
   --grey-5: #737373;
   --grey-6: #4a4a4f;
-  --grey-7: #38383d;
+  --grey-7: #010115;
   --grey-8: #2a2a2e;
   --black: #0c0c0d;
 
@@ -171,16 +171,6 @@ Historically however, thanks to:
   --highlighted-text: rgba(250, 166, 26, 0.2);
   --search-sidebar-background: var(--grey-7);
   --search-sidebar-text: var(--search-text);
-}
-
-img[src$="snake_dark.svg"]  {
-  display: none;
-}
-:root[data-theme="dark"] img[src$="snake.svg"] {
-  display: none;
-}
-:root[data-theme="dark"] img[src$="snake_dark.svg"] {
-  display: inherit;
 }
 
 body {
