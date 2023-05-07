@@ -212,7 +212,7 @@ class Bot:
 
         Returns
         -------
-            :class:`Bale.User` :
+            :class:`bale.User` :
                 Bot User information.
         Raises
         ------
