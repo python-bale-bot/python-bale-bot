@@ -281,7 +281,7 @@ Member Chat Join
    :type user: :class:`bale.User`
 
 Member Chat Leave
-~~~~~~~~~~~~~~~~
+~~~~~~~~~~~~~~~~~
 
 .. function:: on_member_chat_leave(message, chat, user)
 
