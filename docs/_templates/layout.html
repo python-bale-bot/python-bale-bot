@@ -84,7 +84,19 @@
         </form>
       </nav>
     </header>
-    <div class="sub-header grid-item align-center">
+    {#- The sub-header with search and extension related selection #}
+    <div class="sub-header grid-item">
+      <label for="documentation_select">{{ _('View Documentation For') }}</label>
+      <select id="documentation_select" onchange="window.location = this.value;">
+        {%- if pagename is prefixedwith 'ext/' %}
+        <option value="{{ pathto(master_doc)|e }}">bale</option>
+        {%- else %}
+        <option value="{{ pathto(pagename) }}" selected>bale</option>
+        {%- endif %}
+        {%- for ext, p in bale_extensions %}
+        <option value="{{ pathto(p + '/index')|e }}" {% if pagename is prefixedwith p %}selected{% endif %}>{{ ext }}</option>
+        {%- endfor %}
+      </select>
       <form id="search-form" role="search" class="search" action="{{ pathto('search') }}" method="get">
         <div class="search-wrapper">
           <input type="search" name="q" placeholder="{{ _('Search documentation') }}" />
