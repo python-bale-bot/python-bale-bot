@@ -61,9 +61,9 @@ Chat Member
 .. autoclass:: bale.ChatMember()
    :members:
 
-Member Role
-~~~~~~~~~~~
-.. autoclass:: bale.MemberRole()
+Chat Member Status
+~~~~~~~~~~~~~~~~~~
+.. autoclass:: bale.ChatMemberStatus()
    :members:
 
 Message
