@@ -150,7 +150,7 @@ class Chat:
 
     async def send_document(self, document: bytes | str | "Document", *, caption: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption)
 
