@@ -620,6 +620,21 @@ class Bot:
                 "chat param must be type of str or int"
             )
 
+        if not isinstance(title, str):
+            raise TypeError(
+                "title param must be type of str"
+            )
+
+        if not isinstance(provider_token, str):
+            raise TypeError(
+                "provider_token param must be type of str"
+            )
+
+        if not isinstance(prices, list):
+            raise TypeError(
+                "prices must param must be type of list"
+            )
+
         if photo_url and not isinstance(photo_url, str):
             raise TypeError(
                 "photo_url param must be type of str"
