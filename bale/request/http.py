@@ -27,64 +27,8 @@ import aiohttp
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode
-from collections import deque
 
 __all__ = ("HTTPClient", "Route")
-
-
-class RateLimit:
-	__slots__ = (
-		"_loop",
-		"_requests",
-		"_has_rate_limit"
-	)
-	def __init__(self, loop):
-		self._has_rate_limit = False
-		self._requests = deque()
-		self._loop = loop
-
-	def enable(self):
-		self._has_rate_limit = True
-
-	def _next(self):
-		while self._requests:
-			future = self._requests.popleft()
-
-			if not future.done():
-				future.set_result(None)
-				break
-
-	def _wake(self):
-		while self._requests:
-			future = self._requests.popleft()
-			if not future.done():
-				future.set_result(None)
-
-	async def new_request(self):
-		if self._has_rate_limit:
-			future = self._loop.create_future()
-			self._requests.append(future)
-
-			try:
-				await future
-			except:
-				future.cancel()
-				if not self._has_rate_limit:
-					self._next()
-				raise
-
-	async def __aenter__(self):
-		await self.new_request()
-		return self
-
-	async def __aexit__(self, exc_type, exc_val, exc_tb):
-		if len(self._requests) > 0:
-			self._next()
-		else:
-			self._has_rate_limit = False
-
-	def __bool__(self):
-		return self._has_rate_limit
 
 class Route:
 	"""Route Class for http"""
@@ -120,7 +64,6 @@ class HTTPClient:
 		self.__session = None
 		self._loop: asyncio.AbstractEventLoop = loop
 		self.token = token
-		self.rate_limit = RateLimit(self.loop)
 
 	def is_closed(self):
 		return self.__session is None
@@ -194,8 +137,8 @@ class HTTPClient:
 		async with self.__session.get("{base_file_url}/bot{token}/{file_id}".format(base_file_url = BALE_API_FILE_URL, token = self.token, file_id = file_id)) as response:
 			if response.status == ResponseStatusCode.OK:
 				return await response.read()
-			elif response.status == ResponseStatusCode.NOT_FOUND:
-				raise NotFound("Document is not Found")
+			elif response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.NOT_FOUND):
+				raise NotFound("File is not Found")
 			elif response.status == ResponseStatusCode.PERMISSION_DENIED:
 				raise Forbidden()
 			else:
