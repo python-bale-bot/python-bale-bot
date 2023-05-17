@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage
+    from bale import Bot, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage, Video, Audio
 
 
 class User:
@@ -88,6 +88,18 @@ class User:
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption)
+
+    async def send_video(self, video: bytes | str | "Video", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+        """
+        return await self.bot.send_video(self.chat_id, video, caption=caption)
+
+    async def send_audio(self, audio: bytes | str | "Audio", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+        """
+        return await self.bot.send_audio(self.chat_id, audio, caption=caption)
 
     async def send_location(self, location: "Location"):
         """
