@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from bale import Bot
 
 from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents, Price,
-                  Video)
+                  Video, Audio)
 
 
 class Message:
@@ -62,6 +62,10 @@ class Message:
             Message is a shared location, information about the location.
         document: Optional[:class:`bale.Document`]
             Message is a general file, information about the file.
+        video: Optional[:class:`bale.Video`]
+            Message is a video, information about the video.
+        audio: Optional[:class:`bale.Audio`]
+            Message is an audio, information about the Audio.
         new_chat_members: Optional[List[:class:`bale.User`]]
             New members that were added to the group or supergroup and information about them (the bot itself may be one of these members). This list is empty if the message does not contain new chat members.
         left_chat_member: Optional[:class:`bale.User`]
@@ -72,7 +76,7 @@ class Message:
     __slots__ = (
         "text", "caption", "from_user", "_author", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
-        "edit_date", "audio", "document", "photos", "voice", "location", "invoice", "new_chat_members",
+        "edit_date", "audio", "document", "video", "photos", "voice", "location", "invoice", "new_chat_members",
         "left_chat_member", "reply_to_message",
         "invoice", "bot"
     )
@@ -82,8 +86,9 @@ class Message:
                  forward_from_message_id: Optional[str] = None, from_user: Optional["User"] = None,
                  document: Optional["Document"] = None,
                  contact: Optional["ContactMessage"] = None, location: Optional["Location"] = None,
-                 chat: Optional["Chat"] = None, photos: Optional[List["Photo"]] = None,
-                 reply_to_message: Optional["Message"] = None, invoice: Optional["Invoice"] = None,
+                 chat: Optional["Chat"] = None, video: Optional["Video"] = None,
+                 photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None,
+                 invoice: Optional["Invoice"] = None, audio: Optional["Audio"] = None,
                  bot: 'Bot' = None, **options):
         self.message_id: str = message_id if message_id is not None else None
         self.date = date if date is not None else None
@@ -97,6 +102,8 @@ class Message:
         self.forward_from_chat: Chat | None = forward_from_chat if forward_from_chat is not None else None
         self.caption: str | None = caption if caption is not None else None
         self.document = document if document is not None else None
+        self.video = video if video is not None else None
+        self.audio = audio if audio is not None else None
         self.photos = photos if photos is not None else None
         self.contact: ContactMessage | None = contact if contact is not None else None
         self.location: Location | None = location if location is not None else None
@@ -167,8 +174,9 @@ class Message:
                    document=Document.from_dict(bot=bot, data=data.get("document")) if data.get("document") else None,
                    contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
                    location=Location.from_dict(data=data.get("location")) if data.get("location") else None,
+                   audio=Audio.from_dict(data=data.get("audio")) if data.get("audio") else None,
                    photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get(
-                       "photo") else None,
+                       "photo") else None, video=Video.from_dict(data=data.get("video")) if data.get("video") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     def to_dict(self):
@@ -184,6 +192,10 @@ class Message:
             data["document"] = self.document.to_dict()
         if self.photos:
             data["photo"] = [photo.to_dict() for photo in self.photos]
+        if self.video:
+            data["video"] = self.video.to_dict()
+        if self.audio:
+            data["audio"] = self.audio.to_dict()
         if self.contact:
             data["contact"] = self.contact.to_dict()
         if self.location:
@@ -233,6 +245,13 @@ class Message:
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
+                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+
+    async def reply_audio(self, audio: bytes | str | "Audio", *, caption: Optional[str] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+        """
+        return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
     async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
