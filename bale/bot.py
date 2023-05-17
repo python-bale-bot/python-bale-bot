@@ -27,7 +27,7 @@ from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
-                  Photo, Document, Location, ContactMessage, Video)
+                  Photo, Document, Location, ContactMessage, Video, Audio)
 
 __all__ = (
     "Bot"
@@ -340,7 +340,7 @@ class Bot:
         chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         document: :class:`bytes` | :class:`str` | :class:`bale.Document`
-            File to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
+            File to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
         caption: Optional[:class:`str`]
             Document caption.
         reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -391,7 +391,7 @@ class Bot:
             chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
+                Photo to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
             caption: Optional[:class:`str`]
                 Photo caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -438,6 +438,62 @@ class Bot:
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
+    async def send_audio(self, chat_id: str | int, audio: bytes | str | "Audio", *, caption: Optional[str] = None,
+                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+        """This service is used to send Audio.
+
+        Parameters
+        ----------
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            audio: :class:`bytes` | :class:`str` | :class:`bale.Audio`
+                Audio file to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
+            caption: Optional[:class:`str`]
+                Audio caption.
+            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Send Audio to chat.
+            APIError
+                Send Audio Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(audio, (bytes, str, Audio)):
+            raise TypeError(
+                "audio param must be type of bytes, str or Audio"
+            )
+
+        if isinstance(audio, Audio):
+            audio = audio.file_id
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        if caption and not isinstance(caption, str):
+            raise TypeError(
+                "caption param must be type of str"
+            )
+
+        response = await self.http.send_audio(str(chat_id), audio, caption=caption,
+                                              reply_to_message_id=reply_to_message_id)
+        return Message.from_dict(data=response.result, bot=self)
+
     async def send_video(self, chat_id: str | int, video: bytes | str | "Photo", *, caption: Optional[str] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Video.
@@ -447,7 +503,7 @@ class Bot:
             chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             video: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Video to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Telegram to get a file from the Internet, or upload a new one.
+                Video to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
             caption: Optional[:class:`str`]
                 Video caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -500,7 +556,7 @@ class Bot:
         Parameters
         ----------
         chat_id: :class:`str` | :class:`int`
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         location: :class:`bale.Location`
             The Location.
 
