@@ -26,7 +26,7 @@ if __name__ == "__main__":
         license="MIT License",
         project_urls={
             "Documentation": "https://docs.python-bale-bot.ir/en/master/",
-            "Changelog": "https://python-bale-bot.rtfd.io/en/master/whats_new.html",
+            "Changelog": "https:///docs.python-bale-bot.ir/en/master/whats_new.html",
             "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues",
             "Source Code": "https://github.com/python-bale-bot/python-bale-bot/"
         },
