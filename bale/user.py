@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage, Video, Audio
+    from bale import Bot, Photo, Document, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, Video, Audio
 
 
 class User:
@@ -71,7 +71,7 @@ class User:
         """:class:`str`"""
         return str(self.user_id)
 
-    async def send(self, text: str, components: Optional["Components" | "RemoveComponents"] =None):
+    async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] =None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """

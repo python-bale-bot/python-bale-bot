@@ -25,7 +25,7 @@ from __future__ import annotations
 from bale import User
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, Photo, Document, Components, RemoveComponents, Price, Location, ContactMessage, Video, Audio
+    from bale import Bot, Message, User, Photo, Document, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, Video, Audio
 
 
 __all__ = (
@@ -142,7 +142,7 @@ class Chat:
         """Optional[:class:`str`]"""
         return ("@" + self.username) if self.username else None
 
-    async def send(self, text: str, components: Optional["Components" | "RemoveComponents"] = None):
+    async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """

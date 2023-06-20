@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents,
+from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveMenuKeyboard,
                   Video, Audio)
 
 
@@ -216,7 +216,7 @@ class Message:
 
         return data
 
-    async def reply(self, text: str, *, components: Optional[Components | RemoveComponents] = None):
+    async def reply(self, text: str, *, components: Optional[Components | RemoveMenuKeyboard] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
@@ -257,7 +257,7 @@ class Message:
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
 
-    async def edit(self, text: str, *, components: "Components" | "RemoveComponents" = None) -> Message:
+    async def edit(self, text: str, *, components: "Components" | "RemoveMenuKeyboard" = None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
         """
