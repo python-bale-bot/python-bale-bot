@@ -23,9 +23,8 @@ SOFTWARE.
 """
 from .version import __version__
 from .request import HTTPClient, Route, ResponseStatusCode, ResponseParser
-from .components import Components, RemoveComponents, InlineKeyboard, Keyboard
-from .attachments import *
-from .payments import *
+from .ui import InlineKeyboard, MenuKeyboard, RemoveMenuKeyboard, Components
+from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video
 from .payments import Price, Invoice
 from .user import User
 from .attachments.contact import ContactMessage
