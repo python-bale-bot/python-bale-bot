@@ -124,6 +124,14 @@ Remove Components
 Attachment Models
 -----------------
 
+File
+~~~~~
+
+.. attributetable:: bale.File
+
+.. autoclass:: bale.File()
+   :members:
+
 Audio
 ~~~~~
 
