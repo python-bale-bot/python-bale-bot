@@ -21,9 +21,15 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import TYPE_CHECKING
+
+from bale import File
+if TYPE_CHECKING:
+    from bale import Bot
 
 
-class Video:
+class Video(File):
+    __FILE_TYPE__ = "VIDEO"
     """This object shows a Video.
 
     Attributes
@@ -38,39 +44,32 @@ class Video:
             Video height.
         duration: int
             Video duration.
+        mime_type: :class:`str`
+            Video Mime type.
 
     """
-    __slots__ = (
-        "file_id",
+    __slots__ = File.__slots__ + (
         "width",
         "height",
-        "file_size",
         "duration"
     )
 
-    def __init__(self, file_id: str, width: int, height: int, file_size: int, duration: int):
-        self.file_id = file_id
+    def __init__(self, file_id: str, mime_type: str, width: int, height: int, file_size: int, duration: int, bot: "Bot"):
+        super().__init__(self.__FILE_TYPE__, file_id, file_size, mime_type, bot, duration = duration, width = width, height = height)
+
         self.width = width
         self.height = height
-        self.file_size = file_size
         self.duration = duration
 
     @classmethod
-    def from_dict(cls, data: dict):
+    def from_dict(cls, data: dict, bot: "Bot"):
         return cls(
             file_id=data.get("file_id"),
             width=data.get("width"),
             height=data.get("height"),
             file_size=data.get("file_size"),
-            duration=data.get("duration")
+            duration=data.get("duration"),
+            mime_type=data.get("mime_type"),
+            bot=bot
         )
 
-    def to_dict(self):
-        data = {
-            "file_id": self.file_id,
-            "width": self.width,
-            "height": self.height,
-            "file_size": self.file_size,
-            "duration": self.duration
-        }
-        return data

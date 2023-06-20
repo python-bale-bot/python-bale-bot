@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents, Price,
+from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveComponents,
                   Video, Audio)
 
 
@@ -41,7 +41,8 @@ class Message:
         message_id: str
             Unique message identifier inside this chat.
         from_user: Optional[:class:`bale.User`]
-            Sender of the message; empty for messages sent to channels. For backward compatibility, this will contain a fake sender user in non-channel chats, if the message was sent on behalf of a chat.
+            Sender of the message; empty for messages sent to channels. For backward compatibility, this will contain a
+            fake sender user in non-channel chats, if the message was sent on behalf of a chat.
         chat: :class:`bale.Chat`
             Conversation the message belongs to.
         date: :class:`datetime.datetime`
@@ -55,7 +56,8 @@ class Message:
         forward_from_chat: Optional[:class:`bale.Chat`]
             For messages forwarded from channels or from anonymous administrators, information about the original sender chat.
         reply_to_message: Optional[:class:`bale.Message`]
-            For replies, the original message. Note that the Message object in this field will not contain further reply_to_message fields even if it itself is a reply.
+            For replies, the original message. Note that the Message object in this field will not contain further
+            reply_to_message fields even if it itself is a reply.
         contact: Optional[:class:`bale.ContactMessage`]
             Message is a shared contact, information about the contact.
         location: Optional[:class:`bale.Location`]
@@ -67,7 +69,8 @@ class Message:
         audio: Optional[:class:`bale.Audio`]
             Message is an audio, information about the Audio.
         new_chat_members: Optional[List[:class:`bale.User`]]
-            New members that were added to the group or supergroup and information about them (the bot itself may be one of these members). This list is empty if the message does not contain new chat members.
+            New members that were added to the group or supergroup and information about them (the bot itself may be
+            one of these members). This list is empty if the message does not contain new chat members.
         left_chat_member: Optional[:class:`bale.User`]
             A member was removed from the group, information about them (this member may be the bot itself).
         invoice: Optional[:class:`bale.Invoice`]
@@ -174,9 +177,9 @@ class Message:
                    document=Document.from_dict(bot=bot, data=data.get("document")) if data.get("document") else None,
                    contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
                    location=Location.from_dict(data=data.get("location")) if data.get("location") else None,
-                   audio=Audio.from_dict(data=data.get("audio")) if data.get("audio") else None,
-                   photos=[Photo.from_dict(data=photo_payload) for photo_payload in data.get("photo")] if data.get(
-                       "photo") else None, video=Video.from_dict(data=data.get("video")) if data.get("video") else None,
+                   audio=Audio.from_dict(data=data.get("audio"), bot=bot) if data.get("audio") else None,
+                   photos=[Photo.from_dict(data=photo_payload, bot=bot) for photo_payload in data.get("photo")] if data.get(
+                       "photo") else None, video=Video.from_dict(data=data.get("video"), bot=bot) if data.get("video") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     def to_dict(self):
@@ -253,19 +256,6 @@ class Message:
         """
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
-
-    async def reply_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
-                            photo_url: Optional[str] = None,
-                            need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
-                            need_email: Optional[bool] = False,
-                            need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
-        """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
-        """
-        return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
-                                           photo_url=photo_url, need_name=need_name, need_email=need_email,
-                                           need_phone_number=need_phone_number,
-                                           need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
     async def edit(self, text: str, *, components: "Components" | "RemoveComponents" = None) -> Message:
         """
