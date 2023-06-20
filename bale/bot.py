@@ -166,7 +166,7 @@ class Bot:
     def call_to_run_event(self, core, event_name, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
         self.loop: asyncio.AbstractEventLoop
-        return self.loop.create_task(task, name=event_name)
+        return self.loop.create_task(task, name=f"python-bale-bot: {event_name}")
 
     def dispatch(self, event_name, /, *args, **kwargs):
         method = "on_" + event_name
@@ -1115,4 +1115,6 @@ class Bot:
         try:
             asyncio.run(main())
         except KeyboardInterrupt:  # Control-C
+            pass
+        except SystemExit:
             pass
