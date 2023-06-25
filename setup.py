@@ -1,7 +1,6 @@
 from setuptools import setup, find_packages
 
 def get_readme_file() -> str:
-    """Get Readme File"""
     with open("README.md", encoding="utf-8") as f:
         readme_file = f.read()
     return readme_file
@@ -18,7 +17,7 @@ extras_require = {
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.4.5",
+        version="2.4.6",
         platforms=["Windows", ],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
