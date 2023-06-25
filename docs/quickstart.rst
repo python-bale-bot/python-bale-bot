@@ -4,6 +4,9 @@ Quick Start
 Create a Mini Bot
 ------------------
 
+.. note::
+    You should give the token received from [@botFather](https://ble.ir/botFather) to the library by the token parameter.
+
 .. code-block:: python3
     :caption: This is a Example (normal level)
 

@@ -87,13 +87,20 @@ Update Type
 .. autoclass:: bale.UpdateType()
    :members:
 
+UI
+----
+
+.. note::
+    You must be use Component Models for design ui of messages.
+
+
 Components
 ~~~~~~~~~~
 
 .. attributetable:: bale.Components
 
 .. autoclass:: bale.Components()
-   :members: 
+   :members:
 
 Inline Keyboard
 ~~~~~~~~~~~~~~~
@@ -104,22 +111,21 @@ Inline Keyboard
    :members:
 
 
-Keyboard
-~~~~~~~~
+Menu Keyboard
+~~~~~~~~~~~~~
 
-.. attributetable:: bale.Keyboard
+.. attributetable:: bale.MenuKeyboard
 
-.. autoclass:: bale.Keyboard()
+.. autoclass:: bale.MenuKeyboard()
    :members:
 
-Remove Components
-~~~~~~~~~~~~~~~~~~
+Remove Menu Keyboard Components
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-.. attributetable:: bale.RemoveComponents
+.. attributetable:: bale.RemoveMenuKeyboard
 
-.. autoclass:: bale.RemoveComponents()
+.. autoclass:: bale.RemoveMenuKeyboard()
    :members:
-
 
 Attachment Models
 -----------------
