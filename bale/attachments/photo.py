@@ -35,13 +35,13 @@ class Photo(File):
     Attributes
     ----------
         file_id: str
-            Audio ID
+            Identifier for this file, which can be used to download or reuse the file.
         width: int
-            Photo width
-        file_size: int
-            Audio Size.
+            Photo width as defined by sender.
         height: str
-            Photo height.
+            Photo height as defined by sender.
+        file_size: int
+            File size in bytes.
     """
     __slots__ = File.__slots__ + (
         "width",

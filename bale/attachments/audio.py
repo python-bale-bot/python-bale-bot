@@ -30,20 +30,20 @@ if TYPE_CHECKING:
 
 class Audio(File):
     __FILE_TYPE__ = "AUDIO"
-    """This object shows a waist.
+    """This object shows a Audio.
 
     Attributes
     ----------
         file_id: str
-            Audio ID
+            Identifier for this file, which can be used to download or reuse the file.
         duration: int
-            Audio duration
+            Duration of the audio in seconds as defined by sender.
         file_size: int
-            Audio Size.
+            File size in bytes.
         mime_type: Optional[:class:`str`]
-            Audio Mime type.
+            MIME type of the file as defined by sender.
         title: Optional[:class:`str`]
-            Audio Title.
+            Title of the audio as defined by sender or by audio tags.
     """
     __slots__ = File.__slots__ + (
         "duration",

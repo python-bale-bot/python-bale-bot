@@ -555,10 +555,10 @@ class Bot:
 
         Parameters
         ----------
-        chat_id: :class:`str` | :class:`int`
-            Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-        location: :class:`bale.Location`
-            The Location.
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            location: :class:`bale.Location`
+                The Location.
 
         Returns
         --------
@@ -592,10 +592,10 @@ class Bot:
 
         Parameters
         ----------
-        chat_id: :class:`str` | :class:`int`
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-        contact: :class:`bale.ContactMessage`
-            The Contact.
+            chat_id: :class:`str` | :class:`int`
+                    Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            contact: :class:`bale.ContactMessage`
+                The Contact.
 
         Returns
         --------
@@ -635,28 +635,28 @@ class Bot:
 
         Parameters
         ----------
-        chat_id: :class:`str` | :class:`int`
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-        title: str
-            Product name. 1- 32 characters.
-        description: str
-            Product description. 1- 255 characters.
-        provider_token: str
-            You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-        prices: List[:class:`bale.Price`]
-            A list of prices.
-        photo_url: Optional[:class:`str`]
-            URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
-        need_name: Optional[bool]
-            Pass True, if you require the user’s full name to complete the order.
-        need_phone_number: Optional[bool]
-            Pass True, if you require the user’s phone number to complete the order.
-        need_email: Optional[bool]
-            Pass True, if you require the user’s email to complete the order.
-        need_shipping_address: Optional[bool]
-            Pass True, if you require the user’s shipping address to complete the order.
-        is_flexible: Optional[bool]
-            Pass True, if the final price depends on the shipping method.
+            chat_id: :class:`str` | :class:`int`
+                    Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            title: str
+                Product name. 1- 32 characters.
+            description: str
+                Product description. 1- 255 characters.
+            provider_token: str
+                You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
+            prices: List[:class:`bale.Price`]
+                A list of prices.
+            photo_url: Optional[:class:`str`]
+                URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
+            need_name: Optional[bool]
+                Pass True, if you require the user’s full name to complete the order.
+            need_phone_number: Optional[bool]
+                Pass True, if you require the user’s phone number to complete the order.
+            need_email: Optional[bool]
+                Pass True, if you require the user’s email to complete the order.
+            need_shipping_address: Optional[bool]
+                Pass True, if you require the user’s shipping address to complete the order.
+            is_flexible: Optional[bool]
+                Pass True, if the final price depends on the shipping method.
 
         Returns
         -------

@@ -35,17 +35,17 @@ class Video(File):
     Attributes
     ----------
         file_id: str
-            Video ID
+            Identifier for this file, which can be used to download or reuse the file.
         width: int
-            Video width
+            Video width as defined by sender.
         file_size: int
-            Video Size.
+            File size in bytes.
         height: str
-            Video height.
+            Video height as defined by sender.
         duration: int
-            Video duration.
+            Duration of the video in seconds as defined by sender.
         mime_type: :class:`str`
-            Video Mime type.
+           MIME type of a file as defined by sender.
 
     """
     __slots__ = File.__slots__ + (

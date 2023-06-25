@@ -21,7 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING, BinaryIO, NoReturn, Self
+from typing import TYPE_CHECKING, NoReturn, Self
+from io import BufferedIOBase
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -32,10 +33,20 @@ class File:
 
     Attributes
     ----------
-        file_type: Optional[:class:`str`]
-        file_id: Optional[:class:`str`]
+        file_type: :class:`str`
+            Type of the file.
+        file_id: :class:`str`
+            Identifier for this file, which can be used to download or reuse the file.
         file_size: Optional[:class:`int`]
+            File size in bytes.
         mime_type: Optional[:class:`str`]
+            MIME type of the file as defined by sender.
+        extra: Optional[:class:`dict`]
+            The rest of the file information.
+
+        .. note::
+            You can get more information in file with :param:`extra`
+
     """
     __slots__ = (
         "file_type",
@@ -55,17 +66,30 @@ class File:
 
     @property
     def type(self) -> str:
+        """:class:`str`: a Shortcut for use :attr:`bale.File.file_type`"""
         return self.file_type
 
     @property
     def base_file(self) -> Self:
+        """:class:`bale.File`: Represents the Base File Class of this file"""
         return self
 
     async def get(self) -> bytes:
-        return await self.bot.http.get_file(self.file_id)
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
+        """
+        return await self.bot.get_file(self.file_id)
 
-    async def save_to_memory(self, out: "BinaryIO") -> NoReturn:
-        buf = await self.bot.http.get_file(self.file_id)
+    async def save_to_memory(self, out: "BufferedIOBase") -> NoReturn:
+        """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`, the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
+
+        Parameters
+        ----------
+            out: :class:`io.BinaryIO`
+                A file-like object. Must be opened for writing in binary mode.
+
+        """
+        buf = await self.get()
 
         out.write(buf)
 

@@ -5,6 +5,27 @@ Change Log
 
 Project changes are shown on this page.
 
+v2.4.6
+------
+
+New Features
+~~~~~~~~~~~~
+
+- Components have been moved to `ui`
+- Improve the process of using components & files
+- Add new method :meth:`bale.Bot.send_audio`
+- Support from `400` status code Errors in :class:`bale.HTTPClient`
+- Full support from "Bale" rate limits
+- Update License to LGP
+- Improve documentation
+- Update [examples](https://github.com/python-bale-bot/python-bale-bot/tree/master/examples) directory
+
+Bug Fixes
+~~~~~~~~~~
+
+- Fix bug of stopping the Bot
+- Fix the problem of :meth:`bale.Bot.send_invoice` & :meth:`bale.Bot.send_video` checkers
+
 v2.4.5
 ------
 

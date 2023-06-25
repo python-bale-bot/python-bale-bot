@@ -34,10 +34,14 @@ class Document(File):
 
     Attributes
     ----------
-        file_id: Optional[:class:`str`]
+        file_id: :class:`str`
+        	Identifier for this file, which can be used to download or reuse the file.
         file_name: Optional[:class:`str`]
+        	Original filename as defined by sender.
         mime_type: Optional[:class:`str`]
+        	MIME type of the file as defined by sender.
         file_size: Optional[:class:`int`]
+        	File size in bytes.
     """
 	__slots__ = File.__slots__ + (
 		"file_name",

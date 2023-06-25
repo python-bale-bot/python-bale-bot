@@ -3,6 +3,9 @@ from itertools import groupby
 from . import InlineKeyboard, MenuKeyboard
 
 class Components:
+    """This object shows a Component.
+
+    """
     __slots__ = (
         "_menu_keyboards",
         "_inline_keyboards"
@@ -12,16 +15,76 @@ class Components:
         self._menu_keyboards: List[Tuple["MenuKeyboard", int]] = []
         self._inline_keyboards: List[Tuple["InlineKeyboard", int]] = []
 
-    def add_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = None):
+    def add_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = 1):
+        """Use this method to add MenuKeyboard component.
+
+        Parameters
+        ----------
+            menu_keyboard: :class:`bale.MenuKeyboard`
+                The Component you want to add
+            row: :class:`int`
+                The Component row number
+        """
+        if not isinstance(menu_keyboard, MenuKeyboard):
+            raise TypeError("menu_keyboard param must be type of MenuKeyboard")
+
+        if not isinstance(row, int):
+            raise TypeError("row param must be type of int")
+
         self._menu_keyboards.append((menu_keyboard, row))
 
-    def remove_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = None):
+    def remove_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = 1):
+        """Use this method to remove MenuKeyboard component.
+
+        Parameters
+        ----------
+            menu_keyboard: :class:`bale.MenuKeyboard`
+                The Component you want to remove
+            row: :class:`int`
+                The Component row number
+        """
+        if not isinstance(menu_keyboard, MenuKeyboard):
+            raise TypeError("menu_keyboard param must be type of MenuKeyboard")
+
+        if not isinstance(row, int):
+            raise TypeError("row param must be type of int")
+
         self._menu_keyboards.remove((menu_keyboard, row))
 
-    def add_inline_keyboard(self, inline_keyboard: "InlineKeyboard", row: int = None):
+    def add_inline_keyboard(self, inline_keyboard: "InlineKeyboard", row: int = 1):
+        """Use this method to add InlineKeyboard component.
+
+        Parameters
+        ----------
+            inline_keyboard: :class:`bale.InlineKeyboard`
+                The Component you want to add
+            row: :class:`int`
+                The Component row number
+        """
+        if not isinstance(inline_keyboard, InlineKeyboard):
+            raise TypeError("inline_keyboard param must be type of InlineKeyboard")
+
+        if not isinstance(row, int):
+            raise TypeError("row param must be type of int")
+
         self._inline_keyboards.append((inline_keyboard, row))
 
-    def remove_inline_keyboard(self, inline_keyboard: "InlineKeyboard", row: int = None):
+    def remove_inline_keyboard(self, inline_keyboard: "InlineKeyboard", row: int = 1):
+        """Use this method to remove InlineKeyboard component.
+
+        Parameters
+        ----------
+            inline_keyboard: :class:`bale.InlineKeyboard`
+                The Component you want to remove
+            row: :class:`int`
+                The Component row number
+        """
+        if not isinstance(inline_keyboard, InlineKeyboard):
+            raise TypeError("inline_keyboard param must be type of InlineKeyboard")
+
+        if not isinstance(row, int):
+            raise TypeError("row param must be type of int")
+
         self._inline_keyboards.remove((inline_keyboard, row))
 
     def to_dict(self):
