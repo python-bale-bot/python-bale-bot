@@ -1,6 +1,6 @@
 from typing import List, Tuple
 from itertools import groupby
-from bale import InlineKeyboard, MenuKeyboard
+from . import InlineKeyboard, MenuKeyboard
 
 class Components:
     __slots__ = (
