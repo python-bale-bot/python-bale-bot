@@ -26,7 +26,7 @@ import asyncio
 from typing import Callable, Dict, Tuple, List, Optional
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
-from bale import (Message, Update, User, Components, RemoveComponents, Chat, Price, ChatMember, HTTPClient, Updater,
+from bale import (Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, HTTPClient, Updater,
                   Photo, Document, Location, ContactMessage, Video, Audio)
 
 __all__ = (
@@ -240,7 +240,7 @@ class Bot:
         return response.result or False
 
     async def send_message(self, chat_id: str | int, text: str, *,
-                           components: Optional["Components" | "RemoveComponents"] = None,
+                           components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                            reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send text messages.
 
@@ -273,7 +273,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveComponents)):
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -728,7 +728,7 @@ class Bot:
         return Message.from_dict(data=response.result, bot=self)
 
     async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *,
-                           components: Optional["Components" | "RemoveComponents"] = None) -> "Message":
+                           components: Optional["Components" | "RemoveMenuKeyboard"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         Parameters
@@ -760,7 +760,7 @@ class Bot:
                 "message_id param must be type of str or int"
             )
 
-        if components and not isinstance(components, (Components, RemoveComponents)):
+        if components and not isinstance(components, (Components, RemoveMenuKeyboard)):
             raise TypeError(
                 "components param must be type of Components or RemoveComponents"
             )
