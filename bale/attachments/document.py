@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from typing import TYPE_CHECKING
 
-from bale import File
+from .file import File
 if TYPE_CHECKING:
 	from bale import Bot
 
