@@ -1,3 +1,4 @@
+from __future__ import annotations
 from typing import List, Tuple
 from itertools import groupby
 from . import InlineKeyboard, MenuKeyboard
@@ -11,9 +12,17 @@ class Components:
         "_inline_keyboards"
     )
 
-    def __int__(self):
+    def __init__(self):
         self._menu_keyboards: List[Tuple["MenuKeyboard", int]] = []
         self._inline_keyboards: List[Tuple["InlineKeyboard", int]] = []
+
+    @property
+    def menu_keyboards(self) -> List["MenuKeyboard"]:
+        return [item[0] for item in self._menu_keyboards]
+
+    @property
+    def inline_keyboards(self) -> List["InlineKeyboard"]:
+        return [item[0] for item in self._inline_keyboards]
 
     def add_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = 1):
         """Use this method to add MenuKeyboard component.
@@ -94,7 +103,7 @@ class Components:
         if is_used_menu_keyboard and is_used_inline_keyboard:
             raise TypeError("you can't use menu keyboards and inline keyboards params together.")
 
-        if not (is_used_menu_keyboard and is_used_inline_keyboard):
+        if not (is_used_menu_keyboard or is_used_inline_keyboard):
             raise TypeError("you must be use menu keyboards or inline keyboards param.")
 
         correct_children = self._menu_keyboards if bool(self._menu_keyboards) else self._inline_keyboards
@@ -103,11 +112,12 @@ class Components:
             return item[1] or 1
 
         sorted_components = sorted(correct_children, key=key)
-        payload = {correct_children_name: {}}
+        payload = {correct_children_name: []}
 
         for _, group in groupby(sorted_components, key=key):
             _components = []
-            for component in group:
+            for item in group:
+                component = item[0]
                 _components.append(component.to_dict())
 
             payload[correct_children_name].append(_components)
