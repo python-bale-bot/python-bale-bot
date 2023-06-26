@@ -12,13 +12,14 @@ New Features
 ~~~~~~~~~~~~
 
 - Components have been moved to `ui`
-- Improve the process of using components & files
+- Improve the process of using Components and Files
 - Add new method :meth:`bale.Bot.send_audio`
 - Support from `400` status code Errors in :class:`bale.HTTPClient`
 - Full support from "Bale" rate limits
+- Add :attr:`bale.Message.attachment`, :attr:`bale.Components.menu_keyboards`, :attr:`bale.Components.inline_keyboards`
 - Update License to LGP
 - Improve documentation
-- Update [examples](https://github.com/python-bale-bot/python-bale-bot/tree/master/examples) directory
+- Update `examples <https://github.com/python-bale-bot/python-bale-bot/tree/master/examples>`_ directory
 
 Bug Fixes
 ~~~~~~~~~~
