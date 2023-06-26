@@ -41,7 +41,15 @@ class MenuKeyboard:
 
 
 class RemoveMenuKeyboard:
-    """This object shows a Removed menu keyboard(s)."""
+    """This object shows a Removed menu keyboard(s).
+
+    .. code-block:: python3
+    :caption: use RemoveMenuKeyboard to delete Menu keyboard Components.
+
+    ...
+    components = bale.RemoveMenuKeyboard()
+    await message.reply(..., components=components)
+    """
 
     def to_dict(self) -> dict:
         return {"keyboard": None}
