@@ -18,10 +18,12 @@ class Components:
 
     @property
     def menu_keyboards(self) -> List["MenuKeyboard"]:
+        """:class:`str`: Represents the MenuKeyboards list."""
         return [item[0] for item in self._menu_keyboards]
 
     @property
     def inline_keyboards(self) -> List["InlineKeyboard"]:
+        """:class:`str`: Represents the InlineKeyboards list."""
         return [item[0] for item in self._inline_keyboards]
 
     def add_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = 1):
