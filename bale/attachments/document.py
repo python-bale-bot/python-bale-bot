@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class Document(File):
-	__FILE_TYPE__ = "DOCUMENT"
 	"""This object shows a Document.
 
     Attributes
@@ -43,6 +42,7 @@ class Document(File):
         file_size: Optional[:class:`int`]
         	File size in bytes.
     """
+	__FILE_TYPE__ = "DOCUMENT"
 	__slots__ = File.__slots__ + (
 		"file_name",
 	)

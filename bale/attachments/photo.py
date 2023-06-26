@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class Photo(File):
-    __FILE_TYPE__ = "PHOTO"
     """This object shows a Photo.
 
     Attributes
@@ -43,6 +42,7 @@ class Photo(File):
         file_size: int
             File size in bytes.
     """
+    __FILE_TYPE__ = "PHOTO"
     __slots__ = File.__slots__ + (
         "width",
         "height"

@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class Video(File):
-    __FILE_TYPE__ = "VIDEO"
     """This object shows a Video.
 
     Attributes
@@ -45,9 +44,9 @@ class Video(File):
         duration: int
             Duration of the video in seconds as defined by sender.
         mime_type: :class:`str`
-           MIME type of a file as defined by sender.
-
+           MIME type of file as defined by sender.
     """
+    __FILE_TYPE__ = "VIDEO"
     __slots__ = File.__slots__ + (
         "width",
         "height",

@@ -29,7 +29,6 @@ if TYPE_CHECKING:
 
 
 class Audio(File):
-    __FILE_TYPE__ = "AUDIO"
     """This object shows a Audio.
 
     Attributes
@@ -45,6 +44,7 @@ class Audio(File):
         title: Optional[:class:`str`]
             Title of the audio as defined by sender or by audio tags.
     """
+    __FILE_TYPE__ = "AUDIO"
     __slots__ = File.__slots__ + (
         "duration",
         "title"
