@@ -24,13 +24,13 @@ SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional
+from typing import TYPE_CHECKING, List, Optional, NoReturn
 
 if TYPE_CHECKING:
     from bale import Bot
 
 from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveMenuKeyboard,
-                  Video, Audio)
+                  Video, Audio, File)
 
 
 class Message:
@@ -79,7 +79,7 @@ class Message:
     __slots__ = (
         "text", "caption", "from_user", "_author", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
-        "edit_date", "audio", "document", "video", "photos", "voice", "location", "invoice", "new_chat_members",
+        "edit_date", "audio", "document", "video", "photos", "location", "invoice", "new_chat_members",
         "left_chat_member", "reply_to_message",
         "invoice", "bot"
     )
@@ -121,37 +121,45 @@ class Message:
         return self.from_user
 
     @property
-    def content(self):
+    def attachment(self) -> Optional["File"]:
+        """Optional[:class:`bale.File`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
+        attachment = self.video or self.photos or self.audio or self.document
+        if not attachment:
+            return
+
+        if isinstance(attachment, list):
+            attachment = attachment[0]
+
+        return attachment.base_file
+
+    @property
+    def content(self) -> Optional[str]:
+        """Optional[:class:`str`]: Represents the message content. ``None`` if the message don't have text or caption"""
         return self.caption or self.text
 
     @content.setter
-    def content(self, _value):
+    def content(self, _value: str) -> NoReturn:
         if not isinstance(_value, str):
             raise TypeError("content must be type of str")
+
         if self.caption:
             self.caption = _value
         elif self.text:
             self.text = _value
 
     @property
-    def chat_id(self):
-        if self.chat:
-            return self.chat.chat_id
-        return None
+    def chat_id(self) -> Optional[str | int]:
+        """:class:`str` | :class:`int`: Represents the Unique identifier of Conversation the message belongs to."""
+        return self.chat.chat_id
 
     @property
-    def reply_to_message_id(self):
-        if self.reply_to_message:
-            return self.reply_to_message.message_id
-        return None
+    def reply_to_message_id(self) -> Optional[str]:
+        """Optional[:class:`str`]: Represents the Unique identifier of Original message, if the message has been replied. ``None`` If the message is not replied"""
+        if not self.reply_to_message:
+            return
 
-    @reply_to_message_id.setter
-    def reply_to_message_id(self, _value):
-        if not isinstance(_value, int):
-            raise TypeError("_value must be type of int")
+        return self.reply_to_message.message_id
 
-        if self.reply_to_message:
-            self.reply_to_message.message_id = _value
 
     @classmethod
     def from_dict(cls, data: dict, bot):
