@@ -52,3 +52,12 @@ class ContactMessage:
         data = {"phone_number": self.phone_number, "first_name": self.first_name, "last_name": self.last_name}
 
         return data
+
+    def __eq__(self, other):
+        return isinstance(other, ContactMessage) and self.phone_number == other.phone_number
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return f"<ContactMessage phone_number={self.phone_number} first_name={self.first_name} last_name={self.last_name} >"

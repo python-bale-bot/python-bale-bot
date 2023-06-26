@@ -32,7 +32,6 @@ class Location:
             Location longitude
         latitude: int
             Location latitude
-        link: str
     """
     __slots__ = (
         "longitude",
@@ -44,7 +43,8 @@ class Location:
         self.latitude = latitude
 
     @property
-    def link(self):
+    def link(self) -> str:
+        """:class:`str`: export location link from map"""
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
 
     @classmethod
@@ -55,3 +55,12 @@ class Location:
         data = {"longitude": self.longitude if self.longitude is not None else None,
                 "latitude": self.latitude if self.latitude is not None else None}
         return data
+
+    def __eq__(self, other):
+        return isinstance(other, Location) and self.link == other.link
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return f"<Location longitude={self.longitude} latitude={self.latitude} >"

@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING, NoReturn, Self
+from typing import TYPE_CHECKING, NoReturn
 from io import BufferedIOBase
 
 if TYPE_CHECKING:
@@ -70,9 +70,9 @@ class File:
         return self.file_type
 
     @property
-    def base_file(self) -> Self:
+    def base_file(self) -> "File":
         """:class:`bale.File`: Represents the Base File Class of this file"""
-        return self
+        return File(self.file_type, self.file_id, self.file_size, self.mime_type, self.bot, **self.extra)
 
     async def get(self) -> bytes:
         """
@@ -98,3 +98,18 @@ class File:
                 **self.extra}
 
         return data
+
+    def __len__(self):
+        return self.file_size
+
+    def __eq__(self, other):
+        return isinstance(other, type(self)) and self.file_id == other.file_id
+
+    def __ne__(self, other):
+        return not self.__eq__(other)
+
+    def __repr__(self):
+        return f"<File file_type={self.file_type} file_id={self.file_id} file_size={self.file_size} >"
+
+    def __str__(self):
+        return self.file_id
