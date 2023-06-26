@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional
 
-class Keyboard:
-    """This object shows a keyboard
+class MenuKeyboard:
+    """This object shows a Menu keyboard
 
     Attributes
     ----------
@@ -40,8 +40,8 @@ class Keyboard:
         return data
 
 
-class RemoveComponents:
-    """This object shows a remove keyboard(s)."""
+class RemoveMenuKeyboard:
+    """This object shows a Removed menu keyboard(s)."""
 
     def to_dict(self) -> dict:
         return {"keyboard": None}
