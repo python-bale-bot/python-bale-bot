@@ -24,7 +24,7 @@ SOFTWARE.
 from .version import __version__
 from .request import HTTPClient, Route, ResponseStatusCode, ResponseParser
 from .ui import InlineKeyboard, MenuKeyboard, RemoveMenuKeyboard, Components
-from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video
+from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, InputFile
 from .payments import Price, Invoice
 from .user import User
 from .attachments.contact import ContactMessage
