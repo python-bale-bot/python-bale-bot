@@ -21,12 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import List
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
+from ..attachments import InputFile
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
-from .utils import ResponseStatusCode
+from .utils import ResponseStatusCode, to_json
 
 __all__ = ("HTTPClient", "Route")
 
@@ -64,6 +66,10 @@ class HTTPClient:
 		self._loop: asyncio.AbstractEventLoop = loop
 		self.token = token
 
+	@property
+	def user_agent(self) -> str:
+		return "python-bale-bot (https://python-bale-bot.ir): An API Wrapper for Python"
+
 	def is_closed(self):
 		return self.__session is None
 
@@ -92,14 +98,37 @@ class HTTPClient:
 			await self.__session.close()
 			self.__session = None
 
-	async def request(self, route: Route, **kwargs):
+	async def request(self, route: Route, *, form: List[InputFile] = None, **kwargs):
 		url = route.url
 		method = route.method
+		headers = { 'User-Agent': self.user_agent }
+
+		if 'json' in kwargs:
+			headers['Content-Type'] = 'application/json'
+			kwargs['data'] = to_json(kwargs.pop('json'))
+
+		try:
+			data = kwargs.pop('data')
+		except KeyError:
+			data = None
+
+		if form:
+			form_data = aiohttp.FormData()
+			for file in form:
+				form_data.add_field(**dict(**file.to_dict(), content_type = 'multipart/form-data'))
+			if data:
+				for param in data:
+					form_data.add_field(param, data[param])
+
+			kwargs['data'] = form_data
+
+		kwargs['headers'] = headers
+
 		for tries in range(5):
 			try:
 				async with self.__session.request(method=method, url=url, **kwargs) as response:
 					response: aiohttp.ClientResponse = response
-					parsed_response = await ResponseParser.from_response(response)
+					parsed_response = ResponseParser.from_response(response)
 					if response.status == ResponseStatusCode.OK:
 						return parsed_response
 					elif response.status == ResponseStatusCode.NOT_FOUND:
@@ -165,10 +194,9 @@ class HTTPClient:
 
 		return self.request(Route("POST", "forwardMessage", self.token), json=payload)
 
-	def send_document(self, chat_id, document, *, caption=None, reply_to_message_id=None):
+	def send_document(self, chat_id, document, *, file_name=None, caption=None, reply_to_message_id=None):
 		payload = {
-			"chat_id": chat_id,
-			"document": document
+			"chat_id": chat_id
 		}
 		if caption:
 			payload["caption"] = caption
@@ -176,9 +204,9 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "Senddocument", self.token), data=payload)
+		return self.request(Route("POST", "sendDocument", self.token), data=payload, form=[InputFile('document', file_name, document)])
 
-	def send_photo(self, chat_id, photo, *, caption=None, reply_to_message_id=None):
+	def send_photo(self, chat_id, photo, *, file_name=None, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"photo": photo
@@ -188,9 +216,9 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "SendPhoto", self.token), data=payload)
+		return self.request(Route("POST", "SendPhoto", self.token), data=payload, form=[InputFile('photo', file_name, photo)])
 
-	def send_video(self, chat_id, video, *, caption=None, reply_to_message_id=None):
+	def send_video(self, chat_id, video, *, file_name=None, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"video": video
@@ -200,9 +228,9 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "sendVideo", self.token), data=payload)
+		return self.request(Route("POST", "sendVideo", self.token), data=payload, form=[InputFile('video', file_name, video)])
 
-	def send_audio(self, chat_id, audio, *, caption=None, duration=None, title=None, reply_to_message_id=None):
+	def send_audio(self, chat_id, audio, *, file_name=None, caption=None, duration=None, title=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id,
 			"audio": audio
@@ -216,7 +244,7 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "SendAudio", self.token), data=payload)
+		return self.request(Route("POST", "SendAudio", self.token), data=payload, form=[InputFile('audio', file_name, audio)])
 
 	def send_contact(self, chat_id, phone_number, first_name, *, last_name):
 		payload = {
@@ -227,7 +255,7 @@ class HTTPClient:
 		if last_name:
 			payload["last_name"] = last_name
 
-		return self.request(Route("POST", "SendContact", self.token), data=payload)
+		return self.request(Route("POST", "sendContact", self.token), data=payload)
 
 	def send_invoice(self, chat_id, title, description, provider_token, prices, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
 		payload = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
@@ -262,7 +290,7 @@ class HTTPClient:
 			"chat_id": chat_id,
 			"message_id": message_id
 		}
-		return self.request(Route("GET", "deletemessage", self.token), params=payload)
+		return self.request(Route("GET", "deleteMessage", self.token), json=payload)
 
 	def get_updates(self, offset=None, limit=None):
 		payload = {}
@@ -270,31 +298,31 @@ class HTTPClient:
 			payload["offset"] = offset
 		if limit:
 			payload["limit"] = limit
-		return self.request(Route("POST", "getupdates", self.token), json=payload)
+		return self.request(Route("POST", "getUpdates", self.token), json=payload)
 
 	def delete_webhook(self):
 		return self.request(Route("GET", "deleteWebhook", self.token))
 
 	def get_bot(self):
-		return self.request(Route("GET", "getme", self.token))
+		return self.request(Route("GET", "getMe", self.token))
 
 	def get_chat(self, chat_id):
-		return self.request(Route("GET", "getchat", self.token), params=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChat", self.token), json=dict(chat_id=chat_id))
 
 	def leave_chat(self, chat_id):
-		return self.request(Route("GET", "leaveChat", self.token), params=dict(chat_id=chat_id))
+		return self.request(Route("GET", "leaveChat", self.token), json=dict(chat_id=chat_id))
 
 	def get_chat_administrators(self, chat_id):
-		return self.request(Route("GET", "getChatAdministrators", self.token), params=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChatAdministrators", self.token), json=dict(chat_id=chat_id))
 
 	def get_chat_members_count(self, chat_id):
-		return self.request(Route("GET", "getChatMemberCount", self.token), params=dict(chat_id=chat_id))
+		return self.request(Route("GET", "getChatMemberCount", self.token), json=dict(chat_id=chat_id))
 
 	def get_chat_member(self, chat_id, member_id):
-		return self.request(Route("GET", "getChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
+		return self.request(Route("GET", "getChatMember", self.token), json=dict(chat_id=chat_id, user_id=member_id))
 
 	def ban_chat_member(self, chat_id, member_id):
-		return self.request(Route("POST", "banChatMember", self.token), params=dict(chat_id=chat_id, user_id=member_id))
+		return self.request(Route("POST", "banChatMember", self.token), json=dict(chat_id=chat_id, user_id=member_id))
 
 	def invite_to_chat(self, chat_id, user_id):
-		return self.request(Route("GET", "InviteUser", self.token), json=dict(chat_id=chat_id, user_id=user_id))
+		return self.request(Route("GET", "inviteUser", self.token), json=dict(chat_id=chat_id, user_id=user_id))
