@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Dict
+from typing import Dict, List
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
@@ -97,7 +97,7 @@ class HTTPClient:
 			await self.__session.close()
 			self.__session = None
 
-	async def request(self, route: Route, *, form: Dict[str, Dict] = None, **kwargs):
+	async def request(self, route: Route, *, form: List[Dict] = None, **kwargs):
 		url = route.url
 		method = route.method
 		headers = { 'User-Agent': self.user_agent }
@@ -109,8 +109,8 @@ class HTTPClient:
 
 		if form:
 			form_data = aiohttp.FormData()
-			for key in form:
-				form_data.add_field(**form[key], content_type= "multipart/form-data")
+			for file_payload in form:
+				form_data.add_field(**file_payload, content_type= "multipart/form-data")
 			if 'data' in kwargs:
 				_data = kwargs.pop('data')
 				for param in _data:
