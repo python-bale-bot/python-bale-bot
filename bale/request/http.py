@@ -107,18 +107,15 @@ class HTTPClient:
 			headers['Content-Type'] = 'application/json'
 			kwargs['data'] = to_json(kwargs.pop('json'))
 
-		try:
-			data = kwargs.pop('data')
-		except KeyError:
-			data = None
 
 		if form:
 			form_data = aiohttp.FormData()
 			for file in form:
 				form_data.add_field(**dict(**file.to_dict(), content_type = 'multipart/form-data'))
-			if data:
-				for param in data:
-					form_data.add_field(param, data[param])
+			if 'data' in kwargs:
+				_data = kwargs.pop('data')
+				for param in _data:
+					form_data.add_field(param, _data[param])
 
 			kwargs['data'] = form_data
 
