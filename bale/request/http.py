@@ -26,7 +26,7 @@ from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from ..attachments import InputFile
-from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
+from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException, InvalidToken)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode, to_json
 
@@ -128,7 +128,7 @@ class HTTPClient:
 			try:
 				async with self.__session.request(method=method, url=url, **kwargs) as response:
 					response: aiohttp.ClientResponse = response
-					parsed_response = ResponseParser.from_response(response)
+					parsed_response = await ResponseParser.from_response(response)
 					if response.status == ResponseStatusCode.OK:
 						return parsed_response
 					elif response.status == ResponseStatusCode.NOT_FOUND:
@@ -146,6 +146,8 @@ class HTTPClient:
 							continue
 						elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
 							raise Forbidden()
+						elif parsed_response.description == HTTPClientError.TOKEN_NOT_FOUND:
+							raise InvalidToken()
 
 						raise APIError(
 								str(parsed_response.error_code), parsed_response.description

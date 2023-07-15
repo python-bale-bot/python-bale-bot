@@ -54,7 +54,7 @@ class ResponseParser:
 		self._raw = raw
 
 	@classmethod
-	def from_response(cls, data: "ClientResponse"):
+	async def from_response(cls, data: "ClientResponse"):
 		data = await json_or_text(data)
 
 		if isinstance(data, str):

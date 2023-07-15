@@ -23,6 +23,7 @@ SOFTWARE.
 """
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
+    TOKEN_NOT_FOUND = "Token not found"
     RATE_LIMIT = "bot limit exceed"
     LOCAL_RATE_LIMIT = "local_rate_limited"
     PERMISSION_DENIED = "permission_denied"
@@ -60,10 +61,8 @@ class InvalidToken(BaleError):
     """
     __slots__ = ("_message",)
 
-    def __init__(self, message):
-        self._message = message
-
-        super().__init__("Invalid Token" if self._message is not None else self._message)
+    def __init__(self):
+        super().__init__("Invalid Token")
 
 
 class APIError(BaleError):
