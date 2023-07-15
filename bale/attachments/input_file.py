@@ -9,7 +9,7 @@ class InputFile:
         self.name = name
         self.content = content
 
-    def to_dict(self):
+    def to_file_form_payload(self):
         return {
             "name": self.file_type,
             "value": self.content,
