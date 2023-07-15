@@ -396,7 +396,7 @@ class Bot:
         if isinstance(document, Document):
             document = document.file_id
 
-        response = await self.http.send_document(chat_id, InputFile('document', file_name, document).to_file_form_payload(), caption=caption,
+        response = await self.http.send_document(chat_id, [InputFile('document', file_name, document).to_file_form_payload()], caption=caption,
                                                  reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
@@ -464,7 +464,7 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat_id), InputFile('photo', file_name, photo).to_file_form_payload(), caption=caption,
+        response = await self.http.send_photo(str(chat_id), [InputFile('photo', file_name, photo).to_file_form_payload()], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
@@ -532,7 +532,7 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_audio(str(chat_id), InputFile('audio', file_name, audio).to_file_form_payload(), caption=caption,
+        response = await self.http.send_audio(str(chat_id), [InputFile('audio', file_name, audio).to_file_form_payload()], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
@@ -600,7 +600,7 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_video(str(chat_id), InputFile('video', file_name, video).to_file_form_payload(), caption=caption,
+        response = await self.http.send_video(str(chat_id), [InputFile('video', file_name, video).to_file_form_payload()], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
