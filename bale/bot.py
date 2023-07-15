@@ -73,7 +73,7 @@ class Bot:
 
     def __init__(self, token: str, **kwargs):
         if not isinstance(token, str):
-            raise InvalidToken("token must be type of the str")
+            raise InvalidToken()
         self.loop = _loop
         self.token = token
         self.http: HTTPClient = HTTPClient(self.loop, token)
