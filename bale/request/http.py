@@ -21,11 +21,10 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import List
+from typing import Dict
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
-from ..attachments import InputFile
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException, InvalidToken)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode, to_json
@@ -98,7 +97,7 @@ class HTTPClient:
 			await self.__session.close()
 			self.__session = None
 
-	async def request(self, route: Route, *, form: List[InputFile] = None, **kwargs):
+	async def request(self, route: Route, *, form: Dict[str, Dict] = None, **kwargs):
 		url = route.url
 		method = route.method
 		headers = { 'User-Agent': self.user_agent }
@@ -110,8 +109,8 @@ class HTTPClient:
 
 		if form:
 			form_data = aiohttp.FormData()
-			for file in form:
-				form_data.add_field(**dict(**file.to_dict(), content_type = 'multipart/form-data'))
+			for key in form:
+				form_data.add_field(**form[key], content_type= "multipart/form-data")
 			if 'data' in kwargs:
 				_data = kwargs.pop('data')
 				for param in _data:
@@ -193,7 +192,7 @@ class HTTPClient:
 
 		return self.request(Route("POST", "forwardMessage", self.token), json=payload)
 
-	def send_document(self, chat_id, document, *, file_name=None, caption=None, reply_to_message_id=None):
+	def send_document(self, chat_id, form, *, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
 		}
@@ -203,36 +202,33 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "sendDocument", self.token), data=payload, form=[InputFile('document', file_name, document)])
+		return self.request(Route("POST", "sendDocument", self.token), data=payload, form=form)
 
-	def send_photo(self, chat_id, photo, *, file_name=None, caption=None, reply_to_message_id=None):
+	def send_photo(self, chat_id, form, *, caption=None, reply_to_message_id=None):
 		payload = {
-			"chat_id": chat_id,
-			"photo": photo
+			"chat_id": chat_id
 		}
 		if caption:
 			payload["caption"] = caption
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "SendPhoto", self.token), data=payload, form=[InputFile('photo', file_name, photo)])
+		return self.request(Route("POST", "SendPhoto", self.token), data=payload, form=form)
 
-	def send_video(self, chat_id, video, *, file_name=None, caption=None, reply_to_message_id=None):
+	def send_video(self, chat_id, form, *, caption=None, reply_to_message_id=None):
 		payload = {
-			"chat_id": chat_id,
-			"video": video
+			"chat_id": chat_id
 		}
 		if caption:
 			payload["caption"] = caption
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "sendVideo", self.token), data=payload, form=[InputFile('video', file_name, video)])
+		return self.request(Route("POST", "sendVideo", self.token), data=payload, form=form)
 
-	def send_audio(self, chat_id, audio, *, file_name=None, caption=None, duration=None, title=None, reply_to_message_id=None):
+	def send_audio(self, chat_id, form, *, caption=None, duration=None, title=None, reply_to_message_id=None):
 		payload = {
-			"chat_id": chat_id,
-			"audio": audio
+			"chat_id": chat_id
 		}
 		if caption:
 			payload["caption"] = caption
@@ -243,7 +239,7 @@ class HTTPClient:
 		if reply_to_message_id:
 			payload["reply_to_message_id"] = reply_to_message_id
 
-		return self.request(Route("POST", "SendAudio", self.token), data=payload, form=[InputFile('audio', file_name, audio)])
+		return self.request(Route("POST", "SendAudio", self.token), data=payload, form=form)
 
 	def send_contact(self, chat_id, phone_number, first_name, *, last_name):
 		payload = {
