@@ -37,7 +37,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',
-        install_requires=["aiohttp<3.8.0,>=3.6.0", "asyncio~=3.4.3", "setuptools~=65.5.1"]
+        install_requires=["aiohttp>=3.6.0,<3.9.0", "asyncio~=3.4.3", "setuptools~=65.5.1"]
     )
 
 
