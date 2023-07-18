@@ -56,7 +56,7 @@ class File:
         "extra",
         "bot"
     )
-    def __init__(self, file_type: str, file_id: str, file_size: int, mime_type: str, bot: "Bot", **kwargs):
+    def __init__(self, file_type: str, file_id: str, file_size: Optional[int], mime_type: Optional[str], bot: "Bot", **kwargs):
         self.file_type = file_type
         self.file_id = file_id
         self.file_size = file_size
