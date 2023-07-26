@@ -58,5 +58,5 @@ class Audio(File):
 
     @classmethod
     def from_dict(cls, data, bot: "Bot"):
-        return cls(file_id=data["file_id"], duration=data["duration"], file_size=data["file_size"], title=data["title"],
-                   mime_type=data["mime_type"], bot=bot)
+        return cls(file_id=data.get("file_id"), duration=data.get("duration"), file_size=data.get("file_size"), title=data.get("title"),
+                   mime_type=data.get("mime_type"), bot=bot)

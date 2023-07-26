@@ -46,7 +46,7 @@ class ContactMessage:
 
     @classmethod
     def from_dict(cls, data: dict):
-        return cls(first_name=data["first_name"], last_name=data["last_name"], phone_number=data["phone_number"])
+        return cls(first_name=data.get("first_name"), last_name=data.get("last_name"), phone_number=data.get("phone_number"))
 
     def to_dict(self):
         data = {"phone_number": self.phone_number, "first_name": self.first_name, "last_name": self.last_name}
