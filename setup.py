@@ -22,14 +22,16 @@ if __name__ == "__main__":
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
         author="Kian Ahmadian",
-        license="MIT License",
+        author_email="devs@python-bale-bot.ir",
+        license="LGPLv3",
         project_urls={
-            "Documentation": "https://docs.python-bale-bot.ir/en/master/",
-            "Changelog": "https:///docs.python-bale-bot.ir/en/master/whats_new.html",
+            "Documentation": "https://docs.python-bale-bot.ir/en/stable/",
+            "Changelog": "https:///docs.python-bale-bot.ir/en/stable/whats_new.html",
             "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues",
             "Source Code": "https://github.com/python-bale-bot/python-bale-bot/"
         },
-        keywords=["bale", "bale-bot", "framework", "bot"],
+        download_url=f"https://pypi.org/project/python-bale-bot/",
+        keywords="bale bale-bot framework bot",
         python_requires='>=3.8',
         extras_require=extras_require,
         include_package_data=True,
@@ -37,7 +39,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/markdown',
-        install_requires=["aiohttp<3.8.0,>=3.6.0", "asyncio~=3.4.3", "setuptools~=65.5.1"]
+        install_requires=["aiohttp<3.8.5,>=3.6.0", "asyncio~=3.4.3", "setuptools~=60.2.0"]
     )
 
 
