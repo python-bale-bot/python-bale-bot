@@ -23,7 +23,7 @@ if __name__ == "__main__":
         description="An API wrapper for Bale written in Python",
         author="Kian Ahmadian",
         author_email="devs@python-bale-bot.ir",
-        license="LGPLv3",
+        license="LGPLv2",
         project_urls={
             "Documentation": "https://docs.python-bale-bot.ir/en/stable/",
             "Changelog": "https:///docs.python-bale-bot.ir/en/stable/whats_new.html",
