@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING, NoReturn
+from typing import TYPE_CHECKING, NoReturn, Optional
 from io import BufferedIOBase
 
 if TYPE_CHECKING:
@@ -56,7 +56,7 @@ class File:
         "extra",
         "bot"
     )
-    def __init__(self, file_type, file_id, file_size, mime_type, bot: "Bot", **kwargs):
+    def __init__(self, file_type: str, file_id: str, file_size: Optional[int], mime_type: Optional[str], bot: "Bot", **kwargs):
         self.file_type = file_type
         self.file_id = file_id
         self.file_size = file_size

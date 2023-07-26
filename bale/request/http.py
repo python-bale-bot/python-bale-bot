@@ -67,7 +67,7 @@ class HTTPClient:
 
 	@property
 	def user_agent(self) -> str:
-		return "python-bale-bot (https://python-bale-bot.ir): An API Wrapper for Python"
+		return "python-bale-bot (https://python-bale-bot.ir): An API wrapper for Bale written in Python"
 
 	def is_closed(self):
 		return self.__session is None
