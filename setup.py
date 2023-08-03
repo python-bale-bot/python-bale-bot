@@ -17,8 +17,8 @@ extras_require = {
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.4.6",
-        platforms=["Windows", ],
+        version="2.4.7",
+        platforms=["Windows"],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
         author="Kian Ahmadian",
