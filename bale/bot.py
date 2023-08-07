@@ -363,9 +363,9 @@ class Bot:
             APIError
                 Send Document Failed.        
         """
-        if not isinstance(chat_id, (Chat, User)):
+        if not isinstance(chat_id, (str, int)):
             raise TypeError(
-                "chat_id param must be type of Chat or User"
+                "chat_id param must be type of str or int"
             )
 
         if not isinstance(document, (bytes, str, Document)):
@@ -383,9 +383,9 @@ class Bot:
                     "file_name param should only be used when you are uploading a file!"
                 )
 
-        if reply_to_message_id and not isinstance(reply_to_message_id, Message):
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
-                "reply_to_message_id param must be type of Message"
+                "reply_to_message_id param must be type of str or int"
             )
 
         if caption and not isinstance(caption, str):

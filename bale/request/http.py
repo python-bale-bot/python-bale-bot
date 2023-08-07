@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Dict, List
+from typing import Dict, List, Any
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
@@ -32,7 +32,6 @@ from .utils import ResponseStatusCode, to_json
 __all__ = ("HTTPClient", "Route")
 
 class Route:
-	"""Route Class for http"""
 	__slots__ = (
 		"method",
 		"endpoint",
@@ -50,6 +49,11 @@ class Route:
 	def url(self):
 		"""export url for request"""
 		return "{base_url}bot{token}/{endpoint}".format(base_url = BALE_API_BASE_URL, token = self.token, endpoint = self.endpoint)
+
+def parse_form_data(value: Any):
+	if isinstance(value, int):
+		value = str(value)
+	return value
 
 class HTTPClient:
 	"""Send a Request to BALE API Server"""
@@ -88,7 +92,7 @@ class HTTPClient:
 	async def start(self):
 		"""Start Http client"""
 		if self.__session:
-			raise RuntimeError("HTTPClient started ")
+			raise RuntimeError("HTTPClient has already started.")
 		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def close(self):
@@ -110,11 +114,11 @@ class HTTPClient:
 		if form:
 			form_data = aiohttp.FormData()
 			for file_payload in form:
-				form_data.add_field(**file_payload, content_type= "multipart/form-data")
+				form_data.add_field(**file_payload, content_type="multipart/form-data")
 			if 'data' in kwargs:
 				_data = kwargs.pop('data')
 				for param in _data:
-					form_data.add_field(param, _data[param])
+					form_data.add_field(param, parse_form_data(_data[param]))
 
 			kwargs['data'] = form_data
 
