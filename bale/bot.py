@@ -336,6 +336,9 @@ class Bot:
                             reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
 
+        .. warning::
+            To upload a file, you must fill in the "file_name" param and end it with the file extension.
+
         Parameters
         ----------
         chat_id: :class:`str` | :class:`int`
