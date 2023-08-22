@@ -29,15 +29,15 @@ class Invoice:
     Attributes
     ----------
         title: str
-        	Invoice title.
+        	Product name.
         description: str
-        	Invoice Description.
+        	Product description.
         start_parameter: str
-        	No Description.
+        	Unique bot deep-linking parameter that can be used to generate this invoice.
         currency: str
-        	No Description.
+        	Three-letter ISO 4217 currency code.
         total_amount: int
-        	No Description.
+        	Total price in the smallest units of the currency (integer, not float/double).
     """
 	__slots__ = (
 		"title",
