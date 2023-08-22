@@ -245,7 +245,7 @@ Update
 
 .. function:: on_update(update)
 
-   Called when a Update Sent.
+   Called when a Update receive.
 
    :param update: The update
    :type update: :class:`bale.Update`
