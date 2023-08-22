@@ -18,12 +18,12 @@ class Components:
 
     @property
     def menu_keyboards(self) -> List["MenuKeyboard"]:
-        """:class:`str`: Represents the MenuKeyboards list."""
+        """List[:class:`bale.MenuKeyboard`]: Represents the MenuKeyboards list."""
         return [item[0] for item in self._menu_keyboards]
 
     @property
     def inline_keyboards(self) -> List["InlineKeyboard"]:
-        """:class:`str`: Represents the InlineKeyboards list."""
+        """List[:class:`bale.InlineKeyboard`]: Represents the InlineKeyboards list."""
         return [item[0] for item in self._inline_keyboards]
 
     def add_menu_keyboard(self, menu_keyboard: "MenuKeyboard", row: int = 1):
@@ -110,8 +110,8 @@ class Components:
 
         correct_children = self._menu_keyboards if bool(self._menu_keyboards) else self._inline_keyboards
         correct_children_name = "keyboard" if bool(self._menu_keyboards) else "inline_keyboard"
-        def key(item: Tuple["InlineKeyboard" | "MenuKeyboard", int]):
-            return item[1] or 1
+        def key(i: Tuple["InlineKeyboard" | "MenuKeyboard", int]):
+            return i[1] or 1
 
         sorted_components = sorted(correct_children, key=key)
         payload = {correct_children_name: []}
