@@ -1,9 +1,9 @@
-# python-bale-bot
+# python-bale-bot Library
 
 <div align='center'>
 <img width="600" src="https://python-bale-bot.ir/assets/images/banner.png" alt="python-bale-bot image">
 <br>
-<b style='margin-bottom:20px;'>An API wrapper for Bale written in Python. </b>
+<b style='margin-bottom:50px;'>An API wrapper for Bale written in Python. </b>
 <br>
 
 [![Python Version](https://img.shields.io/badge/Python-3.8_|_3.9_|_3.10_|_3.11_-red?logo=python&style=plastic)](https://python.org)
@@ -16,8 +16,18 @@
 
 </div>
 
+## What is Bale?
+**The "Bale" is a messenger-platform for send and receive messages.** it's provides services for developers and they can send or receive messages through `bots` like normal users and These services are provided by [web services](https://dev.bale.ai) (`API`).
+
+## What is python-bale-bot?
+**The "python-bale-bot" is a Python language package optimized for developers to use web services provided by "Bale".**
+
 ## Installing
-<div align='center'><p><b>You can install or update <code>python-bale-bot</code> via:</b></p></div>
+<div align='center'>
+  
+  **You can install or update `python-bale-bot` via:**
+  
+</div>
 
 ### PyPi:
 
@@ -34,7 +44,7 @@ $ python setup.py install
 ```
 
 ## Documentation
-<p><b>The <a href="https://docs.python-bale-bot.ir/en/stable">package documentation</a> is the technical reference for python-bale-bot. It contains descriptions of all available classes, modules, methods and arguments as well as the changelog.</b></p>
+**The [package documentation](https://docs.python-bale-bot.ir/en/stable) is the technical reference for python-bale-bot. It contains descriptions of all available classes, modules, methods and arguments as well as the changelog.**
 
 
 ## Contact to Developers
