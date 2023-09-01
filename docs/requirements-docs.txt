@@ -1,4 +1,4 @@
-sphinx==7.2.3
+sphinx==7.2.5
 sphinx-pypi-upload
 sphinx-paramlinks==0.6.0
 sphinxcontrib-mermaid==0.8.1

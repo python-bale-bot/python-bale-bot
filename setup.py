@@ -7,7 +7,7 @@ def get_readme_file() -> str:
 
 extras_require = {
     'docs': [
-        'sphinx==7.2.3',
+        'sphinx==7.2.5',
         'sphinxcontrib_trio==1.1.2',
         'sphinxcontrib-websupport',
         'typing-extensions>=4.3,<5',
