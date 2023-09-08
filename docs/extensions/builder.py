@@ -1,5 +1,5 @@
 from sphinx.builders.html import StandaloneHTMLBuilder
-from sphinx.builders.gettext import MessageCatalogBuilder, I18nBuilder, timestamp, ltz, should_write, GettextRenderer
+from sphinx.builders.gettext import MessageCatalogBuilder, I18nBuilder, timestamp, should_write, GettextRenderer
 from sphinx.locale import __
 from sphinx.util.display import status_iterator
 from sphinx.util.osutil import ensuredir
@@ -58,7 +58,7 @@ class DPYMessageCatalogBuilder(MessageCatalogBuilder):
         # Bypass MessageCatalogBuilder.finish
         I18nBuilder.finish(self)
 
-        # This is mostly copy pasted from Sphinx
+        # This is mostly copied and pasted from Sphinx
         # However, this allows
         context = {
             'version': self.config.version,
@@ -66,7 +66,7 @@ class DPYMessageCatalogBuilder(MessageCatalogBuilder):
             'project': self.config.project,
             'last_translator': self.config.gettext_last_translator,
             'language_team': self.config.gettext_language_team,
-            'ctime': datetime.datetime.fromtimestamp(timestamp, ltz).strftime('%Y-%m-%d %H:%M%z'),
+            'ctime': datetime.datetime.fromtimestamp(timestamp).strftime('%Y-%m-%d %H:%M%z'),
             'display_location': self.config.gettext_location,
             'display_uuid': self.config.gettext_uuid,
         }
@@ -83,13 +83,13 @@ class DPYMessageCatalogBuilder(MessageCatalogBuilder):
             # noop if config.gettext_compact is set
             ensuredir(os.path.join(self.outdir, os.path.dirname(textdomain)))
 
-            # Due to a bug in Sphinx where messages contain admonitions, this code makes it
+            # Due to a bug in Sphinx where messages contain admonitions, this code makes it,
             # so they're suppressed from the output to prevent the output and CI from breaking
-            # This is quite a bandaid fix but it seems to work ok
+            # This is quite a bandaid fix, but it seems to work ok
             # See https://github.com/sphinx-doc/sphinx/issues/10334
             context['messages'] = [msg for msg in catalog if REGEX.search(msg.text) is None]
 
-            content = GettextRenderer(template_path='_templates/gettext', outdir=self.outdir).render(
+            content = GettextRenderer(template_path=['_templates/gettext'], outdir=self.outdir).render(
                 'message.pot_t', context
             )
 
