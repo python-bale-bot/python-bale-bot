@@ -23,15 +23,24 @@ SOFTWARE.
 """
 from __future__ import annotations
 import asyncio
-from typing import Callable, Dict, Tuple, List, Optional
+import logging
+from typing import Callable, Dict, Tuple, List, Optional, overload, NoReturn, Literal, TypeVar, Any, Coroutine
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
-from bale import (Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, HTTPClient, Updater,
-                  Photo, Document, Location, ContactMessage, Video, Audio, InputFile)
+from .utils.logging import setup_logging
+from bale import (Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, Updater,
+                  Location, ContactMessage, InputFile)
+from bale.request import HTTPClient
 
 __all__ = (
     "Bot"
 )
+
+T = TypeVar('T')
+Coro = Coroutine[Any, Any, T]
+CoroT = TypeVar('CoroT', bound=Callable[..., Coro[Any]])
+
+_log = logging.getLogger(__name__)
 
 
 class _Loop:
@@ -205,7 +214,7 @@ class Bot:
 
     async def on_error(self, event_name, error):
         """a Event for get errors when exceptions"""
-        print("error", event_name, error)
+        _log.exception(f'Exception in {event_name} Ignored')
 
     async def get_bot(self) -> User:
         """Get bot information
@@ -1119,6 +1128,7 @@ class Bot:
             async with self:
                 await self.connect(sleep_after_every_get_updates=sleep_after_every_get_updates)
 
+        setup_logging()
         try:
             asyncio.run(main())
         except KeyboardInterrupt:  # Control-C
