@@ -24,13 +24,13 @@ SOFTWARE.
 
 
 class Location:
-    """This object shows an end
+    """This object shows an Location
 
     Attributes
     ----------
-        longitude: int
+        longitude: :class:`int`
             Location longitude
-        latitude: int
+        latitude: :class:`int`
             Location latitude
     """
     __slots__ = (
@@ -44,7 +44,7 @@ class Location:
 
     @property
     def link(self) -> str:
-        """:class:`str`: export location link from map"""
+        """:class:`str`: Export location link from Google map"""
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
 
     @classmethod
@@ -52,12 +52,13 @@ class Location:
         return cls(longitude=data["longitude"], latitude=data["latitude"])
 
     def to_dict(self):
-        data = {"longitude": self.longitude if self.longitude is not None else None,
-                "latitude": self.latitude if self.latitude is not None else None}
-        return data
+        return {
+            "longitude": self.longitude,
+            "latitude": self.latitude
+        }
 
     def __eq__(self, other):
-        return isinstance(other, Location) and self.link == other.link
+        return isinstance(other, Location) and self.latitude == other.latitude and self.longitude == other.longitude
 
     def __ne__(self, other):
         return not self.__eq__(other)

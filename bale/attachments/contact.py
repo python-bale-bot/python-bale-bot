@@ -49,9 +49,11 @@ class ContactMessage:
         return cls(first_name=data.get("first_name"), last_name=data.get("last_name"), phone_number=data.get("phone_number"))
 
     def to_dict(self):
-        data = {"phone_number": self.phone_number, "first_name": self.first_name, "last_name": self.last_name}
-
-        return data
+        return {
+            'phone_number': self.phone_number,
+            'first_name': self.first_name,
+            'last_name': self.last_name
+        }
 
     def __eq__(self, other):
         return isinstance(other, ContactMessage) and self.phone_number == other.phone_number

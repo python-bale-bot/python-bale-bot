@@ -29,7 +29,7 @@ if TYPE_CHECKING:
 
 
 class Audio(File):
-    """This object shows a Audio.
+    """This object shows an Audio.
 
     Attributes
     ----------
