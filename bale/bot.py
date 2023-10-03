@@ -357,9 +357,6 @@ class Bot:
                             reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
 
-        .. warning::
-            To upload a file, you must fill in the "file_name" param and end it with the file extension.
-
         Parameters
         ----------
         chat_id: :class:`str` | :class:`int`
@@ -654,6 +651,9 @@ class Bot:
                            need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
                            is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
+
+        .. note::
+            When paying the amount, a fee will be charged from the sender.
 
         Parameters
         ----------
