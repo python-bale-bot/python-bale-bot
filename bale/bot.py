@@ -626,6 +626,7 @@ class Bot:
 
     async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str,
                            prices: List["Price"], *,
+                           payload: Optional[str] = None,
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                            need_phone_number: Optional[bool] = False,
                            need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
@@ -644,6 +645,8 @@ class Bot:
                 You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
             prices: List[:class:`bale.Price`]
                 A list of prices.
+            payload: Optional[:class:`str`]
+                Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.
             photo_url: Optional[:class:`str`]
                 URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
             need_name: Optional[bool]
@@ -690,6 +693,11 @@ class Bot:
                 "prices must param must be type of list"
             )
 
+        if payload and not isinstance(payload, str):
+            raise TypeError(
+                "payload param must be type of str"
+            )
+
         if photo_url and not isinstance(photo_url, str):
             raise TypeError(
                 "photo_url param must be type of str"
@@ -721,7 +729,7 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
-        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, photo_url,
+        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, payload, photo_url,
                                                 need_name,
                                                 need_phone_number, need_email, need_shipping_address, is_flexible)
         return Message.from_dict(data=response.result, bot=self)

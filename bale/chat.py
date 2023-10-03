@@ -135,13 +135,14 @@ class Chat:
         return await self.bot.send_contact(self.chat_id, contact)
 
     async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
-                   photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
-                       need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+                   payload: Optional[str] = None, photo_url: Optional[str] = None, need_name: Optional[bool] = False,
+                   need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
+                   need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
         """
         return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
-                                        photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                        payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible)
 
     async def leave(self):
