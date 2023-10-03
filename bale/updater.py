@@ -22,7 +22,8 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 import asyncio
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
+from .error import InvalidToken, BaleError
 
 if TYPE_CHECKING:
     from bale import Bot, Update
@@ -36,10 +37,6 @@ class Updater:
 
         Attributes:
             bot (:class:`bale.Bot`): The bot used with this Updater.
-            _last_offset (int | None): Last of Offset for get updates.
-            _is_running (bool): get status of updater.
-        Args:
-            bot (:class:`bale.Bot`): The Bot Object.
     """
     __slots__ = (
         "bot",
@@ -85,26 +82,51 @@ class Updater:
                 self.running = False
                 raise exc
 
-    async def _polling(self):
-        self.bot.dispatch("ready")
-        await self.action_getupdates()
-
-    async def action_getupdates(self):
-        while self._is_running:
+    async def _polling(self) -> NoReturn:
+        async def action_getupdates() -> bool:
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
+            except BaleError as exc:
+                raise exc
             except Exception as exc:
-                await self.bot.on_error("getUpdates", exc)
-            else:
-                if updates:
-                    for update in updates:
-                        await self.call_to_dispatch(update)
+                await self.bot.on_error("Get Updates", exc) # TODO: Support Logger from this section
+                return True
 
-                    self._last_offset = updates[-1].update_id
+            if updates:
+                for update in updates:
+                    await self.process_update(update)
+                self._last_offset = updates[-1].update_id
+
+            return True
+
+        def getupdates_error(exc) -> NoReturn:
+            print(exc) # TODO: Add Wrapper for errors
+
+        await self._network_loop_retry(
+                action_getupdates,
+                getupdates_error
+            )
+
+    async def _network_loop_retry(self, action_cb: Callable[..., Coroutine], on_error_cb: Callable) -> NoReturn:
+        try:
+            while self.running:
+                try:
+                    if not await action_cb():
+                        break
+
+                except InvalidToken as exc:
+                    raise exc
+
+                except BaleError as exc:
+                    on_error_cb(exc)
+
                 if self.interval:
                     await asyncio.sleep(self.interval)
 
-    async def call_to_dispatch(self, update: "Update"):
+        except asyncio.CancelledError:
+            pass # TODO: Add wrapper for Canceled error
+
+    async def process_update(self, update: "Update"):
         self.bot.dispatch("update", update)
         if update.type == "callback":
             self.bot.dispatch("callback", update.callback_query)
