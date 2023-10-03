@@ -1172,7 +1172,7 @@ class Bot:
         response = await self.http.leave_chat(str(chat_id))
         return response.result or False
 
-    async def get_updates(self, offset: int = None, limit: int = None) -> list["Update"]:
+    async def get_updates(self, offset: int = None, limit: int = None) -> List["Update"]:
         if offset and not isinstance(offset, int):
             raise TypeError(
                 "offset param must be int"
@@ -1187,21 +1187,21 @@ class Bot:
         return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
                 if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
 
-    async def connect(self, sleep_after_every_get_updates):
-        self._user = await self.get_bot()
-        await self.updater.start(sleep_after_every_get_updates=sleep_after_every_get_updates)
+    async def connect(self):
+        await self.get_bot()
+        await self.updater.start()
 
-    def run(self, sleep_after_every_get_updates=None):
-        """Run bot and https"""
+    def run(self):
+        """Starting the bot, updater and HTTPClient."""
 
         async def main():
             async with self:
-                await self.connect(sleep_after_every_get_updates=sleep_after_every_get_updates)
+                await self.connect()
 
         setup_logging()
         try:
             asyncio.run(main())
-        except KeyboardInterrupt:  # Control-C
+        except KeyboardInterrupt:
             pass
         except SystemExit:
             pass
