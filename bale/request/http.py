@@ -137,7 +137,7 @@ class HTTPClient:
 						raise Forbidden()
 					elif not parsed_response.ok or response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
 						if parsed_response.description == HTTPClientError.USER_OR_CHAT_NOT_FOUND:
-							raise NotFound("User or Chat not Found")
+							raise NotFound(parsed_response.description)
 						elif response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
 							if tries >= 4:
 								raise RateLimited()
@@ -219,6 +219,14 @@ class HTTPClient:
 
 		return self.request(Route("POST", "SendPhoto", self.token), data=payload, form=form)
 
+	def send_media_group(self, chat_id, media):
+		payload = {
+			"chat_id": chat_id,
+			"media": media
+		}
+
+		return self.request(Route("POST", "SendMediaGroup", self.token), data=payload)
+
 	def send_video(self, chat_id, form, *, caption=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
@@ -256,17 +264,19 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendContact", self.token), data=payload)
 
-	def send_invoice(self, chat_id, title, description, provider_token, prices, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
-		payload = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
+	def send_invoice(self, chat_id, title, description, provider_token, prices, payload=None, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
+		data = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
 		if photo_url:
-			payload["photo_url"] = photo_url
-		payload["need_name"] = need_name
-		payload["need_phone_number"] = need_phone_number
-		payload["need_email"] = need_email
-		payload["need_shipping_address"] = need_shipping_address
-		payload["is_flexible"] = is_flexible
+			data["photo_url"] = photo_url
+		if payload:
+			data["payload"] = payload
+		data["need_name"] = need_name
+		data["need_phone_number"] = need_phone_number
+		data["need_email"] = need_email
+		data["need_shipping_address"] = need_shipping_address
+		data["is_flexible"] = is_flexible
 
-		return self.request(Route("POST", "sendInvoice", self.token), json=payload)
+		return self.request(Route("POST", "sendInvoice", self.token), json=data)
 
 	def send_location(self, chat_id, latitude, longitude):
 		payload = { "chat_id": chat_id, "latitude": latitude, "longitude": longitude}
@@ -301,6 +311,12 @@ class HTTPClient:
 
 	def delete_webhook(self):
 		return self.request(Route("GET", "deleteWebhook", self.token))
+
+	def set_webhook(self, url):
+		payload = {
+			"url": url
+		}
+		return self.request(Route("POST", "setWebhook", self.token), payload = payload)
 
 	def get_bot(self):
 		return self.request(Route("GET", "getMe", self.token))
