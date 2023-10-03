@@ -194,7 +194,6 @@ class Bot:
 
     def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
         """Wait for an event"""
-        self.loop: asyncio.AbstractEventLoop
         future = self.loop.create_future()
         event_name = event_name.lower()
         if not check:
@@ -218,7 +217,7 @@ class Bot:
         """:class:`bool`: Connection Status"""
         return self._closed
 
-    async def run_event(self, core, event_name, *args, **kwargs):
+    async def run_event(self, core: CoroT, event_name: str, *args, **kwargs):
         try:
             await core(*args, **kwargs)
         except asyncio.CancelledError:
