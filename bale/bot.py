@@ -81,8 +81,8 @@ class Bot:
     def __init__(self, token: str, **kwargs):
         if not isinstance(token, str):
             raise InvalidToken()
-        self.loop = _loop
-        self.token = token
+        self.loop: asyncio.AbstractEventLoop | _Loop = _loop
+        self.token: str = token
         self.http: HTTPClient = HTTPClient(self.loop, token)
         self._user = None
         self.events: Dict[str, List[Callable]] = {}
@@ -116,24 +116,42 @@ class Bot:
         if not self.events.get(event):
             self.events[event] = list()
 
-        self.events[event].append(function)
+    @overload
+    async def wait_for(self, event_name: Literal['message'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
 
-    def remove_event(self, event: str, function=None):
-        """Register an Event with event name"""
-        result = self.events.get(event)
-        if not result:
-            raise TypeError(f"{event} not in Events")
+    @overload
+    async def wait_for(self, event_name: Literal['edit_message'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
 
-        if not function:
-            del self.events[event]
-            return
+    @overload
+    async def wait_for(self, event_name: Literal['callback_query'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
 
-        if not function in result:
-            raise TypeError(f"{function.__name__} not in Event Functions")
+    @overload
+    async def wait_for(self, event_name: Literal['message'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
 
-        del self.events[event][function]
+    @overload
+    async def wait_for(self, event_name: Literal['member_chat_join'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
 
-    def wait_for(self, event_name: str, *, check=None, timeout=None):
+    @overload
+    async def wait_for(self, event_name: Literal['member_chat_leave'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
+
+    @overload
+    async def wait_for(self, event_name: Literal['successful_payment'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None):
+        ...
+
+    def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
         """Wait for an event"""
         self.loop: asyncio.AbstractEventLoop
         future = self.loop.create_future()
@@ -187,7 +205,6 @@ class Bot:
 
     def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
-        self.loop: asyncio.AbstractEventLoop
         return self.loop.create_task(task, name=f"python-bale-bot: {event_name}")
 
     def dispatch(self, event_name: str, /, *args, **kwargs):
