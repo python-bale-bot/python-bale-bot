@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from bale import User
+from bale import User, ChatType
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
     from bale import Bot, Message, User, Photo, Document, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, Video, Audio
@@ -86,9 +86,9 @@ class Chat:
 
     Attributes
     ----------
-        chat_id: str
+        chat_id: :class:`str`
             Unique identifier for this chat.
-        type: :class:`bale.ChatType`
+        type: :class:`str`
             Type of chat.
         title: Optional[:class:`str`]
             Title, for channels and group chats.
@@ -124,7 +124,7 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, type: "ChatType", title: Optional[str] = None, username: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None,
+    def __init__(self, chat_id: int | str, type: str, title: Optional[str] = None, username: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None,
                  pinned_message: Optional["Message"] = None, all_members_are_administrators: Optional[bool] = None, invite_link: Optional[str] = None, bot: 'Bot' = None):
         self.chat_id = chat_id
         self.type = type
@@ -138,9 +138,8 @@ class Chat:
         self.bot = bot
 
     @property
-    def mention(self) -> str | None:
-        """Optional[:class:`str`]"""
-        return ("@" + self.username) if self.username else None
+    def parsed_type(self):
+        return ChatType(self.type)
 
     async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
@@ -244,7 +243,7 @@ class Chat:
 
     @classmethod
     def from_dict(cls, data: dict, bot):
-        return cls(bot=bot, chat_id=data.get("id"), type=ChatType(data.get("type")), title=data.get("title"),
+        return cls(bot=bot, chat_id=data.get("id"), type=data.get("type"), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True),
