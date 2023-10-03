@@ -23,6 +23,7 @@ SOFTWARE.
 """
 from typing import TYPE_CHECKING, NoReturn, Optional
 from io import BufferedIOBase
+from .input_file import InputFile
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -98,6 +99,9 @@ class File:
                 **self.extra}
 
         return data
+
+    def to_input_file(self) -> InputFile:
+        return InputFile(self.file_id)
 
     def __len__(self):
         return self.file_size

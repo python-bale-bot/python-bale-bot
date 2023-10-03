@@ -25,7 +25,7 @@ from __future__ import annotations
 from bale import User, ChatType
 from typing import TYPE_CHECKING, Optional, List
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, Photo, Document, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, Video, Audio
+    from bale import Bot, Message, User, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, InputFile
 
 
 __all__ = (
@@ -98,29 +98,29 @@ class Chat:
         """
         return await self.bot.send_message(self.chat_id, text, components=components)
 
-    async def send_document(self, document: bytes | str | "Document", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
-        return await self.bot.send_document(self.chat_id, document, file_name=file_name, caption=caption)
+        return await self.bot.send_document(self.chat_id, document, caption=caption)
 
-    async def send_photo(self, photo: bytes | str | "Photo", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_photo(self.chat_id, photo, file_name=file_name, caption=caption)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption)
 
-    async def send_video(self, video: bytes | str | "Video", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
         """
-        return await self.bot.send_video(self.chat_id, video, file_name=file_name, caption=caption)
+        return await self.bot.send_video(self.chat_id, video, caption=caption)
 
-    async def send_audio(self, audio: bytes | str | "Audio", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
         """
-        return await self.bot.send_audio(self.chat_id, audio, file_name=file_name, caption=caption)
+        return await self.bot.send_audio(self.chat_id, audio, caption=caption)
 
     async def send_location(self, location: "Location"):
         """

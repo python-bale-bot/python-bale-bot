@@ -330,8 +330,7 @@ class Bot:
         response = await self.http.forward_message(str(chat_id), str(from_chat_id), str(message_id))
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_document(self, chat_id: str | int, document: bytes | str | "Document", *,
-                            file_name: Optional[str] = None,
+    async def send_document(self, chat_id: str | int, document: "InputFile", *,
                             caption: Optional[str] = None,
                             reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
@@ -343,10 +342,8 @@ class Bot:
         ----------
         chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-        document: :class:`bytes` | :class:`str` | :class:`bale.Document`
-                File to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-        file_name: :class:`str`
-                Additional interface options. file name to send.
+        document: :class:`bale.InputFile`
+                File to send. visit :class:`bale.InputFile` to see more info.
         caption: Optional[:class:`str`]
                 Document caption.
         reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -371,20 +368,10 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(document, (bytes, str, Document)):
+        if not isinstance(document, InputFile):
             raise TypeError(
-                "document param must be type of bytes, str or Document"
+                "document param must be type of InputFile"
             )
-
-        if file_name:
-            if not isinstance(file_name, str):
-                raise TypeError(
-                    "file_name param must be type of str"
-                )
-            if isinstance(document, (str, Document)):
-                raise TypeError(
-                    "file_name param should only be used when you are uploading a file!"
-                )
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -396,14 +383,12 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        if isinstance(document, Document):
-            document = document.file_id
-
-        response = await self.http.send_document(chat_id, [InputFile('document', file_name, document).to_file_form_payload()], caption=caption,
+        response = await self.http.send_document(chat_id, [document.to_dict('document')], caption=caption,
                                                  reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_photo(self, chat_id: str | int, photo: bytes | str | "Photo", *, file_name: Optional[str] = None, caption: Optional[str] = None,
+    async def send_photo(self, chat_id: str | int, photo: "InputFile", *,
+                         caption: Optional[str] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send photo.
 
@@ -411,10 +396,8 @@ class Bot:
         ----------
             chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            photo: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Photo to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-            file_name: :class:`str`
-                Additional interface options. file name to send.
+            photo: :class:`bale.InputFile`
+                File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Photo caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -439,23 +422,10 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(photo, (bytes, str, Photo)):
+        if not isinstance(photo, InputFile):
             raise TypeError(
-                "photo param must be type of bytes, str or Photo"
+                "photo param must be type of InputFile"
             )
-
-        if isinstance(photo, Photo):
-            photo = photo.file_id
-
-        if file_name:
-            if not isinstance(file_name, str):
-                raise TypeError(
-                    "file_name param must be type of str"
-                )
-            if isinstance(photo, (str, Photo)):
-                raise TypeError(
-                    "file_name param should only be used when you are uploading a file!"
-                )
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -467,11 +437,12 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat_id), [InputFile('photo', file_name, photo).to_file_form_payload()], caption=caption,
+        response = await self.http.send_photo(str(chat_id), [photo.to_dict('photo')], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_audio(self, chat_id: str | int, audio: bytes | str | "Audio", *, file_name: Optional[str] = None, caption: Optional[str] = None,
+    async def send_audio(self, chat_id: str | int, audio: "InputFile", *,
+                         caption: Optional[str] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Audio.
 
@@ -479,10 +450,8 @@ class Bot:
         ----------
             chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            audio: :class:`bytes` | :class:`str` | :class:`bale.Audio`
-                Audio file to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-            file_name: :class:`str`
-                Additional interface options. file name to send.
+            audio: :class:`bale.InputFile`
+                File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Audio caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -507,23 +476,10 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(audio, (bytes, str, Audio)):
+        if not isinstance(audio, InputFile):
             raise TypeError(
-                "audio param must be type of bytes, str or Audio"
+                "audio param must be type of InputFile"
             )
-
-        if isinstance(audio, Audio):
-            audio = audio.file_id
-
-        if file_name:
-            if not isinstance(file_name, str):
-                raise TypeError(
-                    "file_name param must be type of str"
-                )
-            if isinstance(audio, (str, Audio)):
-                raise TypeError(
-                    "file_name param should only be used when you are uploading a file!"
-                )
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -535,11 +491,12 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_audio(str(chat_id), [InputFile('audio', file_name, audio).to_file_form_payload()], caption=caption,
+        response = await self.http.send_audio(str(chat_id), [audio.to_dict('audio')], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
-    async def send_video(self, chat_id: str | int, video: bytes | str | "Photo", *, file_name: Optional[str] = None, caption: Optional[str] = None,
+    async def send_video(self, chat_id: str | int, video: "InputFile", *,
+                         caption: Optional[str] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Video.
 
@@ -547,10 +504,8 @@ class Bot:
         ----------
             chat_id: :class:`str` | :class:`int`
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            video: :class:`bytes` | :class:`str` | :class:`bale.Photo`
-                Video to send. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-            file_name: :class:`str`
-                Additional interface options. file name to send.
+            video: :class:`bale.InputFile`
+                File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Video caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
@@ -575,23 +530,10 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(video, (bytes, str, Video)):
+        if not isinstance(video, InputFile):
             raise TypeError(
                 "video param must be type of bytes, str or Video"
             )
-
-        if isinstance(video, Video):
-            video = video.file_id
-
-        if file_name:
-            if not isinstance(file_name, str):
-                raise TypeError(
-                    "file_name param must be type of str"
-                )
-            if isinstance(video, (str, Video)):
-                raise TypeError(
-                    "file_name param should only be used when you are uploading a file!"
-                )
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -603,7 +545,7 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_video(str(chat_id), [InputFile('video', file_name, video).to_file_form_payload()], caption=caption,
+        response = await self.http.send_video(str(chat_id), [video.to_dict('video')], caption=caption,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 

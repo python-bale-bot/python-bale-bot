@@ -30,8 +30,8 @@ if TYPE_CHECKING:
     from bale import Bot
 
 from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveMenuKeyboard,
-                  Video, Audio, File)
-
+                  Video, Audio, File, SuccessfulPayment, InputFile)
+from .helpers import parse_time
 
 class Message:
     """This object shows a message.
@@ -237,37 +237,33 @@ class Message:
         """
         return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
 
-    async def reply_document(self, document: bytes | str | "Document", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption,
-                                            file_name=file_name,
-                                            reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                            reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
 
-    async def reply_photo(self, photo: bytes | str | "Photo", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption,
-                                         file_name=file_name,
-                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
 
-    async def reply_video(self, video: bytes | str | "Video", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
-                                         file_name=file_name,
-                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
 
-    async def reply_audio(self, audio: bytes | str | "Audio", *, file_name: Optional[str] = None, caption: Optional[str] = None):
+    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
         """
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
-                                         file_name=file_name,
-                                         reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
 
     async def edit(self, text: str, *, components: "Components" | "RemoveMenuKeyboard" = None) -> Message:
         """
