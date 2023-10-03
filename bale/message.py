@@ -75,13 +75,14 @@ class Message:
             A member was removed from the group, information about them (this member may be the bot itself).
         invoice: Optional[:class:`bale.Invoice`]
             Message is an invoice for a payment, information about the invoice.
+        successful_payment: Optional[:class:`bale.SuccessfulPayment`]
+            Message is a service message about a successful payment, information about the payment.
     """
     __slots__ = (
-        "text", "caption", "from_user", "_author", "contact", "location", "chat", "message_id", "forward_from",
+        "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
         "edit_date", "audio", "document", "video", "photos", "location", "invoice", "new_chat_members",
-        "left_chat_member", "reply_to_message",
-        "invoice", "bot"
+        "left_chat_member", "reply_to_message", "successful_payment", "bot"
     )
 
     def __init__(self, message_id: str, date: datetime, text: Optional[str] = None, caption: Optional[str] = None,
@@ -92,6 +93,7 @@ class Message:
                  chat: Optional["Chat"] = None, video: Optional["Video"] = None,
                  photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None,
                  invoice: Optional["Invoice"] = None, audio: Optional["Audio"] = None,
+                 successful_payment: Optional["SuccessfulPayment"] = None,
                  bot: 'Bot' = None, **options):
         self.message_id: str = message_id
         self.date = date
@@ -179,6 +181,7 @@ class Message:
                    audio=Audio.from_dict(data=data.get("audio"), bot=bot) if data.get("audio") else None,
                    photos=[Photo.from_dict(data=photo_payload, bot=bot) for photo_payload in data.get("photo")] if data.get(
                        "photo") else None, video=Video.from_dict(data=data.get("video"), bot=bot) if data.get("video") else None,
+                   successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     def to_dict(self):
