@@ -253,7 +253,7 @@ class Bot:
             components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
                 Message Components
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
-                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+                If the message is a reply, ID of the original message.
         Returns
         -------
             :class:`bale.Message`
@@ -347,7 +347,7 @@ class Bot:
         caption: Optional[:class:`str`]
                 Document caption.
         reply_to_message_id: Optional[:class:`str` | :class:`int`]
-                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+                If the message is a reply, ID of the original message.
 
         Returns
         --------
@@ -401,7 +401,7 @@ class Bot:
             caption: Optional[:class:`str`]
                 Photo caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
-                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+                If the message is a reply, ID of the original message.
 
         Returns
         --------
@@ -455,7 +455,7 @@ class Bot:
             caption: Optional[:class:`str`]
                 Audio caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
-                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+                If the message is a reply, ID of the original message.
 
         Returns
         --------
@@ -509,7 +509,7 @@ class Bot:
             caption: Optional[:class:`str`]
                 Video caption.
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
-                Additional interface options. An object for an inline keyboard, custom reply keyboard, instructions to remove reply keyboard or to force a reply from the user.
+                If the message is a reply, ID of the original message.
 
         Returns
         --------
