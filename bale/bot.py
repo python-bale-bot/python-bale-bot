@@ -50,7 +50,6 @@ class _Loop:
         raise AttributeError((
             'loop attribute cannot be accessed in non-async contexts. '
             'Consider using either an asynchronous main function and passing it to asyncio.run or '
-            'using asynchronous initialisation hooks such as Bot.setup_hook'
         ))
 
 _loop = _Loop()
@@ -63,7 +62,6 @@ class Bot:
     ----------
         token: str 
             Bot Token
-        updater: Optional[:class:`bale.Updater`]
 
     .. note::
         When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_ready` event.
@@ -89,6 +87,19 @@ class Bot:
         self._user = None
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
+        self._closed: bool = True
+
+        self.updater: Updater = Updater(self)
+
+    @property
+    def user(self) -> Optional["User"]:
+        """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
+        return self._client_user
+
+    async def _setup_hook(self):
+        loop = asyncio.get_running_loop()
+        self.loop = loop
+        self.http.loop = loop
         self._closed = False
 
         self.updater: Updater = kwargs.get("updater", Updater)(self)
@@ -169,16 +180,18 @@ class Bot:
     async def run_event(self, core, event_name, *args, **kwargs):
         try:
             await core(*args, **kwargs)
+        except asyncio.CancelledError:
+            pass
         except Exception as ext:
             await self.on_error(event_name, ext)
 
-    def call_to_run_event(self, core, event_name, *args, **kwargs):
+    def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
         self.loop: asyncio.AbstractEventLoop
         return self.loop.create_task(task, name=f"python-bale-bot: {event_name}")
 
-    def dispatch(self, event_name, /, *args, **kwargs):
-        method = "on_" + event_name
+    def dispatch(self, event_name: str, /, *args, **kwargs):
+        method = 'on_' + event_name
         listeners = self.listeners.get(event_name)
         if listeners:
             removed = []
@@ -210,7 +223,7 @@ class Bot:
         events_core = self.events.get(method)
         if events_core:
             for event_core in events_core:
-                self.call_to_run_event(event_core, method, *args, **kwargs)
+                self._create_event_schedule(event_core, method, *args, **kwargs)
 
     async def on_error(self, event_name, error):
         """a Event for get errors when exceptions"""
@@ -236,8 +249,8 @@ class Bot:
 
         Returns
         -------
-            bool:
-                ``True`` else ``False`` if not done
+            :class:`bool`:
+                On success, True is returned.
         Raises
         ------
             Forbidden
