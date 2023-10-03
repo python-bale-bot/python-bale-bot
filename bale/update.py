@@ -22,83 +22,24 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from typing import TYPE_CHECKING, Dict
+from typing import TYPE_CHECKING, Dict, Optional
 from bale import (Message, CallbackQuery)
 
 if TYPE_CHECKING:
     from bale import Bot
 
 __all__ = (
-    "UpdateType",
-    "Update"
+    "Update",
 )
 
 
-def parse_type(data: dict) -> "UpdateType":
-    if data.get(UpdateType.CALLBACK):
-        return UpdateType(UpdateType.CALLBACK)
-    elif data.get(UpdateType.EDITED_MESSAGE):
-        return UpdateType(UpdateType.EDITED_MESSAGE)
-    elif data.get(UpdateType.MESSAGE):
-        return UpdateType(UpdateType.MESSAGE)
-    else:
-        return UpdateType(UpdateType.UNKNOWN)
+def parse_type(data: Dict) -> Optional[str]:
+    events = ("callback_query", "edited_message", "message")
+    for event in events:
+        if data.get(event):
+            return event
 
-
-class UpdateType:
-    """This object indicates an Update Type.
-
-    .. container:: operations
-        .. describe:: x == y
-            Checks if two update type are equal.
-        .. describe:: x != y
-            Checks if two update type are not equal.
-    """
-    MESSAGE = "message"
-    CALLBACK = "callback_query"
-    EDITED_MESSAGE = "edited_message"
-    UNKNOWN = "unknown"
-
-    __slots__ = (
-        "_type",
-    )
-
-    def __init__(self, _type: str):
-        self._type = _type
-
-    @property
-    def type(self) -> str:
-        return self._type
-
-    def is_message_update(self):
-        """bool:
-        Return ``True`` if Update Type is Message"""
-        return self._type == self.MESSAGE
-
-    def is_callback_update(self):
-        """bool:
-        Return ``True`` if Update Type is Callback"""
-        return self._type == self.CALLBACK
-
-    def is_edited_message(self):
-        """bool:
-        Return ``True`` if Update Type is Edited Message"""
-        return self._type == self.EDITED_MESSAGE
-
-    def is_unknown_update(self):
-        """bool:
-        Return ``True`` if Update Type is Unknown"""
-        return self._type == self.UNKNOWN
-
-    def __str__(self):
-        return self._type
-
-    def __eq__(self, other):
-        return self._type == other
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
+    return None
 
 class Update:
     """This object represents an incoming update.
@@ -123,7 +64,7 @@ class Update:
         "bot"
     )
 
-    def __init__(self, update_id: int, type: "UpdateType", callback_query: "CallbackQuery" = None, message: "Message" = None,
+    def __init__(self, update_id: int, type: Optional[str], callback_query: "CallbackQuery" = None, message: "Message" = None,
                  edited_message: "Message" = None, bot: 'Bot' = None):
         self.update_id = int(update_id)
         self.type = type
@@ -135,16 +76,16 @@ class Update:
     @classmethod
     def from_dict(cls, data: dict, bot: "Bot"):
         callback_query, message, edited_message = None, None, None
-        parsed_type: UpdateType = parse_type(data)
+        update_type: Optional[str] = parse_type(data)
 
-        if parsed_type.is_callback_update():
-            callback_query = CallbackQuery.from_dict(data.get("callback_query"), bot=bot)
-        if parsed_type.is_message_update():
-            message = Message.from_dict(data.get("message"), bot=bot)
-        if parsed_type.is_edited_message():
-            edited_message = Message.from_dict(data.get("edited_message"), bot=bot)
+        if update_type == "callback_query":
+            callback_query = CallbackQuery.from_dict(data[update_type], bot=bot)
+        if update_type == "message":
+            message = Message.from_dict(data[update_type], bot=bot)
+        if update_type == "edited_message":
+            edited_message = Message.from_dict(data[update_type], bot=bot)
 
-        return cls(type=parsed_type, update_id=data["update_id"],
+        return cls(type=update_type, update_id=data["update_id"],
                    message=message, callback_query=callback_query, edited_message=edited_message, bot=bot)
 
     def to_dict(self) -> Dict:
