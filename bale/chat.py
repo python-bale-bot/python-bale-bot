@@ -55,12 +55,6 @@ class Chat:
             Primary invite link, for groups and channel. Returned only in bale.Bot.get_chat().
         all_members_are_administrators: bool
             Does everyone have admin access?. Defaults to True. (for Group)
-
-    .. container:: operations
-        .. describe:: x == y
-            Checks if two chat are equal.
-        .. describe:: x != y
-            Checks if two chat are not equal.
     """
     __slots__ = (
         "chat_id",
