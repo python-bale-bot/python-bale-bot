@@ -223,7 +223,7 @@ class Message:
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
         return await self.bot.send_message(self.chat_id, text, components=components,
-                                           reply_to_message_id=self.message_id if not self.chat.type.is_group_chat() else None)
+                                           reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
 
     async def forward(self, chat_id: str | int):
         """
