@@ -1,14 +1,14 @@
 import asyncio
-from bale import Bot, Message, EventType
+from bale import Bot, Message
 
 client = Bot(token="Your Token")
 
-@client.listen(EventType.READY)
-async def when_bot_is_ready():
+@client.event
+async def on_ready():
     print(client.user, "is Ready!")
 
-@client.listen(EventType.MESSAGE)
-async def when_receive_message(message: Message):
+@client.event
+async def on_message(message: Message):
     if message.content == '/give_name_without_timeout':
         await message.reply('what is your name?')
         def answer_checker(m: Message):

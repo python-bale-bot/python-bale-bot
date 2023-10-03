@@ -1,25 +1,24 @@
-from bale import Update, Message, Bot, Price, EventType
+from bale import Message, Bot, Price, SuccessfulPayment
 
 client = Bot(token="Your Token")
 
-@client.listen(EventType.READY)
-async def when_bot_is_ready():
+@client.event
+async def on_ready():
 	print(client.user, "is Ready!")
 
-@client.listen(EventType.UPDATE)
-async def when_receive_update(update: Update):
-	print(update.update_id, update.type)
-
-@client.listen(EventType.MESSAGE)
-async def when_receive_message(message: Message):
+@client.event
+async def on_message(message: Message):
 	if message.content == "/donate":
-		await message.reply_invoice(
+		await message.chat.send_invoice(
 			title="Example Donate",
 			description="Example Donate description",
 			provider_token="6037************",
+			payload="{}".format(message.author.user_id),
 			prices=[Price(label="Milk", amount=20000)]
 		)
 
-"""There is a problem of receiving the message of money arrival by 'Bale' web services!"""
+@client.event
+async def on_successful_payment(successful_payment: SuccessfulPayment):
+	print("We Receive an payment From {}".format(successful_payment.payload))
 
 client.run()

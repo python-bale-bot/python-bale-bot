@@ -1,15 +1,16 @@
-from bale import Bot, Message, EventType
+from bale import Bot, Message, InputFile
 
 client = Bot("Your Token")
 
-@client.listen(EventType.READY)
-async def when_bot_is_ready():
+@client.event
+async def on_ready():
     print(client.user, "is Ready!")
     
-@client.listen(EventType.MESSAGE)
-async def when_receive_message(message: Message):
+@client.event
+async def on_message(message: Message):
     if message.content == "/photo":
-        photo = open('attachment.png', 'rb').read()
+        file = open('attachment.png', 'rb').read()
+        photo = InputFile(file)
         return await message.reply_photo(photo=photo, caption="This is a simple photo")
 
     elif message.attachment and message.photos:
