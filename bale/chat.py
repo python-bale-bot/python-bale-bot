@@ -30,56 +30,7 @@ if TYPE_CHECKING:
 
 __all__ = (
     "Chat",
-    "ChatType"
 )
-
-class ChatType:
-    """This object indicates a Chat Type.
-
-    .. container:: operations
-        .. describe:: x == y
-            Checks if two chat type are equal.
-        .. describe:: x != y
-            Checks if two chat type are not equal.
-    """
-    PRIVATE = "private"
-    GROUP = "group"
-    CHANNEL = "channel"
-
-    __slots__ = (
-        "_type",
-    )
-
-    def __init__(self, _type: str):
-        self._type = _type
-
-    @property
-    def type(self) -> str:
-        return self._type
-
-    def is_private_chat(self):
-        """bool:
-            Return ``True`` if Chat Type is Private"""
-        return self._type == self.PRIVATE
-
-    def is_group_chat(self):
-        """bool:
-            Return ``True`` if Chat Type is Group"""
-        return self._type == self.GROUP
-
-    def is_channel_chat(self):
-        """bool:
-            Return ``True`` if Chat Type is Channel"""
-        return self._type == self.CHANNEL
-
-    def __repr__(self):
-        return f"<ChatType type={self.type}>"
-
-    def __eq__(self, other):
-        return self._type == other
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
 
 class Chat:
     """This object indicates a chat.
