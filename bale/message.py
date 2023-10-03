@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional, NoReturn
+from typing import TYPE_CHECKING, List, Optional
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -93,27 +93,28 @@ class Message:
                  photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None,
                  invoice: Optional["Invoice"] = None, audio: Optional["Audio"] = None,
                  bot: 'Bot' = None, **options):
-        self.message_id: str = message_id if message_id is not None else None
-        self.date = date if date is not None else None
+        self.message_id: str = message_id
+        self.date = date
 
-        self.text: str | None = text if text is not None else None
-        self.chat: Chat | None = chat if chat is not None else None
-        self.reply_to_message: Message | None = reply_to_message if reply_to_message is not None else reply_to_message
-        self.from_user: User | None = from_user if from_user is not None else None
-        self.forward_from: User | None = forward_from if forward_from is not None else None
-        self.forward_from_message_id: str = forward_from_message_id if forward_from_message_id is not None else None
-        self.forward_from_chat: Chat | None = forward_from_chat if forward_from_chat is not None else None
-        self.caption: str | None = caption if caption is not None else None
-        self.document = document if document is not None else None
-        self.video = video if video is not None else None
-        self.audio = audio if audio is not None else None
-        self.photos = photos if photos is not None else None
-        self.contact: ContactMessage | None = contact if contact is not None else None
-        self.location: Location | None = location if location is not None else None
-        self.new_chat_members: List[User] | None = options.get("new_chat_members")
-        self.left_chat_member: User | None = options.get("left_chat_member")
-        self.invoice = invoice
-        self.bot: Bot = bot if bot is not None else None
+        self.text: Optional[str] = text
+        self.chat: Optional["Chat"] = chat
+        self.reply_to_message: Optional["Message"] = reply_to_message
+        self.from_user: Optional["User"] = from_user
+        self.forward_from: Optional["User"] = forward_from
+        self.forward_from_message_id: Optional[str] = forward_from_message_id
+        self.forward_from_chat: Optional["Chat"] = forward_from_chat
+        self.caption: Optional[str] = caption
+        self.document: Optional["Document"] = document
+        self.video: Optional["Video"] = video
+        self.audio: Optional["Audio"] = audio
+        self.photos: Optional[List["Photo"]] = photos
+        self.contact: Optional["ContactMessage"] = contact
+        self.location: Optional["Location"] = location
+        self.new_chat_members: Optional[List["User"]] = options.get("new_chat_members")
+        self.left_chat_member: Optional["User"] = options.get("left_chat_member")
+        self.invoice: Optional["Invoice"] = invoice
+        self.successful_payment = successful_payment
+        self.bot: Optional[Bot] = bot
 
     @property
     def author(self):
@@ -136,16 +137,6 @@ class Message:
     def content(self) -> Optional[str]:
         """Optional[:class:`str`]: Represents the message content. ``None`` if the message don't have text or caption"""
         return self.caption or self.text
-
-    @content.setter
-    def content(self, _value: str) -> NoReturn:
-        if not isinstance(_value, str):
-            raise TypeError("content must be type of str")
-
-        if self.caption:
-            self.caption = _value
-        elif self.text:
-            self.text = _value
 
     @property
     def chat_id(self) -> Optional[str | int]:
@@ -172,7 +163,7 @@ class Message:
         return cls(bot=bot, message_id=str(data.get("message_id")),
                    chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
                    reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
-                       "reply_to_message") else None, date=datetime.fromtimestamp(int(data.get("date"))),
+                       "reply_to_message") else None, date=parse_time(int(data.get("date"))),
                    text=data.get("text"),
                    caption=data.get("caption"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
