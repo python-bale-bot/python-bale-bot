@@ -21,7 +21,9 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING, NoReturn, Optional
+from __future__ import annotations
+
+from typing import TYPE_CHECKING, NoReturn, Optional, Any
 from io import BufferedIOBase
 from .input_file import InputFile
 
@@ -81,7 +83,7 @@ class File:
         """
         return await self.bot.get_file(self.file_id)
 
-    async def save_to_memory(self, out: "BufferedIOBase") -> NoReturn:
+    async def save_to_memory(self, out: "BufferedIOBase" | Any) -> NoReturn:
         """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`, the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
 
         Parameters
