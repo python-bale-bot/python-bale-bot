@@ -8,9 +8,9 @@ class MenuKeyboard:
     ----------
         text: str
             Keyboard Text.
-        request_contact: bool
+        request_contact: Optional[:class:`bool`]
             If ``True``, the user’s phone number will be sent as a contact when the button is pressed.
-        request_location: bool
+        request_location: Optional[:class:`bool`]
             If ``True``, the user’s current location will be sent when the button is pressed. Available in private chats only.
     """
     __slots__ = (
@@ -19,7 +19,7 @@ class MenuKeyboard:
         "request_location"
     )
 
-    def __init__(self, text: str, request_contact: Optional[bool] = False, request_location: Optional[bool] = False):
+    def __init__(self, text: str, *, request_contact: Optional[bool] = False, request_location: Optional[bool] = False):
         self.text = text
         self.request_contact = request_contact
         self.request_location = request_location

@@ -1,4 +1,5 @@
 from __future__ import annotations
+from typing import Optional
 
 class InlineKeyboard:
     """This object shows an inline keyboard (within the message).
@@ -7,15 +8,15 @@ class InlineKeyboard:
     ----------
         text: str
             Label text on the button.
-        callback_data: str
+        callback_data: Optional[:class:`str`]
             If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
             inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-        url: str
+        url: Optional[:class:`str`]
             HTTP url to be opened when the button is pressed. Defaults to None.
-        switch_inline_query: str
+        switch_inline_query: Optional[:class:`str`]
             If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
             inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-        switch_inline_query_current_chat: str
+        switch_inline_query_current_chat: Optional[:class:`str`]
             If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty,
             in which case only the bot's username will be inserted. Defaults to None.
     """
@@ -23,18 +24,16 @@ class InlineKeyboard:
         "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
     )
 
-    def __init__(self, text: str, *, callback_data: str = None, url: str = None, switch_inline_query: str = None,
+    def __init__(self, text: str, *, callback_data: Optional[str] = None, url: Optional[str] = None, switch_inline_query: Optional[str] = None,
                  switch_inline_query_current_chat: str = None):
         self.text = text
-        self.callback_data = callback_data if callback_data is not None else None
-        self.url = url if url is not None else None
-        self.switch_inline_query = switch_inline_query if switch_inline_query is not None else switch_inline_query
-        self.switch_inline_query_current_chat = switch_inline_query_current_chat if switch_inline_query_current_chat is not None else None
+        self.callback_data = callback_data
+        self.url = url
+        self.switch_inline_query = switch_inline_query
+        self.switch_inline_query_current_chat = switch_inline_query_current_chat
 
     @classmethod
     def from_dict(cls, data: dict):
-        if not data.get("text") or not data.get("callback_data"):
-            return None
         return cls(text=data["text"], callback_data=data.get("callback_data"), url=data.get("url"),
                    switch_inline_query=data.get("switch_inline_query"),
                    switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"))
