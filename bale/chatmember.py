@@ -25,62 +25,12 @@ from __future__ import annotations
 from typing import TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import Bot
-from bale import Permissions, User
+
+from bale import Permissions, User, ChatMemberStatus
 
 __all__ = (
-    "ChatMemberStatus",
-    "ChatMember"
+    "ChatMember",
 )
-
-
-class ChatMemberStatus:
-    """This object shows member's status in chat.
-
-    .. container:: operations
-        .. describe:: x == y
-            Checks if two members role are equal.
-        .. describe:: x != y
-            Checks if two members role are not equal.
-    """
-
-    OWNER = "creator"
-    ADMIN = "administrator"
-    MEMBER = "member"
-    CREATOR = OWNER
-    __slots__ = ("_status",)
-
-    def __init__(self, _status: str):
-        self._status = _status
-
-    @property
-    def status(self) -> str:
-        """"""
-        return self._status
-
-    def is_owner(self):
-        """bool:
-			Return ``True`` if Member is chat creator"""
-        return self._status == self.OWNER
-
-    def is_admin(self):
-        """bool:
-			Return ``True`` if Member have admin status"""
-        return self._status == self.ADMIN
-
-    def is_member(self):
-        """bool:
-            Return ``True`` if Member haven't any status"""
-        return self._status == self.MEMBER
-
-    def __repr__(self):
-        return f"<MemberRole role={self.status}>"
-
-    def __eq__(self, other):
-        return self._status == other
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
 
 class ChatMember:
     """This object shows a member in chat
