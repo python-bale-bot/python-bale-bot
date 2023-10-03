@@ -32,11 +32,11 @@ class User:
 
     Attributes
     ----------
-        user_id: int
+        user_id: :class:`int`
             Unique identifier for this user or bot.
-        is_bot: bool
+        is_bot: :class:`bool`
             ``True``, if this user is a bot.
-        first_name: str
+        first_name: :class:`str`
             User’s or bot’s first name.
         last_name: Optional[:class:`str`]
             User’s or bot’s last name.
@@ -63,12 +63,12 @@ class User:
 
     @property
     def mention(self) -> str | None:
-        """Optional[:class:`str`]: User’s or bot’s mention with username."""
+        """Optional[:class:`str`]: mention user with username."""
         return f"@{self.username}" if self.username else None
 
     @property
     def chat_id(self) -> str:
-        """:class:`str`"""
+        """Aliases for :attr:`user_id`"""
         return str(self.user_id)
 
     async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] =None):
@@ -129,11 +129,13 @@ class User:
                    user_id=data.get("id"), bot=bot)
 
     def to_dict(self):
-        data = {"is_bot": self.is_bot,
-                "first_name": self.first_name if self.first_name is not None else None,
-                "last_name": self.last_name if self.last_name is not None else None,
-                "username": self.username if self.username is not None else None,
-                "id": self.user_id if self.user_id is not None else None}
+        data = {
+            "is_bot": self.is_bot,
+            "first_name": self.first_name,
+            "last_name": self.last_name,
+            "username": self.username,
+            "id": self.user_id
+        }
 
         return data
 
