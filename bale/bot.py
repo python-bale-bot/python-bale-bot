@@ -317,12 +317,12 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(from_chat_id, (Chat, User)):
+        if not isinstance(from_chat_id, (str, int)):
             raise TypeError(
                 "from_chat_id param must be type of str or int"
             )
 
-        if not isinstance(message_id, Message):
+        if not isinstance(message_id, (str, int)):
             raise TypeError(
                 "message_id param must be type of str or int"
             )
