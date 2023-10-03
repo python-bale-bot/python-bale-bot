@@ -869,7 +869,7 @@ class Bot:
             )
 
         chat = await self.get_chat(user_id)
-        if chat and chat.type.is_private_chat():
+        if chat and chat.parsed_type.is_private_chat:
             return User.from_dict(chat.to_dict(), self)
 
         return None
