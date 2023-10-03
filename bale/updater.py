@@ -28,33 +28,8 @@ if TYPE_CHECKING:
     from bale import Bot, Update
 
 __all__ = (
-    "Updater",
-    "EventType"
+    "Updater"
 )
-
-
-class EventType:
-    """This object represents an Event Type.
-
-    Attributes:
-        READY (:class:`str`): :meth:`bale.on_ready`
-        BEFORE_READY (:class:`str`): :meth:`bale.on_before_ready`
-        UPDATE (:class:`str`): :meth:`bale.on_update`
-        MESSAGE (:class:`str`): :meth:`bale.on_message`
-        EDITED_MESSAGE (:class:`str`): :meth:`bale.on_edited_message`
-        CALLBACK (:class:`str`): :meth:`bale.on_callback`
-        MEMBER_CHAT_JOIN (:class:`str`): :meth:`bale.on_member_chat_join`
-        MEMBER_CHAT_LEAVE (:class:`str`): :meth:`bale.on_member_chat_leave`
-    """
-    READY = "on_ready"
-    BEFORE_READY = "on_before_ready"
-    UPDATE = "on_update"
-    MESSAGE = "on_message"
-    EDITED_MESSAGE = "on_edited_message"
-    CALLBACK = "on_callback"
-    MEMBER_CHAT_JOIN = "on_member_chat_join"
-    MEMBER_CHAT_LEAVE = "on_member_chat_leave"
-
 
 class Updater:
     """This object represents a Bale Bot.
@@ -69,40 +44,45 @@ class Updater:
     __slots__ = (
         "bot",
         "_last_offset",
-        "_is_running",
+        "running",
         "__lock",
         "interval"
     )
 
     def __init__(self, bot: "Bot"):
         self.bot = bot
-        self._last_offset = None
-        self._is_running = False
+        self._last_offset: Optional[int] = None
+        self.running = False
         self.__lock = asyncio.Lock()
         self.interval = None
 
-    async def start(self, sleep_after_every_get_updates: int = None):
+    @property
+    def current_offset(self) -> Optional[int]:
+        """Optional[:class:`int`]: Represents the last offset in updates. ``None`` if Updater is not started"""
+        return self._last_offset
+
+    async def start(self):
         """Start poll event function"""
-        if self._is_running:
+        if self.running:
             raise RuntimeError("Updater is running")
-        self.interval = sleep_after_every_get_updates
         self.bot.dispatch("before_ready")
         await self.polling()
 
-    async def polling(self):
+    async def polling(self) -> NoReturn:
         async with self.__lock:
-            if self._is_running:
+            if self.running:
                 raise RuntimeError("Updater is running")
 
             if self.bot.http.is_closed():
                 raise RuntimeError("HTTPClient is Closed")
 
-            self._is_running = True
+            self.running = True
+            self.bot.dispatch("ready")
 
             try:
                 await self._polling()
             except Exception as exc:
-                self._is_running = False
+                self.running = False
                 raise exc
 
     async def _polling(self):
@@ -126,21 +106,23 @@ class Updater:
 
     async def call_to_dispatch(self, update: "Update"):
         self.bot.dispatch("update", update)
-        if update.type.is_callback_update():
+        if update.type == "callback":
             self.bot.dispatch("callback", update.callback_query)
-        elif update.type.is_message_update():
+        elif update.type == "message":
             self.bot.dispatch("message", update.message)
+            if update.message.successful_payment:
+                self.bot.dispatch("successful_payment", update.message.successful_payment)
             if update.message.left_chat_member:
                 self.bot.dispatch("member_chat_leave", update.message, update.message.chat, update.message.left_chat_member)
             for user in update.message.new_chat_members or []:
                 self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
-        elif update.type.is_edited_message():
+        elif update.type == "edited_message":
             self.bot.dispatch("edited_message", update.edited_message)
 
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
         async with self.__lock:
-            if not self._is_running:
+            if not self.running:
                 raise RuntimeError("Updater is not running")
 
-            self._is_running = False
+            self.running = False
