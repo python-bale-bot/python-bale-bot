@@ -1,44 +1,71 @@
 """
-MIT License
+Bale API Wrapper
+~~~~~~~~~~~~~~~~~~~
 
-Copyright (c) 2023 Kian Ahmadian
+An API wrapper for Bale written in Python.
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
+:copyright: (c) 2021-present, Kian Ahmadian
+:license: GPL-2.0, see LICENSE for more details.
 
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
 """
+
+__all__ = (
+    "__version__",
+    "ChatType",
+    "InlineKeyboard",
+    "MenuKeyboard",
+    "RemoveMenuKeyboard",
+    "Components",
+    "File",
+    "Audio",
+    "ContactMessage",
+    "Location",
+    "Photo",
+    "Document",
+    "Video",
+    "InputFile",
+    "Price",
+    "Invoice",
+    "SuccessfulPayment",
+    "User",
+    "Chat",
+    "Message",
+    "Permissions",
+    "ChatMemberStatus",
+    "ChatMember",
+    "CallbackQuery",
+    "Update",
+    "Updater",
+    "BaleError",
+    "APIError",
+    "NetworkError",
+    "HTTPException",
+    "TimeOut",
+    "NotFound",
+    "Forbidden",
+    "HTTPClientError",
+    "InvalidToken",
+    "RateLimited",
+    "Bot"
+)
+
 from .version import __version__
-from .request import HTTPClient, Route, ResponseStatusCode, ResponseParser
 from .ui import InlineKeyboard, MenuKeyboard, RemoveMenuKeyboard, Components
 from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, InputFile
-from .payments import Price, Invoice
+from .payments import Price, Invoice, SuccessfulPayment
 from .user import User
-from .attachments.contact import ContactMessage
-from .chat import Chat, ChatType
+from .chattype import ChatType
+from .chat import Chat
 from .message import Message
 from .permissions import Permissions
-from .chatmember import ChatMember, ChatMemberStatus
+from .chatmemberstatus import ChatMemberStatus
+from .chatmember import ChatMember
 from .callbackquery import CallbackQuery
-from .update import Update, UpdateType
-from .updater import Updater, EventType
+from .update import Update
+from .updater import Updater
 from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken, RateLimited
 from .bot import Bot
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
-__copyright__ = 'Copyright 2021-present Kian Ahmadian'
-__license__ = 'MIT'
+__copyright__ = "Copyright 2021, Present by Kian Ahmadian"
