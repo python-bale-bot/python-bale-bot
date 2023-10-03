@@ -72,7 +72,7 @@ class Bot:
         "loop",
         "events",
         "listeners",
-        "_user",
+        "_client_user",
         "http",
         "_closed",
         "updater"
@@ -84,7 +84,7 @@ class Bot:
         self.loop: asyncio.AbstractEventLoop | _Loop = _loop
         self.token: str = token
         self.http: HTTPClient = HTTPClient(self.loop, token)
-        self._user = None
+        self._client_user = None
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
         self._closed: bool = True
@@ -101,20 +101,61 @@ class Bot:
         self.loop = loop
         self.http.loop = loop
         self._closed = False
+        await self.http.start()
 
-        self.updater: Updater = kwargs.get("updater", Updater)(self)
+    async def __aenter__(self):
+        await self._setup_hook()
+        return self
 
-    def listen(self, event_name):
-        """Register a Event"""
-        return lambda func: self.add_event(event_name, func)
+    async def __aexit__(self, exc_type, exc_value, traceback):
+        pass
 
-    def add_event(self, event: str, function):
-        """Register an Event with event name"""
-        if not asyncio.iscoroutinefunction(function):
-            raise TypeError(f"{function.__name__} is not a Coroutine Function")
+    def event(self, coro: CoroT) -> CoroT:
+        """Set wrapper or listener for selected event (the name of function).
 
-        if not self.events.get(event):
-            self.events[event] = list()
+        .. note::
+            The name of the function for which you write the decorator is considered the name of the event.
+        """
+        if not asyncio.iscoroutinefunction(coro):
+            raise TypeError('event handler must be a coroutine function')
+
+        self.add_event(coro.__name__, coro)
+        return coro
+
+    def listen(self, event_name: str) -> CoroT:
+        """Set wrapper or listener for selected event (custom function name).
+
+        Parameters
+        ----------
+            event_name: :class:`str`
+                Name of the event to set.
+        """
+        def wrapper_function(func):
+            if not asyncio.iscoroutinefunction(func):
+                raise TypeError('event handler must be coroutine function')
+
+            self.add_event(event_name, func)
+
+        return wrapper_function
+
+    def add_event(self, event_name: str, wrapper) -> NoReturn:
+        """Set wrapper or listener for an event.
+
+
+        Parameters
+        ----------
+            event_name: :class:`str`
+                Name of the event
+            wrapper: Callable[]
+                Function to add as wrapper for event
+        """
+        if not asyncio.iscoroutinefunction(wrapper):
+            raise TypeError(f"{wrapper.__name__} is not a Coroutine Function")
+
+        if not self.events.get(event_name):
+            self.events[event_name] = []
+
+        self.events[event_name].append(wrapper)
 
     @overload
     async def wait_for(self, event_name: Literal['message'], *, check: Optional[Callable[..., bool]] = None,
@@ -166,24 +207,6 @@ class Bot:
 
         listeners.append((future, check))
         return asyncio.wait_for(future, timeout=timeout)
-
-    @property
-    def user(self) -> Optional["User"]:
-        """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
-        return self._user
-
-    async def setup_hook(self):
-        loop = asyncio.get_running_loop()
-        self.loop = loop
-        self.http.loop = loop
-        await self.http.start()
-
-    async def __aenter__(self):
-        await self.setup_hook()
-        return self
-
-    async def __aexit__(self, exc_type, exc_value, traceback):
-        pass
 
     async def close(self):
         """Close http Events and bot"""
@@ -259,7 +282,25 @@ class Bot:
                 Get bot Failed.
         """
         response = await self.http.get_bot()
-        return User.from_dict(data=response.result, bot=self)
+        client_user = User.from_dict(data=response.result, bot=self)
+        self._client_user = client_user
+        return client_user
+
+    async def set_webhook(self, url: str) -> bool:
+        """Use this method to specify an url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, Bale will send an HTTPS POST request to the specified url, containing An Update. In case of an unsuccessful request, Bale will give up after a reasonable amount of attempts.
+
+        Parameters
+        ----------
+            url: :class:`str`
+                HTTPS url to send updates to. Use an empty string to remove webhook integration.
+
+        Returns
+        -------
+            :class:`bool`:
+                On success, True is returned.
+        """
+        response = await self.http.set_webhook(url)
+        return response or False
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
