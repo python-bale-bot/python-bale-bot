@@ -84,6 +84,7 @@ class Chat:
 
     @property
     def parsed_type(self):
+        """:class:`bale.ChatType`: Represents the parsed type of chat."""
         return ChatType(self.type)
 
     async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
