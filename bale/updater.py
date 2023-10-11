@@ -23,11 +23,12 @@ SOFTWARE.
 """
 import asyncio
 from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
+from bale import Update
 import logging
 from .error import InvalidToken, BaleError
 
 if TYPE_CHECKING:
-    from bale import Bot, Update
+    from bale import Bot
 
 __all__ = (
     "Updater"
@@ -131,9 +132,9 @@ class Updater:
 
     async def process_update(self, update: "Update"):
         self.bot.dispatch("update", update)
-        if update.type == "callback":
+        if update.type == Update.CALLBACK_QUERY:
             self.bot.dispatch("callback", update.callback_query)
-        elif update.type == "message":
+        elif update.type == Update.MESSAGE:
             self.bot.dispatch("message", update.message)
             if update.message.successful_payment:
                 self.bot.dispatch("successful_payment", update.message.successful_payment)
@@ -141,7 +142,7 @@ class Updater:
                 self.bot.dispatch("member_chat_leave", update.message, update.message.chat, update.message.left_chat_member)
             for user in update.message.new_chat_members or []:
                 self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
-        elif update.type == "edited_message":
+        elif update.type == Update.EDITED_MESSAGE:
             self.bot.dispatch("edited_message", update.edited_message)
 
     async def stop(self):
