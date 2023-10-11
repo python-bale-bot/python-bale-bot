@@ -66,6 +66,7 @@ class Updater:
         """Start poll event function"""
         if self.running:
             raise RuntimeError("Updater is running")
+        _log.debug("Updater is in the pre-start!")
         self.bot.dispatch("before_ready")
         await self.polling()
 
@@ -79,6 +80,7 @@ class Updater:
 
             self.running = True
             self.bot.dispatch("ready")
+            _log.debug("Updater is started! (polling)")
 
             try:
                 await self._polling()
