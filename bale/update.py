@@ -34,7 +34,7 @@ __all__ = (
 
 
 def parse_type(data: Dict) -> Optional[str]:
-    events = ("callback_query", "edited_message", "message")
+    events = (Update.CALLBACK_QUERY, Update.MESSAGE, Update.EDITED_MESSAGE)
     for event in events:
         if data.get(event):
             return event
@@ -55,6 +55,9 @@ class Update:
         edited_message: Optional[:class:`bale.Message`]
             New version of a message that is known to the bot and was edited.
     """
+    CALLBACK_QUERY = "callback_query"
+    MESSAGE = "message"
+    EDITED_MESSAGE = "edited_message"
     __slots__ = (
         "update_id",
         "type",
