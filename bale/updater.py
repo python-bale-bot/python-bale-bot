@@ -23,6 +23,7 @@ SOFTWARE.
 """
 import asyncio
 from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
+import logging
 from .error import InvalidToken, BaleError
 
 if TYPE_CHECKING:
@@ -31,6 +32,8 @@ if TYPE_CHECKING:
 __all__ = (
     "Updater"
 )
+
+_log = logging.getLogger(__name__)
 
 class Updater:
     """This object represents a Bale Bot.
@@ -89,7 +92,7 @@ class Updater:
             except BaleError as exc:
                 raise exc
             except Exception as exc:
-                await self.bot.on_error("Get Updates", exc) # TODO: Support Logger from this section
+                _log.critical("Somthing was happened when we process Update data from bale", exc_info=exc)
                 return True
 
             if updates:
@@ -100,7 +103,7 @@ class Updater:
             return True
 
         def getupdates_error(exc) -> NoReturn:
-            print(exc) # TODO: Add Wrapper for errors
+            _log.exception("Exception happened when polling for updates.", exc_info=exc)
 
         await self._network_loop_retry(
                 action_getupdates,
@@ -124,7 +127,7 @@ class Updater:
                     await asyncio.sleep(self.interval)
 
         except asyncio.CancelledError:
-            pass # TODO: Add wrapper for Canceled error
+            _log.debug("Get Updater Loop was cancelled!")
 
     async def process_update(self, update: "Update"):
         self.bot.dispatch("update", update)
