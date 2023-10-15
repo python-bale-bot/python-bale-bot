@@ -1,6 +1,5 @@
 .muted-link:hover {
 	opacity: 50%;
-	color: none !important;
 }
 
 article a.reference.external:not([href*="/python-bale-bot/blob/"])::after {
