@@ -1,20 +1,32 @@
 version: 2
-formats: []
+
+# Build documentation in the docs/ directory with Sphinx
+sphinx:
+   configuration: docs/source/conf.py
+
+# Optionally build your docs in additional formats such as PDF
+formats:
+   - pdf
+
+# Optionally set the version of Python and requirements required to build your docs
+python:
+   install:
+     - method: pip
+       path: .
+     - requirements: docs/requirements-docs.txt
 
 build:
-  os: ubuntu-22.04
-  tools:
-    python: "3"  # latest stable cpython version
+   os: ubuntu-22.04
+   tools:
+      python: "3"  # latest stable cpython version
 
-sphinx:
-  configuration: docs/conf.py
-  fail_on_warning: false
-  builder: html
+search:
+   ranking:
+      telegram.bot.html: 7
+      telegram.message.html: 3
+      telegram.update.html: 3
+      telegram.user.html: 2
+      telegram.chat.html: 2
 
-python:
-  install:
-    - method: pip
-      path: .
-      extra_requirements:
-        - docs
-    - requirements: docs/requirements-docs.txt
+   ignore:
+      - changelog.html
