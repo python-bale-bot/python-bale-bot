@@ -1,5 +1,3 @@
-.. currentmodule::bale
-
 Change Log
 ==========
 
