@@ -29,7 +29,7 @@ from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from .utils.logging import setup_logging
 from bale import (Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, Updater,
-                  Location, ContactMessage, InputFile)
+                  Location, ContactMessage, InputFile, CallbackQuery, SuccessfulPayment)
 from bale.request import HTTPClient
 
 __all__ = (
@@ -158,38 +158,29 @@ class Bot:
         self.events[event_name].append(wrapper)
 
     @overload
-    async def wait_for(self, event_name: Literal['message'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
-        ...
-
-    @overload
-    async def wait_for(self, event_name: Literal['edit_message'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
+    async def wait_for(self, event_name: Literal['update'], *,
+                       check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None) -> "Update":
         ...
 
     @overload
     async def wait_for(self, event_name: Literal['callback_query'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
+                       timeout: Optional[float] = None) -> "CallbackQuery":
         ...
 
     @overload
-    async def wait_for(self, event_name: Literal['message'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
+    async def wait_for(self, event_name: Literal['message', 'edit_message'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None) -> "Message":
         ...
 
     @overload
-    async def wait_for(self, event_name: Literal['member_chat_join'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
-        ...
-
-    @overload
-    async def wait_for(self, event_name: Literal['member_chat_leave'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
+    async def wait_for(self, event_name: Literal['member_chat_join', 'member_chat_leave'], *, check: Optional[Callable[..., bool]] = None,
+                       timeout: Optional[float] = None) -> Tuple["Message", "Chat", "User"]:
         ...
 
     @overload
     async def wait_for(self, event_name: Literal['successful_payment'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None):
+                       timeout: Optional[float] = None) -> "SuccessfulPayment":
         ...
 
     def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
