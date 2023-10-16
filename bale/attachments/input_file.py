@@ -8,6 +8,8 @@ class InputFile:
 
     .. warning::
         To upload a file, you must fill in the "file_name" param and end it with the file extension.
+    .. admonition:: Examples
+        :any:`Attachment Bot <examples.attachment>`
 
     Parameters
     ----------

@@ -63,8 +63,10 @@ class Bot:
         token: str 
             Bot Token
 
-    .. note::
-        When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_ready` event.
+    .. attention::
+        When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
+    .. admonition:: Examples
+        :any:`My First Bot <examples.basic>`
     """
     __slots__ = (
         "loop",
@@ -113,7 +115,7 @@ class Bot:
     def event(self, coro: CoroT) -> CoroT:
         """Set wrapper or listener for selected event (the name of function).
 
-        .. note::
+        .. hint::
             The name of the function for which you write the decorator is considered the name of the event.
         """
         if not asyncio.iscoroutinefunction(coro):
@@ -184,7 +186,30 @@ class Bot:
         ...
 
     def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
-        """Wait for an event"""
+        """Waits for a WebSocket event to be dispatched.
+
+        This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
+        The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``. Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
+        In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
+        This function returns the first event that meets the requirements.
+
+        .. admonition:: Examples
+            :any:`conversation Bot <examples.conversation>`
+
+        Parameters
+        ----------
+            event_name: :class:`str`
+                Name of the event
+            check: Optional[Callable[..., :class:`bool`]]
+                A predicate to check what to wait for. The arguments must meet the parameters of the event being waited for.
+            timeout: Optional[:class:`float`]
+                The number of seconds to wait before timing out and raising asyncio.TimeoutError.
+
+        Raises
+        ------
+            asyncio.TimeoutError
+                If a timeout is provided, and it was reached.
+        """
         future = self.loop.create_future()
         event_name = event_name.lower()
         if not check:
@@ -744,8 +769,11 @@ class Bot:
                            is_flexible: Optional[bool] = True) -> Message:
         """You can use this service to send money request messages.
 
-        .. note::
+        .. important::
             When paying the amount, a fee will be charged from the sender.
+
+        .. admonition:: Examples
+            :any:`Payment Bot <examples.invoice>`
 
         Parameters
         ----------
