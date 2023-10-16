@@ -77,29 +77,29 @@ class User:
         """
         return await self.bot.send_message(self.chat_id, text, components=components)
 
-    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None):
+    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption)
+        return await self.bot.send_document(self.chat_id, document, caption=caption, components=components)
 
-    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None):
+    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components)
 
-    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None):
+    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
         """
-        return await self.bot.send_video(self.chat_id, video, caption=caption)
+        return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
 
-    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None):
+    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
         """
-        return await self.bot.send_audio(self.chat_id, audio, caption=caption)
+        return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components)
 
     async def send_location(self, location: "Location"):
         """

@@ -402,6 +402,7 @@ class Bot:
 
     async def send_document(self, chat_id: str | int, document: "InputFile", *,
                             caption: Optional[str] = None,
+                            components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                             reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
 
@@ -413,6 +414,8 @@ class Bot:
                 File to send. visit :class:`bale.InputFile` to see more info.
         caption: Optional[:class:`str`]
                 Document caption.
+        components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message Components
         reply_to_message_id: Optional[:class:`str` | :class:`int`]
                 If the message is a reply, ID of the original message.
 
@@ -450,12 +453,21 @@ class Bot:
                 "caption param must be type of str"
             )
 
+        if components:
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
+            components = components.to_dict()
+
         response = await self.http.send_document(chat_id, [document.to_dict('document')], caption=caption,
+                                                 components=components,
                                                  reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_photo(self, chat_id: str | int, photo: "InputFile", *,
                          caption: Optional[str] = None,
+                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send photo.
 
@@ -467,6 +479,8 @@ class Bot:
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Photo caption.
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message Components
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
                 If the message is a reply, ID of the original message.
 
@@ -494,6 +508,13 @@ class Bot:
                 "photo param must be type of InputFile"
             )
 
+        if components:
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
+            components = components.to_dict()
+
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
                 "reply_to_message_id param must be type of str or int"
@@ -505,11 +526,13 @@ class Bot:
             )
 
         response = await self.http.send_photo(str(chat_id), [photo.to_dict('photo')], caption=caption,
+                                              components=components,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_audio(self, chat_id: str | int, audio: "InputFile", *,
                          caption: Optional[str] = None,
+                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Audio.
 
@@ -521,6 +544,8 @@ class Bot:
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Audio caption.
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message Components
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
                 If the message is a reply, ID of the original message.
 
@@ -548,6 +573,13 @@ class Bot:
                 "audio param must be type of InputFile"
             )
 
+        if components:
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
+            components = components.to_dict()
+
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
                 "reply_to_message_id param must be type of str or int"
@@ -559,11 +591,13 @@ class Bot:
             )
 
         response = await self.http.send_audio(str(chat_id), [audio.to_dict('audio')], caption=caption,
+                                              components=components,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
     async def send_video(self, chat_id: str | int, video: "InputFile", *,
                          caption: Optional[str] = None,
+                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Video.
 
@@ -575,6 +609,8 @@ class Bot:
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Video caption.
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message Components
             reply_to_message_id: Optional[:class:`str` | :class:`int`]
                 If the message is a reply, ID of the original message.
 
@@ -602,6 +638,13 @@ class Bot:
                 "video param must be type of bytes, str or Video"
             )
 
+        if components:
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
+            components = components.to_dict()
+
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
                 "reply_to_message_id param must be type of str or int"
@@ -613,6 +656,7 @@ class Bot:
             )
 
         response = await self.http.send_video(str(chat_id), [video.to_dict('video')], caption=caption,
+                                              components=components,
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 

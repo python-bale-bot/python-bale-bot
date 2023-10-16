@@ -196,10 +196,12 @@ class HTTPClient:
 
 		return self.request(Route("POST", "forwardMessage", self.token), json=payload)
 
-	def send_document(self, chat_id, form, *, caption=None, reply_to_message_id=None):
+	def send_document(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
 		}
+		if components:
+			payload["reply_markup"] = components
 		if caption:
 			payload["caption"] = caption
 
@@ -208,10 +210,12 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendDocument", self.token), data=payload, form=form)
 
-	def send_photo(self, chat_id, form, *, caption=None, reply_to_message_id=None):
+	def send_photo(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
 		}
+		if components:
+			payload["reply_markup"] = components
 		if caption:
 			payload["caption"] = caption
 		if reply_to_message_id:
@@ -227,10 +231,12 @@ class HTTPClient:
 
 		return self.request(Route("POST", "SendMediaGroup", self.token), data=payload)
 
-	def send_video(self, chat_id, form, *, caption=None, reply_to_message_id=None):
+	def send_video(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
 		}
+		if components:
+			payload["reply_markup"] = components
 		if caption:
 			payload["caption"] = caption
 		if reply_to_message_id:
@@ -238,10 +244,12 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendVideo", self.token), data=payload, form=form)
 
-	def send_audio(self, chat_id, form, *, caption=None, duration=None, title=None, reply_to_message_id=None):
+	def send_audio(self, chat_id, form, *, caption=None, duration=None, title=None, components=None, reply_to_message_id=None):
 		payload = {
 			"chat_id": chat_id
 		}
+		if components:
+			payload["reply_markup"] = components
 		if caption:
 			payload["caption"] = caption
 		if duration:
