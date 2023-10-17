@@ -11,6 +11,7 @@
    :caption: Reference
 
    bale
+   helpers
 
 .. toctree::
    :hidden:
