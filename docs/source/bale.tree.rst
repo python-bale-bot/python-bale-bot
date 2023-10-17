@@ -11,3 +11,5 @@ Available Types
     bale.chatmember
     bale.permissions
     bale.update
+    bale.ChatMemberStatus
+    bale.ChatType
