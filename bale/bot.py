@@ -110,7 +110,8 @@ class Bot:
         return self
 
     async def __aexit__(self, exc_type, exc_value, traceback):
-        pass
+        await self.close()
+        return
 
     def event(self, coro: CoroT) -> CoroT:
         """Set wrapper or listener for selected event (the name of function).
