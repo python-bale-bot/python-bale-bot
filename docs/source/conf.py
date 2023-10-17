@@ -68,7 +68,7 @@ html_theme_options = {
         },
         {
             "name": "GitHub",
-            "url": "https://github.com/python-bale-bot/python-bale-bot",
+            "url": "https://python-bale-bot.ir",
             "html": "",
             "class": "fas fa-globe fa-2x",
         },
