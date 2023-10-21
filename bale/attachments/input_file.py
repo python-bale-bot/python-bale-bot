@@ -7,7 +7,7 @@ class InputFile:
     """This object shows a file ready to send/upload.
 
     .. warning::
-        To upload a file, you must fill in the "file_name" param and end it with the file extension.
+        Just for upload file, you can use "file_name" param.
     .. admonition:: Examples
         :any:`Attachment Bot <examples.attachment>`
 

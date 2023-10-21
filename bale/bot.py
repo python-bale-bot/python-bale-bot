@@ -187,7 +187,7 @@ class Bot:
         ...
 
     def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
-        """Waits for a WebSocket event to be dispatched.
+        """Waits for an event to be dispatched.
 
         This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
         The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``. Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.

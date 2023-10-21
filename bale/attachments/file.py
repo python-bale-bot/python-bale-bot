@@ -47,8 +47,8 @@ class File:
         extra: Optional[:class:`dict`]
             The rest of the file information.
 
-        .. note::
-            You can get more information in file with :param:`extra`
+    .. note::
+        You can get more information from the file with extra.
 
     """
     __slots__ = (
@@ -103,6 +103,13 @@ class File:
         return data
 
     def to_input_file(self) -> InputFile:
+        """Converts the file to a standard object for sending/uploading it. This object is require in the file sending methods.
+
+        Returns
+        --------
+            :class:`bale.InputFile`
+                The :class`bale.InputFile` Object for send.
+        """
         return InputFile(self.file_id)
 
     def __len__(self):
