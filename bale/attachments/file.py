@@ -108,7 +108,7 @@ class File:
         Returns
         --------
             :class:`bale.InputFile`
-                The :class`bale.InputFile` Object for send.
+                The :class:`bale.InputFile` Object for send.
         """
         return InputFile(self.file_id)
 
