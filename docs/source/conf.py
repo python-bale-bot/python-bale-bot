@@ -55,10 +55,12 @@ html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/fontawesome.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
-    "css/style.css"
+    "css/style.css",
+    "css/announcement.css"
 ]
 html_theme_options = {
     "sidebar_hide_name": True,
+    "announcement": "برای دریافت اطلاعات بیشتر به <a href='https://python-bale-bot.ir'>سایت کتابخانه</a> مراجعه نمایید",
     "footer_icons": [
         {
             "name": "GitHub",
@@ -75,4 +77,4 @@ html_theme_options = {
     ]
 }
 
-man_pages = [(master_doc, "python-telegram-bot", "python-telegram-bot Documentation", [author], 1)]
+man_pages = [(master_doc, "python-bale-bot", "python-bale-bot Documentation", [author], 1)]

@@ -1,0 +1,17 @@
+.announcement {
+    font-family: Vazir, sans-serif;
+}
+
+.announcement a {
+    text-decoration: none;
+    color: darkgray;
+}
+
+.announcement a:hover {
+    opacity: 80%;
+}
+
+@font-face {
+    font-family: Vazir;
+    src: url('https://python-bale-bot.ir/assets/fonts/Vazirmatn-Bold.ttf');
+}
