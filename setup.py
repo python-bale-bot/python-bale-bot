@@ -8,9 +8,12 @@ def get_readme_file() -> str:
 extras_require = {
     'docs': [
         'sphinx==7.2.6',
-        'sphinxcontrib_trio==1.1.2',
-        'sphinxcontrib-websupport',
-        'typing-extensions>=4.3,<5',
+        'sphinx-pypi-upload',
+        'sphinx-paramlinks==0.6.0',
+        'sphinxcontrib-mermaid==0.8.1',
+        'sphinx-copybutton==0.5.2',
+        'furo==2023.9.10',
+        'sphinx-inline-tabs==2023.4.21'
     ]
 }
 
