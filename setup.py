@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 def get_readme_file() -> str:
-    with open("README.md", encoding="utf-8") as f:
+    with open("README.rst", encoding="utf-8") as f:
         readme_file = f.read()
     return readme_file
 
@@ -29,7 +29,7 @@ if __name__ == "__main__":
         license="LGPLv2",
         project_urls={
             "Documentation": "https://docs.python-bale-bot.ir/en/stable/",
-            "Changelog": "https:///docs.python-bale-bot.ir/en/stable/whats_new.html",
+            "Changelog": "https:///docs.python-bale-bot.ir/en/stable/changelog.html",
             "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues",
             "Source Code": "https://github.com/python-bale-bot/python-bale-bot/"
         },
@@ -41,7 +41,7 @@ if __name__ == "__main__":
         url="https://github.com/python-bale-bot/python-bale-bot/",
         packages=find_packages(),
         long_description=get_readme_file(),
-        long_description_content_type='text/markdown',
+        long_description_content_type='text/x-rst',
         install_requires=["aiohttp>=3.6.0,<3.8.6", "asyncio~=3.4.3", "setuptools>=60.2,<68.3"]
     )
 
