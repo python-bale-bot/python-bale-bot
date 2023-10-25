@@ -33,6 +33,7 @@ __all__ = ("HTTPClient", "Route")
 
 class Route:
 	__slots__ = (
+		"base_url",
 		"method",
 		"endpoint",
 		"token"
@@ -41,6 +42,7 @@ class Route:
 	def __init__(self, method: str, endpoint: str, token: str):
 		if not isinstance(token, str):
 			raise TypeError("token param must be str.")
+		self.base_url = BALE_API_BASE_URL
 		self.method = method
 		self.endpoint = endpoint
 		self.token = token
@@ -48,7 +50,11 @@ class Route:
 	@property
 	def url(self):
 		"""export url for request"""
-		return "{base_url}bot{token}/{endpoint}".format(base_url = BALE_API_BASE_URL, token = self.token, endpoint = self.endpoint)
+		return "{base_url}bot{token}/{endpoint}".format(base_url = self.base_url, token = self.token, endpoint = self.endpoint)
+
+	def set_base_url(self, value):
+		if value is not None:
+			self.base_url = value
 
 def parse_form_data(value: Any):
 	if isinstance(value, int):
@@ -61,11 +67,13 @@ class HTTPClient:
 	__slots__ = (
 		"_loop",
 		"token",
-		"__session"
+		"__session",
+		"base_url"
 	)
 
-	def __init__(self, loop, token):
+	def __init__(self, loop, token, base_url=None):
 		self.__session = None
+		self.base_url = base_url
 		self._loop: asyncio.AbstractEventLoop = loop
 		self.token = token
 
@@ -102,6 +110,7 @@ class HTTPClient:
 			self.__session = None
 
 	async def request(self, route: Route, *, form: List[Dict] = None, **kwargs):
+		route.set_base_url(self.base_url)
 		url = route.url
 		method = route.method
 		headers = { 'User-Agent': self.user_agent }

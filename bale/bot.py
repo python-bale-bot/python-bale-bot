@@ -85,7 +85,7 @@ class Bot:
             raise InvalidToken()
         self.loop: asyncio.AbstractEventLoop | _Loop = _loop
         self.token: str = token
-        self.http: HTTPClient = HTTPClient(self.loop, token)
+        self.http: HTTPClient = HTTPClient(self.loop, token, kwargs.get('base_url'))
         self._client_user = None
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
