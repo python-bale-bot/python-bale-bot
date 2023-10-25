@@ -155,15 +155,14 @@ class HTTPClient:
 					elif response.status == ResponseStatusCode.PERMISSION_DENIED:
 						raise Forbidden()
 
-						raise APIError(
-								str(parsed_response.error_code), parsed_response.description
-							)
 			except aiohttp.ClientConnectorError as error:
 				raise NetworkError(str(error))
 			except aiohttp.ServerTimeoutError:
 				raise TimeOut()
 			except aiohttp.ClientOSError as error:
 				raise BaleError(str(error))
+			except BaleError as error:
+				raise error
 			except Exception as error:
 				raise HTTPException(error)
 
