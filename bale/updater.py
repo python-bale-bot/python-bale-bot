@@ -46,16 +46,14 @@ class Updater:
         "bot",
         "_last_offset",
         "running",
-        "__lock",
         "interval"
     )
 
     def __init__(self, bot: "Bot"):
         self.bot = bot
         self._last_offset: Optional[int] = None
-        self.running = False
-        self.__lock = asyncio.Lock()
-        self.interval = None
+        self.running: bool = False
+        self.interval: Optional[float] = None
 
     @property
     def current_offset(self) -> Optional[int]:
@@ -71,22 +69,21 @@ class Updater:
         await self.polling()
 
     async def polling(self) -> NoReturn:
-        async with self.__lock:
-            if self.running:
-                raise RuntimeError("Updater is running")
+        if self.running:
+            raise RuntimeError("Updater is running")
 
-            if self.bot.http.is_closed():
-                raise RuntimeError("HTTPClient is Closed")
+        if self.bot.http.is_closed():
+            raise RuntimeError("HTTPClient is Closed")
 
-            self.running = True
-            self.bot.dispatch("ready")
-            _log.debug("Updater is started! (polling)")
+        self.running = True
+        self.bot.dispatch("ready")
+        _log.debug("Updater is started! (polling)")
 
-            try:
-                await self._polling()
-            except Exception as exc:
-                self.running = False
-                raise exc
+        try:
+            await self._polling()
+        except Exception as exc:
+            self.running = False
+            raise exc
 
     async def _polling(self) -> NoReturn:
         async def action_getupdates() -> bool:
@@ -149,8 +146,4 @@ class Updater:
 
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
-        async with self.__lock:
-            if not self.running:
-                raise RuntimeError("Updater is not running")
-
-            self.running = False
+        self.running = False
