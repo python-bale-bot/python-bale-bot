@@ -42,7 +42,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/x-rst',
-        install_requires=["aiohttp>=3.6.0,<3.8.6", "asyncio~=3.4.3", "setuptools>=60.2,<68.3"]
+        install_requires=["aiohttp>=3.6.0,<3.8.7", "asyncio~=3.4.3", "setuptools>=60.2,<68.3"]
     )
 
 
