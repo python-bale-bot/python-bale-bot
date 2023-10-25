@@ -2,7 +2,7 @@ from aiohttp import ClientResponse
 from typing import Any
 from json import loads
 from json.decoder import JSONDecodeError
-
+from bale.error import HTTPClientError, NotFound, InvalidToken, Forbidden, APIError
 
 async def json_or_text(response: "ClientResponse"):
 	text = await response.text()
@@ -52,6 +52,18 @@ class ResponseParser:
 		self.error_code = error_code
 		self.description = description
 		self._raw = raw
+
+	def get_error(self):
+		data = {
+			HTTPClientError.USER_OR_CHAT_NOT_FOUND: NotFound,
+			HTTPClientError.TOKEN_NOT_FOUND: InvalidToken,
+			HTTPClientError.PERMISSION_DENIED: Forbidden
+		}
+
+		def raise_wrapper():
+			raise data.get(self.description, lambda: APIError(self.error_code, self.description))
+
+		return raise_wrapper
 
 	@classmethod
 	async def from_response(cls, data: "ClientResponse"):

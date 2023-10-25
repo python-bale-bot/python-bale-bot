@@ -23,7 +23,7 @@ SOFTWARE.
 """
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
-    TOKEN_NOT_FOUND = "Token not found"
+    TOKEN_NOT_FOUND = "Bad Request: Token not found"
     RATE_LIMIT = "bot limit exceed"
     LOCAL_RATE_LIMIT = "local_rate_limited"
     PERMISSION_DENIED = "permission_denied"

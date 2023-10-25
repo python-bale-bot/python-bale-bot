@@ -25,7 +25,7 @@ from typing import Dict, List, Any
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
-from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException, InvalidToken)
+from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
 from .utils import ResponseStatusCode, to_json
 
@@ -144,10 +144,13 @@ class HTTPClient:
 
 							await asyncio.sleep((1 + tries) * 2)
 							continue
-						elif parsed_response.description == HTTPClientError.PERMISSION_DENIED:
-							raise Forbidden()
-						elif parsed_response.description == HTTPClientError.TOKEN_NOT_FOUND:
-							raise InvalidToken()
+
+						error = parsed_response.get_error()
+						raise error()
+					elif response.status == ResponseStatusCode.NOT_FOUND:
+						raise NotFound(parsed_response.description)
+					elif response.status == ResponseStatusCode.PERMISSION_DENIED:
+						raise Forbidden()
 
 						raise APIError(
 								str(parsed_response.error_code), parsed_response.description
