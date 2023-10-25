@@ -1,6 +1,7 @@
 from __future__ import annotations
 from typing import List, Tuple
 from itertools import groupby
+import json
 from . import InlineKeyboard, MenuKeyboard
 
 class Components:
@@ -99,6 +100,10 @@ class Components:
             raise TypeError("row param must be type of int")
 
         self._inline_keyboards.remove((inline_keyboard, row))
+
+    def to_json(self) -> str:
+        data = json.dumps(self.to_dict())
+        return data
 
     def to_dict(self):
         is_used_menu_keyboard = bool(self._menu_keyboards)

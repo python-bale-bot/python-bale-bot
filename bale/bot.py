@@ -373,7 +373,7 @@ class Bot:
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
-            components = components.to_dict()
+            components = components.to_json()
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (int, str)):
             raise TypeError(
@@ -484,7 +484,7 @@ class Bot:
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
-            components = components.to_dict()
+            components = components.to_json()
 
         response = await self.http.send_document(chat_id, [document.to_dict('document')], caption=caption,
                                                  components=components,
@@ -539,7 +539,7 @@ class Bot:
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
-            components = components.to_dict()
+            components = components.to_json()
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -604,7 +604,7 @@ class Bot:
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
-            components = components.to_dict()
+            components = components.to_json()
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -669,7 +669,7 @@ class Bot:
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
-            components = components.to_dict()
+            components = components.to_json()
 
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
@@ -916,7 +916,7 @@ class Bot:
             )
 
         if components:
-            components = components.to_dict()
+            components = components.to_json()
 
         response = await self.http.edit_message(chat_id, message_id, text, components=components)
         return response.result
