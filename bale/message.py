@@ -184,46 +184,12 @@ class Message:
                    successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
-    def to_dict(self):
-        data = {"message_id": self.message_id, "date": self.date, "text": self.text}
-
-        if self.chat:
-            data["chat"] = self.chat.to_dict()
-        if self.from_user:
-            data["from"] = self.from_user.to_dict()
-        if self.caption:
-            data["caption"] = self.caption
-        if self.document:
-            data["document"] = self.document.to_dict()
-        if self.photos:
-            data["photo"] = [photo.to_dict() for photo in self.photos]
-        if self.video:
-            data["video"] = self.video.to_dict()
-        if self.audio:
-            data["audio"] = self.audio.to_dict()
-        if self.contact:
-            data["contact"] = self.contact.to_dict()
-        if self.location:
-            data["location"] = self.location.to_dict()
-        if self.new_chat_members:
-            data["new_chat_members"] = self.new_chat_members
-        if self.forward_from:
-            data["forward_from"] = self.forward_from.to_dict()
-        if self.forward_from_chat:
-            data["forward_from"] = self.forward_from_chat.to_dict()
-        if self.left_chat_member:
-            data["left_chat_member"] = self.left_chat_member.to_dict()
-        if self.reply_to_message_id:
-            data["reply_to_message_id"] = self.reply_to_message_id
-
-        return data
-
     async def reply(self, text: str, *, components: Optional[Components | RemoveMenuKeyboard] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
         """
         return await self.bot.send_message(self.chat_id, text, components=components,
-                                           reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
+                                           reply_to_message_id=self.message_id)
 
     async def forward(self, chat_id: str | int):
         """
@@ -237,7 +203,7 @@ class Message:
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption,
                                             components=components,
-                                            reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
+                                            reply_to_message_id=self.message_id)
 
     async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
@@ -245,7 +211,7 @@ class Message:
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
+                                         reply_to_message_id=self.message_id)
 
     async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
@@ -253,7 +219,7 @@ class Message:
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
+                                         reply_to_message_id=self.message_id)
 
     async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
@@ -261,7 +227,7 @@ class Message:
         """
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id if not self.chat.parsed_type.is_group_chat else None)
+                                         reply_to_message_id=self.message_id)
 
     async def edit(self, text: str, *, components: "Components" | "RemoveMenuKeyboard" = None) -> Message:
         """
