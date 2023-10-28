@@ -16,6 +16,7 @@ __all__ = (
     "MenuKeyboard",
     "RemoveMenuKeyboard",
     "Components",
+    "ChatPhoto",
     "File",
     "Audio",
     "ContactMessage",
@@ -55,6 +56,7 @@ from .attachments import File, Audio, ContactMessage, Location, Photo, Document,
 from .payments import Price, Invoice, SuccessfulPayment
 from .user import User
 from .chattype import ChatType
+from .chatphoto import ChatPhoto
 from .chat import Chat
 from .message import Message
 from .permissions import Permissions

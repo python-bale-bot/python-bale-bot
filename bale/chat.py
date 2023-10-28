@@ -24,6 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 from bale import User, ChatType
 from typing import TYPE_CHECKING, Optional, List
+from bale import ChatPhoto
 if TYPE_CHECKING:
     from bale import Bot, Message, User, Components, RemoveMenuKeyboard, Price, Location, ContactMessage, InputFile
 
@@ -49,6 +50,8 @@ class Chat:
             First name of the other party in a private chat.
         last_name: Optional[:class:`str`]
             Last name of the other party in a private chat.
+        photo: Optional[:class:`bale.ChatPhoto`]
+            Chat photo.
         pinned_message: Optional[:class:`bale.Message`]
             Pinned messages in chat. Defaults to None.
         invite_link: Optional[:class:`str`]
@@ -63,6 +66,7 @@ class Chat:
         "username",
         "first_name",
         "last_name",
+        "photo",
         "pinned_message",
         "all_members_are_administrators",
         "invite_link",
@@ -70,13 +74,15 @@ class Chat:
     )
 
     def __init__(self, chat_id: int | str, type: str, title: Optional[str] = None, username: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None,
-                 pinned_message: Optional["Message"] = None, all_members_are_administrators: Optional[bool] = None, invite_link: Optional[str] = None, bot: 'Bot' = None):
+                 photo: Optional["ChatPhoto"] = None, pinned_message: Optional["Message"] = None, all_members_are_administrators: Optional[bool] = None, invite_link: Optional[str] = None,
+                 bot: 'Bot' = None):
         self.chat_id = chat_id
         self.type = type
         self.title = title
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
+        self.photo = photo
         self.pinned_message = pinned_message
         self.all_members_are_administrators = all_members_are_administrators
         self.invite_link = invite_link
@@ -192,21 +198,10 @@ class Chat:
     def from_dict(cls, data: dict, bot):
         return cls(bot=bot, chat_id=data.get("id"), type=data.get("type"), title=data.get("title"),
                    username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
+                   photo=ChatPhoto.from_dict(data=data.get("photo")) if data.get("photo") else None,
                    pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
                    all_members_are_administrators=data.get("all_members_are_administrators", True),
                    invite_link=data.get("invite_link"))
-
-    def to_dict(self):
-        data = {
-            "id": self.chat_id,
-            "type": self.type,
-            "title": self.title,
-            "username": self.username,
-            "first_name": self.first_name,
-            "last_name": self.last_name
-        }
-
-        return data
 
     def __str__(self):
         return str(self.first_name) + str(self.last_name)
