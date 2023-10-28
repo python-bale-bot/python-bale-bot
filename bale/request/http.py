@@ -71,21 +71,21 @@ class HTTPClient:
 		"base_url"
 	)
 
-	def __init__(self, loop, token, base_url=None):
+	def __init__(self, loop: asyncio.AbstractEventLoop, token, base_url=None):
 		self.__session = None
 		self.base_url = base_url
-		self._loop: asyncio.AbstractEventLoop = loop
+		self._loop = loop
 		self.token = token
 
 	@property
 	def user_agent(self) -> str:
 		return "python-bale-bot (https://python-bale-bot.ir): An API wrapper for Bale written in Python"
 
-	def is_closed(self):
+	def is_closed(self) -> bool:
 		return self.__session is None
 
 	@property
-	def loop(self):
+	def loop(self) -> asyncio.AbstractEventLoop:
 		return self._loop
 
 	@loop.setter
