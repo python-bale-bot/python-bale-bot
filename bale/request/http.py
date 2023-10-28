@@ -27,7 +27,7 @@ import asyncio
 import aiohttp
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
-from .utils import ResponseStatusCode, to_json
+from bale.utils.request import ResponseStatusCode, to_json
 
 __all__ = ("HTTPClient", "Route")
 
