@@ -8,7 +8,8 @@ class Components:
     """This object shows a Component.
 
     .. admonition:: Examples
-        :any:`Components Bot <examples.inline_markup>`
+
+        :any:`Components Bot <examples.inline_keyboard>`
     """
     __slots__ = (
         "_menu_keyboards",

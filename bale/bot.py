@@ -66,6 +66,7 @@ class Bot:
     .. attention::
         When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
     .. admonition:: Examples
+
         :any:`My First Bot <examples.basic>`
     """
     __slots__ = (
@@ -195,6 +196,7 @@ class Bot:
         This function returns the first event that meets the requirements.
 
         .. admonition:: Examples
+
             :any:`conversation Bot <examples.conversation>`
 
         Parameters
@@ -774,6 +776,7 @@ class Bot:
             When paying the amount, a fee will be charged from the sender.
 
         .. admonition:: Examples
+
             :any:`Payment Bot <examples.invoice>`
 
         Parameters

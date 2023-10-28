@@ -9,6 +9,7 @@ class InputFile:
     .. warning::
         Just for upload file, you can use "file_name" param.
     .. admonition:: Examples
+
         :any:`Attachment Bot <examples.attachment>`
 
     Parameters
