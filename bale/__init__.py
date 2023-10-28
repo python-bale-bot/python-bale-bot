@@ -47,6 +47,7 @@ __all__ = (
     "HTTPClientError",
     "InvalidToken",
     "RateLimited",
+    "BadRequest",
     "Bot"
 )
 
@@ -65,7 +66,7 @@ from .chatmember import ChatMember
 from .callbackquery import CallbackQuery
 from .update import Update
 from .updater import Updater
-from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken, RateLimited
+from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken, RateLimited, BadRequest
 from .bot import Bot
 
 __title__ = "python-bale-bot"

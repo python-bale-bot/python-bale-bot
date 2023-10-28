@@ -21,6 +21,8 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+from typing import Optional
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
     TOKEN_NOT_FOUND = "Bad Request: Token not found"
@@ -40,6 +42,10 @@ class BaleError(Exception):
     __slots__ = (
         "message",
     )
+
+    @staticmethod
+    def check_response(description: Optional[str]) -> bool:
+        return False
 
     def __init__(self, message):
         super().__init__()
@@ -61,9 +67,12 @@ class InvalidToken(BaleError):
     """
     __slots__ = ("_message",)
 
-    def __init__(self):
-        super().__init__("Invalid Token")
+    def __init__(self, message=None):
+        super().__init__(message or "Invalid Token")
 
+    @staticmethod
+    def check_response(description: Optional[str]) -> bool:
+        return description and "token not found" in description.lower()
 
 class APIError(BaleError):
     """
@@ -99,8 +108,11 @@ class NotFound(BaleError):
     __slots__ = ()
 
     def __init__(self, message=None):
-        super().__init__(message if message else "Not Found")
+        super().__init__(message or "Not Found")
 
+    @staticmethod
+    def check_response(description: Optional[str]) -> bool:
+        return description and HTTPClientError.USER_OR_CHAT_NOT_FOUND in description
 
 class Forbidden(BaleError):
     """
@@ -109,8 +121,26 @@ class Forbidden(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self):
-        super().__init__("Forbidden")
+    def __init__(self, message=None):
+        super().__init__(message or "Forbidden")
+
+    @staticmethod
+    def check_response(description: Optional[str]) -> bool:
+        return description and description.startswith("Forbidden:")
+
+class BadRequest(BaleError):
+    """
+    Exception that's raised for when Bale server say Bad Request.
+    Subclass of :exc:`BaleError`
+    """
+    __slots__ = ()
+
+    def __init__(self, error):
+        super().__init__(error)
+
+    @staticmethod
+    def check_response(description: Optional[str]) -> bool:
+        return description and description.startswith("Bad Request:")
 
 class RateLimited(BaleError):
     """

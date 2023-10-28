@@ -136,11 +136,11 @@ class HTTPClient:
 		for tries in range(1, 5):
 			try:
 				async with self.__session.request(method=method, url=url, **kwargs) as response:
-					response: aiohttp.ClientResponse = response
+					response: aiohttp.ClientResponse
 					parsed_response = await ResponseParser.from_response(response)
 					if response.status == ResponseStatusCode.OK:
 						return parsed_response
-					elif not parsed_response.ok or response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
+					elif not parsed_response.ok or response.status == (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
 						if response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
 							if tries >= 4:
 								raise RateLimited()
@@ -148,12 +148,14 @@ class HTTPClient:
 							await asyncio.sleep(tries * 2)
 							continue
 
-						error = parsed_response.get_error()
-						raise error()
+						parsed_response.get_error()
+
 					elif response.status == ResponseStatusCode.NOT_FOUND:
 						raise NotFound(parsed_response.description)
 					elif response.status == ResponseStatusCode.PERMISSION_DENIED:
 						raise Forbidden()
+
+					raise APIError(parsed_response.error_code, parsed_response.description)
 
 			except aiohttp.ClientConnectorError as error:
 				raise NetworkError(str(error))
