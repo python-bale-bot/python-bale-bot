@@ -21,12 +21,12 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
     """
     if len(bot_username) < 4 or not bot_username.lower().endswith('bot'):
         raise TypeError(
-            "Please enter a Valid Username"
+            "bot_username param must be valid username"
         )
 
     if not re.match(r"^[A-Za-z0-9_-]+$", payload):
         raise TypeError(
-            "Please enter a Valid payload"
+            "payload param must be valid payload."
         )
 
     url = "ble.ir/{username}?start={payload}".format(username = bot_username, payload = payload)
