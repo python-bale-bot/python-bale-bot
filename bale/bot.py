@@ -1110,7 +1110,13 @@ class Bot:
 
         chat = await self.get_chat(user_id)
         if chat and chat.parsed_type.is_private_chat:
-            return User.from_dict(chat.to_dict(), self)
+            payload = {
+                "username": chat.username,
+                "id": chat.chat_id,
+                "first_name": chat.first_name,
+                "last_name": chat.last_name
+            }
+            return User.from_dict(payload, self)
 
         return None
 
