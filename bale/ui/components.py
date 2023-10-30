@@ -9,7 +9,7 @@ class Components:
 
     .. admonition:: Examples
 
-        :any:`Components Bot <examples.inline_keyboard>`
+        :any:`Components Bot <examples.inlinemarkup>`
     """
     __slots__ = (
         "_menu_keyboards",
