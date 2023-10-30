@@ -12,6 +12,15 @@ class InputFile:
 
         :any:`Attachment Bot <examples.attachment>`
 
+    .. code:: python
+
+        # upload the file
+        with open('./my_file.png', 'rb') as f:
+            file = InputFile(f.read())
+
+        # use the unique file id
+        file = InputFile("YOUR_FILE_ID")
+
     Parameters
     ----------
         file: :class:`io.BufferedReader` | :class:`str` | :class:`bytes`

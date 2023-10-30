@@ -187,6 +187,10 @@ class Message:
     async def reply(self, text: str, *, components: Optional[Components | RemoveMenuKeyboard] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+
+        .. code:: python
+
+            await message.reply("Hi, python-bale-bot!", components = None)
         """
         return await self.bot.send_message(self.chat_id, text, components=components,
                                            reply_to_message_id=self.message_id)
@@ -194,12 +198,20 @@ class Message:
     async def forward(self, chat_id: str | int):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.forward_message`.
+
+        .. code:: python
+
+            await message.forward(1234)
         """
         return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
 
     async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        .. code:: python
+
+            await message.reply_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption,
                                             components=components,
@@ -208,6 +220,10 @@ class Message:
     async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+
+        .. code:: python
+
+            await message.reply_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption,
                                          components=components,
@@ -216,6 +232,10 @@ class Message:
     async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+
+        .. code:: python
+
+            await message.reply_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
                                          components=components,
@@ -224,6 +244,10 @@ class Message:
     async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+
+        .. code:: python
+
+            await message.reply_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          components=components,
@@ -231,13 +255,21 @@ class Message:
 
     async def edit(self, text: str, *, components: "Components" | "RemoveMenuKeyboard" = None) -> Message:
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`
+        For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`.
+
+        .. code:: python
+
+            await message.edit("Bye!", components = None)
         """
         return await self.bot.edit_message(self.chat_id, self.message_id, text, components=components)
 
     async def delete(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
+
+        .. code:: python
+
+            await message.delete()
         """
         return await self.bot.delete_message(self.chat_id, self.message_id)
 

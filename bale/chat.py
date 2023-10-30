@@ -55,9 +55,9 @@ class Chat:
         pinned_message: Optional[:class:`bale.Message`]
             Pinned messages in chat. Defaults to None.
         invite_link: Optional[:class:`str`]
-            Primary invite link, for groups and channel. Returned only in bale.Bot.get_chat().
+            Primary invite link, for groups and channel. Returned only in :meth:`bale.Bot.get_chat()`.
         all_members_are_administrators: bool
-            Does everyone have admin access?. Defaults to True. (for Group)
+            Returns True when all users are in admin chat.
     """
     __slots__ = (
         "chat_id",
@@ -96,42 +96,70 @@ class Chat:
     async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+
+        .. code:: python
+
+            await chat.send("hi, python-bale-bot!", components = None)
         """
         return await self.bot.send_message(self.chat_id, text, components=components)
 
     async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        .. code:: python
+
+            await chat.send_document(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption, components=components)
 
     async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+
+        .. code:: python
+
+            await chat.send_photo(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components)
 
     async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+
+        .. code:: python
+
+            await chat.send_video(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
 
     async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+
+        .. code:: python
+
+            await chat.send_audio(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components)
 
     async def send_location(self, location: "Location"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
+
+        .. code:: python
+
+            await chat.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
         return await self.bot.send_location(self.chat_id, location)
 
     async def send_contact(self, contact: "ContactMessage") -> "Message":
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+
+        .. code:: python
+
+            await chat.send_contact(ContactMessage('09****', 'first name', 'last name))
         """
         return await self.bot.send_contact(self.chat_id, contact)
 
@@ -140,7 +168,14 @@ class Chat:
                    need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
                    need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`.
+
+        .. code:: python
+
+            await chat.send_invoice(
+                "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                payload = "unique invoice payload", ...
+            )
         """
         return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
@@ -149,18 +184,35 @@ class Chat:
     async def leave(self):
         """
         For the documentation of the method, please see :meth:`bale.Bot.leave_chat`.
+
+        .. code:: python
+
+            chat = await bot.get_chat(1234)
+            await chat.leave()
         """
         await self.bot.leave_chat(self.chat_id)
 
     async def add_user(self, user: "User"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.invite_user`.
+
+        .. code:: python
+
+            user = await bot.get_user(1234)
+            await chat.add_user(user)
         """
         await self.bot.invite_user(self.chat_id, user.chat_id)
 
     async def get_chat_member(self, user: "User" | str):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
+
+        .. code:: python
+
+            user = await bot.get_user(1234)
+            await chat.get_chat_member(user)
+            ...
+            await chat.get_chat_member(1234)
         """
         if not isinstance(user, (User, str)):
             raise TypeError("user must be type of User or str")
@@ -173,6 +225,13 @@ class Chat:
     async def ban_chat_member(self, user: "User" | str):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+
+        .. code:: python
+
+            user = await bot.get_user(1234)
+            await chat.ban_chat_member(user)
+            ...
+            await chat.ban_chat_member(1234)
         """
         if not isinstance(user, (User, str)):
             raise TypeError("user must be type of user or str")
@@ -185,12 +244,20 @@ class Chat:
     async def get_chat_members_count(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
+
+        .. code:: python
+
+            await chat.get_chat_members_count()
         """
         return await self.bot.get_chat_members_count(self.chat_id)
 
     async def get_chat_administrators(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
+
+        .. code:: python
+
+            await chat.get_chat_administrators()
         """
         return await self.bot.get_chat_administrators(self.chat_id)
 

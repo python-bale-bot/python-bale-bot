@@ -74,42 +74,70 @@ class User:
     async def send(self, text: str, components: Optional["Components" | "RemoveMenuKeyboard"] =None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+
+        .. code:: python
+
+            await user.send("Hi, python-bale-bot!", components = None)
         """
         return await self.bot.send_message(self.chat_id, text, components=components)
 
     async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        .. code:: python
+
+            await user.send_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption, components=components)
 
     async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+
+        .. code:: python
+
+            await user.send_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components)
 
     async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+
+        .. code:: python
+
+            await user.send_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
 
     async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+
+        .. code:: python
+
+            await user.send_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components)
 
     async def send_location(self, location: "Location"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
+
+        .. code:: python
+
+            await user.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
         return await self.bot.send_location(self.chat_id, location)
 
     async def send_contact(self, contact: "ContactMessage"):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+
+        .. code:: python
+
+            await user.send_contact(bale.ContactMessage('09****', 'first name', 'last name))
         """
         return await self.bot.send_contact(self.chat_id, contact)
 
@@ -117,7 +145,14 @@ class User:
                photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
                need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`.
+
+        .. code:: python
+
+            await user.send_invoice(
+                "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                payload = "unique invoice payload", ...
+            )
         """
         return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
                                            payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,

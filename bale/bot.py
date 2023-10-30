@@ -117,6 +117,12 @@ class Bot:
     def event(self, coro: CoroT) -> CoroT:
         """Set wrapper or listener for selected event (the name of function).
 
+        .. code:: python
+
+            @bot.event
+            async def on_message(message: bale.Message):
+                ...
+
         .. hint::
             The name of the function for which you write the decorator is considered the name of the event.
         """
@@ -128,6 +134,12 @@ class Bot:
 
     def listen(self, event_name: str) -> CoroT:
         """Set wrapper or listener for selected event (custom function name).
+
+        .. code:: python
+
+            @bot.listen("on_message")
+            async def _message(message: bale.Message):
+                ...
 
         Parameters
         ----------
@@ -145,6 +157,12 @@ class Bot:
     def add_event(self, event_name: str, wrapper) -> NoReturn:
         """Set wrapper or listener for an event.
 
+        .. code:: python
+
+            def message_handler(message: bale.Message):
+                ...
+
+            bot.add_event("on_message", message_handler)
 
         Parameters
         ----------
@@ -194,6 +212,15 @@ class Bot:
         The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``. Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
         In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
         This function returns the first event that meets the requirements.
+
+        .. code:: python
+
+            message = await bot.wait_for("message", check = lambda m: m.author.user_id == '1234')
+            ...
+            try:
+                message = await bot.wait_for("message", ..., timeout = 20.0)
+            except asyncio.TimeoutError: # 20s A message with the conditions specified in the `check` parameter was not found.
+                pass
 
         .. admonition:: Examples
 
@@ -307,6 +334,10 @@ class Bot:
     async def set_webhook(self, url: str) -> bool:
         """Use this method to specify an url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, Bale will send an HTTPS POST request to the specified url, containing An Update. In case of an unsuccessful request, Bale will give up after a reasonable amount of attempts.
 
+        .. code:: python
+
+            await bot.set_webhook("https://example.com")
+
         Parameters
         ----------
             url: :class:`str`
@@ -322,6 +353,10 @@ class Bot:
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
+
+        .. code:: python
+
+            await bot.delete_webhook()
 
         Returns
         -------
@@ -341,6 +376,10 @@ class Bot:
                            components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                            reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send text messages.
+
+        .. code:: python
+
+            await bot.send_message(1234, "hi, python-bale-bot!", ...)
 
         Parameters
         ----------
@@ -389,6 +428,10 @@ class Bot:
     async def forward_message(self, chat_id: int | str, from_chat_id: int | str, message_id: int | str):
         """This service is used to send text messages.
 
+        .. code:: python
+
+            await bot.forward_message(1234, 1234, 1234)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -433,6 +476,10 @@ class Bot:
                             components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                             reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send document.
+
+        .. code:: python
+
+            await bot.send_document(1234, bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
 
         Parameters
         ----------
@@ -499,6 +546,10 @@ class Bot:
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send photo.
 
+        .. code:: python
+
+            await bot.send_photo(1234, bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -563,6 +614,10 @@ class Bot:
                          components: Optional["Components" | "RemoveMenuKeyboard"] = None,
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Audio.
+
+        .. code:: python
+
+            await bot.send_audio(1234, bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
 
         Parameters
         ----------
@@ -629,6 +684,10 @@ class Bot:
                          reply_to_message_id: Optional[str | int] = None) -> "Message":
         """This service is used to send Video.
 
+        .. code:: python
+
+            await bot.send_video(1234, bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -691,6 +750,10 @@ class Bot:
     async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
         """Use this method to send point on the map.
 
+        .. code:: python
+
+            await bot.send_location(1234, bale.Location(35.71470468031143, 51.8568519168293))
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -727,6 +790,10 @@ class Bot:
 
     async def send_contact(self, chat_id: str | int, contact: "ContactMessage") -> "Message":
         """This service is used to send contact.
+
+        .. code:: python
+
+            await bot.send_cantact(1234, bale.ContactMessage('09****', 'first name', 'last name))
 
         Parameters
         ----------
@@ -774,6 +841,16 @@ class Bot:
 
         .. important::
             When paying the amount, a fee will be charged from the sender.
+
+        .. hint::
+            The `on_successful_payment` event is called when the sent transaction is done.
+
+        .. code:: python
+
+            await bot.send_invoice(
+                1234, "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                payload = "unique invoice payload", ...
+            )
 
         .. admonition:: Examples
 
@@ -884,6 +961,10 @@ class Bot:
                            components: Optional["Components" | "RemoveMenuKeyboard"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
+        .. code:: python
+
+            await bot.edit_message(1234, 1234, "this is test", components=None)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -927,12 +1008,13 @@ class Bot:
     async def delete_message(self, chat_id: str | int, message_id: str | int) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
 
-        .. warning::
-            In Channel or Group:
-                If it is a group or channel Manager, it can delete a message from (group or channel).
+        .. code:: python
 
-            In private message (PV):
-                If the message was sent by a bot, it can be deleted with this method
+            await bot.delete_message(1234, 1234)
+
+        .. warning::
+            In channels or groups, only when the admin can delete other people's messages.
+            Otherwise, It's no limit to delete his own message.
 
         Parameters
         ----------
@@ -964,6 +1046,12 @@ class Bot:
     async def get_chat(self, chat_id: int | str) -> Chat | None:
         """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
 
+        .. code:: python
+
+            await bot.get_chat(1234)
+            ...
+            await bot.get_chat("1234")
+
         Parameters
         ----------
             chat_id: int | str
@@ -994,6 +1082,12 @@ class Bot:
     async def get_user(self, user_id: int | str) -> "User" | None:
         """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
+        .. code:: python
+
+            await bot.get_user(1234)
+            ...
+            await bot.get_user("1234")
+
         Parameters
         ----------
             user_id: int
@@ -1022,6 +1116,13 @@ class Bot:
 
     async def get_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember" | None:
         """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
+
+        .. code:: python
+
+            await bot.get_chat_member(1234, 1234)
+
+        .. warning::
+            Just only when the admin can ban member(s).
 
         Parameters
         ----------
@@ -1064,6 +1165,10 @@ class Bot:
     async def ban_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 
+        .. code:: python
+
+            await bot.ban_chat_member(1234, 1234)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -1101,6 +1206,10 @@ class Bot:
     async def get_chat_members_count(self, chat_id: str | int) -> int:
         """Use this method to get the number of members in a chat.
 
+        .. code:: python
+
+            await bot.get_chat_members_count(1234)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -1131,6 +1240,10 @@ class Bot:
     async def get_chat_administrators(self, chat_id: str | int) -> list["ChatMember"] | None:
         """Use this method to get a list of administrators in a chat.
 
+        .. code:: python
+
+            await bot.get_chat_administrators(1234)
+
         Parameters
         ----------
             chat_id: :class:`str` | :class:`int`
@@ -1158,6 +1271,10 @@ class Bot:
 
     async def get_file(self, file_id: str):
         """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
+
+        .. code:: python
+
+            await bot.get_file("FILE_ID")
 
         Parameters
         ----------
@@ -1187,6 +1304,10 @@ class Bot:
 
     async def invite_user(self, chat_id: str | int, user_id: str | int) -> bool:
         """Invite user to the chat
+
+        .. code:: python
+
+            await bot.get_chat(1234, 1234)
 
         Parameters
         ----------
@@ -1219,6 +1340,10 @@ class Bot:
 
     async def leave_chat(self, chat_id: str | int) -> bool:
         """Use this method for your bot to leave a group, channel.
+
+        .. code:: python
+
+            await bot.leave_chat(1234)
 
         Parameters
         ----------

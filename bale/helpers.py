@@ -9,6 +9,9 @@ __all__ = (
 def create_deep_linked_url(bot_username: str, payload: str) -> str:
     """Creating a deep link for the bot.
 
+    .. warning::
+            The username of the robot must be entered in the correct format and invalid characters should not be used in the payload parameter.
+
     Parameters
     ----------
         bot_username: :class:`str`

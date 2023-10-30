@@ -63,6 +63,11 @@ class ChatMember:
     async def ban(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+
+        .. code:: python
+
+            member = await bot.get_chat_member(1234, 1234)
+            await member.ban()
         """
         return await self.bot.ban_chat_member(self.chat_id, self.user.user_id)
 
