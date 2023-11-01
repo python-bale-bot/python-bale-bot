@@ -12,5 +12,5 @@ Attachments
     bale.attachments.location
     bale.attachments.photo
     bale.attachments.video
-
+    bale.attachments.animation
     

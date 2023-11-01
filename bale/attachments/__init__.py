@@ -6,3 +6,4 @@ from .contact import ContactMessage
 from .location import Location
 from .photo import Photo
 from .video import Video
+from .animation import Animation

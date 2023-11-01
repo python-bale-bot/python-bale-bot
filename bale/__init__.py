@@ -24,6 +24,7 @@ __all__ = (
     "Photo",
     "Document",
     "Video",
+    "Animation",
     "InputFile",
     "Price",
     "Invoice",
@@ -53,7 +54,7 @@ __all__ = (
 
 from .version import __version__
 from .ui import InlineKeyboard, MenuKeyboard, RemoveMenuKeyboard, Components
-from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, InputFile
+from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
 from .payments import Price, Invoice, SuccessfulPayment
 from .user import User
 from .chattype import ChatType
