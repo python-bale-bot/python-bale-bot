@@ -722,7 +722,7 @@ class Bot:
 
         if not isinstance(video, InputFile):
             raise TypeError(
-                "video param must be type of bytes, str or Video"
+                "video param must be type of InputFile"
             )
 
         if components:
