@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from bale import Bot
 
 from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveMenuKeyboard,
-                  Video, Audio, File, SuccessfulPayment, InputFile)
+                  Video, Audio, File, SuccessfulPayment, Animation, InputFile)
 from .helpers import parse_time
 
 class Message:
@@ -66,6 +66,8 @@ class Message:
             Message is a general file, information about the file.
         video: Optional[:class:`bale.Video`]
             Message is a video, information about the video.
+        animation: Optional[:class:`bale.Animation`]
+            Message is a animation, information about the animation.
         audio: Optional[:class:`bale.Audio`]
             Message is an audio, information about the Audio.
         new_chat_members: Optional[List[:class:`bale.User`]]
@@ -81,7 +83,7 @@ class Message:
     __slots__ = (
         "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
-        "edit_date", "audio", "document", "video", "photos", "location", "invoice", "new_chat_members",
+        "edit_date", "audio", "document", "video", "animation", "photos", "location", "invoice", "new_chat_members",
         "left_chat_member", "reply_to_message", "successful_payment", "bot"
     )
 
@@ -93,7 +95,7 @@ class Message:
                  chat: Optional["Chat"] = None, video: Optional["Video"] = None,
                  photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None,
                  invoice: Optional["Invoice"] = None, audio: Optional["Audio"] = None,
-                 successful_payment: Optional["SuccessfulPayment"] = None,
+                 successful_payment: Optional["SuccessfulPayment"] = None, animation: Optional["Animation"] = None,
                  bot: 'Bot' = None, **options):
         self.message_id: str = message_id
         self.date = date
@@ -108,6 +110,7 @@ class Message:
         self.caption: Optional[str] = caption
         self.document: Optional["Document"] = document
         self.video: Optional["Video"] = video
+        self.animation: Optional["Animation"] = animation
         self.audio: Optional["Audio"] = audio
         self.photos: Optional[List["Photo"]] = photos
         self.contact: Optional["ContactMessage"] = contact
@@ -126,7 +129,7 @@ class Message:
     @property
     def attachment(self) -> Optional["File"]:
         """Optional[:class:`bale.File`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
-        attachment = self.video or self.photos or self.audio or self.document
+        attachment = self.video or self.photos or self.audio or self.document or self.animation
         if not attachment:
             return
 
@@ -179,6 +182,7 @@ class Message:
                    contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
                    location=Location.from_dict(data=data.get("location")) if data.get("location") else None,
                    audio=Audio.from_dict(data=data.get("audio"), bot=bot) if data.get("audio") else None,
+                   animation=Animation.from_dict(data=data.get("animation"), bot=bot) if data.get("animation") else None,
                    photos=[Photo.from_dict(data=photo_payload, bot=bot) for photo_payload in data.get("photo")] if data.get(
                        "photo") else None, video=Video.from_dict(data=data.get("video"), bot=bot) if data.get("video") else None,
                    successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
@@ -238,6 +242,21 @@ class Message:
             await message.reply_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
+                                         components=components,
+                                         reply_to_message_id=self.message_id)
+
+    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
+
+        .. code:: python
+
+            await message.reply_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
+        """
+        return await self.bot.send_animation(self.chat_id, animation, duration=duration,
+                                         width=width,
+                                         height=height,
+                                         caption=caption,
                                          components=components,
                                          reply_to_message_id=self.message_id)
 

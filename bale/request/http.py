@@ -298,6 +298,26 @@ class HTTPClient:
 
 		return self.request(Route("POST", "sendLocation", self.token), json=payload)
 
+	def send_animation(self, chat_id, form, *, duration=None, width=None, height=None, caption=None, components=None, reply_to_message_id=None):
+		payload = {
+			"chat_id": chat_id
+		}
+
+		if duration:
+			payload["duration"] = duration
+		if width:
+			payload["width"] = width
+		if height:
+			payload["height"] = height
+		if caption:
+			payload["caption"] = caption
+		if components:
+			payload["components"] = components
+		if reply_to_message_id:
+			payload["reply_to_message_id"] = reply_to_message_id
+
+		return self.request(Route("POST", "sendAnimation", self.token), json=payload, form=form)
+
 	def edit_message(self, chat_id, message_id, text, *, components=None):
 		payload = {
 			"chat_id": chat_id,

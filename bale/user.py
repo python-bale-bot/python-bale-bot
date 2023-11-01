@@ -111,6 +111,16 @@ class User:
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
 
+    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
+
+        .. code:: python
+
+            await user.send_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
+        """
+        return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components)
+
     async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.

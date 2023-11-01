@@ -747,6 +747,99 @@ class Bot:
                                               reply_to_message_id=reply_to_message_id)
         return Message.from_dict(data=response.result, bot=self)
 
+    async def send_animation(self, chat_id: str | int, animation: "InputFile", *,
+                         duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
+                         caption: Optional[str] = None,
+                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
+                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+        """This service is used to send Animation.
+
+        .. code:: python
+
+            await bot.send_animation(1234, bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
+
+        Parameters
+        ----------
+            chat_id: :class:`str` | :class:`int`
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            animation: :class:`bale.InputFile`
+                File to send. visit :class:`bale.InputFile` to see more info.
+            duration: :class:`int`
+                Duration of sent animation in seconds.
+            width: :class:`int`
+                Animation width.
+            height: :class:`int`
+                Animation height.
+            caption: Optional[:class:`str`]
+                Animation caption.
+            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+                Message Components
+            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+                If the message is a reply, ID of the original message.
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Send Animation to chat.
+            APIError
+                Send Animation Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(animation, InputFile):
+            raise TypeError(
+                "animation param must be type of InputFile"
+            )
+
+        if duration and not isinstance(duration, int):
+            raise TypeError(
+                "duration param must be type of int"
+            )
+
+        if width and not isinstance(width, int):
+            raise TypeError(
+                "width param must be type of int"
+            )
+
+        if height and not isinstance(height, int):
+            raise TypeError(
+                "height param must be type of int"
+            )
+
+        if caption and not isinstance(caption, str):
+            raise TypeError(
+                "caption param must be type of str"
+            )
+
+        if components:
+            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+                raise TypeError(
+                    "components param must be type of Components or RemoveComponents"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        response = await self.http.send_animation(str(chat_id), [animation.to_dict('animation')], duration=duration,
+                                              width=width, height=height,
+                                              caption=caption,
+                                              components=components,
+                                              reply_to_message_id=reply_to_message_id)
+        return Message.from_dict(data=response.result, bot=self)
+
     async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
         """Use this method to send point on the map.
 
