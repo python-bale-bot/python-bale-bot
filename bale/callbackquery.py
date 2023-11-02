@@ -78,22 +78,6 @@ class CallbackQuery:
                    inline_message_id=data.get("inline_message_id"),
                    from_user=User.from_dict(bot=bot, data=data.get("from")))
 
-    def to_dict(self):
-        data = {
-            "id": self.callback_id
-        }
-
-        if self.data:
-            data["data"] = self.data
-        if self.inline_message_id:
-            data["inline_message_id"] = self.inline_message_id
-        if self.message:
-            data["message"] = self.message.to_dict()
-        if self.from_user:
-            data["from_user"] = self.from_user.to_dict()
-
-        return data
-
     def __eq__(self, other):
         return isinstance(other, CallbackQuery) and self.callback_id == other.callback_id
 

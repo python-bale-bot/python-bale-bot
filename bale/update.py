@@ -91,18 +91,6 @@ class Update:
         return cls(type=update_type, update_id=data["update_id"],
                    message=message, callback_query=callback_query, edited_message=edited_message, bot=bot)
 
-    def to_dict(self) -> Dict:
-        data = {}
-
-        if self.type:
-            data["type"] = self.type
-        if self.callback_query:
-            data["callback_query"] = self.callback_query.to_dict()
-        if self.message:
-            data["message"] = self.message.to_dict()
-
-        return data
-
     def __eq__(self, other):
         return isinstance(other, Update) and self.update_id == other.update_id
 
