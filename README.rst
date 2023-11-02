@@ -8,11 +8,14 @@ python-bale-bot Library
    |Python Version| |PyPi Version| |Codacy Badge| |python-bale-bot
    score| |Project License| |API Version| |Documentation Status|
 
+Introduction
+============
+
 What is Bale?
 -------------
 
 **The “Bale” is a messenger-platform for send and receive messages.**
-it’s provides services for developers and they can send or receive
+it’s provides services for developers, and they can send or receive
 messages through ``bots`` like normal users and These services are
 provided by `web services <https://dev.bale.ai>`__ (``API``).
 
@@ -23,21 +26,21 @@ What is python-bale-bot?
 developers to use web services provided by “Bale”.**
 
 Installing
-----------
+==========
 
 .. container::
 
    **You can install or update ``python-bale-bot`` via:**
 
 PyPi:
-~~~~~
+-----
 
 ::
 
    $ pip install python-bale-bot -U
 
 Git:
-~~~~
+-----
 
 ::
 
@@ -45,17 +48,25 @@ Git:
    $ cd python-bale-bot
    $ python setup.py install
 
-Documentation
--------------
+Quick Start
+===========
 
-**The**\ `package
-documentation <https://docs.python-bale-bot.ir/en/stable>`__\ **is the
+To get started, learn how the library works through the library. In
+addition, there are examples in the
+“`Examples <https://docs.python-bale-bot.ir/en/stable/examples.html>`__”
+section of the library.
+
+Documentation
+=============
+
+**The** \ `package
+documentation <https://docs.python-bale-bot.ir/en/stable>`__ \ **is the
 technical reference for python-bale-bot. It contains descriptions of all
 available classes, modules, methods and arguments as well as the
 changelog.**
 
 Contact to Developers
----------------------
+=====================
 
 |Email| |Discord| |Our Site|
 

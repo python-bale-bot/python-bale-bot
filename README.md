@@ -16,13 +16,15 @@
 
 </div>
 
+# Introduction
+
 ## What is Bale?
-**The "Bale" is a messenger-platform for send and receive messages.** it's provides services for developers and they can send or receive messages through `bots` like normal users and These services are provided by [web services](https://dev.bale.ai) (`API`).
+**The "Bale" is a messenger-platform for send and receive messages.** it's provides services for developers, and they can send or receive messages through `bots` like normal users and These services are provided by [web services](https://dev.bale.ai) (`API`).
 
 ## What is python-bale-bot?
 **The "python-bale-bot" is a Python language package optimized for developers to use web services provided by "Bale".**
 
-## Installing
+# Installing
 <div align='center'>
   
   **You can install or update `python-bale-bot` via:**
@@ -43,11 +45,34 @@ $ cd python-bale-bot
 $ python setup.py install
 ```
 
-## Documentation
+# Quick Start
+To get started, learn how the library works through the library. In addition, there are examples in the "[Examples](https://docs.python-bale-bot.ir/en/stable/examples.html)" section of the library.
+
+```python
+from bale import Bot, Update, Message
+
+client = Bot(token="Your Token")
+
+@client.event
+async def on_ready():
+	print(client.user, "is Ready!")
+
+@client.event
+async def on_update(update: Update):
+	print(update.update_id, update.type)
+
+@client.event
+async def on_message(message: Message):
+	await message.reply(text="Hi!")
+
+client.run()
+```
+
+# Documentation
 **The [package documentation](https://docs.python-bale-bot.ir/en/stable) is the technical reference for python-bale-bot. It contains descriptions of all available classes, modules, methods and arguments as well as the changelog.**
 
 
-## Contact to Developers
+# Contact to Developers
 [![Email](https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white)](mailto:python-bale-bot@googlegroups.com)
 [![Discord](https://img.shields.io/badge/Support_Server-bYHEzyDe2j-green?logo=Discord&logoColor=white)](https://discord.gg/bYHEzyDe2j)
 [![Our Site](https://img.shields.io/badge/Our_site-python--bale--bot.ir-green?logo=GitHub&logoColor=white)](https://python-bale-bot.ir)
