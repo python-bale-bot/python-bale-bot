@@ -12,6 +12,7 @@
 
    bale
    helpers
+   event
 
 .. toctree::
    :hidden:
