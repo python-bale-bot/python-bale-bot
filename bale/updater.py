@@ -142,7 +142,7 @@ class Updater:
             for user in update.message.new_chat_members or []:
                 self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
         elif update.type == Update.EDITED_MESSAGE:
-            self.bot.dispatch("edited_message", update.edited_message)
+            self.bot.dispatch("message_edit", update.edited_message)
 
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
