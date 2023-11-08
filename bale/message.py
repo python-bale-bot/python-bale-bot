@@ -67,7 +67,7 @@ class Message:
         video: Optional[:class:`bale.Video`]
             Message is a video, information about the video.
         animation: Optional[:class:`bale.Animation`]
-            Message is a animation, information about the animation.
+            Message is an animation, information about the animation.
         audio: Optional[:class:`bale.Audio`]
             Message is an audio, information about the Audio.
         new_chat_members: Optional[List[:class:`bale.User`]]
