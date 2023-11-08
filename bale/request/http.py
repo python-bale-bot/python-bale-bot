@@ -49,10 +49,9 @@ class Route:
 
 	@property
 	def url(self):
-		"""export url for request"""
 		return "{base_url}bot{token}/{endpoint}".format(base_url = self.base_url, token = self.token, endpoint = self.endpoint)
 
-	def set_base_url(self, value):
+	def set_base_url(self, value: Optional[str]):
 		if value is not None:
 			self.base_url = value
 
@@ -93,18 +92,15 @@ class HTTPClient:
 		self._loop = _value
 
 	def reload_session(self):
-		"""Reset Session"""
 		if self.__session and self.__session.closed:
 			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def start(self):
-		"""Start Http client"""
 		if self.__session:
 			raise RuntimeError("HTTPClient has already started.")
 		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
 
 	async def close(self):
-		"""Close Session connection"""
 		if self.__session:
 			await self.__session.close()
 			self.__session = None
