@@ -21,12 +21,13 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Dict, List, Any
+from typing import Dict, List, Any, Optional
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio
 import aiohttp
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
 from .parser import ResponseParser
+from .params import RequestParams
 from bale.utils.request import ResponseStatusCode, to_json
 
 __all__ = ("HTTPClient", "Route")
@@ -178,197 +179,74 @@ class HTTPClient:
 
 		raise RuntimeError("failed to get file")
 
-	def send_message(self, chat_id, text, *, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id,
-			"text": text
-		}
-		if components:
-			payload["reply_markup"] = components
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
+	def send_message(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendMessage", self.token), json=params.payload)
 
-		return self.request(Route("POST", "sendMessage", self.token), json=payload)
+	def forward_message(self, *, params: RequestParams):
+		return self.request(Route("POST", "forwardMessage", self.token), json=params.payload)
 
-	def forward_message(self, chat_id, from_chat_id, message_id):
-		payload = {
-			"chat_id": chat_id,
-			"from_chat_id": from_chat_id,
-			"message_id": message_id
-		}
+	def send_document(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendDocument", self.token), data=params.payload, form=params.multipart)
 
-		return self.request(Route("POST", "forwardMessage", self.token), json=payload)
+	def send_photo(self, *, params: RequestParams):
+		return self.request(Route("POST", "SendPhoto", self.token), data=params.payload, form=params.multipart)
 
-	def send_document(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id
-		}
-		if components:
-			payload["reply_markup"] = components
-		if caption:
-			payload["caption"] = caption
+	def send_media_group(self, *, params: RequestParams):
+		return self.request(Route("POST", "SendMediaGroup", self.token), data=params.payload, form=params.multipart)
 
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
+	def send_video(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendVideo", self.token), data=params.payload, form=params.multipart)
 
-		return self.request(Route("POST", "sendDocument", self.token), data=payload, form=form)
+	def send_audio(self, *, params: RequestParams):
+		return self.request(Route("POST", "SendAudio", self.token), data=params.payload, form=params.multipart)
 
-	def send_photo(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id
-		}
-		if components:
-			payload["reply_markup"] = components
-		if caption:
-			payload["caption"] = caption
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
+	def send_contact(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendContact", self.token), data=params.payload, form=params.multipart)
 
-		return self.request(Route("POST", "SendPhoto", self.token), data=payload, form=form)
+	def send_invoice(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendInvoice", self.token), json=params.payload)
 
-	def send_media_group(self, chat_id, media):
-		payload = {
-			"chat_id": chat_id,
-			"media": media
-		}
+	def send_location(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendLocation", self.token), json=params.payload)
 
-		return self.request(Route("POST", "SendMediaGroup", self.token), data=payload)
+	def send_animation(self, *, params: RequestParams):
+		return self.request(Route("POST", "sendAnimation", self.token), data=params.payload, form=params.multipart)
 
-	def send_video(self, chat_id, form, *, caption=None, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id
-		}
-		if components:
-			payload["reply_markup"] = components
-		if caption:
-			payload["caption"] = caption
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
+	def edit_message(self, *, params: RequestParams):
+		return self.request(Route("POST", "editMessageText", self.token), json=params.payload)
 
-		return self.request(Route("POST", "sendVideo", self.token), data=payload, form=form)
+	def delete_message(self, *, params: RequestParams):
+		return self.request(Route("GET", "deleteMessage", self.token), json=params.payload)
 
-	def send_audio(self, chat_id, form, *, caption=None, duration=None, title=None, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id
-		}
-		if components:
-			payload["reply_markup"] = components
-		if caption:
-			payload["caption"] = caption
-		if duration:
-			payload["duration"] = duration
-		if title:
-			payload["title"] = title
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
-
-		return self.request(Route("POST", "SendAudio", self.token), data=payload, form=form)
-
-	def send_contact(self, chat_id, phone_number, first_name, *, last_name):
-		payload = {
-			"chat_id": chat_id,
-			"phone_number": phone_number,
-			"first_name": first_name
-		}
-		if last_name:
-			payload["last_name"] = last_name
-
-		return self.request(Route("POST", "sendContact", self.token), data=payload)
-
-	def send_invoice(self, chat_id, title, description, provider_token, prices, payload=None, photo_url=None, need_name=False, need_phone_number=False, need_email=False, need_shipping_address=False, is_flexible=True):
-		data = {"chat_id": chat_id, "title": title, "description": description, "provider_token": provider_token, "prices": prices}
-		if photo_url:
-			data["photo_url"] = photo_url
-		if payload:
-			data["payload"] = payload
-		data["need_name"] = need_name
-		data["need_phone_number"] = need_phone_number
-		data["need_email"] = need_email
-		data["need_shipping_address"] = need_shipping_address
-		data["is_flexible"] = is_flexible
-
-		return self.request(Route("POST", "sendInvoice", self.token), json=data)
-
-	def send_location(self, chat_id, latitude, longitude):
-		payload = { "chat_id": chat_id, "latitude": latitude, "longitude": longitude}
-
-		return self.request(Route("POST", "sendLocation", self.token), json=payload)
-
-	def send_animation(self, chat_id, form, *, duration=None, width=None, height=None, caption=None, components=None, reply_to_message_id=None):
-		payload = {
-			"chat_id": chat_id
-		}
-
-		if duration:
-			payload["duration"] = duration
-		if width:
-			payload["width"] = width
-		if height:
-			payload["height"] = height
-		if caption:
-			payload["caption"] = caption
-		if components:
-			payload["components"] = components
-		if reply_to_message_id:
-			payload["reply_to_message_id"] = reply_to_message_id
-
-		return self.request(Route("POST", "sendAnimation", self.token), json=payload, form=form)
-
-	def edit_message(self, chat_id, message_id, text, *, components=None):
-		payload = {
-			"chat_id": chat_id,
-			"message_id": message_id,
-			"text": text
-		}
-		if components:
-			payload["reply_markup"] = components
-
-		return self.request(Route("POST", "editMessageText", self.token), json=payload)
-
-	def delete_message(self, chat_id, message_id):
-		payload = {
-			"chat_id": chat_id,
-			"message_id": message_id
-		}
-		return self.request(Route("GET", "deleteMessage", self.token), json=payload)
-
-	def get_updates(self, offset=None, limit=None):
-		payload = {}
-		if offset:
-			payload["offset"] = offset
-		if limit:
-			payload["limit"] = limit
-		return self.request(Route("POST", "getUpdates", self.token), json=payload)
+	def get_updates(self, *, params: RequestParams):
+		return self.request(Route("POST", "getUpdates", self.token), json=params.payload)
 
 	def delete_webhook(self):
 		return self.request(Route("GET", "deleteWebhook", self.token))
 
-	def set_webhook(self, url):
-		payload = {
-			"url": url
-		}
-		return self.request(Route("POST", "setWebhook", self.token), payload = payload)
+	def set_webhook(self, *, params: RequestParams):
+		return self.request(Route("POST", "setWebhook", self.token), json=params.payload)
 
 	def get_bot(self):
 		return self.request(Route("GET", "getMe", self.token))
 
-	def get_chat(self, chat_id):
-		return self.request(Route("GET", "getChat", self.token), json=dict(chat_id=chat_id))
+	def get_chat(self, *, params: RequestParams):
+		return self.request(Route("GET", "getChat", self.token), json=params.payload)
 
-	def leave_chat(self, chat_id):
-		return self.request(Route("GET", "leaveChat", self.token), json=dict(chat_id=chat_id))
+	def leave_chat(self, *, params: RequestParams):
+		return self.request(Route("GET", "leaveChat", self.token), json=params.payload)
 
-	def get_chat_administrators(self, chat_id):
-		return self.request(Route("GET", "getChatAdministrators", self.token), json=dict(chat_id=chat_id))
+	def get_chat_administrators(self, *, params: RequestParams):
+		return self.request(Route("GET", "getChatAdministrators", self.token), json=params.payload)
 
-	def get_chat_members_count(self, chat_id):
-		return self.request(Route("GET", "getChatMemberCount", self.token), json=dict(chat_id=chat_id))
+	def get_chat_members_count(self, *, params: RequestParams):
+		return self.request(Route("GET", "getChatMemberCount", self.token), json=params.payload)
 
-	def get_chat_member(self, chat_id, member_id):
-		return self.request(Route("GET", "getChatMember", self.token), json=dict(chat_id=chat_id, user_id=member_id))
+	def get_chat_member(self, *, params: RequestParams):
+		return self.request(Route("GET", "getChatMember", self.token), json=params.payload)
 
-	def ban_chat_member(self, chat_id, member_id):
-		return self.request(Route("POST", "banChatMember", self.token), json=dict(chat_id=chat_id, user_id=member_id))
+	def ban_chat_member(self, *, params: RequestParams):
+		return self.request(Route("POST", "banChatMember", self.token), json=params.payload)
 
-	def invite_to_chat(self, chat_id, user_id):
-		return self.request(Route("GET", "inviteUser", self.token), json=dict(chat_id=chat_id, user_id=user_id))
+	def invite_to_chat(self, *, params: RequestParams):
+		return self.request(Route("GET", "inviteUser", self.token), json=params.payload)
