@@ -24,21 +24,18 @@ SOFTWARE.
 from __future__ import annotations
 import asyncio
 import logging
-from typing import Callable, Dict, Tuple, List, Optional, overload, NoReturn, Literal, TypeVar, Any, Coroutine
+from typing import Callable, Dict, Tuple, List, Optional, overload, NoReturn, Literal
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
-from .utils.logging import setup_logging
-from bale import (Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, Updater,
+from .utils import setup_logging, CoroT
+from bale import (State, Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, Updater,
                   Location, ContactMessage, InputFile, CallbackQuery, SuccessfulPayment)
-from bale.request import HTTPClient
+from bale.request import HTTPClient, handle_request_param
 
 __all__ = (
     "Bot"
 )
 
-T = TypeVar('T')
-Coro = Coroutine[Any, Any, T]
-CoroT = TypeVar('CoroT', bound=Callable[..., Coro[Any]])
 
 _log = logging.getLogger(__name__)
 
@@ -75,8 +72,9 @@ class Bot:
         "loop",
         "events",
         "listeners",
+        "_state",
         "_client_user",
-        "http",
+        "_http",
         "_closed",
         "updater"
     )
@@ -86,7 +84,8 @@ class Bot:
             raise InvalidToken()
         self.loop: asyncio.AbstractEventLoop | _Loop = _loop
         self.token: str = token
-        self.http: HTTPClient = HTTPClient(self.loop, token, kwargs.get('base_url'))
+        self._http: HTTPClient = HTTPClient(self.loop, token, kwargs.get('base_url'))
+        self._state: "State" = State(self, **kwargs)
         self._client_user = None
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
@@ -102,9 +101,9 @@ class Bot:
     async def _setup_hook(self):
         loop = asyncio.get_running_loop()
         self.loop = loop
-        self.http.loop = loop
+        self._http.loop = loop
         self._closed = False
-        await self.http.start()
+        await self._http.start()
 
     async def __aenter__(self):
         await self._setup_hook()
@@ -129,7 +128,7 @@ class Bot:
         if not asyncio.iscoroutinefunction(coro):
             raise TypeError('event handler must be a coroutine function')
 
-        self.add_event(coro.__name__, coro)
+        self._add_event(coro.__name__, coro)
         return coro
 
     def listen(self, event_name: str) -> CoroT:
@@ -150,11 +149,11 @@ class Bot:
             if not asyncio.iscoroutinefunction(func):
                 raise TypeError('event handler must be coroutine function')
 
-            self.add_event(event_name, func)
+            self._add_event(event_name, func)
 
         return wrapper_function
 
-    def add_event(self, event_name: str, wrapper) -> NoReturn:
+    def _add_event(self, event_name: str, wrapper) -> NoReturn:
         """Set wrapper or listener for an event.
 
         .. code:: python
@@ -256,11 +255,11 @@ class Bot:
     async def close(self):
         """Close http Events and bot"""
         await self.updater.stop()
-        await self.http.close()
+        await self._http.close()
         self._closed = True
 
     def is_closed(self):
-        """:class:`bool`: Connection Status"""
+        """:class:`bool`: Bot Status"""
         return self._closed
 
     async def run_event(self, core: CoroT, event_name: str, *args, **kwargs):
@@ -326,7 +325,7 @@ class Bot:
             APIError
                 Get bot Failed.
         """
-        response = await self.http.get_bot()
+        response = await self._http.get_bot()
         client_user = User.from_dict(data=response.result, bot=self)
         self._client_user = client_user
         return client_user
@@ -348,7 +347,7 @@ class Bot:
             :class:`bool`:
                 On success, True is returned.
         """
-        response = await self.http.set_webhook(url)
+        response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
         return response or False
 
     async def delete_webhook(self) -> bool:
@@ -369,7 +368,7 @@ class Bot:
             APIError
                 Delete webhook Failed.
         """
-        response = await self.http.delete_webhook()
+        response = await self._http.delete_webhook()
         return response.result or False
 
     async def send_message(self, chat_id: str | int, text: str, *,
@@ -421,9 +420,13 @@ class Bot:
                 "reply_to_message_id param must be type of Message"
             )
 
-        response = await self.http.send_message(str(chat_id), text, components=components,
-                                                reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_message(
+            params=handle_request_param(dict(chat_id=str(chat_id), text=text, reply_markup=components,
+            reply_to_message_id=reply_to_message_id))
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def forward_message(self, chat_id: int | str, from_chat_id: int | str, message_id: int | str):
         """This service is used to send text messages.
@@ -468,8 +471,12 @@ class Bot:
                 "message_id param must be type of str or int"
             )
 
-        response = await self.http.forward_message(str(chat_id), str(from_chat_id), str(message_id))
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.forward_message(
+            params=handle_request_param(dict(chat_id=str(chat_id), from_chat_id=str(from_chat_id), message_id=str(message_id)))
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_document(self, chat_id: str | int, document: "InputFile", *,
                             caption: Optional[str] = None,
@@ -535,10 +542,18 @@ class Bot:
                 )
             components = components.to_json()
 
-        response = await self.http.send_document(chat_id, [document.to_dict('document')], caption=caption,
-                                                 components=components,
-                                                 reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_document(
+            params=handle_request_param(
+                dict(
+                    chat_id=chat_id, caption=caption, reply_markup=components,
+                    reply_to_message_id=reply_to_message_id
+                ),
+                [document.to_dict('document')]
+            )
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_photo(self, chat_id: str | int, photo: "InputFile", *,
                          caption: Optional[str] = None,
@@ -604,10 +619,19 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_photo(str(chat_id), [photo.to_dict('photo')], caption=caption,
-                                              components=components,
-                                              reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_photo(
+            params=handle_request_param(
+                dict(
+                    chat_id=str(chat_id), caption=caption, reply_markup=components,
+                    reply_to_message_id=reply_to_message_id
+                ),
+                [photo.to_dict('photo')]
+            )
+
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_audio(self, chat_id: str | int, audio: "InputFile", *,
                          caption: Optional[str] = None,
@@ -673,10 +697,15 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_audio(str(chat_id), [audio.to_dict('audio')], caption=caption,
-                                              components=components,
-                                              reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_audio(params=handle_request_param(
+            dict(
+                chat_id=str(chat_id), caption=caption, reply_markup=components,
+                reply_to_message_id=reply_to_message_id),
+            [audio.to_dict('audio')]
+        ))
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_video(self, chat_id: str | int, video: "InputFile", *,
                          caption: Optional[str] = None,
@@ -742,10 +771,16 @@ class Bot:
                 "caption param must be type of str"
             )
 
-        response = await self.http.send_video(str(chat_id), [video.to_dict('video')], caption=caption,
-                                              components=components,
-                                              reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_video(params=handle_request_param(
+              dict(
+                    chat_id=str(chat_id), caption=caption, reply_markup=components,
+                    reply_to_message_id=reply_to_message_id
+              ),
+              [video.to_dict('video')]
+        ))
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_animation(self, chat_id: str | int, animation: "InputFile", *,
                          duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
@@ -833,12 +868,19 @@ class Bot:
                 "reply_to_message_id param must be type of str or int"
             )
 
-        response = await self.http.send_animation(str(chat_id), [animation.to_dict('animation')], duration=duration,
-                                              width=width, height=height,
-                                              caption=caption,
-                                              components=components,
-                                              reply_to_message_id=reply_to_message_id)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_animation(params=handle_request_param(
+            dict(
+                chat_id=str(chat_id), duration=duration,
+                width=width, height=height,
+                caption=caption,
+                reply_markup=components,
+                reply_to_message_id=reply_to_message_id
+            ),
+            [animation.to_dict('animation')]
+        ))
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
         """Use this method to send point on the map.
@@ -878,8 +920,10 @@ class Bot:
                 "location param must be type of Location"
             )
 
-        response = await self.http.send_location(str(chat_id), location.latitude, location.longitude)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_location(params=handle_request_param(dict(chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude)))
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_contact(self, chat_id: str | int, contact: "ContactMessage") -> "Message":
         """This service is used to send contact.
@@ -919,9 +963,15 @@ class Bot:
                 "contact param must be type of ContactMessage"
             )
 
-        response = await self.http.send_contact(str(chat_id), contact.phone_number, contact.first_name,
-                                                last_name=contact.last_name)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_contact(params=handle_request_param(
+            dict(
+                chat_id=str(chat_id), phone_number=contact.phone_number, first_name=contact.first_name,
+                last_name=contact.last_name)
+            )
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str,
                            prices: List["Price"], *,
@@ -1045,10 +1095,13 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
-        response = await self.http.send_invoice(str(chat_id), title, description, provider_token, prices, payload, photo_url,
-                                                need_name,
-                                                need_phone_number, need_email, need_shipping_address, is_flexible)
-        return Message.from_dict(data=response.result, bot=self)
+        response = await self._http.send_invoice(
+            params=handle_request_param(dict(chat_id=str(chat_id), title=title, description=description, provider_token=provider_token, prices=prices, payload=payload, photo_url=photo_url,
+            need_name=need_name, need_phone_number=need_phone_number, need_email=need_email, need_shipping_address=need_shipping_address, is_flexible=is_flexible))
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        return result
 
     async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *,
                            components: Optional["Components" | "RemoveMenuKeyboard"] = None) -> "Message":
@@ -1095,7 +1148,7 @@ class Bot:
         if components:
             components = components.to_json()
 
-        response = await self.http.edit_message(chat_id, message_id, text, components=components)
+        response = await self._http.edit_message(params=handle_request_param(dict(chat_id=chat_id, message_id=message_id, text=text, reply_markup=components)))
         return response.result
 
     async def delete_message(self, chat_id: str | int, message_id: str | int) -> bool:
@@ -1133,10 +1186,12 @@ class Bot:
             raise TypeError(
                 "message_id param must be type of str or int"
             )
-        response = await self.http.delete_message(str(chat_id), message_id)
+        response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
+        if response.result:
+            self._state.remove_message(str(chat_id), message_id)
         return response.result or False
 
-    async def get_chat(self, chat_id: int | str) -> Chat | None:
+    async def get_chat(self, chat_id: int | str, *, use_cache=True) -> Chat | None:
         """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
 
         .. code:: python
@@ -1147,8 +1202,10 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: int | str
+            chat_id: Union[:class:`int`, :class:`str`]
                  Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            use_cache: Optional[:class:`bool`]
+                 Use of caches stored in relation to chats.
         Returns
         -------
             Optional[:class:`bale.Chat`]
@@ -1165,14 +1222,22 @@ class Bot:
                 "chat_id param must be type of int or str"
             )
 
+        if use_cache:
+            result = self._state.get_chat(chat_id)
+            if result:
+                return result
+
         try:
-            response = await self.http.get_chat(str(chat_id))
+            response = await self._http.get_chat(params=handle_request_param(dict(chat_id=str(chat_id))))
         except NotFound:
+            self._state.remove_chat(str(chat_id))
             return None
         else:
-            return Chat.from_dict(response.result, bot=self)
+            chat = Chat.from_dict(response.result, bot=self)
+            self._state.store_chat(chat)
+            return chat
 
-    async def get_user(self, user_id: int | str) -> "User" | None:
+    async def get_user(self, user_id: int | str, *, use_cache=True) -> Optional["User"]:
         """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         .. code:: python
@@ -1185,6 +1250,8 @@ class Bot:
         ----------
             user_id: int
                 user id
+            use_cache: Optional[:class:`bool`]
+                Use of caches stored in relation to chats.
         Returns
         -------
             Optional[:class:`bale.User`]
@@ -1201,6 +1268,11 @@ class Bot:
                 "user_id param must be type of int or str"
             )
 
+        if use_cache:
+            result = self._state.get_user(user_id)
+            if result:
+                return result
+
         chat = await self.get_chat(user_id)
         if chat and chat.parsed_type.is_private_chat:
             payload = {
@@ -1209,8 +1281,11 @@ class Bot:
                 "first_name": chat.first_name,
                 "last_name": chat.last_name
             }
-            return User.from_dict(payload, self)
+            result = User.from_dict(payload, self)
+            self._state.store_user(result)
+            return result
 
+        self._state.remove_user(user_id)
         return None
 
     async def get_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember" | None:
@@ -1255,7 +1330,7 @@ class Bot:
             )
 
         try:
-            response = await self.http.get_chat_member(chat_id=str(chat_id), member_id=str(user_id))
+            response = await self._http.get_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), member_id=str(user_id))))
         except NotFound:
             return None
         else:
@@ -1299,7 +1374,7 @@ class Bot:
                 "user_id must be type of str or int"
             )
 
-        response = await self.http.ban_chat_member(chat_id=str(chat_id), member_id=str(user_id))
+        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), member_id=str(user_id))))
         return response.result
 
     async def get_chat_members_count(self, chat_id: str | int) -> int:
@@ -1333,7 +1408,7 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        response = await self.http.get_chat_members_count(str(chat_id))
+        response = await self._http.get_chat_members_count(params=handle_request_param(dict(chat_id=str(chat_id))))
         return response.result
 
     async def get_chat_administrators(self, chat_id: str | int) -> list["ChatMember"] | None:
@@ -1365,8 +1440,12 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        response = await self.http.get_chat_administrators(chat_id)
-        return [ChatMember.from_dict(chat_id=chat_id, data=member_payload, bot=self) for member_payload in response.result or list()]
+        response = await self._http.get_chat_administrators(params=handle_request_param(dict(chat_id=str(chat_id))))
+        result = [ChatMember.from_dict(chat_id=chat_id, data=member_payload, bot=self) for member_payload in response.result or list()]
+        for member in result:
+            self._state.store_user(member.user)
+
+        return result
 
     async def get_file(self, file_id: str):
         """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
@@ -1399,7 +1478,7 @@ class Bot:
                 "file_id must be type of str"
             )
 
-        return await self.http.get_file(file_id)
+        return await self._http.get_file(file_id)
 
     async def invite_user(self, chat_id: str | int, user_id: str | int) -> bool:
         """Invite user to the chat
@@ -1434,7 +1513,7 @@ class Bot:
                 "user_id param must be type of str or int"
             )
 
-        response = await self.http.invite_to_chat(str(chat_id), str(user_id))
+        response = await self._http.invite_to_chat(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result or False
 
     async def leave_chat(self, chat_id: str | int) -> bool:
@@ -1460,7 +1539,9 @@ class Bot:
             raise TypeError(
                 "chat_id param must be type of str or int"
             )
-        response = await self.http.leave_chat(str(chat_id))
+        response = await self._http.leave_chat(params=handle_request_param(dict(chat_id=str(chat_id))))
+        if response.result:
+            self._state.remove_chat(chat_id)
         return response.result or False
 
     async def get_updates(self, offset: int = None, limit: int = None) -> List["Update"]:
@@ -1474,9 +1555,22 @@ class Bot:
                 "limit param must be int"
             )
 
-        response = await self.http.get_updates(offset, limit)
-        return [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
+        response = await self._http.get_updates(params=handle_request_param(dict(offset=offset, limit=limit)))
+        result = [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
                 if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
+        if result:
+            for update in result:
+                message = update.message
+                callback = update.callback_query
+                if message:
+                    self._state.store_message(message)
+                    if message.author:
+                        self._state.store_user(message.author)
+
+                if callback:
+                    self._state.store_user(callback.user)
+
+        return result
 
     async def connect(self):
         await self.get_bot()
