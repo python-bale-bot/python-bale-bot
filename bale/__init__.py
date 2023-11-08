@@ -32,6 +32,7 @@ __all__ = (
     "User",
     "Chat",
     "Message",
+    "State",
     "Permissions",
     "ChatMemberStatus",
     "ChatMember",
@@ -68,6 +69,7 @@ from .callbackquery import CallbackQuery
 from .update import Update
 from .updater import Updater
 from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, InvalidToken, RateLimited, BadRequest
+from .state import State
 from .bot import Bot
 
 __title__ = "python-bale-bot"
