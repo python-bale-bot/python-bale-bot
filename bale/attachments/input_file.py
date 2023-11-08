@@ -3,6 +3,10 @@ from __future__ import annotations
 from typing import Optional, Dict
 from io import BufferedReader
 
+__all__ = (
+    "InputFile",
+)
+
 class InputFile:
     """This object shows a file ready to send/upload.
 
@@ -58,10 +62,10 @@ class InputFile:
         self.file: bytes | str = file
         self.file_name: Optional[str] = file_name
 
-    def to_dict(self, param: str) -> Dict:
+    def to_dict(self, media_type: str) -> Dict:
         payload = {
             "value": self.file,
-            "name": param
+            "name": media_type
         }
         if self.file_name:
             payload["filename"] = self.file_name
