@@ -1,10 +1,15 @@
+from __future__ import annotations
+from typing import Iterable, Callable, TypeVar, Any, Optional
 import re
 from datetime import datetime
 
 __all__ = (
     "create_deep_linked_url",
-    "parse_time"
+    "parse_time",
+    "find"
 )
+
+T = TypeVar('T')
 
 def create_deep_linked_url(bot_username: str, payload: str) -> str:
     """Creating a deep link for the bot.
@@ -34,3 +39,19 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
 
 def parse_time(data: int):
     return datetime.fromtimestamp(data)
+
+def find(predicate: Callable[[T], Any], iterable: Iterable[T]) -> Optional[T]:
+    """A helper to return the first element in the sequence that meets the predicate.
+
+    Parameters
+    ----------
+        predicate:
+            A function to return boolean-like result.
+        iterable: :class:`str`
+            An iterable to search through.
+    """
+    for element in iterable:
+        if predicate(element):
+            return element
+
+    return None
