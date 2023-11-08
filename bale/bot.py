@@ -262,6 +262,10 @@ class Bot:
         """:class:`bool`: Bot Status"""
         return self._closed
 
+    def http_is_closed(self):
+        """:class:`bool`: HTTPClient Status"""
+        return self._http.is_closed()
+
     async def run_event(self, core: CoroT, event_name: str, *args, **kwargs):
         try:
             await core(*args, **kwargs)

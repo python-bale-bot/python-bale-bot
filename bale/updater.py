@@ -72,7 +72,7 @@ class Updater:
         if self.running:
             raise RuntimeError("Updater is running")
 
-        if self.bot.http.is_closed():
+        if self.bot.http_is_closed():
             raise RuntimeError("HTTPClient is Closed")
 
         self.running = True
