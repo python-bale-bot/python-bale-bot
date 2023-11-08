@@ -113,9 +113,6 @@ class Components:
         if is_used_menu_keyboard and is_used_inline_keyboard:
             raise TypeError("you can't use menu keyboards and inline keyboards params together.")
 
-        if not (is_used_menu_keyboard or is_used_inline_keyboard):
-            raise TypeError("you must be use menu keyboards or inline keyboards param.")
-
         correct_children = self._menu_keyboards if is_used_menu_keyboard else self._inline_keyboards
         correct_children_name = "keyboard" if is_used_menu_keyboard else "inline_keyboard"
         def key(i: Tuple["InlineKeyboard" | "MenuKeyboard", int]):
