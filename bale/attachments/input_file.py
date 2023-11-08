@@ -28,6 +28,11 @@ class InputFile:
         file_name: Optional[:class:`str`]
             Additional interface options. It is used only when uploading a file.
     """
+    PHOTO_TYPE = "photo"
+    ANIMATION_TYPE = "animation"
+    VIDEO_TYPE = "video"
+    DOCUMENT_TYPE = "document"
+    AUDIO_TYPE = "audio"
     __slots__ = (
         "file",
         "file_name"
