@@ -44,6 +44,7 @@ class User:
             User’s or bot’s username.
     """
     __slots__ = (
+        "__weakref__",
         "is_bot",
         "first_name",
         "last_name",

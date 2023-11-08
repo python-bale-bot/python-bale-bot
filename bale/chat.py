@@ -60,6 +60,7 @@ class Chat:
             Returns True when all users are in admin chat.
     """
     __slots__ = (
+        "__weakref__",
         "chat_id",
         "type",
         "title",
