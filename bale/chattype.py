@@ -1,3 +1,5 @@
+from typing import ClassVar
+
 __all__ = (
     'ChatType',
 )
@@ -12,9 +14,9 @@ class ChatType:
             The type of Chat.
 
     """
-    PRIVATE = "private"
-    GROUP = "group"
-    CHANNEL = "channel"
+    PRIVATE: ClassVar[str] = "private"
+    GROUP: ClassVar[str] = "group"
+    CHANNEL: ClassVar[str] = "channel"
 
     __slots__ = (
         "value",
