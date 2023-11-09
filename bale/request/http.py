@@ -23,14 +23,16 @@ SOFTWARE.
 """
 from typing import Dict, List, Any, Optional
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
-import asyncio
-import aiohttp
+import asyncio, aiohttp, logging
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
+from ssl import SSLCertVerificationError
 from .parser import ResponseParser
 from .params import RequestParams
 from bale.utils.request import ResponseStatusCode, to_json
 
 __all__ = ("HTTPClient", "Route")
+
+_log = logging.getLogger(__name__)
 
 class Route:
 	__slots__ = (
@@ -68,14 +70,19 @@ class HTTPClient:
 		"_loop",
 		"token",
 		"__session",
-		"base_url"
+		"_extra"
 	)
 
-	def __init__(self, loop: asyncio.AbstractEventLoop, token, base_url=None):
+	def __init__(self, loop: asyncio.AbstractEventLoop, token: str, /, ssl: bool=None):
+		if not isinstance(token, str):
+			raise TypeError(
+				"token param must be type of str."
+			)
 		self.__session = None
 		self.base_url = base_url
 		self._loop = loop
 		self.token = token
+		self._extra = dict(ssl=ssl)
 
 	@property
 	def user_agent(self) -> str:
@@ -94,12 +101,12 @@ class HTTPClient:
 
 	def reload_session(self):
 		if self.__session and self.__session.closed:
-			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
+			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self._extra))
 
 	async def start(self):
 		if self.__session:
 			raise RuntimeError("HTTPClient has already started.")
-		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0))
+		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self._extra))
 
 	async def close(self):
 		if self.__session:
@@ -154,6 +161,9 @@ class HTTPClient:
 
 					raise APIError(parsed_response.error_code, parsed_response.description)
 
+			except SSLCertVerificationError as error:
+				_log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
+				raise NetworkError(str(error))
 			except aiohttp.ClientConnectorError as error:
 				raise NetworkError(str(error))
 			except aiohttp.ServerTimeoutError:
