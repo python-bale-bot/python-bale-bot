@@ -21,7 +21,7 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 import asyncio, aiohttp, logging
 from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
@@ -54,10 +54,6 @@ class Route:
 	def url(self):
 		return "{base_url}bot{token}/{endpoint}".format(base_url = self.base_url, token = self.token, endpoint = self.endpoint)
 
-	def set_base_url(self, value: Optional[str]):
-		if value is not None:
-			self.base_url = value
-
 def parse_form_data(value: Any):
 	if isinstance(value, int):
 		value = str(value)
@@ -79,7 +75,6 @@ class HTTPClient:
 				"token param must be type of str."
 			)
 		self.__session = None
-		self.base_url = base_url
 		self._loop = loop
 		self.token = token
 		self._extra = dict(ssl=ssl)
@@ -114,7 +109,6 @@ class HTTPClient:
 			self.__session = None
 
 	async def request(self, route: Route, *, form: List[Dict] = None, **kwargs):
-		route.set_base_url(self.base_url)
 		url = route.url
 		method = route.method
 		headers = { 'User-Agent': self.user_agent }
