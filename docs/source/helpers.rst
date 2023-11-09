@@ -3,8 +3,8 @@ Helpers
 
 Deep Link
 ---------
-.. automethod:: bale.helpers.create_deep_linked_url
+.. autofunction:: bale.helpers.create_deep_linked_url
 
 Find
 ----
-.. automethod:: bale.helpers.find
+.. autofunction:: bale.helpers.find
