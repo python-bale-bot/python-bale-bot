@@ -62,7 +62,7 @@ class InputFile:
         self.file: bytes | str = file
         self.file_name: Optional[str] = file_name
 
-    def to_dict(self, media_type: str) -> Dict:
+    def to_multipart_payload(self, media_type: str) -> Dict:
         payload = {
             "value": self.file,
             "name": media_type

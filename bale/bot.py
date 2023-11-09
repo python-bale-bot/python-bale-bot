@@ -552,7 +552,7 @@ class Bot:
                     chat_id=chat_id, caption=caption, reply_markup=components,
                     reply_to_message_id=reply_to_message_id
                 ),
-                [document.to_dict('document')]
+                [document.to_multipart_payload('document')]
             )
         )
         result = Message.from_dict(data=response.result, bot=self)
@@ -629,7 +629,7 @@ class Bot:
                     chat_id=str(chat_id), caption=caption, reply_markup=components,
                     reply_to_message_id=reply_to_message_id
                 ),
-                [photo.to_dict('photo')]
+                [photo.to_multipart_payload('photo')]
             )
 
         )
@@ -705,7 +705,7 @@ class Bot:
             dict(
                 chat_id=str(chat_id), caption=caption, reply_markup=components,
                 reply_to_message_id=reply_to_message_id),
-            [audio.to_dict('audio')]
+            [audio.to_multipart_payload('audio')]
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -780,7 +780,7 @@ class Bot:
                     chat_id=str(chat_id), caption=caption, reply_markup=components,
                     reply_to_message_id=reply_to_message_id
               ),
-              [video.to_dict('video')]
+              [video.to_multipart_payload('video')]
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -880,7 +880,7 @@ class Bot:
                 reply_markup=components,
                 reply_to_message_id=reply_to_message_id
             ),
-            [animation.to_dict('animation')]
+            [animation.to_multipart_payload('animation')]
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
