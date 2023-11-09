@@ -25,7 +25,7 @@ import asyncio
 from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
 from bale import Update
 import logging
-from .error import InvalidToken, BaleError
+from .error import InvalidToken, BaleError, NetworkError
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -118,6 +118,9 @@ class Updater:
                         break
 
                 except InvalidToken as exc:
+                    raise exc
+
+                except NetworkError as exc:
                     raise exc
 
                 except BaleError as exc:
