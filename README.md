@@ -7,7 +7,7 @@
 <br>
 
 [![Python Version](https://img.shields.io/badge/Python-3.8_|_3.9_|_3.10_|_3.11_-red?logo=python&style=plastic)](https://python.org)
-[![PyPi Version](https://img.shields.io/pypi/v/python-bale-bot?color=blue&label=pypi&style=plastic)](https://pypi.org/p/python-bale-bot)
+[![PyPi Version](https://img.shields.io/pypi/v/python-bale-bot?color=blue&label=pypi&style=plastic&logo=pypi)](https://pypi.org/p/python-bale-bot)
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/deacf2bc3f13492d944e329ac19ac0d1)](https://www.codacy.com/gh/python-bale-bot/python-bale-bot/dashboard)
 [![python-bale-bot score](https://snyk.io/advisor/python/python-bale-bot/badge.svg)](https://snyk.io/advisor/python/python-bale-bot)
 [![Project License](https://img.shields.io/github/license/python-bale-bot/python-bale-bot?style=plastic)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
@@ -74,5 +74,7 @@ client.run()
 
 # Contact to Developers
 [![Email](https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white)](mailto:python-bale-bot@googlegroups.com)
-[![Discord](https://img.shields.io/badge/Support_Server-bYHEzyDe2j-green?logo=Discord&logoColor=white)](https://discord.gg/bYHEzyDe2j)
+[![Discord](https://img.shields.io/discord/942347256508596225?logo=discord&logoColor=white&label=Support%20Server
+)](https://discord.gg/bYHEzyDe2j)
+[![Telegram Channel](https://img.shields.io/badge/Telegram_Channel-@pbblib-green?logo=telegram&logoColor=white)](https://t.me/pbblib)
 [![Our Site](https://img.shields.io/badge/Our_site-python--bale--bot.ir-green?logo=GitHub&logoColor=white)](https://python-bale-bot.ir)
