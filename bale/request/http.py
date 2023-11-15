@@ -66,10 +66,10 @@ class HTTPClient:
 		"_loop",
 		"token",
 		"__session",
-		"_extra"
+		"__extra"
 	)
 
-	def __init__(self, loop: asyncio.AbstractEventLoop, token: str, /, ssl: bool=None):
+	def __init__(self, loop: asyncio.AbstractEventLoop, token: str, /, **kwargs):
 		if not isinstance(token, str):
 			raise TypeError(
 				"token param must be type of str."
@@ -77,7 +77,7 @@ class HTTPClient:
 		self.__session = None
 		self._loop = loop
 		self.token = token
-		self._extra = dict(ssl=ssl)
+		self.__extra = kwargs
 
 	@property
 	def user_agent(self) -> str:
@@ -96,12 +96,12 @@ class HTTPClient:
 
 	def reload_session(self):
 		if self.__session and self.__session.closed:
-			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self._extra))
+			self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
 	async def start(self):
 		if self.__session:
 			raise RuntimeError("HTTPClient has already started.")
-		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self._extra))
+		self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
 	async def close(self):
 		if self.__session:
