@@ -133,27 +133,27 @@ class HTTPClient:
 
 		for tries in range(1, 5):
 			try:
-				async with self.__session.request(method=method, url=url, **kwargs) as response:
-					response: aiohttp.ClientResponse
-					parsed_response = await ResponseParser.from_response(response)
-					if response.status == ResponseStatusCode.OK:
-						return parsed_response
-					elif not parsed_response.ok or response.status == (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
-						if response.status == ResponseStatusCode.RATE_LIMIT or parsed_response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
+				async with self.__session.request(method=method, url=url, **kwargs) as original_response:
+					original_response: aiohttp.ClientResponse
+					response: ResponseParser = await ResponseParser.from_response(original_response)
+					if original_response.status == ResponseStatusCode.OK:
+						return response
+					elif not response.ok or original_response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
+						if original_response.status == ResponseStatusCode.RATE_LIMIT or response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
 							if tries >= 4:
 								raise RateLimited()
 
 							await asyncio.sleep(tries * 2)
 							continue
 
-						parsed_response.get_error()
+						response.get_error()
 
-					elif response.status == ResponseStatusCode.NOT_FOUND:
-						raise NotFound(parsed_response.description)
-					elif response.status == ResponseStatusCode.PERMISSION_DENIED:
+					elif original_response.status == ResponseStatusCode.NOT_FOUND:
+						raise NotFound(response.description)
+					elif original_response.status == ResponseStatusCode.PERMISSION_DENIED:
 						raise Forbidden()
 
-					raise APIError(parsed_response.error_code, parsed_response.description)
+					raise APIError(response.error_code, response.description)
 
 			except SSLCertVerificationError as error:
 				_log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
