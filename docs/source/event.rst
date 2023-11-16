@@ -38,6 +38,7 @@ Connection
     This event is called before the updater starts.
 
 .. py:function:: on_ready()
+    :async:
 
     When the updater starts working and the Bot information is placed in :attr:`bale.Bot.user`.
 
