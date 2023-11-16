@@ -169,19 +169,32 @@ class HTTPClient:
 			except Exception as error:
 				raise HTTPException(error)
 
-	async def get_file(self, file_id):
-		async with self.__session.get("{base_file_url}/bot{token}/{file_id}".format(base_file_url = BALE_API_FILE_URL, token = self.token, file_id = file_id)) as response:
-			if response.status == ResponseStatusCode.OK:
-				return await response.read()
-			elif response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.NOT_FOUND):
-				raise NotFound("File is not Found")
-			elif response.status == ResponseStatusCode.PERMISSION_DENIED:
-				raise Forbidden()
-			else:
-				error_payload = await response.json()
-				raise APIError(0, "UNKNOWN ERROR: {}".format(error_payload))
-
-		raise RuntimeError("failed to get file")
+	async def get_file(self, file_id: str):
+		try:
+			async with self.__session.get("{base_file_url}/bot{token}/{file_id}".format(base_file_url=BALE_API_FILE_URL, token=self.token, file_id=file_id)) as response:
+				response: aiohttp.ClientResponse
+				if response.status == ResponseStatusCode.OK:
+					return await response.read()
+				elif response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.NOT_FOUND):
+					raise NotFound("File is not Found")
+				elif response.status == ResponseStatusCode.PERMISSION_DENIED:
+					raise Forbidden()
+				else:
+					error_payload = await response.json()
+					raise APIError(error_payload.get('error_code', 0), error_payload.get('description', 'File not found'))
+		except SSLCertVerificationError as error:
+			_log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
+			raise NetworkError(str(error))
+		except aiohttp.ClientConnectorError as error:
+			raise NetworkError(str(error))
+		except aiohttp.ServerTimeoutError:
+			raise TimeOut()
+		except aiohttp.ClientOSError as error:
+			raise BaleError(str(error))
+		except BaleError as error:
+			raise error
+		except Exception as error:
+			raise HTTPException(error)
 
 	def send_message(self, *, params: RequestParams):
 		return self.request(Route("POST", "sendMessage", self.token), json=params.payload)
