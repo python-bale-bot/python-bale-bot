@@ -22,9 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from typing import Optional, Dict, Self, TYPE_CHECKING
-if TYPE_CHECKING:
-    from bale import Bot
+from typing import Optional, Dict, Self
 
 __all__ = (
     "ChatPhoto",
