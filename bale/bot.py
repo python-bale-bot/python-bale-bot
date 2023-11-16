@@ -28,7 +28,7 @@ from typing import Callable, Dict, Tuple, List, Union, Optional, overload, Liter
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from .utils import setup_logging, CoroT
-from bale import (State, Message, Update, User, Components, RemoveMenuKeyboard, Chat, Price, ChatMember, Updater,
+from bale import (State, Message, Update, User, Components, Chat, Price, ChatMember, Updater,
                   Location, ContactMessage, InputFile, CallbackQuery, SuccessfulPayment)
 from bale.request import HTTPClient, handle_request_param
 
@@ -376,7 +376,7 @@ class Bot:
         return response.result or False
 
     async def send_message(self, chat_id: Union[str, int], text: str, *,
-                           components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                           components: Optional["Components"] = None,
                            reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send text messages.
 
@@ -413,7 +413,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -484,7 +484,7 @@ class Bot:
 
     async def send_document(self, chat_id: Union[str, int], document: "InputFile", *,
                             caption: Optional[str] = None,
-                            components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                            components: Optional["Components"] = None,
                             reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send document.
 
@@ -540,7 +540,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -561,7 +561,7 @@ class Bot:
 
     async def send_photo(self, chat_id: Union[str, int], photo: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         components: Optional["Components"] = None,
                          reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send photo.
 
@@ -607,7 +607,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -639,7 +639,7 @@ class Bot:
 
     async def send_audio(self, chat_id: Union[str, int], audio: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         components: Optional["Components"] = None,
                          reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Audio.
 
@@ -685,7 +685,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -713,7 +713,7 @@ class Bot:
 
     async def send_video(self, chat_id: Union[str, int], video: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         components: Optional["Components"] = None,
                          reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Video.
 
@@ -759,7 +759,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -789,7 +789,7 @@ class Bot:
     async def send_animation(self, chat_id: Union[str, int], animation: "InputFile", *,
                          duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
                          caption: Optional[str] = None,
-                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         components: Optional["Components"] = None,
                          reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Animation.
 
@@ -861,7 +861,7 @@ class Bot:
             )
 
         if components:
-            if not isinstance(components, (Components, RemoveMenuKeyboard)):
+            if not isinstance(components, Components):
                 raise TypeError(
                     "components param must be type of Components or RemoveComponents"
                 )
@@ -1108,7 +1108,7 @@ class Bot:
         return result
 
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
-                           components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None) -> "Message":
+                           components: Optional["Components"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         .. code:: python
@@ -1144,7 +1144,7 @@ class Bot:
                 "message_id param must be type of str or int"
             )
 
-        if components and not isinstance(components, (Components, RemoveMenuKeyboard)):
+        if components and not isinstance(components, Components):
             raise TypeError(
                 "components param must be type of Components or RemoveComponents"
             )

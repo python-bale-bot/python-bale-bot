@@ -29,7 +29,7 @@ from typing import TYPE_CHECKING, List, Optional
 if TYPE_CHECKING:
     from bale import Bot
 
-from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components, RemoveMenuKeyboard,
+from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, Components,
                   Video, Audio, File, SuccessfulPayment, Animation, InputFile)
 from .helpers import parse_time
 
@@ -188,7 +188,7 @@ class Message:
                    successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
-    async def reply(self, text: str, *, components: Optional[Components | RemoveMenuKeyboard] = None):
+    async def reply(self, text: str, *, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -209,7 +209,7 @@ class Message:
         """
         return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
 
-    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -221,7 +221,7 @@ class Message:
                                             components=components,
                                             reply_to_message_id=self.message_id)
 
-    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -233,7 +233,7 @@ class Message:
                                          components=components,
                                          reply_to_message_id=self.message_id)
 
-    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -245,7 +245,7 @@ class Message:
                                          components=components,
                                          reply_to_message_id=self.message_id)
 
-    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -260,7 +260,7 @@ class Message:
                                          components=components,
                                          reply_to_message_id=self.message_id)
 
-    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components" | "RemoveMenuKeyboard"] = None):
+    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -272,7 +272,7 @@ class Message:
                                          components=components,
                                          reply_to_message_id=self.message_id)
 
-    async def edit(self, text: str, *, components: "Components" | "RemoveMenuKeyboard" = None) -> Message:
+    async def edit(self, text: str, *, components: Optional["Components"] = None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`.
 
