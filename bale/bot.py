@@ -24,7 +24,7 @@ SOFTWARE.
 from __future__ import annotations
 import asyncio
 import logging
-from typing import Callable, Dict, Tuple, List, Optional, overload, NoReturn, Literal
+from typing import Callable, Dict, Tuple, List, Union, Optional, overload, Literal
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from .utils import setup_logging, CoroT
@@ -82,7 +82,7 @@ class Bot:
     def __init__(self, token: str, **kwargs):
         if not isinstance(token, str):
             raise InvalidToken()
-        self.loop: asyncio.AbstractEventLoop | _Loop = _loop
+        self.loop: Union[asyncio.AbstractEventLoop, _Loop] = _loop
         self.token: str = token
         self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.get('http_kwargs', {}))
         self._state: "State" = State(self, **kwargs)
@@ -153,7 +153,7 @@ class Bot:
 
         return wrapper_function
 
-    def _add_event(self, event_name: str, wrapper) -> NoReturn:
+    def _add_event(self, event_name: str, wrapper):
         """Set wrapper or listener for an event.
 
         .. code:: python
@@ -375,9 +375,9 @@ class Bot:
         response = await self._http.delete_webhook()
         return response.result or False
 
-    async def send_message(self, chat_id: str | int, text: str, *,
-                           components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                           reply_to_message_id: Optional[str | int] = None) -> "Message":
+    async def send_message(self, chat_id: Union[str, int], text: str, *,
+                           components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                           reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send text messages.
 
         .. code:: python
@@ -386,13 +386,13 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             text: :class:`str`
                 Text of the message to be sent. Max 4096 characters after entities parsing.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
         Returns
         -------
@@ -432,7 +432,7 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def forward_message(self, chat_id: int | str, from_chat_id: int | str, message_id: int | str):
+    async def forward_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int]):
         """This service is used to send text messages.
 
         .. code:: python
@@ -441,11 +441,11 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            from_chat_id: :class:`str` | :class:`int`
+            from_chat_id: Union[:class:`str`, :class:`int`]
                 the chat where the original message was sent (or channel username in the format @channelusername).
-            message_id: :class:`int` | :class:`str`
+            message_id: Union[:class:`int`, :class:`str`]
                 Message in the chat specified in ``from_chat_id``.
         Returns
         -------
@@ -482,10 +482,10 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_document(self, chat_id: str | int, document: "InputFile", *,
+    async def send_document(self, chat_id: Union[str, int], document: "InputFile", *,
                             caption: Optional[str] = None,
-                            components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                            reply_to_message_id: Optional[str | int] = None) -> "Message":
+                            components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                            reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send document.
 
         .. code:: python
@@ -494,15 +494,15 @@ class Bot:
 
         Parameters
         ----------
-        chat_id: :class:`str` | :class:`int`
+        chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         document: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
         caption: Optional[:class:`str`]
                 Document caption.
-        components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+        components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-        reply_to_message_id: Optional[:class:`str` | :class:`int`]
+        reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
 
         Returns
@@ -559,10 +559,10 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_photo(self, chat_id: str | int, photo: "InputFile", *,
+    async def send_photo(self, chat_id: Union[str, int], photo: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send photo.
 
         .. code:: python
@@ -571,15 +571,15 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             photo: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Photo caption.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
 
         Returns
@@ -637,10 +637,10 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_audio(self, chat_id: str | int, audio: "InputFile", *,
+    async def send_audio(self, chat_id: Union[str, int], audio: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Audio.
 
         .. code:: python
@@ -649,15 +649,15 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             audio: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Audio caption.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
 
         Returns
@@ -711,10 +711,10 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_video(self, chat_id: str | int, video: "InputFile", *,
+    async def send_video(self, chat_id: Union[str, int], video: "InputFile", *,
                          caption: Optional[str] = None,
-                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Video.
 
         .. code:: python
@@ -723,15 +723,15 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             video: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
             caption: Optional[:class:`str`]
                 Video caption.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
 
         Returns
@@ -786,11 +786,11 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_animation(self, chat_id: str | int, animation: "InputFile", *,
+    async def send_animation(self, chat_id: Union[str, int], animation: "InputFile", *,
                          duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
                          caption: Optional[str] = None,
-                         components: Optional["Components" | "RemoveMenuKeyboard"] = None,
-                         reply_to_message_id: Optional[str | int] = None) -> "Message":
+                         components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None,
+                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
         """This service is used to send Animation.
 
         .. code:: python
@@ -799,7 +799,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             animation: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
@@ -811,9 +811,9 @@ class Bot:
                 Animation height.
             caption: Optional[:class:`str`]
                 Animation caption.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 Message Components
-            reply_to_message_id: Optional[:class:`str` | :class:`int`]
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
 
         Returns
@@ -886,7 +886,7 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_location(self, chat_id: str | int, location: "Location") -> "Message":
+    async def send_location(self, chat_id: Union[str, int], location: "Location") -> "Message":
         """Use this method to send point on the map.
 
         .. code:: python
@@ -895,7 +895,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             location: :class:`bale.Location`
                 The Location.
@@ -929,7 +929,7 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_contact(self, chat_id: str | int, contact: "ContactMessage") -> "Message":
+    async def send_contact(self, chat_id: Union[str, int], contact: "ContactMessage") -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -938,7 +938,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             contact: :class:`bale.ContactMessage`
                 The Contact.
@@ -977,7 +977,7 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_invoice(self, chat_id: str | int, title: str, description: str, provider_token: str,
+    async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
                            prices: List["Price"], *,
                            payload: Optional[str] = None,
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
@@ -1005,7 +1005,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             title: str
                 Product name. 1- 32 characters.
@@ -1107,8 +1107,8 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def edit_message(self, chat_id: str | int, message_id: str | int, text: str, *,
-                           components: Optional["Components" | "RemoveMenuKeyboard"] = None) -> "Message":
+    async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
+                           components: Optional[Union["Components", "RemoveMenuKeyboard"]] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         .. code:: python
@@ -1117,13 +1117,13 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            message_id: :class:`str` | :class:`int`
+            message_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the message to edit.
             text: str
                 New text of the message, 1- 4096 characters after entities parsing.
-            components: Optional[:class:`bale.Components` | :class:`bale.RemoveComponents`]
+            components: Optional[Union[:class:`bale.Components`, :class:`bale.RemoveComponents`]]
                 An object for an inline keyboard.
         Raises
         ------
@@ -1155,7 +1155,7 @@ class Bot:
         response = await self._http.edit_message(params=handle_request_param(dict(chat_id=chat_id, message_id=message_id, text=text, reply_markup=components)))
         return response.result
 
-    async def delete_message(self, chat_id: str | int, message_id: str | int) -> bool:
+    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int]) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.
 
         .. code:: python
@@ -1168,7 +1168,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             message_id: :class:`bale.Message`
                 Unique identifier for the message to delete.
@@ -1195,7 +1195,7 @@ class Bot:
             self._state.remove_message(str(chat_id), message_id)
         return response.result or False
 
-    async def get_chat(self, chat_id: int | str, *, use_cache=True) -> Chat | None:
+    async def get_chat(self, chat_id: Union[str, int], *, use_cache=True) -> Optional["Chat"]:
         """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
 
         .. code:: python
@@ -1241,7 +1241,7 @@ class Bot:
             self._state.store_chat(chat)
             return chat
 
-    async def get_user(self, user_id: int | str, *, use_cache=True) -> Optional["User"]:
+    async def get_user(self, user_id: Union[str, int], *, use_cache=True) -> Optional["User"]:
         """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
 
         .. code:: python
@@ -1252,8 +1252,8 @@ class Bot:
 
         Parameters
         ----------
-            user_id: int
-                user id
+            user_id: Union[:class:`int`, :class:`str`]
+                 Unique identifier for the target chat.
             use_cache: Optional[:class:`bool`]
                 Use of caches stored in relation to chats.
         Returns
@@ -1292,7 +1292,7 @@ class Bot:
         self._state.remove_user(user_id)
         return None
 
-    async def get_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember" | None:
+    async def get_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> Optional["ChatMember"]:
         """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
 
         .. code:: python
@@ -1304,9 +1304,9 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`int`, :class:`str`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Optional[:class:`int` | :class:`str`]
+            user_id: Union[:class:`int`, :class:`str`]
                 Unique identifier of the target user.
 
         Returns
@@ -1340,7 +1340,7 @@ class Bot:
         else:
             return ChatMember.from_dict(chat_id, response.result, self)
 
-    async def ban_chat_member(self, chat_id: str | int, user_id: str | int) -> "ChatMember":
+    async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 
         .. code:: python
@@ -1349,9 +1349,9 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`int`, :class:`str`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: :class:`int` | :class:`str`
+            user_id: Union[:class:`int`, :class:`str`]
                 Unique identifier of the target user.
 
         Returns
@@ -1381,7 +1381,7 @@ class Bot:
         response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), member_id=str(user_id))))
         return response.result
 
-    async def get_chat_members_count(self, chat_id: str | int) -> int:
+    async def get_chat_members_count(self, chat_id: Union[str, int]) -> int:
         """Use this method to get the number of members in a chat.
 
         .. code:: python
@@ -1390,7 +1390,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
 
         Raises
@@ -1415,7 +1415,7 @@ class Bot:
         response = await self._http.get_chat_members_count(params=handle_request_param(dict(chat_id=str(chat_id))))
         return response.result
 
-    async def get_chat_administrators(self, chat_id: str | int) -> list["ChatMember"] | None:
+    async def get_chat_administrators(self, chat_id: Union[str, int]) -> Optional[List["ChatMember"]]:
         """Use this method to get a list of administrators in a chat.
 
         .. code:: python
@@ -1424,7 +1424,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
         Returns
         -------
@@ -1484,7 +1484,7 @@ class Bot:
 
         return await self._http.get_file(file_id)
 
-    async def invite_user(self, chat_id: str | int, user_id: str | int) -> bool:
+    async def invite_user(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
         """Invite user to the chat
 
         .. code:: python
@@ -1493,9 +1493,9 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: :class:`str` | :class:`int`
+            user_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target user.
 
         Raises
@@ -1520,7 +1520,7 @@ class Bot:
         response = await self._http.invite_to_chat(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result or False
 
-    async def leave_chat(self, chat_id: str | int) -> bool:
+    async def leave_chat(self, chat_id: Union[str, int]) -> bool:
         """Use this method for your bot to leave a group, channel.
 
         .. code:: python
@@ -1529,7 +1529,7 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: :class:`str` | :class:`int`
+            chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
 
         Raises
