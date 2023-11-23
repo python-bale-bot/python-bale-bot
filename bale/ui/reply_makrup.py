@@ -1,7 +1,7 @@
 from __future__ import annotations
 from typing import List, Union, Dict, Optional
 from itertools import groupby
-from . import ReplyMarkupItem, InlineKeyboardButton, KeyboardButton
+from . import ReplyMarkupItem, InlineKeyboardButton, MenuKeyboardButton
 from bale.utils import to_json
 
 class BaseReplyMarkup:
@@ -11,7 +11,7 @@ class BaseReplyMarkup:
     def __init__(self):
         self.__keyboards: List["ReplyMarkupItem"] = []
 
-    def _add(self, item: Union["InlineKeyboardButton", "KeyboardButton"], row: Optional[int]=None):
+    def _add(self, item: Union["InlineKeyboardButton", "MenuKeyboardButton"], row: Optional[int]=None):
         reply_markup_item = ReplyMarkupItem(item, row)
         self.__keyboards.append(reply_markup_item)
 
@@ -19,7 +19,7 @@ class BaseReplyMarkup:
     def keyboards(self) -> List["ReplyMarkupItem"]:
         return self.__keyboards
 
-    def _to_components(self) -> List[List[Union["InlineKeyboardButton", "KeyboardButton"]]]:
+    def _to_components(self) -> List[List[Union["InlineKeyboardButton", "MenuKeyboardButton"]]]:
         components = []
         def key(i: "ReplyMarkupItem"):
             return i.row

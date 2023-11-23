@@ -1,13 +1,13 @@
 from __future__ import annotations
 from typing import Optional, Dict, List
-from . import BaseReplyMarkup, KeyboardButton, ReplyMarkupItem
+from . import BaseReplyMarkup, MenuKeyboardButton, ReplyMarkupItem
 
 class MenuKeyboardMarkup(BaseReplyMarkup):
     def __init__(self, inline_keyboards: List["ReplyMarkupItem"]):
         super().__init__()
 
-    def add(self, keyboard_button: KeyboardButton, row: Optional[int] = None):
-        if not isinstance(keyboard_button, KeyboardButton):
+    def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None):
+        if not isinstance(keyboard_button, MenuKeyboardButton):
             raise TypeError(
                 "keyboard_button param must be type of KeyboardButton"
             )
