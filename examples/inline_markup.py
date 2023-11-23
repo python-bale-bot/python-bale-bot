@@ -1,4 +1,4 @@
-from bale import Bot, CallbackQuery, Message, Components, InlineKeyboard
+from bale import Bot, CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
 
 client = Bot(token="Your Token")
 
@@ -9,13 +9,13 @@ async def on_ready():
 @client.event
 async def on_message(message: Message):
 	if message.content == "/start":
-		component = Components()
-		component.add_inline_keyboard(InlineKeyboard(text="what is python-bale-bot?", callback_data="python-bale-bot:help"))
-		component.add_inline_keyboard(InlineKeyboard(text="package site", url="https://python-bale-bot.ir"), row=2)
-		component.add_inline_keyboard(InlineKeyboard(text="package GitHub", url="https://python-bale-bot.ir/github"), row=2)
+		reply_markup = InlineKeyboardMarkup()
+		reply_markup.add(InlineKeyboardButton(text="what is python-bale-bot?", callback_data="python-bale-bot:help"))
+		reply_markup.add(InlineKeyboardButton(text="package site", url="https://python-bale-bot.ir"), row=2)
+		reply_markup.add(InlineKeyboardButton(text="package GitHub", url="https://python-bale-bot.ir/github"), row=2)
 		await message.reply(
 			f"*Hi {message.author.first_name}, Welcome to python-bale-bot bot*",
-			components=component
+			components=reply_markup
 		)
 
 @client.event
