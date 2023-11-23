@@ -12,9 +12,10 @@ An API wrapper for Bale written in Python.
 __all__ = (
     "__version__",
     "ChatType",
-    "InlineKeyboard",
-    "MenuKeyboard",
-    "Components",
+    "InlineKeyboardButton",
+    "KeyboardButton",
+    "InlineKeyboardMarkup",
+    "MenuKeyboardMarkup",
     "ChatPhoto",
     "File",
     "Audio",
@@ -53,7 +54,7 @@ __all__ = (
 )
 
 from .version import __version__
-from .ui import InlineKeyboard, MenuKeyboard, Components
+from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, KeyboardButton, InlineKeyboardButton
 from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
 from .payments import Price, Invoice, SuccessfulPayment
 from .user import User

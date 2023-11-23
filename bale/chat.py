@@ -23,10 +23,10 @@ SOFTWARE.
 """
 from __future__ import annotations
 from bale import User, ChatType
-from typing import TYPE_CHECKING, Optional, List
+from typing import TYPE_CHECKING, Optional, List, Union
 from bale import ChatPhoto
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, Components, Price, Location, ContactMessage, InputFile
+    from bale import Bot, Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, Price, Location, ContactMessage, InputFile
 
 
 __all__ = (
@@ -94,7 +94,7 @@ class Chat:
         """:class:`bale.ChatType`: Represents the parsed type of chat."""
         return ChatType(self.type)
 
-    async def send(self, text: str, components: Optional["Components"] = None):
+    async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -104,7 +104,7 @@ class Chat:
         """
         return await self.bot.send_message(self.chat_id, text, components=components)
 
-    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
+    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -114,7 +114,7 @@ class Chat:
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption, components=components)
 
-    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
+    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -124,7 +124,7 @@ class Chat:
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components)
 
-    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
+    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -134,7 +134,7 @@ class Chat:
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
 
-    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional["Components"] = None):
+    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -144,7 +144,7 @@ class Chat:
         """
         return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components)
 
-    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional["Components"] = None):
+    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 

@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional
 
-class MenuKeyboard:
-    """This object shows a Menu keyboard
+class KeyboardButton:
+    """This object shows a Keyboard Button
 
     Attributes
     ----------

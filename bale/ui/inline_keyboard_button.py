@@ -1,8 +1,8 @@
 from __future__ import annotations
 from typing import Optional
 
-class InlineKeyboard:
-    """This object shows an inline keyboard (within the message).
+class InlineKeyboardButton:
+    """This object shows an inline keyboard button (within the message).
 
     Attributes
     ----------
