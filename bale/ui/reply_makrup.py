@@ -15,6 +15,19 @@ class BaseReplyMarkup:
         reply_markup_item = ReplyMarkupItem(item, row)
         self.__keyboards.append(reply_markup_item)
 
+    def _remove(self, item: "ReplyMarkupItem"):
+        self.__keyboards.remove(item)
+
+    def _remove_row(self, row: int):
+        if not isinstance(row, int):
+            raise TypeError(
+                "row param must be type of number"
+            )
+
+        for item in self.__keyboards:
+            if item.row == row:
+                self.__keyboards.remove(item)
+
     @property
     def keyboards(self) -> List["ReplyMarkupItem"]:
         return self.__keyboards
