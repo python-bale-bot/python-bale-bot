@@ -4,6 +4,7 @@ UI
 .. toctree::
     :titlesonly:
 
-    bale.ui.components
-    bale.ui.inlinekeyboard
-    bale.ui.menukeyboard
+    bale.ui.inlinekeyboardmarkup
+    bale.ui.menukeyboardmarkup
+    bale.ui.inlinekeyboardbutton
+    bale.ui.menukeyboardbutton
