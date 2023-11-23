@@ -31,7 +31,7 @@ autodoc_typehints = "none"
 
 autodoc_default_options = {
     "special-members": True,
-    "exclude-members": ",".join(["__init__", "__str__", "__eq__", "__ne__", "__hash__", "__repr__", "__ge__", "__gt__", "__le__", "__lt__"])
+    "exclude-members": ",".join(["__init__", "__str__", "__eq__", "__ne__", "__hash__", "__repr__", "__ge__", "__gt__", "__le__", "__lt__", "__weakref__"])
 }
 intersphinx_mapping = {
   'py': ('https://docs.python.org/3', None),
