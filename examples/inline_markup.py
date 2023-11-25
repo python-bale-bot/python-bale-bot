@@ -1,4 +1,4 @@
-from bale import Bot, CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton
+from bale import Bot, CallbackQuery, Message, InlineKeyboardMarkup, InlineKeyboardButton, MenuKeyboardMarkup, MenuKeyboardButton
 
 client = Bot(token="Your Token")
 
@@ -16,6 +16,20 @@ async def on_message(message: Message):
 		await message.reply(
 			f"*Hi {message.author.first_name}, Welcome to python-bale-bot bot*",
 			components=reply_markup
+		)
+
+	elif message.content == "/keyboard":
+		await message.reply(
+			f"*Hi {message.author.first_name}, Welcome to python-bale-bot bot*",
+			components=MenuKeyboardMarkup().add(MenuKeyboardButton('package site')).add(MenuKeyboardButton('package github'))
+		)
+
+	elif message.content in [
+		'package site',
+		'package github'
+	]:
+		await message.reply(
+			"{} is {}".format(message.content, {"package site": 'https://python-bale-bot.ir', "package github": 'https://python-bale-bot.ir/github'}[message.content])
 		)
 
 @client.event
