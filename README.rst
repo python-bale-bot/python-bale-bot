@@ -68,7 +68,7 @@ changelog.**
 Contact to Developers
 =====================
 
-|Email| |Discord| |Our Site|
+|Email| |Discord| |Telegram Channel| |Our Site|
 
 .. |Python Version| image:: https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_-red?logo=python&style=plastic
    :target: https://python.org
@@ -88,5 +88,7 @@ Contact to Developers
    :target: mailto:python-bale-bot@googlegroups.com
 .. |Discord| image:: https://img.shields.io/badge/Support_Server-bYHEzyDe2j-green?logo=Discord&logoColor=white
    :target: https://discord.gg/bYHEzyDe2j
+.. |Telegram Channel| image:: https://img.shields.io/badge/Telegram_Channel-@pbblib-green?logo=telegram&logoColor=white
+   :target: https://t.me/pbblib
 .. |Our Site| image:: https://img.shields.io/badge/Our_site-python--bale--bot.ir-green?logo=GitHub&logoColor=white
    :target: https://python-bale-bot.ir
