@@ -1,9 +1,9 @@
 from __future__ import annotations
-from typing import Optional, Dict, List, Self
+from typing import Optional, Dict, Self
 from . import BaseReplyMarkup, MenuKeyboardButton, ReplyMarkupItem
 
 class MenuKeyboardMarkup(BaseReplyMarkup):
-    def __init__(self, inline_keyboards: List["ReplyMarkupItem"]):
+    def __init__(self):
         super().__init__()
 
     def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> Self:
