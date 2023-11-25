@@ -12,6 +12,10 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
         .. warning::
             Your numbers in the "row" param must be natural and greater than 0.
 
+        .. admonition:: Examples
+
+            :any:`Components Bot <examples.inlinemarkup>`
+
         Parameters
         ----------
             inline_keyboard_button: :class:`bale.InlineKeyboardButton`
