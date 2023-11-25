@@ -30,6 +30,7 @@ class BaseReplyMarkup:
 
     @property
     def keyboards(self) -> List["ReplyMarkupItem"]:
+        """List[:class:`bale.ReplyMarkupItem`]: The keyboards in order."""
         return self.__keyboards
 
     def _to_components(self) -> List[List[Union["InlineKeyboardButton", "MenuKeyboardButton"]]]:
