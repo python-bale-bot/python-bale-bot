@@ -60,5 +60,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
         }
         for group in super()._to_components():
             components.append([keyboard_button.to_dict() for keyboard_button in group])
+        if len(self.keyboards) <= 0:
+            components.append([])
 
         return payload
