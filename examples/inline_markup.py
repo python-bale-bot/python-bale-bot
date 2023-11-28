@@ -29,7 +29,8 @@ async def on_message(message: Message):
 		'package github'
 	]:
 		await message.reply(
-			"{} is {}".format(message.content, {"package site": 'https://python-bale-bot.ir', "package github": 'https://python-bale-bot.ir/github'}[message.content])
+			"{} is {}".format(message.content, {"package site": 'https://python-bale-bot.ir', "package github": 'https://python-bale-bot.ir/github'}[message.content]),
+			components=MenuKeyboardMarkup() # to remove menu keyboards
 		)
 
 @client.event
