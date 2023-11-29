@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import Optional, Dict, Self
+from typing import Optional, Dict
 from . import BaseReplyMarkup, MenuKeyboardButton, ReplyMarkupItem
 
 class MenuKeyboardMarkup(BaseReplyMarkup):
     def __init__(self):
         super().__init__()
 
-    def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> Self:
+    def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> "MenuKeyboardMarkup":
         """Add a Menu Keyboard button to keyboards.
 
         .. warning::
@@ -31,7 +31,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
         super()._add(keyboard_button, row)
         return self
 
-    def remove(self, item: "ReplyMarkupItem") -> Self:
+    def remove(self, item: "ReplyMarkupItem") -> "MenuKeyboardMarkup":
         """Remove a Reply Markup item from keyboards.
 
         Parameters
@@ -42,7 +42,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
         super()._remove(item)
         return self
 
-    def remove_row(self, row: int) -> Self:
+    def remove_row(self, row: int) -> "MenuKeyboardMarkup":
         """Remove a row along with the menu keyboards located in that row.
 
         Parameters

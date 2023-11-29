@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from typing import Optional, Dict, Self
+from typing import Optional, Dict
 
 __all__ = (
     "ChatPhoto",
@@ -56,5 +56,5 @@ class ChatPhoto:
         self.big_file_unique_id = big_file_unique_id
 
     @classmethod
-    def from_dict(cls, data : Dict) -> Self:
+    def from_dict(cls, data : Dict) -> "ChatPhoto":
         return cls(data.get('small_file_id'), data.get('small_file_unique_id'), data.get('big_file_id'), data.get('big_file_unique_id'))

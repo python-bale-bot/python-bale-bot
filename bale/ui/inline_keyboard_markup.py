@@ -1,12 +1,12 @@
 from __future__ import annotations
-from typing import Optional, Dict, Self
+from typing import Optional, Dict
 from . import BaseReplyMarkup, InlineKeyboardButton, ReplyMarkupItem
 
 class InlineKeyboardMarkup(BaseReplyMarkup):
     def __init__(self):
         super().__init__()
 
-    def add(self, inline_keyboard_button: "InlineKeyboardButton", row: Optional[int] = None) -> Self:
+    def add(self, inline_keyboard_button: "InlineKeyboardButton", row: Optional[int] = None) -> "InlineKeyboardMarkup":
         """Add an Inline Keyboard button to keyboards.
 
         .. warning::
@@ -31,7 +31,7 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
         super()._add(inline_keyboard_button, row)
         return self
 
-    def remove(self, item: "ReplyMarkupItem") -> Self:
+    def remove(self, item: "ReplyMarkupItem") -> "InlineKeyboardMarkup":
         """Remove a Reply Markup item from keyboards.
 
         Parameters
@@ -42,7 +42,7 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
         super()._remove(item)
         return self
 
-    def remove_row(self, row: int) -> Self:
+    def remove_row(self, row: int) -> "InlineKeyboardMarkup":
         """Remove a row along with the inline keyboards located in that row.
 
         Parameters
