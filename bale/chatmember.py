@@ -38,20 +38,23 @@ class ChatMember:
     Attributes
     ----------
         user: :class:`bale.User`
-            Information about the user.
+            Information about the chat member.
         status: :class:`str`
             The member’s status in the chat.
         permissions: :class:`bale.Permissions`
             The member’s permissions in the chat.
+        is_member: :class:`bool`
+            Is the user still a chat member?
     """
     __slots__ = (
-        "chat_id", "status", "user", "permissions", "bot"
+        "chat_id", "status", "user", "is_member", "permissions", "bot"
     )
 
-    def __init__(self, chat_id: int, status: str, user: "User", permissions: "Permissions", bot: "Bot"):
+    def __init__(self, chat_id: int, status: str, user: "User", is_member: bool, permissions: "Permissions", bot: "Bot"):
         self.chat_id = chat_id
         self.status = status
         self.user = user
+        self.is_member = is_member
         self.permissions = permissions
         self.bot = bot
 
@@ -74,7 +77,7 @@ class ChatMember:
     @classmethod
     def from_dict(cls, chat_id: int, data: dict, bot: "Bot"):
         return cls(chat_id=chat_id, permissions=Permissions.from_dict(data), user=User.from_dict(data.get("user")),
-                   status=data.get("status"), bot=bot)
+                   status=data.get("status"), is_member=data.get("is_member", False), bot=bot)
 
     def __repr__(self):
         return f"<ChatMember chat_id={self.chat_id} status={self.status} user={self.user} permissions={self.permissions}>"
