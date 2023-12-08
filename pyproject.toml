@@ -2,23 +2,4 @@
 requires = ["setuptools", "wheel"]
 build-backend = "setuptools.build_meta"
 
-[project]
-name = "python-bale-bot"
-version = "2.4.9"
-requires-python = ">=3.8"
-authors = [
-    {name = "Kian Ahmadian", email = "info@kian-ahmadian.ir"}
-]
-description = "An API wrapper for Bale written in Python."
-readme = "README.md"
-license = {file = "LICENSE"}
-keywords = [
-    "bale", "bale-bot", "framework", "bot"
-]
 
-[project.urls]
-Homepage = "https://python-bale-bot.ir"
-Documentation = "https://docs.python-bale-bot.ir"
-Repository = "https://github.com/python-bale-bot/python-bale-bot"
-"Bug Tracker" = "https://github.com/python-bale-bot/python-bale-bot/issues"
-Changelog = "https://python-bale-bot.ir/changelog"
