@@ -1113,7 +1113,7 @@ class Bot:
 
         .. code:: python
 
-            await bot.edit_message(1234, 1234, "this is test", components=None)
+            await bot.edit_message(1234, 1234, "this is tested", components=None)
 
         Parameters
         ----------
@@ -1144,16 +1144,17 @@ class Bot:
                 "message_id param must be type of str or int"
             )
 
-        if components and not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-            raise TypeError(
-                "components param must be type of Components or RemoveComponents"
-            )
-
         if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
             components = components.to_json()
 
         response = await self._http.edit_message(params=handle_request_param(dict(chat_id=chat_id, message_id=message_id, text=text, reply_markup=components)))
-        return response.result
+        result = Message.from_dict(response.result, self)
+        self._state.update_message(result)
+        return result
 
     async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int]) -> bool:
         """You can use this service to delete a message that you have already sent through the arm.

@@ -62,6 +62,12 @@ class State:
     def store_user(self, user: "User"):
         self._users[str(user.chat_id)] = user
 
+    def update_message(self, message: "Message"):
+        for index, msg in enumerate(self._messages):
+            if msg.message_id == message.message_id and msg.chat_id == message.chat_id:
+                self._messages[index] = message
+                break
+
     def get_message(self, chat_id, message_id: int) -> Optional["Message"]:
         for msg in self._messages:
             if msg.message_id == message_id and msg.chat_id == chat_id:
