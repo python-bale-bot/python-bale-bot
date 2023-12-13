@@ -61,7 +61,7 @@ class Bot:
             Bot Token
 
     .. attention::
-        When you create bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
+        When you create a bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
     .. admonition:: Examples
 
         :any:`My First Bot <examples.basic>`
@@ -314,7 +314,7 @@ class Bot:
                 self._create_event_schedule(event_core, method, *args, **kwargs)
 
     async def on_error(self, event_name, error):
-        """a Event for get errors when exceptions"""
+        """an Event for get errors when exceptions"""
         _log.exception(f'Exception in {event_name} Ignored')
 
     async def get_bot(self) -> User:
