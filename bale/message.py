@@ -295,7 +295,7 @@ class Message:
 
             await message.delete(delay=5)
         """
-        return await self.bot.delete_message(self.chat_id, self.message_id)
+        return await self.bot.delete_message(self.chat_id, self.message_id, delay=delay)
 
     def __str__(self):
         return str(self.message_id)
