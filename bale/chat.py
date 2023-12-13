@@ -94,7 +94,7 @@ class Chat:
         """:class:`bale.ChatType`: Represents the parsed type of chat."""
         return ChatType(self.type)
 
-    async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -102,9 +102,9 @@ class Chat:
 
             await chat.send("hi, python-bale-bot!", components = None)
         """
-        return await self.bot.send_message(self.chat_id, text, components=components)
+        return await self.bot.send_message(self.chat_id, text, components=components, delete_after=delete_after)
 
-    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -112,9 +112,9 @@ class Chat:
 
             await chat.send_document(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption, components=components)
+        return await self.bot.send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -122,9 +122,9 @@ class Chat:
 
             await chat.send_photo(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components)
+        return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -132,9 +132,9 @@ class Chat:
 
             await chat.send_video(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_video(self.chat_id, video, caption=caption, components=components)
+        return await self.bot.send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -142,9 +142,9 @@ class Chat:
 
             await chat.send_animation(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components)
+        return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -152,9 +152,9 @@ class Chat:
 
             await chat.send_audio(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components)
+        return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_location(self, location: "Location"):
+    async def send_location(self, location: "Location", delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
 
@@ -162,9 +162,9 @@ class Chat:
 
             await chat.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
-        return await self.bot.send_location(self.chat_id, location)
+        return await self.bot.send_location(self.chat_id, location, delete_after=delete_after)
 
-    async def send_contact(self, contact: "ContactMessage") -> "Message":
+    async def send_contact(self, contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None) -> "Message":
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
 
@@ -172,12 +172,13 @@ class Chat:
 
             await chat.send_contact(ContactMessage('09****', 'first name', 'last name))
         """
-        return await self.bot.send_contact(self.chat_id, contact)
+        return await self.bot.send_contact(self.chat_id, contact, delete_after=delete_after)
 
     async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
                    payload: Optional[str] = None, photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                    need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
-                   need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True):
+                   need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True,
+                   delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`.
 
@@ -190,7 +191,8 @@ class Chat:
         """
         return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
-                                        need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible)
+                                        need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
+                                        delete_after=delete_after)
 
     async def leave(self):
         """

@@ -377,7 +377,7 @@ class Bot:
 
     async def send_message(self, chat_id: Union[str, int], text: str, *,
                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                           reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send text messages.
 
         .. code:: python
@@ -394,6 +394,9 @@ class Bot:
                 Message Components
             reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
+
         Returns
         -------
             :class:`bale.Message`
@@ -424,12 +427,20 @@ class Bot:
                 "reply_to_message_id param must be type of Message"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_message(
             params=handle_request_param(dict(chat_id=str(chat_id), text=text, reply_markup=components,
             reply_to_message_id=reply_to_message_id))
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def forward_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int]):
@@ -485,7 +496,7 @@ class Bot:
     async def send_document(self, chat_id: Union[str, int], document: "InputFile", *,
                             caption: Optional[str] = None,
                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                            reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send document.
 
         .. code:: python
@@ -504,6 +515,8 @@ class Bot:
                 Message Components
         reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+        delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -546,6 +559,11 @@ class Bot:
                 )
             components = components.to_json()
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_document(
             params=handle_request_param(
                 dict(
@@ -557,12 +575,15 @@ class Bot:
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def send_photo(self, chat_id: Union[str, int], photo: "InputFile", *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send photo.
 
         .. code:: python
@@ -581,6 +602,8 @@ class Bot:
                 Message Components
             reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -623,6 +646,11 @@ class Bot:
                 "caption param must be type of str"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_photo(
             params=handle_request_param(
                 dict(
@@ -635,12 +663,15 @@ class Bot:
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def send_audio(self, chat_id: Union[str, int], audio: "InputFile", *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send Audio.
 
         .. code:: python
@@ -659,6 +690,8 @@ class Bot:
                 Message Components
             reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -701,6 +734,11 @@ class Bot:
                 "caption param must be type of str"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_audio(params=handle_request_param(
             dict(
                 chat_id=str(chat_id), caption=caption, reply_markup=components,
@@ -709,12 +747,15 @@ class Bot:
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def send_video(self, chat_id: Union[str, int], video: "InputFile", *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send Video.
 
         .. code:: python
@@ -733,6 +774,8 @@ class Bot:
                 Message Components
             reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -775,6 +818,11 @@ class Bot:
                 "caption param must be type of str"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_video(params=handle_request_param(
               dict(
                     chat_id=str(chat_id), caption=caption, reply_markup=components,
@@ -784,13 +832,16 @@ class Bot:
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def send_animation(self, chat_id: Union[str, int], animation: "InputFile", *,
                          duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send Animation.
 
         .. code:: python
@@ -815,6 +866,8 @@ class Bot:
                 Message Components
             reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
                 If the message is a reply, ID of the original message.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -872,6 +925,11 @@ class Bot:
                 "reply_to_message_id param must be type of str or int"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_animation(params=handle_request_param(
             dict(
                 chat_id=str(chat_id), duration=duration,
@@ -884,9 +942,12 @@ class Bot:
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
-    async def send_location(self, chat_id: Union[str, int], location: "Location") -> "Message":
+    async def send_location(self, chat_id: Union[str, int], location: "Location", delete_after: Optional[Union[float, int]] = None) -> "Message":
         """Use this method to send point on the map.
 
         .. code:: python
@@ -899,6 +960,8 @@ class Bot:
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             location: :class:`bale.Location`
                 The Location.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -924,12 +987,20 @@ class Bot:
                 "location param must be type of Location"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_location(params=handle_request_param(dict(chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude)))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
-    async def send_contact(self, chat_id: Union[str, int], contact: "ContactMessage") -> "Message":
+    async def send_contact(self, chat_id: Union[str, int], contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -942,6 +1013,8 @@ class Bot:
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             contact: :class:`bale.ContactMessage`
                 The Contact.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         --------
@@ -967,6 +1040,11 @@ class Bot:
                 "contact param must be type of ContactMessage"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         response = await self._http.send_contact(params=handle_request_param(
             dict(
                 chat_id=str(chat_id), phone_number=contact.phone_number, first_name=contact.first_name,
@@ -975,6 +1053,9 @@ class Bot:
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
@@ -983,7 +1064,7 @@ class Bot:
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                            need_phone_number: Optional[bool] = False,
                            need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
-                           is_flexible: Optional[bool] = True) -> Message:
+                           is_flexible: Optional[bool] = True, delete_after: Optional[Union[float, int]] = None) -> Message:
         """You can use this service to send money request messages.
 
         .. important::
@@ -1029,6 +1110,8 @@ class Bot:
                 Pass True, if you require the user’s shipping address to complete the order.
             is_flexible: Optional[bool]
                 Pass True, if the final price depends on the shipping method.
+            delete_after: Optional[Union[:class:`float`, :class:`int`]]
+                If used, the sent message will be deleted after the specified number of seconds.
 
         Returns
         -------
@@ -1098,6 +1181,11 @@ class Bot:
                 "is_flexible param must be type of boolean"
             )
 
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
         prices = [price.to_dict() for price in prices if isinstance(price, Price)]
         response = await self._http.send_invoice(
             params=handle_request_param(dict(chat_id=str(chat_id), title=title, description=description, provider_token=provider_token, prices=prices, payload=payload, photo_url=photo_url,
@@ -1105,6 +1193,9 @@ class Bot:
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,

@@ -188,7 +188,7 @@ class Message:
                    successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
-    async def reply(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
 
@@ -197,9 +197,9 @@ class Message:
             await message.reply("Hi, python-bale-bot!", components = None)
         """
         return await self.bot.send_message(self.chat_id, text, components=components,
-                                           reply_to_message_id=self.message_id)
+                                           reply_to_message_id=self.message_id, delete_after=delete_after)
 
-    async def forward(self, chat_id: str | int):
+    async def forward(self, chat_id: Union[str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.forward_message`.
 
@@ -209,7 +209,7 @@ class Message:
         """
         return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
 
-    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -219,9 +219,10 @@ class Message:
         """
         return await self.bot.send_document(self.chat_id, document, caption=caption,
                                             components=components,
-                                            reply_to_message_id=self.message_id)
+                                            reply_to_message_id=self.message_id,
+                                            delete_after=delete_after)
 
-    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -231,9 +232,10 @@ class Message:
         """
         return await self.bot.send_photo(self.chat_id, photo, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id)
+                                         reply_to_message_id=self.message_id,
+                                         delete_after=delete_after)
 
-    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -243,9 +245,10 @@ class Message:
         """
         return await self.bot.send_video(self.chat_id, video, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id)
+                                         reply_to_message_id=self.message_id,
+                                         delete_after=delete_after)
 
-    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -258,9 +261,10 @@ class Message:
                                          height=height,
                                          caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id)
+                                         reply_to_message_id=self.message_id,
+                                         delete_after=delete_after)
 
-    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -270,7 +274,8 @@ class Message:
         """
         return await self.bot.send_video(self.chat_id, audio, caption=caption,
                                          components=components,
-                                         reply_to_message_id=self.message_id)
+                                         reply_to_message_id=self.message_id,
+                                         delete_after=delete_after)
 
     async def edit(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> Message:
         """
