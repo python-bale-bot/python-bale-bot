@@ -282,13 +282,13 @@ class Message:
         """
         return await self.bot.edit_message(self.chat_id, self.message_id, text, components=components)
 
-    async def delete(self):
+    async def delete(self, *, delay: Optional[Union[int, float]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
 
         .. code:: python
 
-            await message.delete()
+            await message.delete(delay=5)
         """
         return await self.bot.delete_message(self.chat_id, self.message_id)
 

@@ -1156,7 +1156,7 @@ class Bot:
         self._state.update_message(result)
         return result
 
-    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int]) -> bool:
+    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = None) -> None:
         """You can use this service to delete a message that you have already sent through the arm.
 
         .. code:: python
@@ -1173,6 +1173,8 @@ class Bot:
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             message_id: :class:`bale.Message`
                 Unique identifier for the message to delete.
+            delay: Optional[Union[:class:`int`, :class:`float`]]
+                If used, the message will be deleted after that number of seconds delay.
         Raises
         ------
             NotFound
@@ -1191,10 +1193,26 @@ class Bot:
             raise TypeError(
                 "message_id param must be type of str or int"
             )
-        response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
-        if response.result:
-            self._state.remove_message(str(chat_id), message_id)
-        return response.result or False
+
+        if delay:
+            if not isinstance(delay, (float, int)):
+                raise TypeError(
+                    "delay param must be type of float or int"
+                )
+            delay = float(delay)
+
+        async def delete_message_task(d: Optional[float] = None):
+            if d:
+                await asyncio.sleep(d)
+
+            response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
+            if response.result:
+                self._state.remove_message(str(chat_id), message_id)
+
+        if delay:
+            await asyncio.create_task(delete_message_task(delay))
+        else:
+            await delete_message_task()
 
     async def get_chat(self, chat_id: Union[str, int], *, use_cache=True) -> Optional["Chat"]:
         """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
