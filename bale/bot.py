@@ -418,7 +418,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -555,7 +555,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -632,7 +632,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -720,7 +720,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -804,7 +804,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -916,7 +916,7 @@ class Bot:
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
-                    "components param must be type of Components or RemoveComponents"
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
                 )
             components = components.to_json()
 
@@ -1005,7 +1005,7 @@ class Bot:
 
         .. code:: python
 
-            await bot.send_cantact(1234, bale.ContactMessage('09****', 'first name', 'last name))
+            await bot.send_cantact(1234, bale.ContactMessage('09****', 'first name', 'last name'))
 
         Parameters
         ----------
