@@ -216,7 +216,7 @@ class Chat:
         """
         await self.bot.invite_user(self.chat_id, user.chat_id)
 
-    async def get_chat_member(self, user: "User" | str):
+    async def get_chat_member(self, user: Union["User", str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
 
@@ -227,15 +227,12 @@ class Chat:
             ...
             await chat.get_chat_member(1234)
         """
-        if not isinstance(user, (User, str)):
-            raise TypeError("user must be type of User or str")
-
         if isinstance(user, User):
             user = user.user_id
 
         return await self.bot.get_chat_member(self.chat_id, user_id=user)
 
-    async def ban_chat_member(self, user: "User" | str):
+    async def ban_chat_member(self, user: Union["User", str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
 
@@ -246,9 +243,6 @@ class Chat:
             ...
             await chat.ban_chat_member(1234)
         """
-        if not isinstance(user, (User, str)):
-            raise TypeError("user must be type of user or str")
-
         if isinstance(user, User):
             user = user.user_id
 
