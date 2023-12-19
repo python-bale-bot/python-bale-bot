@@ -297,9 +297,6 @@ class Message:
         """
         return await self.bot.delete_message(self.chat_id, self.message_id, delay=delay)
 
-    def __str__(self):
-        return str(self.message_id)
-
     def __eq__(self, other):
         return isinstance(other, Message) and self.message_id == other.message_id
 

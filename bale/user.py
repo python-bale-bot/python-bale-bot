@@ -187,10 +187,6 @@ class User:
 
         return data
 
-    def __str__(self):
-        return (str(self.username) + "#" + str(self.user_id) if self.username else str(self.first_name) + " " + str(
-            self.last_name))
-
     def __eq__(self, other: User):
         return isinstance(other, User) and self.user_id == other.user_id
 

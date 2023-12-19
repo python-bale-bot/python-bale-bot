@@ -277,9 +277,6 @@ class Chat:
                    all_members_are_administrators=data.get("all_members_are_administrators", True),
                    invite_link=data.get("invite_link"))
 
-    def __str__(self):
-        return str(self.first_name) + str(self.last_name)
-
     def __eq__(self, other):
         return isinstance(other, Chat) and self.chat_id == other.chat_id
 
