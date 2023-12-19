@@ -1444,7 +1444,7 @@ class Bot:
             )
 
         try:
-            response = await self._http.get_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), member_id=str(user_id))))
+            response = await self._http.get_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         except NotFound:
             return None
         else:
@@ -1488,7 +1488,7 @@ class Bot:
                 "user_id must be type of str or int"
             )
 
-        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), member_id=str(user_id))))
+        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result
 
     async def get_chat_members_count(self, chat_id: Union[str, int]) -> int:
