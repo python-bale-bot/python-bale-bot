@@ -205,7 +205,7 @@ class Chat:
         """
         await self.bot.leave_chat(self.chat_id)
 
-    async def add_user(self, user: "User"):
+    async def add_user(self, user: Union["User", str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.invite_user`.
 
@@ -214,7 +214,10 @@ class Chat:
             user = await bot.get_user(1234)
             await chat.add_user(user)
         """
-        await self.bot.invite_user(self.chat_id, user.chat_id)
+        if isinstance(user, User):
+            user = user.user_id
+
+        await self.bot.invite_user(self.chat_id, user)
 
     async def get_chat_member(self, user: Union["User", str, int]):
         """
