@@ -30,7 +30,7 @@ if TYPE_CHECKING:
     from bale import Bot
 
 from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, InlineKeyboardMarkup,
-                  MenuKeyboardMarkup, Video, Audio, File, SuccessfulPayment, Animation, InputFile)
+                  MenuKeyboardMarkup, Video, Audio, File, Sticker, SuccessfulPayment, Animation, InputFile)
 from .helpers import parse_time
 
 class Message:
@@ -70,6 +70,8 @@ class Message:
             Message is an animation, information about the animation.
         audio: Optional[:class:`bale.Audio`]
             Message is an audio, information about the Audio.
+        sticker: Optional[:class:`bale.Sticker`]
+            Message is a sticker, information about the sticker.
         new_chat_members: Optional[List[:class:`bale.User`]]
             New members that were added to the group or supergroup and information about them (the bot itself may be
             one of these members). This list is empty if the message does not contain new chat members.
@@ -83,8 +85,9 @@ class Message:
     __slots__ = (
         "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
-        "edit_date", "audio", "document", "video", "animation", "photos", "location", "invoice", "new_chat_members",
-        "left_chat_member", "reply_to_message", "successful_payment", "bot"
+        "edit_date", "audio", "document", "video", "animation", "photos", "location", "sticker","invoice",
+        "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment",
+        "bot"
     )
 
     def __init__(self, message_id: str, date: datetime, text: Optional[str] = None, caption: Optional[str] = None,
@@ -93,33 +96,34 @@ class Message:
                  document: Optional["Document"] = None,
                  contact: Optional["ContactMessage"] = None, location: Optional["Location"] = None,
                  chat: Optional["Chat"] = None, video: Optional["Video"] = None,
-                 photos: Optional[List["Photo"]] = None, reply_to_message: Optional["Message"] = None,
-                 invoice: Optional["Invoice"] = None, audio: Optional["Audio"] = None,
-                 successful_payment: Optional["SuccessfulPayment"] = None, animation: Optional["Animation"] = None,
-                 bot: 'Bot' = None, **options):
-        self.message_id: str = message_id
+                 photos: Optional[List["Photo"]] = None, sticker: Optional["Sticker"] = None,
+                 reply_to_message: Optional["Message"] = None, invoice: Optional["Invoice"] = None,
+                 audio: Optional["Audio"] = None, successful_payment: Optional["SuccessfulPayment"] = None,
+                 animation: Optional["Animation"] = None, bot: 'Bot' = None, **options):
+        self.message_id = message_id
         self.date = date
 
-        self.text: Optional[str] = text
-        self.chat: Optional["Chat"] = chat
-        self.reply_to_message: Optional["Message"] = reply_to_message
-        self.from_user: Optional["User"] = from_user
-        self.forward_from: Optional["User"] = forward_from
-        self.forward_from_message_id: Optional[str] = forward_from_message_id
-        self.forward_from_chat: Optional["Chat"] = forward_from_chat
-        self.caption: Optional[str] = caption
-        self.document: Optional["Document"] = document
-        self.video: Optional["Video"] = video
-        self.animation: Optional["Animation"] = animation
-        self.audio: Optional["Audio"] = audio
-        self.photos: Optional[List["Photo"]] = photos
-        self.contact: Optional["ContactMessage"] = contact
-        self.location: Optional["Location"] = location
-        self.new_chat_members: Optional[List["User"]] = options.get("new_chat_members")
-        self.left_chat_member: Optional["User"] = options.get("left_chat_member")
-        self.invoice: Optional["Invoice"] = invoice
+        self.text = text
+        self.chat = chat
+        self.reply_to_message = reply_to_message
+        self.from_user = from_user
+        self.forward_from = forward_from
+        self.forward_from_message_id = forward_from_message_id
+        self.forward_from_chat = forward_from_chat
+        self.caption = caption
+        self.document = document
+        self.video= video
+        self.animation = animation
+        self.audio = audio
+        self.photos = photos
+        self.contact = contact
+        self.location = location
+        self.sticker = sticker
+        self.new_chat_members = options.get("new_chat_members")
+        self.left_chat_member = options.get("left_chat_member")
+        self.invoice = invoice
         self.successful_payment = successful_payment
-        self.bot: Optional[Bot] = bot
+        self.bot = bot
 
     @property
     def author(self):
@@ -186,6 +190,7 @@ class Message:
                    photos=[Photo.from_dict(data=photo_payload, bot=bot) for photo_payload in data.get("photo")] if data.get(
                        "photo") else None, video=Video.from_dict(data=data.get("video"), bot=bot) if data.get("video") else None,
                    successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
+                   sticker=Sticker.from_dict(data.get('sticker'), bot=bot) if data.get('sticker') else None,
                    invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
 
     async def reply(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
