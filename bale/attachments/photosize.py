@@ -21,44 +21,44 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING
+from __future__ import annotations
+from bale import BaleObject
+from typing import Optional
 
-from .file import File
-if TYPE_CHECKING:
-    from bale import Bot
+__all__ = (
+    "PhotoSize",
+)
 
-
-class Photo(File):
-    """This object shows a Photo.
+class PhotoSize(BaleObject):
+    """This object represents one size of a photo or a file/sticker thumbnail.
 
     Attributes
     ----------
         file_id: str
-            Identifier for this file, which can be used to download or reuse the file.
+            Identifier for this photo file, which can be used to download or reuse the file.
+        file_unique_id: str
+            Unique file identifier of thumbnail file.
         width: int
-            Photo width as defined by sender.
+            photo width.
         height: str
-            Photo height as defined by sender.
-        file_size: int
-            File size in bytes.
+            photo height.
+        file_size: Optional[:class:`int`]
+            photo file size in bytes.
     """
-    __FILE_TYPE__ = "PHOTO"
-    __slots__ = File.__slots__ + (
+    __slots__ = (
+        "file_id",
+        "file_unique_id",
         "width",
-        "height"
+        "height",
+        "file_size"
     )
-    def __init__(self, file_id: str, width: int, height: int, file_size: int, bot: "Bot"):
-        super().__init__(self.__FILE_TYPE__, file_id, file_size, "jpg", bot, width = width, height = height)
-
+    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, file_size: Optional[int]):
+        super().__init__()
+        self._id = file_id
+        self.file_id = file_id
+        self.file_unique_id = file_unique_id
         self.width = width
         self.height = height
+        self.file_size = file_size
 
-    @classmethod
-    def from_dict(cls, data: dict, bot: "Bot"):
-        return cls(
-            file_id=data.get("file_id"),
-            width=data.get("width"),
-            height=data.get("height"),
-            file_size=data.get("file_size"),
-            bot=bot
-        )
+        self._lock()
