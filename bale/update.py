@@ -23,7 +23,7 @@ SOFTWARE.
 """
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Optional
-from bale import (Message, CallbackQuery)
+from bale import BaleObject, Message, CallbackQuery
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -32,16 +32,7 @@ __all__ = (
     "Update",
 )
 
-
-def parse_type(data: Dict) -> Optional[str]:
-    events = (Update.CALLBACK_QUERY, Update.MESSAGE, Update.EDITED_MESSAGE)
-    for event in events:
-        if data.get(event):
-            return event
-
-    return None
-
-class Update:
+class Update(BaleObject):
     """This object represents an incoming update.
 
     Attributes
@@ -63,39 +54,29 @@ class Update:
         "type",
         "message",
         "callback_query",
-        "edited_message",
-        "bot"
+        "edited_message"
     )
 
-    def __init__(self, update_id: int, type: Optional[str], callback_query: "CallbackQuery" = None, message: "Message" = None,
-                 edited_message: "Message" = None, bot: 'Bot' = None):
+    def __init__(self, update_id: int, callback_query: "CallbackQuery" = None, message: "Message" = None,
+                 edited_message: "Message" = None):
+        super().__init__()
+        self._id = update_id
         self.update_id = int(update_id)
-        self.type = type
-        self.bot = bot
-        self.callback_query = callback_query if callback_query is not None else None
-        self.message = message if message is not None else None
-        self.edited_message = edited_message if edited_message is not None else None
+        self.callback_query = callback_query
+        self.message = message
+        self.edited_message = edited_message
 
     @classmethod
-    def from_dict(cls, data: dict, bot: "Bot"):
-        callback_query, message, edited_message = None, None, None
-        update_type: Optional[str] = parse_type(data)
+    def from_dict(cls, data: Optional[Dict], bot: "Bot") -> Optional["Update"]:
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
 
-        if update_type == "callback_query":
-            callback_query = CallbackQuery.from_dict(data[update_type], bot=bot)
-        if update_type == "message":
-            message = Message.from_dict(data[update_type], bot=bot)
-        if update_type == "edited_message":
-            edited_message = Message.from_dict(data[update_type], bot=bot)
+        data['callback_query'] = CallbackQuery.from_dict(data.pop('callback_query', None), bot)
+        data['message'] = Message.from_dict(data.pop('message', None), bot)
+        data['edited_message'] = Message.from_dict(data.pop('edited_message', None), bot)
 
-        return cls(type=update_type, update_id=data["update_id"],
-                   message=message, callback_query=callback_query, edited_message=edited_message, bot=bot)
-
-    def __eq__(self, other):
-        return isinstance(other, Update) and self.update_id == other.update_id
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
+        return super().from_dict(data, bot)
 
     def __le__(self, other):
         if not isinstance(other, Update):
@@ -117,6 +98,3 @@ class Update:
 
     def __gt__(self, other):
         return not self.__lt__(other)
-
-    def __repr__(self):
-        return f"<Update update_id={self.update_id} type={self.type}>"

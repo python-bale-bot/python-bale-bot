@@ -24,16 +24,15 @@ SOFTWARE.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import TYPE_CHECKING, List, Optional, Union
-
-if TYPE_CHECKING:
-    from bale import Bot
-
-from bale import (Chat, User, Document, ContactMessage, Location, Photo, Invoice, InlineKeyboardMarkup,
-                  MenuKeyboardMarkup, Video, Audio, File, Sticker, SuccessfulPayment, Animation, InputFile)
+from typing import List, Dict, Optional, Union
+from bale import (
+    BaleObject,
+    Chat, User, Document, Contact, Location, PhotoSize, Invoice, InlineKeyboardMarkup,
+    MenuKeyboardMarkup, Video, Audio, BaseFile, Sticker, SuccessfulPayment, Animation, InputFile
+)
 from .helpers import parse_time
 
-class Message:
+class Message(BaleObject):
     """This object shows a message.
 
     Attributes
@@ -86,20 +85,20 @@ class Message:
         "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
         "forward_from_chat", "forward_from_message_id", "date_code", "date",
         "edit_date", "audio", "document", "video", "animation", "photos", "location", "sticker","invoice",
-        "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment",
-        "bot"
+        "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment"
     )
 
-    def __init__(self, message_id: str, date: datetime, text: Optional[str] = None, caption: Optional[str] = None,
-                 forward_from: Optional["User"] = None, forward_from_chat: Optional["Chat"] = None,
-                 forward_from_message_id: Optional[str] = None, from_user: Optional["User"] = None,
-                 document: Optional["Document"] = None,
-                 contact: Optional["ContactMessage"] = None, location: Optional["Location"] = None,
-                 chat: Optional["Chat"] = None, video: Optional["Video"] = None,
-                 photos: Optional[List["Photo"]] = None, sticker: Optional["Sticker"] = None,
-                 reply_to_message: Optional["Message"] = None, invoice: Optional["Invoice"] = None,
-                 audio: Optional["Audio"] = None, successful_payment: Optional["SuccessfulPayment"] = None,
-                 animation: Optional["Animation"] = None, bot: 'Bot' = None, **options):
+    def __init__(self, message_id: str, date: datetime, text: Optional[str], caption: Optional[str],
+                 forward_from: Optional["User"], forward_from_chat: Optional["Chat"],
+                 forward_from_message_id: Optional[str], from_user: Optional["User"],
+                 document: Optional["Document"], contact: Optional["Contact"],
+                 location: Optional["Location"], chat: Optional["Chat"], video: Optional["Video"],
+                 photos: Optional[List["PhotoSize"]], sticker: Optional["Sticker"],
+                 reply_to_message: Optional["Message"], invoice: Optional["Invoice"],
+                 audio: Optional["Audio"], successful_payment: Optional["SuccessfulPayment"],
+                 animation: Optional["Animation"], new_chat_members: Optional[List["User"]], left_chat_member: Optional["User"]):
+        super().__init__()
+        self._id = message_id
         self.message_id = message_id
         self.date = date
 
@@ -119,11 +118,12 @@ class Message:
         self.contact = contact
         self.location = location
         self.sticker = sticker
-        self.new_chat_members = options.get("new_chat_members")
-        self.left_chat_member = options.get("left_chat_member")
+        self.new_chat_members = new_chat_members
+        self.left_chat_member = left_chat_member
         self.invoice = invoice
         self.successful_payment = successful_payment
-        self.bot = bot
+
+        self._lock()
 
     @property
     def author(self):
@@ -131,7 +131,7 @@ class Message:
         return self.from_user
 
     @property
-    def attachment(self) -> Optional["File"]:
+    def attachment(self) -> Optional["BaseFile"]:
         """Optional[:class:`bale.File`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
         attachment = self.video or self.photos or self.audio or self.document or self.animation
         if not attachment:
@@ -148,9 +148,9 @@ class Message:
         return self.caption or self.text
 
     @property
-    def chat_id(self) -> Optional[str | int]:
+    def chat_id(self) -> Optional[Union[str, int]]:
         """:class:`str` | :class:`int`: Represents the Unique identifier of Conversation the message belongs to."""
-        return self.chat.chat_id
+        return self.chat.id
 
     @property
     def reply_to_message_id(self) -> Optional[str]:
@@ -160,38 +160,31 @@ class Message:
 
         return self.reply_to_message.message_id
 
-
     @classmethod
-    def from_dict(cls, data: dict, bot):
-        options = {}
-        if data.get("new_chat_members"):
-            options["new_chat_members"] = [User.from_dict(bot=bot, data=i) for i in data.get("new_chat_members")]
-        if data.get("left_chat_member"):
-            options["left_chat_member"] = User.from_dict(bot=bot, data=data.get("left_chat_member"))
+    def from_dict(cls, data: Optional[Dict], bot) -> Optional["Message"]:
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
+        
+        data["date"] = parse_time(int(data.get('date', 0)))
+        data["from_user"] = User.from_dict(data.pop('from', None), bot)
+        data["chat"] = Chat.from_dict(data.get('chat'), bot)
+        data["forward_from"] = User.from_dict(data.get('forward_from'), bot)
+        data["forward_from_chat"] = Chat.from_dict(data.get('forward_from_chat'), bot)
+        data["reply_to_message"] = Message.from_dict(data.get('reply_to_message'), bot)
+        data["photos"] = [PhotoSize.from_dict(photo_payload, bot) for photo_payload in data.pop("photo", [])]
+        data["document"] = Document.from_dict(data.get('document'), bot)
+        data["audio"] = Audio.from_dict(data.get('audio'), bot)
+        data["location"] = Location.from_dict(data.get('location'), bot)
+        data["contact"] = Contact.from_dict(data.get('contact'), bot)
+        data["animation"] = Animation.from_dict(data.get('animation'), bot)
+        data["successful_payment"] = SuccessfulPayment.from_dict(data.get('successful_payment'), bot)
+        data["sticker"] = Sticker.from_dict(data.get('sticker'), bot)
+        data["invoice"] = Invoice.from_dict(data.get('invoice'), bot)
+        data["new_chat_members"] = [User.from_dict(new_chat_member_payload, bot) for new_chat_member_payload in data.get('new_chat_members', [])] or None
+        data["left_chat_member"] = User.from_dict(data.get('left_chat_member'), bot)
 
-        return cls(bot=bot, message_id=str(data.get("message_id")),
-                   chat=Chat.from_dict(bot=bot, data=data.get("chat")) if data.get("chat") else None,
-                   reply_to_message=Message.from_dict(bot=bot, data=data.get("reply_to_message")) if data.get(
-                       "reply_to_message") else None, date=parse_time(int(data.get("date"))),
-                   text=data.get("text"),
-                   caption=data.get("caption"),
-                   from_user=User.from_dict(bot=bot, data=data.get("from")) if data.get("from") else None,
-                   forward_from=User.from_dict(bot=bot, data=data.get("forward_from")) if data.get(
-                       "forward_from") else None,
-                   forward_from_chat=Chat.from_dict(bot=bot, data=data.get("forward_from_chat")) if data.get(
-                       "forward_from_chat") else None,
-                   forward_from_message_id=str(data.get("forward_from_message_id")) if data.get(
-                       "forward_from_message_id") else None,
-                   document=Document.from_dict(bot=bot, data=data.get("document")) if data.get("document") else None,
-                   contact=ContactMessage.from_dict(data=data.get("contact")) if data.get("contact") else None,
-                   location=Location.from_dict(data=data.get("location")) if data.get("location") else None,
-                   audio=Audio.from_dict(data=data.get("audio"), bot=bot) if data.get("audio") else None,
-                   animation=Animation.from_dict(data=data.get("animation"), bot=bot) if data.get("animation") else None,
-                   photos=[Photo.from_dict(data=photo_payload, bot=bot) for photo_payload in data.get("photo")] if data.get(
-                       "photo") else None, video=Video.from_dict(data=data.get("video"), bot=bot) if data.get("video") else None,
-                   successful_payment=SuccessfulPayment.from_dict(data.get("successful_payment")) if data.get("successful_payment") else None,
-                   sticker=Sticker.from_dict(data.get('sticker'), bot=bot) if data.get('sticker') else None,
-                   invoice=Invoice.from_dict(data=data.get("invoice")) if data.get("invoice") else None, **options)
+        return super().from_dict(data, bot)
 
     async def reply(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -201,7 +194,7 @@ class Message:
 
             await message.reply("Hi, python-bale-bot!", components = None)
         """
-        return await self.bot.send_message(self.chat_id, text, components=components,
+        return await self.get_bot().send_message(self.chat_id, text, components=components,
                                            reply_to_message_id=self.message_id, delete_after=delete_after)
 
     async def forward(self, chat_id: Union[str, int]):
@@ -212,7 +205,7 @@ class Message:
 
             await message.forward(1234)
         """
-        return await self.bot.forward_message(chat_id, self.chat_id, self.message_id)
+        return await self.get_bot().forward_message(chat_id, self.chat_id, self.message_id)
 
     async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -222,7 +215,7 @@ class Message:
 
             await message.reply_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption,
+        return await self.get_bot().send_document(self.chat_id, document, caption=caption,
                                             components=components,
                                             reply_to_message_id=self.message_id,
                                             delete_after=delete_after)
@@ -235,7 +228,7 @@ class Message:
 
             await message.reply_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption,
+        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption,
                                          components=components,
                                          reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
@@ -248,7 +241,7 @@ class Message:
 
             await message.reply_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_video(self.chat_id, video, caption=caption,
+        return await self.get_bot().send_video(self.chat_id, video, caption=caption,
                                          components=components,
                                          reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
@@ -261,7 +254,7 @@ class Message:
 
             await message.reply_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_animation(self.chat_id, animation, duration=duration,
+        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration,
                                          width=width,
                                          height=height,
                                          caption=caption,
@@ -277,7 +270,7 @@ class Message:
 
             await message.reply_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_video(self.chat_id, audio, caption=caption,
+        return await self.get_bot().send_video(self.chat_id, audio, caption=caption,
                                          components=components,
                                          reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
@@ -290,7 +283,7 @@ class Message:
 
             await message.edit("Bye!", components = None)
         """
-        return await self.bot.edit_message(self.chat_id, self.message_id, text, components=components)
+        return await self.get_bot().edit_message(self.chat_id, self.message_id, text, components=components)
 
     async def delete(self, *, delay: Optional[Union[int, float]] = None):
         """
@@ -300,13 +293,4 @@ class Message:
 
             await message.delete(delay=5)
         """
-        return await self.bot.delete_message(self.chat_id, self.message_id, delay=delay)
-
-    def __eq__(self, other):
-        return isinstance(other, Message) and self.message_id == other.message_id
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __repr__(self):
-        return f"<Message message_id={self.message_id} from={self.from_user} chat={self.chat}>"
+        return await self.get_bot().delete_message(self.chat_id, self.message_id, delay=delay)
