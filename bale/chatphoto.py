@@ -22,13 +22,16 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from typing import Optional, Dict
+from typing import Optional, TYPE_CHECKING
+from bale import BaleObject
+if TYPE_CHECKING:
+    from bale import BaseFile
 
 __all__ = (
     "ChatPhoto",
 )
 
-class ChatPhoto:
+class ChatPhoto(BaleObject):
     """
     This object represents a chat photo.
 
@@ -49,12 +52,25 @@ class ChatPhoto:
         "big_file_id",
         "big_file_unique_id"
     )
-    def __init__(self, small_file_id: Optional[str] = None, small_file_unique_id: Optional[str] = None, big_file_id: Optional[str] = None, big_file_unique_id: Optional[str] = None):
+    def __init__(self, small_file_id: Optional[str] = None, small_file_unique_id: Optional[str] = None,
+                 big_file_id: Optional[str] = None, big_file_unique_id: Optional[str] = None):
+        super().__init__()
         self.small_file_id = small_file_unique_id
         self.small_file_unique_id = small_file_unique_id
         self.big_file_id = big_file_unique_id
         self.big_file_unique_id = big_file_unique_id
+        self._lock()
 
-    @classmethod
-    def from_dict(cls, data : Dict) -> "ChatPhoto":
-        return cls(data.get('small_file_id'), data.get('small_file_unique_id'), data.get('big_file_id'), data.get('big_file_unique_id'))
+    @property
+    def small_file_object(self) -> "BaseFile":
+        from bale import BaseFile
+        obj = BaseFile(self.small_file_id, self.small_file_unique_id, None)
+        obj.set_bot(self.bot)
+        return obj
+
+    @property
+    def big_file_object(self) -> "BaseFile":
+        from bale import BaseFile
+        obj = BaseFile(self.big_file_id, self.big_file_unique_id, None)
+        obj.set_bot(self.bot)
+        return obj
