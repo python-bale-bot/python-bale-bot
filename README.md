@@ -11,7 +11,7 @@
 [![Codacy Badge](https://app.codacy.com/project/badge/Grade/deacf2bc3f13492d944e329ac19ac0d1)](https://www.codacy.com/gh/python-bale-bot/python-bale-bot/dashboard)
 [![python-bale-bot score](https://snyk.io/advisor/python/python-bale-bot/badge.svg)](https://snyk.io/advisor/python/python-bale-bot)
 [![Project License](https://img.shields.io/github/license/python-bale-bot/python-bale-bot?style=plastic)](https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html)
-[![API Version](https://img.shields.io/badge/Bale%20API-1.0-blue?style=plastic)](https://dev.bale.ai/api)
+[![API Version](https://img.shields.io/badge/Bale%20API-2.0-blue?style=plastic)](https://docs.bale.ai)
 [![Documentation Status](https://readthedocs.org/projects/python-bale-bot/badge/?version=stable)](https://docs.python-bale-bot.ir/)
 
 </div>
