@@ -17,12 +17,12 @@ __all__ = (
     "ReplyMarkupItem",
     "InlineKeyboardMarkup",
     "MenuKeyboardMarkup",
+    "PhotoSize",
     "ChatPhoto",
-    "File",
+    "BaseFile",
     "Audio",
-    "ContactMessage",
+    "Contact",
     "Location",
-    "Photo",
     "Document",
     "Video",
     "Animation",
@@ -56,7 +56,8 @@ __all__ = (
 from .version import __version__
 from .baleobject import BaleObject
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
-from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
+from attachments.photosize import PhotoSize
+from .attachments import BaseFile, Audio, Contact, Location, Document, Video, Animation, InputFile
 from .sticker import Sticker
 from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .user import User

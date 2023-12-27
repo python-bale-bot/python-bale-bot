@@ -21,10 +21,16 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from __future__ import annotations
+from typing import Optional
+from bale import BaleObject
 
+__all__ = (
+    "Location",
+)
 
-class Location:
-    """This object shows an Location
+class Location(BaleObject):
+    """This object shows a Location
 
     Attributes
     ----------
@@ -32,36 +38,26 @@ class Location:
             Location longitude
         latitude: :class:`int`
             Location latitude
+        horizontal_accuracy: Optional[:class:`int`]
+            The radius of uncertainty for the location, measured in meters; 0-1500.
     """
     __slots__ = (
         "longitude",
-        "latitude"
+        "latitude",
+        "horizontal_accuracy"
     )
 
-    def __init__(self, longitude: int, latitude: int):
+    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = None):
+        super().__init__()
         self.longitude = longitude
         self.latitude = latitude
+        self.horizontal_accuracy = horizontal_accuracy
+        self._id = (longitude, latitude, horizontal_accuracy)
+
+        self._lock()
 
     @property
     def link(self) -> str:
         """:class:`str`: Export location link from Google map"""
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
 
-    @classmethod
-    def from_dict(cls, data):
-        return cls(longitude=data["longitude"], latitude=data["latitude"])
-
-    def to_dict(self):
-        return {
-            "longitude": self.longitude,
-            "latitude": self.latitude
-        }
-
-    def __eq__(self, other):
-        return isinstance(other, Location) and self.latitude == other.latitude and self.longitude == other.longitude
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __repr__(self):
-        return f"<Location longitude={self.longitude} latitude={self.latitude} >"

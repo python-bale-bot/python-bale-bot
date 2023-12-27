@@ -7,10 +7,10 @@ Attachments
     bale.attachments.audio
     bale.attachments.contact
     bale.attachments.document
-    bale.attachments.file
+    bale.attachments.basefile
     bale.attachments.inputfile
     bale.attachments.location
-    bale.attachments.photo
+    bale.attachments.photosize
     bale.attachments.video
     bale.attachments.animation
     

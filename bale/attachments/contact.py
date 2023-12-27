@@ -21,45 +21,40 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
+from typing import Optional
+from bale import BaleObject
 
+__all__ = (
+    "Contact",
+)
 
-class ContactMessage:
-    """This object shows a Message Contact.
+class Contact(BaleObject):
+    """This object shows a Contact.
 
     Attributes
     ----------
         phone_number: int
-        first_name: :class:`str`
+            Contact’s phone number.
+        first_name: str
+            Contact’s first name.
         last_name: Optional[:class:`str`]
+            Contact’s last name.
+        user_id: Optional[:class:`int`]
+            Contact’s user identifier in Bale.
     """
     __slots__ = (
         "phone_number",
         "first_name",
         "last_name",
-        "bot"
+        "user_id"
     )
 
-    def __init__(self, phone_number: int, first_name: str = None, last_name: str = None):
+    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str], user_id: Optional[int]):
+        super().__init__()
+        self._id = user_id
         self.phone_number = phone_number
         self.first_name = first_name
         self.last_name = last_name
+        self.user_id = user_id
 
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(first_name=data.get("first_name"), last_name=data.get("last_name"), phone_number=data.get("phone_number"))
-
-    def to_dict(self):
-        return {
-            'phone_number': self.phone_number,
-            'first_name': self.first_name,
-            'last_name': self.last_name
-        }
-
-    def __eq__(self, other):
-        return isinstance(other, ContactMessage) and self.phone_number == other.phone_number
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __repr__(self):
-        return f"<ContactMessage phone_number={self.phone_number} first_name={self.first_name} last_name={self.last_name} >"
+        self._lock()

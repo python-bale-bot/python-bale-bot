@@ -21,38 +21,53 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import TYPE_CHECKING
+from typing import Dict, Optional
+from bale import PhotoSize
+from .file import BaseFile
 
-from .file import File
-if TYPE_CHECKING:
-	from bale import Bot
+__all__ = (
+	"Document",
+)
 
-
-class Document(File):
+class Document(BaseFile):
 	"""This object shows a Document.
 
     Attributes
     ----------
         file_id: :class:`str`
-        	Identifier for this file, which can be used to download or reuse the file.
+            Identifier for this file, which can be used to download or reuse the file.
+        file_unique_id: :class:`str`
+            Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
+        thumbnail: Optional[:class:`bale.PhotoSize`]
+            document thumbnail as defined by sender.
         file_name: Optional[:class:`str`]
-        	Original filename as defined by sender.
+            Original document filename as defined by sender.
         mime_type: Optional[:class:`str`]
-        	MIME type of the file as defined by sender.
-        file_size: Optional[:class:`int`]
-        	File size in bytes.
+            MIME type of file as defined by sender.
+        file_size: Optional[:class:`int]
+            File size in bytes, if known.
     """
-	__FILE_TYPE__ = "DOCUMENT"
-	__slots__ = File.__slots__ + (
-		"file_name",
+	__slots__ = (
+        "thumbnail",
+        "file_name",
+        "mime_type"
 	)
 
-	def __init__(self, file_id: str, file_name: str = None, mime_type: str = None, file_size: int = None,
-	             bot: "Bot" = None):
-		super().__init__(self.__FILE_TYPE__, file_id, file_size, mime_type, bot, file_name=file_name)
-		self.file_name = file_name if file_name is not None else None
+	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str], thumbnail: Optional["PhotoSize"], mime_type: Optional[str], file_size: Optional[int]):
+		super().__init__(file_id, file_unique_id, file_size)
+		self.thumbnail = thumbnail
+		self.file_name = file_name
+		self.mime_type = mime_type
+		self.file_size = file_size
+
+		self._lock()
 
 	@classmethod
-	def from_dict(cls, data: dict, bot: "Bot" = None):
-		return cls(file_id=data.get("file_id"), file_name=data.get("file_name"),
-		           mime_type=data.get("mime_type"), file_size=data.get("file_size"), bot=bot)
+	def from_dict(cls, data: Optional[Dict], bot):
+		data = BaseFile.parse_data(data)
+		if not data:
+			return None
+
+		data["thumbnail"] = PhotoSize.from_dict(data.get('thumbnail'), bot)
+
+		return super().from_dict(data, bot)

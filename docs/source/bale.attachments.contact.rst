@@ -1,6 +1,6 @@
 Contact
 =======
 
-.. autoclass:: bale.ContactMessage
+.. autoclass:: bale.Contact
     :members:
     :show-inheritance:

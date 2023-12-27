@@ -1,6 +1,6 @@
-File
-====
+Base File
+=========
 
-.. autoclass:: bale.File
+.. autoclass:: bale.BaseFile
     :members:
     :show-inheritance:
