@@ -1107,7 +1107,7 @@ class Bot:
         return result
 
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
-                           prices: List["Price"], *,
+                           prices: List["LabeledPrice"], *,
                            payload: Optional[str] = None,
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                            need_phone_number: Optional[bool] = False,
@@ -1234,7 +1234,7 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
-        prices = [price.to_dict() for price in prices if isinstance(price, Price)]
+        prices = [price.to_dict() for price in prices if isinstance(price, LabeledPrice)]
         response = await self._http.send_invoice(
             params=handle_request_param(dict(chat_id=str(chat_id), title=title, description=description, provider_token=provider_token, prices=prices, payload=payload, photo_url=photo_url,
             need_name=need_name, need_phone_number=need_phone_number, need_email=need_email, need_shipping_address=need_shipping_address, is_flexible=is_flexible))
