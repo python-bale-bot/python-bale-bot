@@ -23,11 +23,12 @@ SOFTWARE.
 """
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List, Union
+from bale import BaleObject
 if TYPE_CHECKING:
-    from bale import Bot, InlineKeyboardMarkup, MenuKeyboardMarkup, Price, Location, ContactMessage, InputFile
+    from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile
 
 
-class User:
+class User(BaleObject):
     """This object represents a Bale user or bot.
 
     Attributes
@@ -49,18 +50,20 @@ class User:
         "first_name",
         "last_name",
         "username",
-        "user_id",
-        "bot"
+        "user_id"
     )
 
-    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None, username: Optional[str] = None,
-            bot: 'Bot' = None):
+    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
+                 username: Optional[str] = None):
+        super().__init__()
+        self._id = user_id
         self.is_bot = is_bot
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
         self.user_id = user_id
-        self.bot = bot
+
+        self._lock()
 
     @property
     def mention(self) -> str | None:
@@ -80,7 +83,7 @@ class User:
 
             await user.send("Hi, python-bale-bot!", components = None)
         """
-        return await self.bot.send_message(self.chat_id, text, components=components, delete_after=delete_after)
+        return await self.get_bot().send_message(self.chat_id, text, components=components, delete_after=delete_after)
 
     async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -90,7 +93,7 @@ class User:
 
             await user.send_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after)
 
     async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -100,7 +103,7 @@ class User:
 
             await user.send_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after)
 
     async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -110,7 +113,7 @@ class User:
 
             await user.send_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after)
 
     async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -120,7 +123,7 @@ class User:
 
             await user.send_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
 
     async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -130,9 +133,9 @@ class User:
 
             await user.send_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after)
 
-    async def send_location(self, location: "Location", delete_after: Optional[Union[float, int]] = None):
+    async def send_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
 
@@ -140,9 +143,9 @@ class User:
 
             await user.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
-        return await self.bot.send_location(self.chat_id, location, delete_after=delete_after)
+        return await self.get_bot().send_location(self.chat_id, location, components=components, delete_after=delete_after)
 
-    async def send_contact(self, contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None):
+    async def send_contact(self, contact: "Contact", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
 
@@ -150,9 +153,9 @@ class User:
 
             await user.send_contact(bale.ContactMessage('09****', 'first name', 'last name))
         """
-        return await self.bot.send_contact(self.chat_id, contact, delete_after=delete_after)
+        return await self.get_bot().send_contact(self.chat_id, contact, components=components, delete_after=delete_after)
 
-    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *, payload: Optional[str] = None,
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["LabeledPrice"], *, payload: Optional[str] = None,
                photo_url: Optional[str] = None, need_name: Optional[bool] = False, need_phone_number: Optional[bool] = False,
                need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True,
                delete_after: Optional[Union[float, int]] = None):
@@ -166,35 +169,7 @@ class User:
                 payload = "unique invoice payload", ...
             )
         """
-        return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
+        return await self.get_bot().send_invoice(self.chat_id, title, description, provider_token, prices,
                                            payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                            need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                            delete_after=delete_after)
-
-    @classmethod
-    def from_dict(cls, data: dict, bot=None):
-        return cls(is_bot=data.get("is_bot"), username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
-                   user_id=data.get("id"), bot=bot)
-
-    def to_dict(self):
-        data = {
-            "is_bot": self.is_bot,
-            "first_name": self.first_name,
-            "last_name": self.last_name,
-            "username": self.username,
-            "id": self.user_id
-        }
-
-        return data
-
-    def __eq__(self, other: User):
-        return isinstance(other, User) and self.user_id == other.user_id
-
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(self.__str__())
-
-    def __repr__(self):
-        return f"<User is_bot={self.is_bot} first_name={self.first_name} last_name={self.last_name} user_id={self.user_id} username={self.username}>"
