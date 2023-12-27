@@ -12,7 +12,6 @@ An API wrapper for Bale written in Python.
 __all__ = (
     "__version__",
     "BaleObject",
-    "ChatType",
     "InlineKeyboardButton",
     "MenuKeyboardButton",
     "ReplyMarkupItem",
@@ -36,8 +35,6 @@ __all__ = (
     "Chat",
     "Message",
     "State",
-    "Permissions",
-    "ChatMemberStatus",
     "ChatMember",
     "CallbackQuery",
     "Update",
@@ -63,12 +60,9 @@ from .attachments import File, Audio, ContactMessage, Location, Photo, Document,
 from .sticker import Sticker
 from .payments import Price, Invoice, SuccessfulPayment
 from .user import User
-from .chattype import ChatType
 from .chatphoto import ChatPhoto
 from .chat import Chat
 from .message import Message
-from .permissions import Permissions
-from .chatmemberstatus import ChatMemberStatus
 from .chatmember import ChatMember
 from .callbackquery import CallbackQuery
 from .update import Update
