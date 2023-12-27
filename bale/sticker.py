@@ -21,15 +21,14 @@ LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
 OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
-from typing import Optional, Dict, TYPE_CHECKING
-if TYPE_CHECKING:
-    from bale import Bot
+from typing import Optional
+from bale import BaleObject, PhotoSize
 
 __all__ = (
     "Sticker",
 )
 
-class Sticker:
+class Sticker(BaleObject):
     """This object shows a Sticker.
 
     Attributes
@@ -44,7 +43,11 @@ class Sticker:
             Sticker width.
         height: str
             Sticker height.
-        file_size: int
+        thumb: Optional[:class:`bale.Thumbnail`]
+            Sticker thumbnail.
+        set_name: Optional[str]
+            Name of the sticker set to which the sticker belongs.
+        file_size: Optional[:class:`int`]
             File size in bytes.
     """
     __slots__ = (
@@ -53,27 +56,24 @@ class Sticker:
         "type",
         "width",
         "height",
-        "file_size",
-        "bot"
+        "thumb",
+        "set_name",
+        "file_size"
     )
-    def __init__(self, file_id: str, file_unique_id: str, type: str, width: int, height: int, bot: "Bot", file_size: Optional[int] = None):
+    def __init__(self, file_id: str, file_unique_id: str, type: str, width: int, height: int, thumb: Optional["PhotoSize"], set_name: Optional[str] = None, file_size: Optional[int] = None):
+        super().__init__()
+        self._id = file_id
         self.file_id = file_id
         self.file_unique_id = file_unique_id
         self.type = type
         self.width = width
         self.height = height
+        self.thumb = thumb
+        self.set_name = set_name
         self.file_size = file_size
-        self.bot = bot
 
     async def get_file(self) -> bytes:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
         """
-        return await self.bot.get_file(self.file_id)
-
-    @classmethod
-    def from_dict(cls, data: Dict, bot: "Bot") -> "Sticker":
-        return cls(
-            file_id=data.get('file_id'), file_unique_id=data.get('file_unique_id'), type=data.get('type'),
-            width=data.get('width'), height=data.get('height'), file_size=data.get('file_size'), bot=bot
-        )
+        return await self.get_bot().get_file(self.file_id)
