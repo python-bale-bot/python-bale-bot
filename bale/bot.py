@@ -1436,10 +1436,10 @@ class Bot:
                 return result
 
         chat = await self.get_chat(user_id)
-        if chat and chat.parsed_type.is_private_chat:
+        if chat and chat.is_private_chat:
             payload = {
                 "username": chat.username,
-                "id": chat.chat_id,
+                "id": chat.id,
                 "first_name": chat.first_name,
                 "last_name": chat.last_name
             }
@@ -1496,7 +1496,7 @@ class Bot:
         except NotFound:
             return None
         else:
-            return ChatMember.from_dict(chat_id, response.result, self)
+            return ChatMember.from_dict(response.result, self)
 
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
@@ -1603,7 +1603,7 @@ class Bot:
             )
 
         response = await self._http.get_chat_administrators(params=handle_request_param(dict(chat_id=str(chat_id))))
-        result = [ChatMember.from_dict(chat_id=chat_id, data=member_payload, bot=self) for member_payload in response.result or list()]
+        result = [ChatMember.from_dict(data=member_payload, bot=self) for member_payload in response.result or list()]
         for member in result:
             self._state.store_user(member.user)
 
