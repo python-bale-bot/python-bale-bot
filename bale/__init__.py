@@ -11,6 +11,7 @@ An API wrapper for Bale written in Python.
 
 __all__ = (
     "__version__",
+    "BaleObject",
     "ChatType",
     "InlineKeyboardButton",
     "MenuKeyboardButton",
@@ -56,6 +57,7 @@ __all__ = (
 )
 
 from .version import __version__
+from .baleobject import BaleObject
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
 from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
 from .sticker import Sticker
