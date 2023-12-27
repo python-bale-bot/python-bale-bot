@@ -1,6 +1,6 @@
 Price
 =====
 
-.. autoclass:: bale.Price
+.. autoclass:: bale.LabeledPrice
     :members:
     :show-inheritance:

@@ -28,7 +28,7 @@ __all__ = (
     "Animation",
     "InputFile",
     "Sticker",
-    "Price",
+    "LabeledPrice",
     "Invoice",
     "SuccessfulPayment",
     "User",
@@ -58,7 +58,7 @@ from .baleobject import BaleObject
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
 from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
 from .sticker import Sticker
-from .payments import Price, Invoice, SuccessfulPayment
+from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .user import User
 from .chatphoto import ChatPhoto
 from .chat import Chat

@@ -22,6 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
+from bale import BaleObject
 from typing import Optional
 
 __all__ = (
@@ -29,7 +30,7 @@ __all__ = (
 )
 
 
-class SuccessfulPayment:
+class SuccessfulPayment(BaleObject):
     """
     This object contains basic information about a successful payment.
 
@@ -52,16 +53,15 @@ class SuccessfulPayment:
     )
 
     def __init__(self, currency: str, total_amount: int, invoice_payload: Optional[str] = None, shipping_option_id: Optional[str] = None):
+        super().__init__()
         self.currency = currency
         self.total_amount = total_amount
         self.invoice_payload = invoice_payload
         self.shipping_option_id = shipping_option_id
 
+        self._lock()
+
     @property
     def payload(self) -> Optional[str]:
         """Aliases for :attr:`invoice_payload`"""
         return self.invoice_payload
-
-    @classmethod
-    def from_dict(cls, data: dict):
-        return cls(data['currency'], data['total_amount'], data.get('invoice_payload'), data.get('shipping_option_id'))

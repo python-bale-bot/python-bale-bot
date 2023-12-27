@@ -22,8 +22,13 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
+from bale import BaleObject
 
-class Invoice:
+__all__ = (
+	"Invoice",
+)
+
+class Invoice(BaleObject):
 	"""This object shows Invoice
 
     Attributes
@@ -47,18 +52,11 @@ class Invoice:
 		"total_amount"
 	)
 	def __init__(self, title: str, description: str, start_parameter: str, currency: str, total_amount: int):
+		super().__init__()
 		self.title = title
 		self.description = description
 		self.start_parameter = start_parameter
 		self.currency = currency
 		self.total_amount = total_amount
 
-	@classmethod
-	def from_dict(cls, data: dict):
-		return cls(
-			title=data.get("title"),
-			description=data.get("description"),
-			start_parameter=data.get("start_parameter"),
-			currency=data.get("currency"),
-			total_amount=data.get("total_amount")
-		)
+		self._lock()
