@@ -18,7 +18,7 @@
    :hidden:
    :caption: Project
 
-   changelog
+   ChangeLog <https://python-bale-bot.ir/changelog>
    examples
    Website <https://python-bale-bot.ir>
    GitHub Repository <https://github.com/python-bale-bot/python-bale-bot>
