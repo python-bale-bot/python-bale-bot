@@ -28,8 +28,8 @@ from typing import Callable, Dict, Tuple, List, Union, Optional, overload, Liter
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from .utils import setup_logging, CoroT
-from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, Price, ChatMember, Updater,
-                  Location, ContactMessage, InputFile, CallbackQuery, SuccessfulPayment)
+from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, LabeledPrice, ChatMember, Updater,
+                  Location, Contact, InputFile, CallbackQuery, SuccessfulPayment)
 from bale.request import HTTPClient, handle_request_param
 
 __all__ = (
@@ -947,7 +947,12 @@ class Bot:
 
         return result
 
-    async def send_location(self, chat_id: Union[str, int], location: "Location", delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_location(
+            self, chat_id: Union[str, int],
+            location: "Location",
+            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None
+    ) -> "Message":
         """Use this method to send point on the map.
 
         .. code:: python
@@ -960,6 +965,10 @@ class Bot:
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             location: :class:`bale.Location`
                 The Location.
+            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+                Message Components
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
+                If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
 
@@ -987,12 +996,32 @@ class Bot:
                 "location param must be type of Location"
             )
 
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
         if delete_after and not isinstance(delete_after, (int, float)):
             raise TypeError(
                 "delete_after param must be type of int or float"
             )
 
-        response = await self._http.send_location(params=handle_request_param(dict(chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude)))
+        response = await self._http.send_location(
+            params=handle_request_param(
+                dict(
+                    chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude,
+                    horizontal_accuracy=location.horizontal_accuracy, reply_markup=components,
+                    reply_to_message_id=reply_to_message_id
+                )
+            )
+        )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -1000,7 +1029,9 @@ class Bot:
 
         return result
 
-    async def send_contact(self, chat_id: Union[str, int], contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_contact(self, chat_id: Union[str, int], contact: "Contact",
+                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -1013,6 +1044,10 @@ class Bot:
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             contact: :class:`bale.ContactMessage`
                 The Contact.
+            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+                Message Components
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
+                If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
 
@@ -1035,9 +1070,21 @@ class Bot:
                 "chat param must be type of str or int"
             )
 
-        if not isinstance(contact, ContactMessage):
+        if not isinstance(contact, Contact):
             raise TypeError(
                 "contact param must be type of ContactMessage"
+            )
+
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
             )
 
         if delete_after and not isinstance(delete_after, (int, float)):
@@ -1048,9 +1095,10 @@ class Bot:
         response = await self._http.send_contact(params=handle_request_param(
             dict(
                 chat_id=str(chat_id), phone_number=contact.phone_number, first_name=contact.first_name,
-                last_name=contact.last_name)
+                last_name=contact.last_name, reply_markup=components,
+                reply_to_message_id=reply_to_message_id
             )
-        )
+        ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
