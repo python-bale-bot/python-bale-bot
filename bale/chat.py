@@ -22,23 +22,23 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from bale import User, ChatType
-from typing import TYPE_CHECKING, Optional, List, Union
-from bale import ChatPhoto
+from bale import BaleObject, User, ChatPhoto, PhotoSize
+from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
+
 if TYPE_CHECKING:
-    from bale import Bot, Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, Price, Location, ContactMessage, InputFile
+    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile
 
 
 __all__ = (
     "Chat",
 )
 
-class Chat:
+class Chat(BaleObject):
     """This object indicates a chat.
 
     Attributes
     ----------
-        chat_id: :class:`str`
+        id: :class:`str`
             Unique identifier for this chat.
         type: :class:`str`
             Type of chat.
@@ -52,16 +52,15 @@ class Chat:
             Last name of the other party in a private chat.
         photo: Optional[:class:`bale.ChatPhoto`]
             Chat photo.
-        pinned_message: Optional[:class:`bale.Message`]
-            Pinned messages in chat. Defaults to None.
         invite_link: Optional[:class:`str`]
             Primary invite link, for groups and channel. Returned only in :meth:`bale.Bot.get_chat()`.
-        all_members_are_administrators: bool
-            Returns True when all users are in admin chat.
     """
+    PRIVATE: ClassVar[str] = "private"
+    GROUP: ClassVar[str] = "group"
+    CHANNEL: ClassVar[str] = "channel"
     __slots__ = (
         "__weakref__",
-        "chat_id",
+        "id",
         "type",
         "title",
         "username",
@@ -74,25 +73,32 @@ class Chat:
         "bot"
     )
 
-    def __init__(self, chat_id: int | str, type: str, title: Optional[str] = None, username: Optional[str] = None, first_name: Optional[str] = None, last_name: Optional[str] = None,
-                 photo: Optional["ChatPhoto"] = None, pinned_message: Optional["Message"] = None, all_members_are_administrators: Optional[bool] = None, invite_link: Optional[str] = None,
-                 bot: 'Bot' = None):
-        self.chat_id = chat_id
+    def __init__(self, id: int, type: str, title: Optional[str], username: Optional[str], first_name: Optional[str], last_name: Optional[str],
+                 photo: Optional["ChatPhoto"], invite_link: Optional[str]):
+        super().__init__()
+        self._id = id
+        self.id = id
         self.type = type
         self.title = title
         self.username = username
         self.first_name = first_name
         self.last_name = last_name
         self.photo = photo
-        self.pinned_message = pinned_message
-        self.all_members_are_administrators = all_members_are_administrators
         self.invite_link = invite_link
-        self.bot = bot
+
+        self._lock()
+        
+    @property
+    def is_private_chat(self) -> bool:
+        return self.type == self.PRIVATE
+    
+    @property
+    def is_group_chat(self) -> bool:
+        return self.type == self.GROUP
 
     @property
-    def parsed_type(self):
-        """:class:`bale.ChatType`: Represents the parsed type of chat."""
-        return ChatType(self.type)
+    def is_channel_chat(self) -> bool:
+        return self.type == self.CHANNEL
 
     async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -102,7 +108,7 @@ class Chat:
 
             await chat.send("hi, python-bale-bot!", components = None)
         """
-        return await self.bot.send_message(self.chat_id, text, components=components, delete_after=delete_after)
+        return await self.get_bot().send_message(self.id, text, components=components, delete_after=delete_after)
 
     async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -112,7 +118,7 @@ class Chat:
 
             await chat.send_document(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_document(self.id, document, caption=caption, components=components, delete_after=delete_after)
 
     async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -122,7 +128,7 @@ class Chat:
 
             await chat.send_photo(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_photo(self.id, photo, caption=caption, components=components, delete_after=delete_after)
 
     async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -132,7 +138,7 @@ class Chat:
 
             await chat.send_video(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_video(self.id, video, caption=caption, components=components, delete_after=delete_after)
 
     async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -142,7 +148,7 @@ class Chat:
 
             await chat.send_animation(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_animation(self.id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
 
     async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -152,7 +158,7 @@ class Chat:
 
             await chat.send_audio(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.bot.send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_audio(self.id, audio, caption=caption, components=components, delete_after=delete_after)
 
     async def send_location(self, location: "Location", delete_after: Optional[Union[float, int]] = None):
         """
@@ -162,9 +168,9 @@ class Chat:
 
             await chat.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
-        return await self.bot.send_location(self.chat_id, location, delete_after=delete_after)
+        return await self.get_bot().send_location(self.id, location, delete_after=delete_after)
 
-    async def send_contact(self, contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_contact(self, contact: "Contact", delete_after: Optional[Union[float, int]] = None) -> "Message":
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
 
@@ -172,9 +178,9 @@ class Chat:
 
             await chat.send_contact(ContactMessage('09****', 'first name', 'last name))
         """
-        return await self.bot.send_contact(self.chat_id, contact, delete_after=delete_after)
+        return await self.get_bot().send_contact(self.id, contact, delete_after=delete_after)
 
-    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["Price"], *,
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["LabeledPrice"], *,
                    payload: Optional[str] = None, photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                    need_phone_number: Optional[bool] = False, need_email: Optional[bool] = False,
                    need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True,
@@ -189,7 +195,7 @@ class Chat:
                 payload = "unique invoice payload", ...
             )
         """
-        return await self.bot.send_invoice(self.chat_id, title, description, provider_token, prices,
+        return await self.get_bot().send_invoice(self.id, title, description, provider_token, prices,
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                         delete_after=delete_after)
@@ -203,7 +209,7 @@ class Chat:
             chat = await bot.get_chat(1234)
             await chat.leave()
         """
-        await self.bot.leave_chat(self.chat_id)
+        await self.get_bot().leave_chat(self.id)
 
     async def add_user(self, user: Union["User", str, int]):
         """
@@ -217,7 +223,7 @@ class Chat:
         if isinstance(user, User):
             user = user.user_id
 
-        await self.bot.invite_user(self.chat_id, user)
+        await self.get_bot().invite_user(self.id, user)
 
     async def get_chat_member(self, user: Union["User", str, int]):
         """
@@ -233,7 +239,7 @@ class Chat:
         if isinstance(user, User):
             user = user.user_id
 
-        return await self.bot.get_chat_member(self.chat_id, user_id=user)
+        return await self.get_bot().get_chat_member(self.id, user_id=user)
 
     async def ban_chat_member(self, user: Union["User", str, int]):
         """
@@ -249,7 +255,7 @@ class Chat:
         if isinstance(user, User):
             user = user.user_id
 
-        return await self.bot.ban_chat_member(self.chat_id, user_id=user)
+        return await self.get_bot().ban_chat_member(self.id, user_id=user)
 
     async def get_chat_members_count(self):
         """
@@ -259,7 +265,7 @@ class Chat:
 
             await chat.get_chat_members_count()
         """
-        return await self.bot.get_chat_members_count(self.chat_id)
+        return await self.get_bot().get_chat_members_count(self.id)
 
     async def get_chat_administrators(self):
         """
@@ -269,26 +275,14 @@ class Chat:
 
             await chat.get_chat_administrators()
         """
-        return await self.bot.get_chat_administrators(self.chat_id)
+        return await self.get_bot().get_chat_administrators(self.id)
 
     @classmethod
-    def from_dict(cls, data: dict, bot):
-        return cls(bot=bot, chat_id=data.get("id"), type=data.get("type"), title=data.get("title"),
-                   username=data.get("username"), first_name=data.get("first_name"), last_name=data.get("last_name"),
-                   photo=ChatPhoto.from_dict(data=data.get("photo")) if data.get("photo") else None,
-                   pinned_message=Message.from_dict(bot=bot, data=data.get("pinned_message")) if data.get("pinned_message") else None,
-                   all_members_are_administrators=data.get("all_members_are_administrators", True),
-                   invite_link=data.get("invite_link"))
+    def from_dict(cls, data: Optional[Dict], bot):
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
 
-    def __eq__(self, other):
-        return isinstance(other, Chat) and self.chat_id == other.chat_id
+        data["photo"] = PhotoSize.from_dict(data.get('photo'), bot)
 
-    def __ne__(self, other):
-        return not self.__eq__(other)
-
-    def __hash__(self):
-        return hash(self.__str__())
-
-    def __repr__(self):
-        return (f"<Chat type={self.type} first_name={self.first_name} last_name={self.last_name} user_id={self.chat_id} username={self.username}"
-            f"title={self.title}>")
+        return super().from_dict(data, bot)
