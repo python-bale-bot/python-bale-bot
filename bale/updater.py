@@ -134,17 +134,18 @@ class Updater:
 
     async def process_update(self, update: "Update"):
         self.bot.dispatch("update", update)
-        if update.type == Update.CALLBACK_QUERY:
+        if update.callback_query:
             self.bot.dispatch("callback", update.callback_query)
-        elif update.type == Update.MESSAGE:
+        elif update.message:
             self.bot.dispatch("message", update.message)
             if update.message.successful_payment:
                 self.bot.dispatch("successful_payment", update.message.successful_payment)
+            if update.message.new_chat_members:
+                for user in update.message.new_chat_members:
+                    self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
             if update.message.left_chat_member:
                 self.bot.dispatch("member_chat_leave", update.message, update.message.chat, update.message.left_chat_member)
-            for user in update.message.new_chat_members or []:
-                self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
-        elif update.type == Update.EDITED_MESSAGE:
+        elif update.edited_message:
             self.bot.dispatch("message_edit", update.edited_message)
 
     async def stop(self):
