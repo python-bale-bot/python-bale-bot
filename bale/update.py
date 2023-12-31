@@ -22,7 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from __future__ import annotations
-from typing import TYPE_CHECKING, Dict, Optional
+from typing import TYPE_CHECKING, Dict, Optional, ClassVar
 from bale import BaleObject, Message, CallbackQuery
 
 if TYPE_CHECKING:
@@ -46,9 +46,9 @@ class Update(BaleObject):
         edited_message: Optional[:class:`bale.Message`]
             New version of a message that is known to the bot and was edited.
     """
-    CALLBACK_QUERY = "callback_query"
-    MESSAGE = "message"
-    EDITED_MESSAGE = "edited_message"
+    CALLBACK_QUERY: ClassVar[str] = "callback_query"
+    MESSAGE: ClassVar[str] = "message"
+    EDITED_MESSAGE: ClassVar[str] = "edited_message"
     __slots__ = (
         "update_id",
         "type",
