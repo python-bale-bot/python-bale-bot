@@ -68,6 +68,7 @@ class BaleObject:
         return self.__bot
 
     def set_bot(self, bot: "Bot"):
+        from bale import Bot
         if not isinstance(bot, Bot):
             raise TypeError(
                 "bot param must be type of Bot"
@@ -105,14 +106,14 @@ class BaleObject:
         attrs = self._get_attrs(to_dict=False)
         return "<{} {}>".format(
             self.__class__.__name__,
-            " ".join([
-                repr(attr) for attr in attrs
+            ", ".join([
+                "{}={}".format(key, repr(value)) for key, value in attrs.items() if not key.startswith("_")
             ])
         )
 
     @classmethod
-    def _get_signature_keys(cls, include_private=False) -> Set:
-        return set({ k: v for k, v in inspect.signature(cls).parameters.keys() if not include_private or (include_private and not k.startswith('_')) })
+    def _get_signature_keys(cls) -> Set:
+        return set(inspect.signature(cls).parameters.keys())
 
     def _get_attrs(self, *, to_dict: bool) -> Dict:
         attributes = {item: getattr(self, item, None) for cls in self.__class__.__mro__[:-1] for item in cls.__slots__}
