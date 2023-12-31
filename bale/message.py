@@ -275,6 +275,32 @@ class Message(BaleObject):
                                          reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
 
+    async def reply_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+
+        .. code:: python
+
+            await message.reply_location(bale.Location(35.71470468031143, 51.8568519168293))
+        """
+        return await self.get_bot().send_location(self.chat_id, location,
+                                               components=components,
+                                               reply_to_message_id=self.message_id,
+                                               delete_after=delete_after)
+
+    async def reply_contact(self, contact: "Contact", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+
+        .. code:: python
+
+            await message.reply_contact(bale.ContactMessage('09****', 'first name', 'last name'))
+        """
+        return await self.get_bot().send_contact(self.chat_id, contact,
+                                               components=components,
+                                               reply_to_message_id=self.message_id,
+                                               delete_after=delete_after)
+
     async def edit(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`.
