@@ -38,12 +38,12 @@ class BaleObject:
     __slots__ = (
         "__bot",
         "_id",
-        "__lock"
+        "_locked"
     )
     def __init__(self):
         self.__bot: Optional["Bot"] = None
         self._id = None
-        self.__lock: bool = False
+        self._locked: bool = False
 
     @property
     def bot(self) -> Optional["Bot"]:
@@ -54,10 +54,10 @@ class BaleObject:
         self.set_bot(value)
 
     def _lock(self) -> None:
-        self.__lock = True
+        self._locked = True
 
     def _unlock(self) -> None:
-        self.__lock = False
+        self._locked = False
 
     def get_bot(self) -> "Bot":
         if not self.__bot:
@@ -76,7 +76,7 @@ class BaleObject:
         self.__bot = bot
 
     def __setattr__(self, key: str, value: Any) -> None:
-        if key.startswith('_') or not getattr(self, "__lock", True):
+        if key.startswith('_') or not getattr(self, "_locked", True):
             super().__setattr__(key, value)
             return
 
@@ -85,7 +85,7 @@ class BaleObject:
         )
 
     def __delattr__(self, item: str) -> None:
-        if item.startswith('_') or not getattr(self, "__lock", True):
+        if item.startswith('_') or not getattr(self, "_locked", True):
             super().__delattr__(item)
             return
 
