@@ -142,23 +142,17 @@ class BaleObject:
         if not data:
             return None
 
-        try:
-            obj: Bale_obj = cls(**data)
-        except TypeError as exc:
-            if not "__init__() got an unexpected keyword argument" in str(exc):
-                raise exc
-
-            existing_kwargs = {
+        existing_kwargs = {
                 key: data.get(key if not key == 'from_user' else 'from') for key in cls._get_signature_keys()
             }
-            obj: Bale_obj = cls(**existing_kwargs)
+        obj: Bale_obj = cls(**existing_kwargs)
 
         obj.set_bot(bot)
         return obj
 
     @classmethod
     def from_dict(cls: Type[Bale_obj], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj]:
-        return cls.from_dict(data=data, bot=bot)
+        return cls._from_dict(data=data, bot=bot)
 
     @staticmethod
     def parse_data(data: Optional[Dict]) -> Optional[Dict]:
