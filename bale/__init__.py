@@ -56,8 +56,7 @@ __all__ = (
 from .version import __version__
 from .baleobject import BaleObject
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
-from attachments.photosize import PhotoSize
-from .attachments import BaseFile, Audio, Contact, Location, Document, Video, Animation, InputFile
+from .attachments import InputFile, PhotoSize, BaseFile, Document, Audio, Contact, Location, Video, Animation
 from .sticker import Sticker
 from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .user import User

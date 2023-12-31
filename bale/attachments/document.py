@@ -22,8 +22,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 """
 from typing import Dict, Optional
-from bale import PhotoSize
-from .file import BaseFile
+from . import BaseFile, PhotoSize
 
 __all__ = (
 	"Document",
