@@ -33,7 +33,7 @@ class User(BaleObject):
 
     Attributes
     ----------
-        user_id: :class:`int`
+        id: :class:`int`
             Unique identifier for this user or bot.
         is_bot: :class:`bool`
             ``True``, if this user is a bot.
@@ -50,18 +50,18 @@ class User(BaleObject):
         "first_name",
         "last_name",
         "username",
-        "user_id"
+        "id"
     )
 
-    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
+    def __init__(self, id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
                  username: Optional[str] = None):
         super().__init__()
-        self._id = user_id
+        self._id = id
         self.is_bot = is_bot
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
-        self.user_id = user_id
+        self.id = id
 
         self._lock()
 
@@ -72,8 +72,13 @@ class User(BaleObject):
 
     @property
     def chat_id(self) -> str:
-        """Aliases for :attr:`user_id`"""
-        return str(self.user_id)
+        """Aliases for :attr:`id`"""
+        return str(self.id)
+
+    @property
+    def user_id(self) -> str:
+        """Aliases for :attr:`id`"""
+        return str(self.id)
 
     async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
