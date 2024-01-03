@@ -68,12 +68,6 @@ class BaleObject:
         return self.__bot
 
     def set_bot(self, bot: "Bot"):
-        from bale import Bot
-        if not isinstance(bot, Bot):
-            raise TypeError(
-                "bot param must be type of Bot"
-            )
-
         self.__bot = bot
 
     def __setattr__(self, key: str, value: Any) -> None:
