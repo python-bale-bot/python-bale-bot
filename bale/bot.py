@@ -1036,13 +1036,13 @@ class Bot:
 
         .. code:: python
 
-            await bot.send_cantact(1234, bale.ContactMessage('09****', 'first name', 'last name'))
+            await bot.send_cantact(1234, bale.Contact('09****', 'first name', 'last name'))
 
         Parameters
         ----------
             chat_id: Union[:class:`str`, :class:`int`]
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            contact: :class:`bale.ContactMessage`
+            contact: :class:`bale.Contact`
                 The Contact.
             components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
                 Message Components
@@ -1072,7 +1072,7 @@ class Bot:
 
         if not isinstance(contact, Contact):
             raise TypeError(
-                "contact param must be type of ContactMessage"
+                "contact param must be type of Contact"
             )
 
         if components:
@@ -1124,7 +1124,7 @@ class Bot:
         .. code:: python
 
             await bot.send_invoice(
-                1234, "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                1234, "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
                 payload = "unique invoice payload", ...
             )
 
@@ -1142,7 +1142,7 @@ class Bot:
                 Product description. 1- 255 characters.
             provider_token: str
                 You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-            prices: List[:class:`bale.Price`]
+            prices: List[:class:`bale.LabeledPrice`]
                 A list of prices.
             payload: Optional[:class:`str`]
                 Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.

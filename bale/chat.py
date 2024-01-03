@@ -176,7 +176,7 @@ class Chat(BaleObject):
 
         .. code:: python
 
-            await chat.send_contact(ContactMessage('09****', 'first name', 'last name))
+            await chat.send_contact(Contact('09****', 'first name', 'last name))
         """
         return await self.get_bot().send_contact(self.id, contact, delete_after=delete_after)
 
@@ -191,7 +191,7 @@ class Chat(BaleObject):
         .. code:: python
 
             await chat.send_invoice(
-                "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
                 payload = "unique invoice payload", ...
             )
         """

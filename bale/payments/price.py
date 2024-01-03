@@ -29,7 +29,7 @@ __all__ = (
 )
 
 class LabeledPrice(BaleObject):
-	"""This object shows a Price.
+	"""This object shows a LabeledPrice.
 
     Attributes
     ----------

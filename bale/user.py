@@ -151,7 +151,7 @@ class User(BaleObject):
 
         .. code:: python
 
-            await user.send_contact(bale.ContactMessage('09****', 'first name', 'last name))
+            await user.send_contact(bale.Contact('09****', 'first name', 'last name))
         """
         return await self.get_bot().send_contact(self.chat_id, contact, components=components, delete_after=delete_after)
 
@@ -165,7 +165,7 @@ class User(BaleObject):
         .. code:: python
 
             await user.send_invoice(
-                "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
                 payload = "unique invoice payload", ...
             )
         """

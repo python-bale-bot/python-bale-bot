@@ -57,7 +57,7 @@ class Message(BaleObject):
         reply_to_message: Optional[:class:`bale.Message`]
             For replies, the original message. Note that the Message object in this field will not contain further
             reply_to_message fields even if it itself is a reply.
-        contact: Optional[:class:`bale.ContactMessage`]
+        contact: Optional[:class:`bale.Contact`]
             Message is a shared contact, information about the contact.
         location: Optional[:class:`bale.Location`]
             Message is a shared location, information about the location.
@@ -294,7 +294,7 @@ class Message(BaleObject):
 
         .. code:: python
 
-            await message.reply_contact(bale.ContactMessage('09****', 'first name', 'last name'))
+            await message.reply_contact(bale.Contact('09****', 'first name', 'last name'))
         """
         return await self.get_bot().send_contact(self.chat_id, contact,
                                                components=components,

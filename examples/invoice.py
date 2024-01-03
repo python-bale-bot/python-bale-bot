@@ -1,4 +1,4 @@
-from bale import Message, Bot, Price, SuccessfulPayment
+from bale import Message, Bot, LabeledPrice, SuccessfulPayment
 
 client = Bot(token="Your Token")
 
@@ -14,7 +14,7 @@ async def on_message(message: Message):
 			description="Example Donate description",
 			provider_token="6037************",
 			payload="{}".format(message.author.user_id),
-			prices=[Price(label="Milk", amount=20000)]
+			prices=[LabeledPrice(label="Milk", amount=20000)]
 		)
 
 @client.event

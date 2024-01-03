@@ -1,5 +1,5 @@
-ChatPhoto
-=========
+Chat Photo
+==========
 
 .. autoclass:: bale.ChatPhoto
     :members:

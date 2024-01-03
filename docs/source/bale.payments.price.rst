@@ -1,5 +1,5 @@
-Price
-=====
+Labeled Price
+=============
 
 .. autoclass:: bale.LabeledPrice
     :members:
