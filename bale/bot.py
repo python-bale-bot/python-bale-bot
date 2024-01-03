@@ -422,9 +422,9 @@ class Bot:
                 )
             components = components.to_json()
 
-        if reply_to_message_id and not isinstance(reply_to_message_id, (int, str)):
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
-                "reply_to_message_id param must be type of Message"
+                "reply_to_message_id param must be type of int or str"
             )
 
         if delete_after and not isinstance(delete_after, (int, float)):
