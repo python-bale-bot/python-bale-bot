@@ -126,7 +126,7 @@ class BaleObject:
         return dumps(self.to_dict())
 
     def to_dict(self) -> Dict:
-        data = {k: v for k, v in self._get_attrs(to_dict=True).keys() if not k.startswith('_')}
+        data = {k: v for k, v in self._get_attrs(to_dict=True).items() if not k.startswith('_')}
 
         if "from_user" in data:
             data["from"] = data.pop("from_user")
@@ -138,7 +138,7 @@ class BaleObject:
             return None
 
         existing_kwargs = {
-                key: data.get(key if not key == 'from_user' else 'from') for key in cls._get_signature_keys()
+                key: data.get(key) for key in cls._get_signature_keys()
             }
         obj: Bale_obj = cls(**existing_kwargs)
 
