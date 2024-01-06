@@ -1351,9 +1351,9 @@ class Bot:
                 )
             delay = float(delay)
 
-        async def delete_message_task(d: Optional[float] = None):
-            if d:
-                await asyncio.sleep(d)
+        async def delete_message_task(_delay: Optional[float] = None):
+            if _delay:
+                await asyncio.sleep(_delay)
 
             response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
             if response.result:
