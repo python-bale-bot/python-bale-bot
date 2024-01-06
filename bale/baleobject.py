@@ -101,7 +101,7 @@ class BaleObject:
         return "<{} {}>".format(
             self.__class__.__name__,
             ", ".join([
-                "{}={}".format(key, repr(value)) for key, value in attrs.items() if not key.startswith("_")
+                "{}={}".format(key, repr(value)) for key, value in attrs.items() if not key.startswith("_") and value
             ])
         )
 
