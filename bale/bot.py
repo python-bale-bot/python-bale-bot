@@ -31,6 +31,7 @@ from .utils import setup_logging, CoroT
 from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, LabeledPrice, ChatMember, Updater,
                   Location, Contact, InputFile, CallbackQuery, SuccessfulPayment)
 from bale.request import HTTPClient, handle_request_param
+from weakref import WeakValueDictionary
 
 __all__ = (
     "Bot"
@@ -97,6 +98,16 @@ class Bot:
     def user(self) -> Optional["User"]:
         """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
         return self._client_user
+
+    @property
+    def users(self) -> WeakValueDictionary[str, "User"]:
+        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
+        return self._state.users
+
+    @property
+    def chats(self) -> WeakValueDictionary[str, "Chat"]:
+        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
+        return self._state.chats
 
     async def _setup_hook(self):
         loop = asyncio.get_running_loop()

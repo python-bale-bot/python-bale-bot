@@ -53,11 +53,23 @@ class State:
     def bot(self) -> "Bot":
         return self._bot
 
+    @property
+    def messages(self) -> Deque["Message"]:
+        return self._messages
+
+    @property
+    def users(self) -> weakref.WeakValueDictionary[str, "User"]:
+        return self._users
+
+    @property
+    def chats(self) -> weakref.WeakValueDictionary[str, "Chat"]:
+        return self._chats
+
     def store_message(self, message: "Message"):
         self._messages.appendleft(message)
 
     def store_chat(self, chat: "Chat"):
-        self._chats[str(chat.chat_id)] = chat
+        self._chats[str(chat.id)] = chat
 
     def store_user(self, user: "User"):
         self._users[str(user.chat_id)] = user
