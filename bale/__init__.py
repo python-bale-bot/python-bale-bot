@@ -4,7 +4,7 @@ Bale API Wrapper
 
 An API wrapper for Bale written in Python.
 
-:copyright: (c) 2023-present, Kian Ahmadian
+:copyright: (c) 2022-present, Kian Ahmadian
 :license: GPL-2.0, see LICENSE for more details.
 
 """
