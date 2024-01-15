@@ -119,7 +119,7 @@ class Message(BaleObject):
 
     @property
     def attachment(self) -> Optional["BaseFile"]:
-        """Optional[:class:`bale.File`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
+        """Optional[:class:`bale.BaseFile`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
         attachment = self.video or self.photos or self.audio or self.document or self.animation
         if not attachment:
             return
