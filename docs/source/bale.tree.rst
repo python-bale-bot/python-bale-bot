@@ -11,3 +11,4 @@ Available Types
     bale.chatphoto
     bale.user
     bale.callbackquery
+    bale.sticker
