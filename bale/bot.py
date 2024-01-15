@@ -315,7 +315,7 @@ class Bot:
         """an Event for get errors when exceptions"""
         _log.exception(f'Exception in {event_name} Ignored')
 
-    async def get_bot(self) -> User:
+    async def get_me(self) -> User:
         """Get bot information
 
         Returns
@@ -327,7 +327,7 @@ class Bot:
             APIError
                 Get bot Failed.
         """
-        response = await self._http.get_bot()
+        response = await self._http.get_me()
         client_user = User.from_dict(data=response.result, bot=self)
         self._client_user = client_user
         return client_user
@@ -1398,7 +1398,7 @@ class Bot:
             return chat
 
     async def get_user(self, user_id: Union[str, int], *, use_cache=True) -> Optional["User"]:
-        """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
+        """This Method almost like :meth:`bale.Bot.get_chat` , but this a filter that only get user.
 
         .. code:: python
 
@@ -1673,7 +1673,7 @@ class Bot:
                 "user_id param must be type of str or int"
             )
 
-        response = await self._http.invite_to_chat(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
+        response = await self._http.invite_user(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result or False
 
     async def leave_chat(self, chat_id: Union[str, int]) -> bool:
@@ -1733,7 +1733,7 @@ class Bot:
         return result
 
     async def connect(self):
-        await self.get_bot()
+        await self.get_me()
         await self.updater.start()
 
     def run(self):

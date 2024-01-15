@@ -231,7 +231,7 @@ class HTTPClient:
 	def set_webhook(self, *, params: RequestParams):
 		return self.request(Route("POST", "setWebhook", self.token), json=params.payload)
 
-	def get_bot(self):
+	def get_me(self):
 		return self.request(Route("GET", "getMe", self.token))
 
 	def get_chat(self, *, params: RequestParams):
@@ -252,5 +252,5 @@ class HTTPClient:
 	def ban_chat_member(self, *, params: RequestParams):
 		return self.request(Route("POST", "banChatMember", self.token), json=params.payload)
 
-	def invite_to_chat(self, *, params: RequestParams):
+	def invite_user(self, *, params: RequestParams):
 		return self.request(Route("GET", "inviteUser", self.token), json=params.payload)
