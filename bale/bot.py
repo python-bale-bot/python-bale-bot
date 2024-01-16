@@ -350,7 +350,7 @@ class Bot:
                 On success, True is returned.
         """
         response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
-        return response or False
+        return response.result or False
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
@@ -1495,6 +1495,122 @@ class Bot:
             return None
         else:
             return ChatMember.from_dict(response.result, self)
+
+    async def promote_chat_member(self,
+          chat_id: Union[str, int],
+          user_id: Union[str, int],
+          can_be_edited: Optional[bool] = None,
+          can_change_info: Optional[bool] = None,
+          can_post_messages: Optional[bool] = None,
+          can_edit_messages: Optional[bool] = None,
+          can_delete_messages: Optional[bool] = None,
+          can_invite_users: Optional[bool] = None,
+          can_restrict_members: Optional[bool] = None,
+          can_pin_messages: Optional[bool] = None,
+          can_promote_members: Optional[bool] = None,
+          can_send_messages: Optional[bool] = None,
+          can_send_media_messages: Optional[bool] = None,
+          can_reply_to_story: Optional[bool] = None,
+          can_send_link_message: Optional[bool] = None,
+          can_send_forwarded_message: Optional[bool] = None,
+          can_see_members: Optional[bool] = None,
+          can_add_story: Optional[bool] = None
+    ):
+        """an administrator in the chat for this to work and must have the appropriate admin rights.
+        Pass :obj:`False` for all boolean parameters to demote a user.
+
+        .. code:: python
+
+            await bot.promote_chat_member(1234, 1234, can_change_info = True)
+
+        Parameters
+        ----------
+            chat_id: Union[:class:`int`, :class:`str`]
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            user_id: Union[:class:`int`, :class:`str`]
+                Unique identifier of the target user.
+            can_be_edited: :class:`bool`
+                Pass :obj:`True`, if the bot is allowed to edit administrator privileges of that user.
+            can_change_info: :class:`bool`
+                Pass :obj:`True`, if the user can change the chat title, photo and other settings.
+            can_post_messages: :class:`bool`
+                Pass :obj:`True`, if the administrator can post messages in the channel,
+                or access channel statistics; channels only.
+            can_edit_messages: :class:`bool`
+                Pass :obj:`True`,
+                if the administrator can edit messages of other users and can pin messages; channels only.
+            can_delete_messages: :class:`bool`
+                Pass :obj:`True`, if the administrator can delete messages of other users.
+            can_invite_users: :class:`bool`
+                Pass :obj:`True`, if the user can invite new users to the chat.
+            can_restrict_members: :class:`bool`
+                Pass :obj:`True`, if the administrator can restrict, ban or unban chat members.
+            can_pin_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to pin messages, groups, channels only.
+            can_promote_members: :class:`bool`
+                Pass :obj:`True`,
+                if the administrator can add new administrators with a subset of his own privileges or demote administrators
+                that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user).
+            can_send_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send messages.
+            can_send_media_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send a media message.
+            can_reply_to_story: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to reply to a story.
+            can_send_link_message: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send a link message.
+            can_send_forwarded_message: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to forward a message to chat.
+            can_see_members: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to see the list of chat members.
+            can_add_story: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to post a story from chat.
+
+        Returns
+        -------
+            :class:`bool`
+                On success, ``True`` is returned.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to promote Chat Member.
+            APIError
+                Promote chat member Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat param must be type of Chat"
+            )
+
+        if not isinstance(user_id, (str, int)):
+            raise TypeError(
+                "user_id must be type of str or int"
+            )
+
+        response = await self._http.get_chat_member(params=handle_request_param(dict(
+            chat_id=str(chat_id),
+            user_id=str(user_id),
+            can_be_edited=can_be_edited,
+            can_change_info=can_change_info,
+            can_post_messages=can_post_messages,
+            can_edit_messages=can_edit_messages,
+            can_delete_messages=can_delete_messages,
+            can_invite_users=can_invite_users,
+            can_restrict_members=can_restrict_members,
+            can_pin_messages=can_pin_messages,
+            can_promote_members=can_promote_members,
+            can_send_messages=can_send_messages,
+            can_send_media_messages=can_send_media_messages,
+            can_reply_to_story=can_reply_to_story,
+            can_send_link_message=can_send_link_message,
+            can_send_forwarded_message=can_send_forwarded_message,
+            can_see_members=can_see_members,
+            can_add_story=can_add_story
+        )))
+        return response.result or False
 
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
