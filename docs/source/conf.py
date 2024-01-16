@@ -77,5 +77,6 @@ html_theme_options = {
         },
     ]
 }
+html_title = 'python-bale-bot v{}'.format(version)
 
 man_pages = [(master_doc, "python-bale-bot", "python-bale-bot Documentation", [author], 1)]
