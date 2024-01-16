@@ -28,7 +28,7 @@ class BaseFile(BaleObject):
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :class:`str`
             Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
-        file_size: Optional[:class:`int]
+        file_size: Optional[:class:`int`]
             File size in bytes, if known.
 
     .. note::

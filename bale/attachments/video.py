@@ -34,7 +34,7 @@ class Video(BaseFile):
             Original video filename as defined by sender.
         mime_type: Optional[:class:`str`]
             MIME type of file as defined by sender.
-        file_size: Optional[:class:`int]
+        file_size: Optional[:class:`int`]
             File size in bytes, if known.
     """
     __slots__ = (
