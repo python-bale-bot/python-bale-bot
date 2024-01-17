@@ -32,7 +32,7 @@ class Sticker(BaleObject):
             Sticker height.
         thumb: Optional[:class:`bale.PhotoSize`]
             Sticker thumbnail.
-        set_name: Optional[str]
+        set_name: Optional[:class:`str`]
             Name of the sticker set to which the sticker belongs.
         file_size: Optional[:class:`int`]
             File size in bytes.
