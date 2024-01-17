@@ -9,7 +9,7 @@
 project = 'python-bale-bot'
 project_copyright = '2020-Present, Kian Ahmadian'
 author = 'Kian Ahmadian'
-release = '2.4.9'
+release = version = '2.5.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
