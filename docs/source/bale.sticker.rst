@@ -1,6 +1,6 @@
-Contact
+Sticker
 =======
 
-.. autoclass:: bale.Contact
+.. autoclass:: bale.Sticker
     :members:
     :show-inheritance:

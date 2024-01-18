@@ -20,7 +20,7 @@ extras_require = {
 if __name__ == "__main__":
     setup(
         name="python-bale-bot",
-        version="2.4.9",
+        version="2.5.0",
         platforms=["Windows"],
         fullname="python-bale-bot",
         description="An API wrapper for Bale written in Python",
@@ -29,9 +29,10 @@ if __name__ == "__main__":
         license="LGPLv2",
         project_urls={
             "Documentation": "https://docs.python-bale-bot.ir/en/stable/",
-            "Changelog": "https:///docs.python-bale-bot.ir/en/stable/changelog.html",
+            "Changelog": "https://python-bale-bot.ir/changelog",
             "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues",
-            "Source Code": "https://github.com/python-bale-bot/python-bale-bot/"
+            "Source Code": "https://github.com/python-bale-bot/python-bale-bot/",
+            "News": "https://t.me/pbblib"
         },
         download_url=f"https://pypi.org/project/python-bale-bot/",
         keywords="bale bale-bot framework bot",

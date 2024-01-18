@@ -7,9 +7,9 @@
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
 project = 'python-bale-bot'
-copyright = '2020-Present, Kian Ahmadian'
+project_copyright = '2020-Present, Kian Ahmadian'
 author = 'Kian Ahmadian'
-release = '2.4.9'
+release = version = '2.5.0'
 
 # -- General configuration ---------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#general-configuration
@@ -56,6 +56,7 @@ html_css_files = [
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/solid.min.css",
     "https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/brands.min.css",
     "css/style.css",
+    "css/sidebar.css",
     "css/announcement.css"
 ]
 html_theme_options = {
@@ -76,5 +77,6 @@ html_theme_options = {
         },
     ]
 }
+html_title = 'python-bale-bot v{}'.format(version)
 
 man_pages = [(master_doc, "python-bale-bot", "python-bale-bot Documentation", [author], 1)]

@@ -80,8 +80,8 @@ Contact to Developers
    :target: https://snyk.io/advisor/python/python-bale-bot
 .. |Project License| image:: https://img.shields.io/github/license/python-bale-bot/python-bale-bot?style=plastic
    :target: https://www.gnu.org/licenses/old-licenses/gpl-2.0.en.html
-.. |API Version| image:: https://img.shields.io/badge/Bale%20API-1.0-blue?style=plastic
-   :target: https://dev.bale.ai/api
+.. |API Version| image:: https://img.shields.io/badge/Bale%20API-2.0-blue?style=plastic
+   :target: https://docs.bale.ai
 .. |Documentation Status| image:: https://readthedocs.org/projects/python-bale-bot/badge/?version=stable
    :target: https://docs.python-bale-bot.ir/
 .. |Email| image:: https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white

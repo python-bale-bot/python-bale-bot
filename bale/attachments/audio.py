@@ -1,62 +1,53 @@
-"""
-MIT License
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2024
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
+#
+# This software is licensed under the GNU General Public License v2.0.
+# See the accompanying LICENSE file for details.
+#
+# You should have received a copy of the GNU General Public License v2.0
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+from typing import Optional
+from .file import BaseFile
 
-Copyright (c) 2023 Kian Ahmadian
+__all__ = (
+    "Audio",
+)
 
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
-from typing import TYPE_CHECKING
-
-from .file import File
-if TYPE_CHECKING:
-    from bale import Bot
-
-
-class Audio(File):
+class Audio(BaseFile):
     """This object shows an Audio.
 
     Attributes
     ----------
-        file_id: str
+        file_id: :class:`str`
             Identifier for this file, which can be used to download or reuse the file.
+        file_unique_id: :class:`str`
+            Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
         duration: int
             Duration of the audio in seconds as defined by sender.
-        file_size: int
-            File size in bytes.
-        mime_type: Optional[:class:`str`]
-            MIME type of the file as defined by sender.
         title: Optional[:class:`str`]
             Title of the audio as defined by sender or by audio tags.
+        file_name: Optional[:class:`str`]
+            Original audio filename as defined by sender.
+        mime_type: Optional[:class:`str`]
+            MIME type of file as defined by sender.
+        file_size: Optional[:class:`int`]
+            File size in bytes, if known.
     """
-    __FILE_TYPE__ = "AUDIO"
-    __slots__ = File.__slots__ + (
+    __slots__ = (
         "duration",
-        "title"
+        "title",
+        "file_name",
+        "mime_type"
     )
 
-    def __init__(self, file_id: str, duration: int = None, file_size: int = None, bot: "Bot" = None, mime_type: str = None, title: str = None):
-        super().__init__(self.__FILE_TYPE__, file_id, file_size, mime_type, bot, duration=duration, title=title)
+    def __init__(self, file_id: str, file_unique_id: str, duration: int, file_name: Optional[str], title: Optional[str], mime_type: Optional[str], file_size: Optional[int]):
+        super().__init__(file_id, file_unique_id, file_size)
 
         self.duration = duration
+        self.file_name = file_name
         self.title = title
+        self.mime_type = mime_type
 
-    @classmethod
-    def from_dict(cls, data, bot: "Bot"):
-        return cls(file_id=data.get("file_id"), duration=data.get("duration"), file_size=data.get("file_size"), title=data.get("title"),
-                   mime_type=data.get("mime_type"), bot=bot)
+        self._lock()

@@ -1,6 +1,6 @@
-Chat Photo
+Photo Size
 ==========
 
-.. autoclass:: bale.ChatPhoto
+.. autoclass:: bale.PhotoSize
     :members:
     :show-inheritance:

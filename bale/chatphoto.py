@@ -1,34 +1,24 @@
-"""
-MIT License
-
-Copyright (c) 2023 Kian Ahmadian
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2024
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
+#
+# This software is licensed under the GNU General Public License v2.0.
+# See the accompanying LICENSE file for details.
+#
+# You should have received a copy of the GNU General Public License v2.0
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import Optional, Dict
+from typing import Optional, TYPE_CHECKING
+from bale import BaleObject
+if TYPE_CHECKING:
+    from bale import BaseFile
 
 __all__ = (
     "ChatPhoto",
 )
 
-class ChatPhoto:
+class ChatPhoto(BaleObject):
     """
     This object represents a chat photo.
 
@@ -49,12 +39,25 @@ class ChatPhoto:
         "big_file_id",
         "big_file_unique_id"
     )
-    def __init__(self, small_file_id: Optional[str] = None, small_file_unique_id: Optional[str] = None, big_file_id: Optional[str] = None, big_file_unique_id: Optional[str] = None):
+    def __init__(self, small_file_id: Optional[str] = None, small_file_unique_id: Optional[str] = None,
+                 big_file_id: Optional[str] = None, big_file_unique_id: Optional[str] = None):
+        super().__init__()
         self.small_file_id = small_file_unique_id
         self.small_file_unique_id = small_file_unique_id
         self.big_file_id = big_file_unique_id
         self.big_file_unique_id = big_file_unique_id
+        self._lock()
 
-    @classmethod
-    def from_dict(cls, data : Dict) -> "ChatPhoto":
-        return cls(data.get('small_file_id'), data.get('small_file_unique_id'), data.get('big_file_id'), data.get('big_file_unique_id'))
+    @property
+    def small_file_object(self) -> "BaseFile":
+        from bale import BaseFile
+        obj = BaseFile(self.small_file_id, self.small_file_unique_id, None)
+        obj.set_bot(self.bot)
+        return obj
+
+    @property
+    def big_file_object(self) -> "BaseFile":
+        from bale import BaseFile
+        obj = BaseFile(self.big_file_id, self.big_file_unique_id, None)
+        obj.set_bot(self.bot)
+        return obj

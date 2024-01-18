@@ -4,39 +4,37 @@ Bale API Wrapper
 
 An API wrapper for Bale written in Python.
 
-:copyright: (c) 2023-present, Kian Ahmadian
+:copyright: (c) 2022-present, Kian Ahmadian
 :license: GPL-2.0, see LICENSE for more details.
 
 """
 
 __all__ = (
     "__version__",
-    "ChatType",
+    "BaleObject",
     "InlineKeyboardButton",
     "MenuKeyboardButton",
     "ReplyMarkupItem",
     "InlineKeyboardMarkup",
     "MenuKeyboardMarkup",
+    "PhotoSize",
     "ChatPhoto",
-    "File",
+    "BaseFile",
     "Audio",
-    "ContactMessage",
+    "Contact",
     "Location",
-    "Photo",
     "Document",
     "Video",
     "Animation",
     "InputFile",
     "Sticker",
-    "Price",
+    "LabeledPrice",
     "Invoice",
     "SuccessfulPayment",
     "User",
     "Chat",
     "Message",
     "State",
-    "Permissions",
-    "ChatMemberStatus",
     "ChatMember",
     "CallbackQuery",
     "Update",
@@ -56,17 +54,15 @@ __all__ = (
 )
 
 from .version import __version__
+from .baleobject import BaleObject
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
-from .attachments import File, Audio, ContactMessage, Location, Photo, Document, Video, Animation, InputFile
+from .attachments import InputFile, PhotoSize, BaseFile, Document, Audio, Contact, Location, Video, Animation
 from .sticker import Sticker
-from .payments import Price, Invoice, SuccessfulPayment
+from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .user import User
-from .chattype import ChatType
 from .chatphoto import ChatPhoto
 from .chat import Chat
 from .message import Message
-from .permissions import Permissions
-from .chatmemberstatus import ChatMemberStatus
 from .chatmember import ChatMember
 from .callbackquery import CallbackQuery
 from .update import Update

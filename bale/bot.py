@@ -1,26 +1,13 @@
-"""
-MIT License
-
-Copyright (c) 2023 Kian Ahmadian
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-"""
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2024
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
+#
+# This software is licensed under the GNU General Public License v2.0.
+# See the accompanying LICENSE file for details.
+#
+# You should have received a copy of the GNU General Public License v2.0
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 import asyncio
 import logging
@@ -28,9 +15,10 @@ from typing import Callable, Dict, Tuple, List, Union, Optional, overload, Liter
 from builtins import enumerate, reversed
 from .error import NotFound, InvalidToken
 from .utils import setup_logging, CoroT
-from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, Price, ChatMember, Updater,
-                  Location, ContactMessage, InputFile, CallbackQuery, SuccessfulPayment)
+from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, LabeledPrice, ChatMember, Updater,
+                  Location, Contact, InputFile, CallbackQuery, SuccessfulPayment)
 from bale.request import HTTPClient, handle_request_param
+from weakref import WeakValueDictionary
 
 __all__ = (
     "Bot"
@@ -97,6 +85,16 @@ class Bot:
     def user(self) -> Optional["User"]:
         """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
         return self._client_user
+
+    @property
+    def users(self) -> WeakValueDictionary[str, "User"]:
+        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
+        return self._state.users
+
+    @property
+    def chats(self) -> WeakValueDictionary[str, "Chat"]:
+        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
+        return self._state.chats
 
     async def _setup_hook(self):
         loop = asyncio.get_running_loop()
@@ -317,7 +315,7 @@ class Bot:
         """an Event for get errors when exceptions"""
         _log.exception(f'Exception in {event_name} Ignored')
 
-    async def get_bot(self) -> User:
+    async def get_me(self) -> User:
         """Get bot information
 
         Returns
@@ -329,7 +327,7 @@ class Bot:
             APIError
                 Get bot Failed.
         """
-        response = await self._http.get_bot()
+        response = await self._http.get_me()
         client_user = User.from_dict(data=response.result, bot=self)
         self._client_user = client_user
         return client_user
@@ -352,7 +350,7 @@ class Bot:
                 On success, True is returned.
         """
         response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
-        return response or False
+        return response.result or False
 
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
@@ -422,9 +420,9 @@ class Bot:
                 )
             components = components.to_json()
 
-        if reply_to_message_id and not isinstance(reply_to_message_id, (int, str)):
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
-                "reply_to_message_id param must be type of Message"
+                "reply_to_message_id param must be type of int or str"
             )
 
         if delete_after and not isinstance(delete_after, (int, float)):
@@ -947,7 +945,12 @@ class Bot:
 
         return result
 
-    async def send_location(self, chat_id: Union[str, int], location: "Location", delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_location(
+            self, chat_id: Union[str, int],
+            location: "Location",
+            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None
+    ) -> "Message":
         """Use this method to send point on the map.
 
         .. code:: python
@@ -960,6 +963,10 @@ class Bot:
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             location: :class:`bale.Location`
                 The Location.
+            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+                Message Components
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
+                If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
 
@@ -987,12 +994,32 @@ class Bot:
                 "location param must be type of Location"
             )
 
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
         if delete_after and not isinstance(delete_after, (int, float)):
             raise TypeError(
                 "delete_after param must be type of int or float"
             )
 
-        response = await self._http.send_location(params=handle_request_param(dict(chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude)))
+        response = await self._http.send_location(
+            params=handle_request_param(
+                dict(
+                    chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude,
+                    horizontal_accuracy=location.horizontal_accuracy, reply_markup=components,
+                    reply_to_message_id=reply_to_message_id
+                )
+            )
+        )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -1000,19 +1027,25 @@ class Bot:
 
         return result
 
-    async def send_contact(self, chat_id: Union[str, int], contact: "ContactMessage", delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_contact(self, chat_id: Union[str, int], contact: "Contact",
+                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
 
-            await bot.send_cantact(1234, bale.ContactMessage('09****', 'first name', 'last name'))
+            await bot.send_cantact(1234, bale.Contact('09****', 'first name', 'last name'))
 
         Parameters
         ----------
             chat_id: Union[:class:`str`, :class:`int`]
                     Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            contact: :class:`bale.ContactMessage`
+            contact: :class:`bale.Contact`
                 The Contact.
+            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+                Message Components
+            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
+                If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
 
@@ -1035,9 +1068,21 @@ class Bot:
                 "chat param must be type of str or int"
             )
 
-        if not isinstance(contact, ContactMessage):
+        if not isinstance(contact, Contact):
             raise TypeError(
-                "contact param must be type of ContactMessage"
+                "contact param must be type of Contact"
+            )
+
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
             )
 
         if delete_after and not isinstance(delete_after, (int, float)):
@@ -1048,9 +1093,10 @@ class Bot:
         response = await self._http.send_contact(params=handle_request_param(
             dict(
                 chat_id=str(chat_id), phone_number=contact.phone_number, first_name=contact.first_name,
-                last_name=contact.last_name)
+                last_name=contact.last_name, reply_markup=components,
+                reply_to_message_id=reply_to_message_id
             )
-        )
+        ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -1059,7 +1105,7 @@ class Bot:
         return result
 
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
-                           prices: List["Price"], *,
+                           prices: List["LabeledPrice"], *,
                            payload: Optional[str] = None,
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                            need_phone_number: Optional[bool] = False,
@@ -1076,7 +1122,7 @@ class Bot:
         .. code:: python
 
             await bot.send_invoice(
-                1234, "invoice title", "invoice description", "6037************", [bale.Price("label", 2000)],
+                1234, "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
                 payload = "unique invoice payload", ...
             )
 
@@ -1094,7 +1140,7 @@ class Bot:
                 Product description. 1- 255 characters.
             provider_token: str
                 You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
-            prices: List[:class:`bale.Price`]
+            prices: List[:class:`bale.LabeledPrice`]
                 A list of prices.
             payload: Optional[:class:`str`]
                 Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.
@@ -1186,7 +1232,7 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
-        prices = [price.to_dict() for price in prices if isinstance(price, Price)]
+        prices = [price.to_dict() for price in prices if isinstance(price, LabeledPrice)]
         response = await self._http.send_invoice(
             params=handle_request_param(dict(chat_id=str(chat_id), title=title, description=description, provider_token=provider_token, prices=prices, payload=payload, photo_url=photo_url,
             need_name=need_name, need_phone_number=need_phone_number, need_email=need_email, need_shipping_address=need_shipping_address, is_flexible=is_flexible))
@@ -1292,9 +1338,9 @@ class Bot:
                 )
             delay = float(delay)
 
-        async def delete_message_task(d: Optional[float] = None):
-            if d:
-                await asyncio.sleep(d)
+        async def delete_message_task(_delay: Optional[float] = None):
+            if _delay:
+                await asyncio.sleep(_delay)
 
             response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
             if response.result:
@@ -1352,7 +1398,7 @@ class Bot:
             return chat
 
     async def get_user(self, user_id: Union[str, int], *, use_cache=True) -> Optional["User"]:
-        """This Method almost like :class:`bale.Bot.get_chat` , but this a filter that only get user.
+        """This Method almost like :meth:`bale.Bot.get_chat` , but this a filter that only get user.
 
         .. code:: python
 
@@ -1388,10 +1434,10 @@ class Bot:
                 return result
 
         chat = await self.get_chat(user_id)
-        if chat and chat.parsed_type.is_private_chat:
+        if chat and chat.is_private_chat:
             payload = {
                 "username": chat.username,
-                "id": chat.chat_id,
+                "id": chat.id,
                 "first_name": chat.first_name,
                 "last_name": chat.last_name
             }
@@ -1448,7 +1494,123 @@ class Bot:
         except NotFound:
             return None
         else:
-            return ChatMember.from_dict(chat_id, response.result, self)
+            return ChatMember.from_dict(response.result, self)
+
+    async def promote_chat_member(self,
+          chat_id: Union[str, int],
+          user_id: Union[str, int],
+          can_be_edited: Optional[bool] = None,
+          can_change_info: Optional[bool] = None,
+          can_post_messages: Optional[bool] = None,
+          can_edit_messages: Optional[bool] = None,
+          can_delete_messages: Optional[bool] = None,
+          can_invite_users: Optional[bool] = None,
+          can_restrict_members: Optional[bool] = None,
+          can_pin_messages: Optional[bool] = None,
+          can_promote_members: Optional[bool] = None,
+          can_send_messages: Optional[bool] = None,
+          can_send_media_messages: Optional[bool] = None,
+          can_reply_to_story: Optional[bool] = None,
+          can_send_link_message: Optional[bool] = None,
+          can_send_forwarded_message: Optional[bool] = None,
+          can_see_members: Optional[bool] = None,
+          can_add_story: Optional[bool] = None
+    ):
+        """an administrator in the chat for this to work and must have the appropriate admin rights.
+        Pass :obj:`False` for all boolean parameters to demote a user.
+
+        .. code:: python
+
+            await bot.promote_chat_member(1234, 1234, can_change_info = True)
+
+        Parameters
+        ----------
+            chat_id: Union[:class:`int`, :class:`str`]
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            user_id: Union[:class:`int`, :class:`str`]
+                Unique identifier of the target user.
+            can_be_edited: :class:`bool`
+                Pass :obj:`True`, if the bot is allowed to edit administrator privileges of that user.
+            can_change_info: :class:`bool`
+                Pass :obj:`True`, if the user can change the chat title, photo and other settings.
+            can_post_messages: :class:`bool`
+                Pass :obj:`True`, if the administrator can post messages in the channel,
+                or access channel statistics; channels only.
+            can_edit_messages: :class:`bool`
+                Pass :obj:`True`,
+                if the administrator can edit messages of other users and can pin messages; channels only.
+            can_delete_messages: :class:`bool`
+                Pass :obj:`True`, if the administrator can delete messages of other users.
+            can_invite_users: :class:`bool`
+                Pass :obj:`True`, if the user can invite new users to the chat.
+            can_restrict_members: :class:`bool`
+                Pass :obj:`True`, if the administrator can restrict, ban or unban chat members.
+            can_pin_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to pin messages, groups, channels only.
+            can_promote_members: :class:`bool`
+                Pass :obj:`True`,
+                if the administrator can add new administrators with a subset of his own privileges or demote administrators
+                that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user).
+            can_send_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send messages.
+            can_send_media_messages: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send a media message.
+            can_reply_to_story: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to reply to a story.
+            can_send_link_message: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to send a link message.
+            can_send_forwarded_message: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to forward a message to chat.
+            can_see_members: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to see the list of chat members.
+            can_add_story: :class:`bool`
+                Pass :obj:`True`, if the user is allowed to post a story from chat.
+
+        Returns
+        -------
+            :class:`bool`
+                On success, ``True`` is returned.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to promote Chat Member.
+            APIError
+                Promote chat member Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat param must be type of Chat"
+            )
+
+        if not isinstance(user_id, (str, int)):
+            raise TypeError(
+                "user_id must be type of str or int"
+            )
+
+        response = await self._http.get_chat_member(params=handle_request_param(dict(
+            chat_id=str(chat_id),
+            user_id=str(user_id),
+            can_be_edited=can_be_edited,
+            can_change_info=can_change_info,
+            can_post_messages=can_post_messages,
+            can_edit_messages=can_edit_messages,
+            can_delete_messages=can_delete_messages,
+            can_invite_users=can_invite_users,
+            can_restrict_members=can_restrict_members,
+            can_pin_messages=can_pin_messages,
+            can_promote_members=can_promote_members,
+            can_send_messages=can_send_messages,
+            can_send_media_messages=can_send_media_messages,
+            can_reply_to_story=can_reply_to_story,
+            can_send_link_message=can_send_link_message,
+            can_send_forwarded_message=can_send_forwarded_message,
+            can_see_members=can_see_members,
+            can_add_story=can_add_story
+        )))
+        return response.result or False
 
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> "ChatMember":
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
@@ -1555,7 +1717,7 @@ class Bot:
             )
 
         response = await self._http.get_chat_administrators(params=handle_request_param(dict(chat_id=str(chat_id))))
-        result = [ChatMember.from_dict(chat_id=chat_id, data=member_payload, bot=self) for member_payload in response.result or list()]
+        result = [ChatMember.from_dict(data=member_payload, bot=self) for member_payload in response.result or list()]
         for member in result:
             self._state.store_user(member.user)
 
@@ -1627,7 +1789,7 @@ class Bot:
                 "user_id param must be type of str or int"
             )
 
-        response = await self._http.invite_to_chat(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
+        response = await self._http.invite_user(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result or False
 
     async def leave_chat(self, chat_id: Union[str, int]) -> bool:
@@ -1687,7 +1849,7 @@ class Bot:
         return result
 
     async def connect(self):
-        await self.get_bot()
+        await self.get_me()
         await self.updater.start()
 
     def run(self):
