@@ -270,6 +270,6 @@ class Chat(BaleObject):
         if not data:
             return None
 
-        data["photo"] = PhotoSize.from_dict(data.get('photo'), bot)
+        data["photo"] = ChatPhoto.from_dict(data.get('photo'), bot)
 
         return super().from_dict(data, bot)
