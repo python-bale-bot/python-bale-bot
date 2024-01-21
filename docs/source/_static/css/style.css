@@ -3,7 +3,7 @@
 }
 
 .icons {
-    font-size: 13px;
+    font-size: 13px !important;
 }
 
 article a.reference.external:not([href*="/python-bale-bot/blob/"])::after {
