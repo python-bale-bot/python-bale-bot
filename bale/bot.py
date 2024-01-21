@@ -1617,7 +1617,7 @@ class Bot:
         )))
         return response.result or False
 
-    async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> "ChatMember":
+    async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 
         .. code:: python
@@ -1657,6 +1657,103 @@ class Bot:
 
         response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
         return response.result
+
+    async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = None) -> bool:
+        """Use this method to unban a previously kicked user in a group or channel.
+        The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don’t want this, use the parameter only_if_banned.
+
+        .. code:: python
+
+            await bot.unban_chat_member(1234, 1234)
+
+        Parameters
+        ----------
+            chat_id: Union[:class:`int`, :class:`str`]
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            user_id: Union[:class:`int`, :class:`str`]
+                Unique identifier of the target user.
+            only_if_banned: Optional[:class:`bool`]
+                 Do nothing if the user is not banned.
+        Returns
+        -------
+            :class:`bool`
+                On success, ``True`` is returned.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat or User ID.
+            Forbidden
+                You do not have permission to unban Chat Member.
+            APIError
+                unban chat member Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(user_id, (str, int)):
+            raise TypeError(
+                "user_id must be type of str or int"
+            )
+
+        if only_if_banned and not isinstance(only_if_banned, bool):
+            raise TypeError(
+                "only_if_banned param must be type of bool"
+            )
+
+        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id), only_if_banned=only_if_banned)))
+        return response.result
+
+    async def set_chat_photo(self, chat_id: Union[str, int], photo: "InputFile") -> bool:
+        """Use this method to set a new profile photo for the chat.
+
+        .. code:: python
+
+            await bot.set_chat_photo(1234, bale.InputFile("FILE_ID"))
+
+        Parameters
+        ----------
+            chat_id: Union[:class:`str`, :class:`int`]
+                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            photo: :class:`bale.InputFile`
+                New chat photo. visit :class:`bale.InputFile` to see more info.
+
+        Returns
+        --------
+            :class:`bool`:
+                On success, True is returned.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Set Chat Photo to chat.
+            APIError
+                Set chat photo Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(photo, InputFile):
+            raise TypeError(
+                "photo param must be type of InputFile"
+            )
+
+        response = await self._http.set_chat_photo(
+            params=handle_request_param(
+                dict(
+                    chat_id=str(chat_id),
+                ),
+                [photo.to_multipart_payload('photo')]
+            )
+
+        )
+        return response.result or False
 
     async def get_chat_members_count(self, chat_id: Union[str, int]) -> int:
         """Use this method to get the number of members in a chat.

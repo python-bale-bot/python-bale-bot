@@ -249,8 +249,14 @@ class HTTPClient:
     def get_chat_member(self, *, params: RequestParams):
         return self.request(Route("GET", "getChatMember", self.token), json=params.payload)
 
+    def set_chat_photo(self, *, params: RequestParams):
+        return self.request(Route("POST", "setChatPhoto", self.token), data=params.payload, form=params.multipart)
+
     def ban_chat_member(self, *, params: RequestParams):
         return self.request(Route("POST", "banChatMember", self.token), json=params.payload)
+
+    def unban_chat_member(self, *, params: RequestParams):
+        return self.request(Route("POST", "unbanChatMember", self.token), json=params.payload)
 
     def invite_user(self, *, params: RequestParams):
         return self.request(Route("GET", "inviteUser", self.token), json=params.payload)
