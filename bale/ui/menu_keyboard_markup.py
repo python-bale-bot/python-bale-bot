@@ -13,18 +13,16 @@ from typing import Optional, Dict
 from . import BaseReplyMarkup, MenuKeyboardButton, ReplyMarkupItem
 
 class MenuKeyboardMarkup(BaseReplyMarkup):
+    """
+    .. admonition:: Examples
+
+            :any:`Components Bot <examples.inlinemarkup>`
+    """
     def __init__(self):
         super().__init__()
 
     def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> "MenuKeyboardMarkup":
         """Add a Menu Keyboard button to keyboards.
-
-        .. warning::
-            Your numbers in the "row" param must be natural and greater than 0.
-
-        .. admonition:: Examples
-
-            :any:`Components Bot <examples.inlinemarkup>`
 
         Parameters
         ----------
@@ -32,6 +30,9 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
                 The menu keyboard button.
             row: Optional[:class:`int`]
                 The row where you want the button to be placed.
+
+                .. warning::
+                    Your numbers in the "row" param must be natural and greater than 0.
         """
         if not isinstance(keyboard_button, MenuKeyboardButton):
             raise TypeError(
@@ -59,6 +60,9 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
         ----------
             row: :class:`int`
                 The row.
+
+                .. warning::
+                    Your numbers in the "row" param must be natural and greater than 0.
         """
         super()._remove_row(row)
         return self

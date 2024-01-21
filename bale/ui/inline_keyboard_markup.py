@@ -13,18 +13,16 @@ from typing import Optional, Dict
 from . import BaseReplyMarkup, InlineKeyboardButton, ReplyMarkupItem
 
 class InlineKeyboardMarkup(BaseReplyMarkup):
+    """
+    .. admonition:: Examples
+
+            :any:`Components Bot <examples.inlinemarkup>`
+    """
     def __init__(self):
         super().__init__()
 
     def add(self, inline_keyboard_button: "InlineKeyboardButton", row: Optional[int] = None) -> "InlineKeyboardMarkup":
         """Add an Inline Keyboard button to keyboards.
-
-        .. warning::
-            Your numbers in the "row" param must be natural and greater than 0.
-
-        .. admonition:: Examples
-
-            :any:`Components Bot <examples.inlinemarkup>`
 
         Parameters
         ----------
@@ -32,6 +30,9 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
                 The inline keyboard button.
             row: Optional[:class:`int`]
                 The row where you want the button to be placed.
+
+                .. warning::
+                    Your numbers in the "row" param must be natural and greater than 0.
         """
         if not isinstance(inline_keyboard_button, InlineKeyboardButton):
             raise TypeError(
@@ -59,6 +60,9 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
         ----------
             row: :class:`int`
                 The row.
+
+                .. warning::
+                    Your numbers in the "row" param must be natural and greater than 0.
         """
         super()._remove_row(row)
         return self
