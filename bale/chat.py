@@ -9,7 +9,7 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from bale import BaleObject, User, ChatPhoto, PhotoSize
+from bale import BaleObject, User, ChatPhoto
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
@@ -242,7 +242,33 @@ class Chat(BaleObject):
         if isinstance(user, User):
             user = user.user_id
 
-        return await self.get_bot().ban_chat_member(self.id, user_id=user)
+        return await self.get_bot().ban_chat_member(self.id, user)
+
+    async def unban_chat_member(self, user: Union["User", str, int], *, only_if_banned: Optional[bool] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.unban_chat_member`.
+
+        .. code:: python
+
+            user = await bot.get_user(1234)
+            await chat.unban_chat_member(user)
+            ...
+            await chat.unban_chat_member(1234)
+        """
+        if isinstance(user, User):
+            user = user.user_id
+
+        return await self.get_bot().unban_chat_member(self.id, user, only_if_banned=only_if_banned)
+
+    async def set_photo(self, photo: "InputFile"):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.set_chat_photo`.
+
+        .. code:: python
+
+            await chat.set_photo(bale.InputFile("FILE_ID"))
+        """
+        return await self.get_bot().set_chat_photo(self.id, photo)
 
     async def get_chat_members_count(self):
         """
