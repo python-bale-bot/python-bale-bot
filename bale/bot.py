@@ -87,6 +87,11 @@ class Bot:
         return self._client_user
 
     @property
+    def state(self) -> Optional["State"]:
+        """Optional[:class:`bale.State`]: Represents the state class for cache data. ``None`` if bot not logged in"""
+        return self._state
+
+    @property
     def users(self) -> WeakValueDictionary[str, "User"]:
         """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
         return self._state.users
