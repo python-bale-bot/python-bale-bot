@@ -19,8 +19,7 @@ __all__ = (
 )
 
 class ChatPhoto(BaleObject):
-    """
-    This object represents a chat photo.
+    """This object represents a chat photo.
 
     Attributes
     ----------
@@ -50,6 +49,7 @@ class ChatPhoto(BaleObject):
 
     @property
     def small_file_object(self) -> "BaseFile":
+        """Optional[:class:`bale.BaseFile`]: Represents the small file object."""
         from bale import BaseFile
         obj = BaseFile(self.small_file_id, self.small_file_unique_id, None)
         obj.set_bot(self.bot)
@@ -57,6 +57,7 @@ class ChatPhoto(BaleObject):
 
     @property
     def big_file_object(self) -> "BaseFile":
+        """Optional[:class:`bale.BaseFile`]: Represents the big file object."""
         from bale import BaseFile
         obj = BaseFile(self.big_file_id, self.big_file_unique_id, None)
         obj.set_bot(self.bot)
