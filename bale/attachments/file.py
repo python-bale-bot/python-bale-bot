@@ -32,7 +32,7 @@ class BaseFile(BaleObject):
             File size in bytes, if known.
 
     .. note::
-        You can get more information from the file with extra.
+        You can get more information from the file with ``BaseFile.kwargs_data``.
 
     """
     __slots__ = (
