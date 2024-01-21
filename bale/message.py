@@ -44,6 +44,8 @@ class Message(BaleObject):
         reply_to_message: Optional[:class:`bale.Message`]
             For replies, the original message. Note that the Message object in this field will not contain further
             reply_to_message fields even if it itself is a reply.
+        edit_date: Optional[:class:`datetime.datetime`]
+            Date the message was last edited.
         contact: Optional[:class:`bale.Contact`]
             Message is a shared contact, information about the contact.
         location: Optional[:class:`bale.Location`]
@@ -70,7 +72,7 @@ class Message(BaleObject):
     """
     __slots__ = (
         "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
-        "forward_from_chat", "forward_from_message_id", "date_code", "date",
+        "forward_from_chat", "forward_from_message_id", "date",
         "edit_date", "audio", "document", "video", "animation", "photos", "location", "sticker","invoice",
         "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment"
     )
@@ -78,7 +80,7 @@ class Message(BaleObject):
     def __init__(self, message_id: str, date: datetime, text: Optional[str], caption: Optional[str],
                  forward_from: Optional["User"], forward_from_chat: Optional["Chat"],
                  forward_from_message_id: Optional[str], from_user: Optional["User"],
-                 document: Optional["Document"], contact: Optional["Contact"],
+                 document: Optional["Document"], contact: Optional["Contact"], edit_date: Optional[datetime],
                  location: Optional["Location"], chat: Optional["Chat"], video: Optional["Video"],
                  photos: Optional[List["PhotoSize"]], sticker: Optional["Sticker"],
                  reply_to_message: Optional["Message"], invoice: Optional["Invoice"],
@@ -96,6 +98,7 @@ class Message(BaleObject):
         self.forward_from = forward_from
         self.forward_from_message_id = forward_from_message_id
         self.forward_from_chat = forward_from_chat
+        self.edit_date = edit_date
         self.caption = caption
         self.document = document
         self.video= video
@@ -153,12 +156,13 @@ class Message(BaleObject):
         if not data:
             return None
         
-        data["date"] = parse_time(int(data.get('date', 0)))
+        data["date"] = parse_time(int(data.get('date')))
         data["from_user"] = User.from_dict(data.pop('from', None), bot)
         data["chat"] = Chat.from_dict(data.get('chat'), bot)
         data["forward_from"] = User.from_dict(data.get('forward_from'), bot)
         data["forward_from_chat"] = Chat.from_dict(data.get('forward_from_chat'), bot)
         data["reply_to_message"] = Message.from_dict(data.get('reply_to_message'), bot)
+        data["edit_date"] = parse_time(data.pop('edit_date', None))
         data["photos"] = [PhotoSize.from_dict(photo_payload, bot) for photo_payload in data.pop("photo", [])]
         data["document"] = Document.from_dict(data.get('document'), bot)
         data["audio"] = Audio.from_dict(data.get('audio'), bot)
