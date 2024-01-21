@@ -47,8 +47,11 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
     url = "ble.ir/{username}?start={payload}".format(username = bot_username, payload = payload)
     return url
 
-def parse_time(data: int):
-    return datetime.fromtimestamp(data)
+def parse_time(data: Optional[int]) -> Optional[datetime]:
+    try:
+        return datetime.fromtimestamp(data)
+    except ValueError:
+        return None
 
 def find(predicate: Callable[[T], Any], iterable: Iterable[T]) -> Optional[T]:
     """A helper to return the first element in the sequence that meets the predicate.
