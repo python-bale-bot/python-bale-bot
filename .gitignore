@@ -4,3 +4,4 @@
 /docs/build/
 /.idea/
 /docs/make.bat
+.pypirc
