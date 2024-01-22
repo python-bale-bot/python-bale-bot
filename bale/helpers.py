@@ -49,7 +49,7 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
 
 def parse_time(data: Optional[int]) -> Optional[datetime]:
     try:
-        return datetime.fromtimestamp(data)
+        return datetime.fromtimestamp(int(data))
     except ValueError:
         return None
 
