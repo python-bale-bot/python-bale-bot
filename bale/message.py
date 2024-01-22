@@ -156,7 +156,7 @@ class Message(BaleObject):
         if not data:
             return None
         
-        data["date"] = parse_time(int(data.get('date')))
+        data["date"] = parse_time(data.get('date'))
         data["from_user"] = User.from_dict(data.pop('from', None), bot)
         data["chat"] = Chat.from_dict(data.get('chat'), bot)
         data["forward_from"] = User.from_dict(data.get('forward_from'), bot)

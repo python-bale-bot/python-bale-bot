@@ -50,7 +50,9 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
 def parse_time(data: Optional[int]) -> Optional[datetime]:
     try:
         return datetime.fromtimestamp(int(data))
-    except ValueError:
+    except Exception as exc:
+        if not isinstance(exc, (ValueError, TypeError)):
+            raise exc
         return None
 
 def find(predicate: Callable[[T], Any], iterable: Iterable[T]) -> Optional[T]:
