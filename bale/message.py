@@ -12,6 +12,7 @@ from __future__ import annotations
 
 from datetime import datetime
 from typing import List, Dict, Optional, Union
+
 from bale import (
     BaleObject,
     Chat, User, Document, Contact, Location, PhotoSize, Invoice, InlineKeyboardMarkup,
@@ -19,6 +20,7 @@ from bale import (
     InputFile
 )
 from .helpers import parse_time
+
 
 class Message(BaleObject):
     """This object shows a message.
@@ -135,7 +137,7 @@ class Message(BaleObject):
         if isinstance(attachment, list):
             attachment = attachment[0]
 
-        return attachment.base_file
+        return attachment
 
     @property
     def content(self) -> Optional[str]:
