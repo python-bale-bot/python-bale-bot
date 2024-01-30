@@ -5,6 +5,7 @@ if TYPE_CHECKING:
 
 JSONDICT = Dict[str, Any]
 T = TypeVar('T')
+UT = TypeVar('UT')
 Coro = Coroutine[Any, Any, T]
 CoroT = TypeVar('CoroT', bound=Callable[..., Coro[Any]])
 
