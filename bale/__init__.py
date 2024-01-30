@@ -58,7 +58,7 @@ __all__ = (
     "Bot"
 )
 
-from .attachments import InputFile, PhotoSize, BaseFile, Document, Voice, Audio, Contact, Location, Video, Animation
+from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
 from .baleobject import BaleObject
 from .bot import Bot
 from .callbackquery import CallbackQuery
