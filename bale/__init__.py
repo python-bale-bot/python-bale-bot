@@ -58,24 +58,24 @@ __all__ = (
     "__version__"
 )
 
-from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
 from .baleobject import BaleObject
-from .bot import Bot
-from .callbackquery import CallbackQuery
-from .chat import Chat
-from .chatmember import ChatMember
+from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
 from .chatphoto import ChatPhoto
 from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, \
     InvalidToken, RateLimited, BadRequest
-from .handlers import BaseHandler, MessageHandler, CommandHandler, CallbackQueryHandler
-from .message import Message
 from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .state import State
 from .sticker import Sticker
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
-from .update import Update
 from .updater import Updater
 from .user import User
+from .chatmember import ChatMember
+from .chat import Chat
+from .message import Message
+from .callbackquery import CallbackQuery
+from .update import Update
+from .handlers import BaseHandler, MessageHandler, CommandHandler, CallbackQueryHandler
+from .bot import Bot
 from .version import __version__
 
 __title__ = "python-bale-bot"
