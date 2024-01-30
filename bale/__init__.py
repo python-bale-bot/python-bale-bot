@@ -80,4 +80,4 @@ from .version import __version__
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
-__copyright__ = "Copyright 2023, Present by Kian Ahmadian"
+__copyright__ = "Copyright 2024, Present by Kian Ahmadian"
