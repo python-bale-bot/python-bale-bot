@@ -5,6 +5,7 @@ Attachments
     :titlesonly:
 
     bale.attachments.audio
+    bale.attachments.voice
     bale.attachments.contact
     bale.attachments.document
     bale.attachments.basefile

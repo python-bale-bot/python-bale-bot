@@ -1,7 +1,7 @@
 from typing import Union, Dict, Any, TypeVar, Callable, Coroutine, TYPE_CHECKING
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
-    from bale import Audio, Document, Location, Photo, Video, Animation
+    from bale import Audio, Document, Location, PhotoSize, Video, Animation, Voice
 
 JSONDICT = Dict[str, Any]
 T = TypeVar('T')
@@ -12,7 +12,8 @@ MediaType = Union[
     "Audio",
     "Document",
     "Location",
-    "Photo",
+    "PhotoSize",
     "Video",
-    "Animation"
+    "Animation",
+    "Voice"
 ]

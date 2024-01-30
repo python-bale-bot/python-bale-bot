@@ -15,7 +15,8 @@ from typing import List, Dict, Optional, Union
 from bale import (
     BaleObject,
     Chat, User, Document, Contact, Location, PhotoSize, Invoice, InlineKeyboardMarkup,
-    MenuKeyboardMarkup, Video, Audio, BaseFile, Sticker, SuccessfulPayment, Animation, InputFile
+    MenuKeyboardMarkup, Video, Voice, Audio, BaseFile, Sticker, SuccessfulPayment, Animation,
+    InputFile
 )
 from .helpers import parse_time
 
@@ -58,6 +59,8 @@ class Message(BaleObject):
             Message is an animation, information about the animation.
         audio: Optional[:class:`bale.Audio`]
             Message is an audio, information about the Audio.
+        voice: Optional[:class:`bale.Voice`]
+            Message is a voice, information about the Voice.
         sticker: Optional[:class:`bale.Sticker`]
             Message is a sticker, information about the sticker.
         new_chat_members: Optional[List[:class:`bale.User`]]
@@ -72,8 +75,8 @@ class Message(BaleObject):
     """
     __slots__ = (
         "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
-        "forward_from_chat", "forward_from_message_id", "date",
-        "edit_date", "audio", "document", "video", "animation", "photos", "location", "sticker","invoice",
+        "forward_from_chat", "forward_from_message_id", "date", "edit_date",
+        "audio", "voice", "document", "video", "animation", "photos", "location", "sticker","invoice",
         "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment"
     )
 
@@ -84,8 +87,9 @@ class Message(BaleObject):
                  location: Optional["Location"], chat: Optional["Chat"], video: Optional["Video"],
                  photos: Optional[List["PhotoSize"]], sticker: Optional["Sticker"],
                  reply_to_message: Optional["Message"], invoice: Optional["Invoice"],
-                 audio: Optional["Audio"], successful_payment: Optional["SuccessfulPayment"],
-                 animation: Optional["Animation"], new_chat_members: Optional[List["User"]], left_chat_member: Optional["User"]):
+                 audio: Optional["Audio"], voice: Optional["Voice"],
+                 successful_payment: Optional["SuccessfulPayment"], animation: Optional["Animation"],
+                 new_chat_members: Optional[List["User"]], left_chat_member: Optional["User"]):
         super().__init__()
         self._id = message_id
         self.message_id = message_id
@@ -104,6 +108,7 @@ class Message(BaleObject):
         self.video= video
         self.animation = animation
         self.audio = audio
+        self.voice = voice
         self.photos = photos
         self.contact = contact
         self.location = location
@@ -122,8 +127,8 @@ class Message(BaleObject):
 
     @property
     def attachment(self) -> Optional["BaseFile"]:
-        """Optional[:class:`bale.BaseFile`]: Represents the message attachment. ``None`` if the message don't have any attachments"""
-        attachment = self.video or self.photos or self.audio or self.document or self.animation
+        """Optional[Union[:class:`bale.Video`, :class:`bale.PhotoSize`, :class:`bale.Document`, :class:`bale.Animation`]]: Represents the message attachment. ``None`` if the message don't have any attachments"""
+        attachment = self.video or self.photos or self.audio or self.document or self.animation or self.voice
         if not attachment:
             return
 
@@ -166,6 +171,7 @@ class Message(BaleObject):
         data["photos"] = [PhotoSize.from_dict(photo_payload, bot) for photo_payload in data.pop("photo", [])]
         data["document"] = Document.from_dict(data.get('document'), bot)
         data["audio"] = Audio.from_dict(data.get('audio'), bot)
+        data["voice"] = Voice.from_dict(data.get('voice'), bot)
         data["location"] = Location.from_dict(data.get('location'), bot)
         data["contact"] = Contact.from_dict(data.get('contact'), bot)
         data["animation"] = Animation.from_dict(data.get('animation'), bot)
