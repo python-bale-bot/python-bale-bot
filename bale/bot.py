@@ -9,16 +9,22 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
+
 import asyncio
 import logging
-from typing import Callable, Dict, Tuple, List, Union, Optional, overload, Literal
 from builtins import enumerate, reversed
+from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, overload
+from weakref import WeakValueDictionary
+
+from bale import (
+    State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup,
+    Chat, LabeledPrice, ChatMember, Updater, Location,
+    Contact, InputFile, CallbackQuery, BaseHandler,
+    CommandHandler, CallbackQueryHandler, MessageHandler
+)
+from bale.request import HTTPClient, handle_request_param
 from .error import NotFound, InvalidToken
 from .utils import setup_logging, CoroT
-from bale import (State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup, Chat, LabeledPrice, ChatMember, Updater,
-                  Location, Contact, InputFile, CallbackQuery, SuccessfulPayment)
-from bale.request import HTTPClient, handle_request_param
-from weakref import WeakValueDictionary
 
 __all__ = (
     "Bot"
@@ -60,6 +66,7 @@ class Bot:
         "loop",
         "events",
         "listeners",
+        "_handlers",
         "_state",
         "_client_user",
         "_http",
@@ -76,7 +83,8 @@ class Bot:
         self._state: "State" = State(self, **kwargs)
         self._client_user = None
         self.events: Dict[str, List[Callable]] = {}
-        self.listeners: Dict[str, List[Tuple[asyncio.Future, Callable[..., bool]]]] = {}
+        self.listeners: List[Tuple[BaseHandler, asyncio.Future, Callable[["Update"], bool]]] = []
+        self._handlers: List[BaseHandler] = []
         self._closed: bool = True
 
         self.updater: Updater = Updater(self)
@@ -131,7 +139,7 @@ class Bot:
         if not asyncio.iscoroutinefunction(coro):
             raise TypeError('event handler must be a coroutine function')
 
-        self._add_event(coro.__name__, coro)
+        self.add_event(coro.__name__, coro)
         return coro
 
     def listen(self, event_name: str) -> CoroT:
@@ -152,11 +160,43 @@ class Bot:
             if not asyncio.iscoroutinefunction(func):
                 raise TypeError('event handler must be coroutine function')
 
-            self._add_event(event_name, func)
+            self.add_event(event_name, func)
 
         return wrapper_function
 
-    def _add_event(self, event_name: str, wrapper):
+    def handler(self, handler: object) -> CoroT:
+        def wrapper_function(func):
+            if not asyncio.iscoroutinefunction(func):
+                raise TypeError('event handler must be coroutine function')
+
+            self.add_handler(handler, func)
+
+        return wrapper_function
+
+    def add_handler(self, handler: object, wrapper):
+        """Set wrapper or listener for an event.
+
+        .. code:: python
+
+            // must be complete
+
+        Parameters
+        ----------
+            handler: :class:`object`
+                Name of the event
+            wrapper: Callable[]
+                Function to add as wrapper for handler
+        """
+        if not asyncio.iscoroutinefunction(wrapper):
+            raise TypeError(f"{wrapper.__name__} is not a Coroutine Function")
+
+        if not isinstance(handler, BaseHandler):
+            raise TypeError('handler must be BaseHandler or subclass of that')
+
+        handler.set_callback(wrapper)
+        self._handlers.append(handler)
+
+    def add_event(self, event_name: str, wrapper):
         """Set wrapper or listener for an event.
 
         .. code:: python
@@ -181,33 +221,27 @@ class Bot:
 
         self.events[event_name].append(wrapper)
 
+
     @overload
-    async def wait_for(self, event_name: Literal['update'], *,
+    async def wait_for(self, handler: "BaseHandler", *,
                        check: Optional[Callable[..., bool]] = None,
                        timeout: Optional[float] = None) -> "Update":
         ...
 
     @overload
-    async def wait_for(self, event_name: Literal['callback_query'], *, check: Optional[Callable[..., bool]] = None,
+    async def wait_for(self, handler: "CallbackQueryHandler", *,
+                       check: Optional[Callable[..., bool]] = None,
                        timeout: Optional[float] = None) -> "CallbackQuery":
         ...
 
     @overload
-    async def wait_for(self, event_name: Literal['message', 'edit_message'], *, check: Optional[Callable[..., bool]] = None,
+    async def wait_for(self, handler: Union["MessageHandler", "CommandHandler"], *,
+                       check: Optional[Callable[..., bool]] = None,
                        timeout: Optional[float] = None) -> "Message":
         ...
 
-    @overload
-    async def wait_for(self, event_name: Literal['member_chat_join', 'member_chat_leave'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None) -> Tuple["Message", "Chat", "User"]:
-        ...
-
-    @overload
-    async def wait_for(self, event_name: Literal['successful_payment'], *, check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None) -> "SuccessfulPayment":
-        ...
-
-    def wait_for(self, event_name: str, *, check: Optional[Callable[..., bool]]=None, timeout: Optional[float]=None):
+    def wait_for(self, handler: BaseHandler, *, check: Optional[Callable[["Update"], bool]] = None,
+                 timeout: Optional[float] = None):
         """Waits for an event to be dispatched.
 
         This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
@@ -217,10 +251,10 @@ class Bot:
 
         .. code:: python
 
-            message = await bot.wait_for("message", check = lambda m: m.author.user_id == '1234')
+            message = await bot.wait_for(MessageHandler(check=lambda update: update.message.author.user_id == '1234'))
             ...
             try:
-                message = await bot.wait_for("message", ..., timeout = 20.0)
+                message = await bot.wait_for(MessageHandler(), ..., timeout = 20.0)
             except asyncio.TimeoutError: # 20s A message with the conditions specified in the `check` parameter was not found.
                 pass
 
@@ -230,10 +264,10 @@ class Bot:
 
         Parameters
         ----------
-            event_name: :class:`str`
-                Name of the event
+            handler: :class:`bale.BaseHandler`
+                A BaseHandler instance.
             check: Optional[Callable[..., :class:`bool`]]
-                A predicate to check what to wait for. The arguments must meet the parameters of the event being waited for.
+                A predicate to check what to wait for. The arguments must meet the parameters of the handler being waited for.
             timeout: Optional[:class:`float`]
                 The number of seconds to wait before timing out and raising asyncio.TimeoutError.
 
@@ -243,16 +277,10 @@ class Bot:
                 If a timeout is provided, and it was reached.
         """
         future = self.loop.create_future()
-        event_name = event_name.lower()
         if not check:
             check = lambda *args: True
 
-        listeners = self.listeners.get(event_name)
-        if not listeners:
-            listeners = []
-            self.listeners[event_name] = listeners
-
-        listeners.append((future, check))
+        self.listeners.append((handler, future, check))
         return asyncio.wait_for(future, timeout=timeout)
 
     async def close(self):
@@ -279,38 +307,57 @@ class Bot:
 
     def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
-        return self.loop.create_task(task, name=f"python-bale-bot: {event_name}")
+        return self.loop.create_task(task, name=f"python-bale-bot:{event_name}")
+
+    async def run_handler(self, core: Coroutine, handler: "BaseHandler", update: "Update"):
+        try:
+            await core
+        except asyncio.CancelledError:
+            pass
+        except Exception as ext:
+            await self.on_process_update_error(handler, update, ext)
+
+    def _create_handler_schedule(self, handler: "BaseHandler", update: "Update", *args):
+        core = handler.handle_update(update, *args)
+        task = self.run_handler(core, handler, update)
+        return self.loop.create_task(task, name=f"python-bale-bot:process_update:{handler}")
+
+    def process_update(self, update: "Update"):
+        self.dispatch('update', update)
+        removed = []
+        for index, (handler, future, check) in enumerate(self.listeners):
+            args = handler.check_new_update(update)
+            if not args or future.cancelled():
+                removed.append(index)
+                continue
+            try:
+                check_result = check(update)
+            except Exception as _:
+                future.set_exception(_)
+                removed.append(index)
+            else:
+                if check_result:
+                    if len(args) == 0:
+                        future.set_result(None)
+                    elif len(args) == 1:
+                        future.set_result(args[0])
+                    else:
+                        future.set_result(args)
+                    removed.append(index)
+
+        for item in reversed(removed):
+            del self.listeners[item]
+
+        for handler in self._handlers:
+            check = handler.check_new_update(update)
+            if check is not None:
+                self._create_handler_schedule(handler, update, *check)
+
+    async def on_process_update_error(self, handler: "BaseHandler", update: "Update", error: Exception):
+        _log.exception(f'Exception in callback function of {handler} Ignored')
 
     def dispatch(self, event_name: str, /, *args, **kwargs):
         method = 'on_' + event_name
-        listeners = self.listeners.get(event_name)
-        if listeners:
-            removed = []
-            for index, (future, check) in enumerate(listeners):
-                if future.cancelled():
-                    removed.append(index)
-                    continue
-                try:
-                    result = check(*args)
-                except Exception as __exception:
-                    future.set_exception(__exception)
-                    removed.append(index)
-                else:
-                    if result:
-                        if len(args) == 0:
-                            future.set_result(None)
-                        elif len(args) == 1:
-                            future.set_result(args[0])
-                        else:
-                            future.set_result(args)
-                        removed.append(index)
-
-            if len(listeners) == len(removed):
-                self.listeners.pop(event_name)
-            else:
-                for index in reversed(removed):
-                    del listeners[index]
-
         events_core = self.events.get(method)
         if events_core:
             for event_core in events_core:

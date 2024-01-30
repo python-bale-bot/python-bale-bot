@@ -9,9 +9,9 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 import asyncio
-from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
-from bale import Update
 import logging
+from typing import TYPE_CHECKING, Callable, Coroutine, Optional, NoReturn
+
 from .error import InvalidToken, BaleError, NetworkError
 
 if TYPE_CHECKING:
@@ -84,7 +84,7 @@ class Updater:
 
             if updates:
                 for update in updates:
-                    await self.process_update(update)
+                    self.bot.process_update(update)
                 self._last_offset = updates[-1].update_id
 
             return True
@@ -118,22 +118,6 @@ class Updater:
 
         except asyncio.CancelledError:
             _log.debug("Get Updater Loop was cancelled!")
-
-    async def process_update(self, update: "Update"):
-        self.bot.dispatch("update", update)
-        if update.callback_query:
-            self.bot.dispatch("callback", update.callback_query)
-        elif update.message:
-            self.bot.dispatch("message", update.message)
-            if update.message.successful_payment:
-                self.bot.dispatch("successful_payment", update.message.successful_payment)
-            if update.message.new_chat_members:
-                for user in update.message.new_chat_members:
-                    self.bot.dispatch("member_chat_join", update.message, update.message.chat, user)
-            if update.message.left_chat_member:
-                self.bot.dispatch("member_chat_leave", update.message, update.message.chat, update.message.left_chat_member)
-        elif update.edited_message:
-            self.bot.dispatch("message_edit", update.edited_message)
 
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
