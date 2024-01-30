@@ -1,4 +1,4 @@
-bale package
+Bale Package
 ============
 
 Classes in this package
@@ -12,3 +12,4 @@ Classes in this package
    bale.ui.rst
    bale.payments.rst
    bale.attachments.rst
+   bale.handlers.rst
