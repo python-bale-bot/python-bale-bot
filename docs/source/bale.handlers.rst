@@ -1,5 +1,5 @@
-Attachments
------------
+Handlers
+--------
 
 .. toctree::
     :titlesonly:
