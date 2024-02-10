@@ -59,6 +59,9 @@ html_css_files = [
     "css/sidebar.css",
     "css/announcement.css"
 ]
+html_js_files = [
+    'js/view.js',
+]
 html_theme_options = {
     "sidebar_hide_name": True,
     "announcement": "برای دریافت اطلاعات بیشتر به <a href='https://python-bale-bot.ir'>سایت کتابخانه</a> مراجعه نمایید",
