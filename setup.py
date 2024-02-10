@@ -12,7 +12,7 @@ extras_require = {
         'sphinx-paramlinks==0.6.0',
         'sphinxcontrib-mermaid==0.8.1',
         'sphinx-copybutton==0.5.2',
-        'furo==2023.9.10',
+        'furo==2024.1.29',
         'sphinx-inline-tabs==2023.4.21'
     ]
 }
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         packages=find_packages(),
         long_description=get_readme_file(),
         long_description_content_type='text/x-rst',
-        install_requires=["aiohttp>=3.6.0,<3.9.2", "asyncio~=3.4.3", "setuptools~=69.0.3"]
+        install_requires=["aiohttp>=3.6.0,<3.9.4", "asyncio~=3.4.3", "setuptools~=69.0.3"]
     )
 
 
