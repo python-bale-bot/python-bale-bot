@@ -269,7 +269,7 @@ class Message(BaleObject):
 
             await message.reply_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_video(self.chat_id, audio, caption=caption,
+        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption,
                                          components=components,
                                          reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
