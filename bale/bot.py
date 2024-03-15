@@ -1367,9 +1367,23 @@ class Bot:
             )
 
         prices = [price.to_dict() for price in prices if isinstance(price, LabeledPrice)]
+        payload = {
+            "chat_id": chat_id,
+            "title": title,
+            "description": description,
+            "provider_token": provider_token,
+            "prices": prices,
+            "payload": payload,
+            "photo_url": photo_url,
+            "need_name": need_name,
+            "need_phone_number": need_phone_number,
+            "need_email": need_email,
+            "need_shipping_address": need_shipping_address,
+            "is_flexible": is_flexible
+        }
+
         response = await self._http.send_invoice(
-            params=handle_request_param(dict(chat_id=str(chat_id), title=title, description=description, provider_token=provider_token, prices=prices, payload=payload, photo_url=photo_url,
-            need_name=need_name, need_phone_number=need_phone_number, need_email=need_email, need_shipping_address=need_shipping_address, is_flexible=is_flexible))
+            params=handle_request_param(payload)
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -1422,7 +1436,16 @@ class Bot:
                 )
             components = components.to_json()
 
-        response = await self._http.edit_message(params=handle_request_param(dict(chat_id=chat_id, message_id=message_id, text=text, reply_markup=components)))
+        payload = {
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "text": text
+        }
+        if components:
+            payload["reply_markup"] = components
+        response = await self._http.edit_message(
+            params=handle_request_param(payload)
+        )
         result = Message.from_dict(response.result, self)
         self._state.update_message(result)
         return result
@@ -1516,15 +1539,17 @@ class Bot:
                 "chat_id param must be type of int or str"
             )
 
-        if use_cache:
-            result = self._state.get_chat(chat_id)
-            if result:
-                return result
         if use_cache and (founded_chat := self._state.get_chat(str(chat_id))):
             return founded_chat
 
+        payload = {
+            "chat_id" : str(chat_id)
+        }
+
         try:
-            response = await self._http.get_chat(params=handle_request_param(dict(chat_id=str(chat_id))))
+            response = await self._http.get_chat(
+                params=handle_request_param(payload)
+            )
         except NotFound:
             self._state.remove_chat(str(chat_id))
             return None
@@ -1623,8 +1648,15 @@ class Bot:
                 "user_id must be type of str or int"
             )
 
+        payload = {
+            "chat_id": chat_id,
+            "user_id": user_id
+        }
+
         try:
-            response = await self._http.get_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
+            response = await self._http.get_chat_member(
+                params=handle_request_param(payload)
+            )
         except NotFound:
             return None
         else:
@@ -1784,8 +1816,15 @@ class Bot:
                 "user_id must be type of str or int"
             )
 
-        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
-        return response.result
+        payload = {
+            "chat_id": chat_id,
+            "user_id": user_id
+        }
+
+        response = await self._http.ban_chat_member(
+            params=handle_request_param(payload)
+        )
+        return response.result or False
 
     async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = None) -> bool:
         """Use this method to unban a previously kicked user in a group or channel.
@@ -1832,7 +1871,15 @@ class Bot:
                 "only_if_banned param must be type of bool"
             )
 
-        response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id), only_if_banned=only_if_banned)))
+        payload = {
+            "chat_id": chat_id,
+            "user_id": user_id,
+            "only_if_banned": only_if_banned
+        }
+
+        response = await self._http.ban_chat_member(
+            params=handle_request_param(payload)
+        )
         return response.result
 
     async def set_chat_photo(self, chat_id: Union[str, int], photo: Union[PhotoSize, FileInput]) -> bool:
@@ -1914,7 +1961,13 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        response = await self._http.get_chat_members_count(params=handle_request_param(dict(chat_id=str(chat_id))))
+        payload = {
+            "chat_id": chat_id
+        }
+
+        response = await self._http.get_chat_members_count(
+            params=handle_request_param(payload)
+        )
         return response.result
 
     async def get_chat_administrators(self, chat_id: Union[str, int]) -> Optional[List["ChatMember"]]:
@@ -1946,7 +1999,13 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        response = await self._http.get_chat_administrators(params=handle_request_param(dict(chat_id=str(chat_id))))
+        payload = {
+            "chat_id": chat_id
+        }
+
+        response = await self._http.get_chat_administrators(
+            params=handle_request_param(payload)
+        )
         result = [ChatMember.from_dict(data=member_payload, bot=self) for member_payload in response.result or list()]
         for member in result:
             self._state.store_user(member.user)
@@ -2019,7 +2078,14 @@ class Bot:
                 "user_id param must be type of str or int"
             )
 
-        response = await self._http.invite_user(params = handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id))))
+        payload = {
+            "chat_id": chat_id,
+            "user_id": user_id
+        }
+
+        response = await self._http.invite_user(
+            params=handle_request_param(payload)
+        )
         return response.result or False
 
     async def leave_chat(self, chat_id: Union[str, int]) -> bool:
@@ -2045,12 +2111,20 @@ class Bot:
             raise TypeError(
                 "chat_id param must be type of str or int"
             )
-        response = await self._http.leave_chat(params=handle_request_param(dict(chat_id=str(chat_id))))
+
+        payload = {
+            "chat_id": chat_id
+        }
+
+        response = await self._http.leave_chat(
+            params=handle_request_param(payload)
+        )
+
         if response.result:
             self._state.remove_chat(chat_id)
         return response.result or False
 
-    async def get_updates(self, offset: int = None, limit: int = None) -> List["Update"]:
+    async def get_updates(self, offset: Optional[int] = None, limit: Optional[int] = None) -> List["Update"]:
         if offset and not isinstance(offset, int):
             raise TypeError(
                 "offset param must be int"
@@ -2061,7 +2135,15 @@ class Bot:
                 "limit param must be int"
             )
 
-        response = await self._http.get_updates(params=handle_request_param(dict(offset=offset, limit=limit)))
+        payload = {}
+        if offset:
+            payload["offset"] = offset
+        if limit:
+            payload["limit"] = limit
+
+        response = await self._http.get_updates(
+            params=handle_request_param(payload)
+        )
         result = [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
                 if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
         if result:
