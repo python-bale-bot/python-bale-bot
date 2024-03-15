@@ -8,10 +8,23 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Dict, List, Any
+from typing import Any
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
-import asyncio, aiohttp, logging
-from ..error import (NetworkError, TimeOut, NotFound, Forbidden, APIError, BaleError, HTTPClientError, RateLimited, HTTPException)
+from bale.attachments import InputFile
+import asyncio
+import aiohttp
+import logging
+from ..error import (
+    NetworkError,
+    TimeOut,
+    NotFound,
+    Forbidden,
+    APIError,
+    BaleError,
+    HTTPClientError,
+    RateLimited,
+    HTTPException
+)
 from ssl import SSLCertVerificationError
 from .parser import ResponseParser
 from .params import RequestParams
@@ -95,7 +108,7 @@ class HTTPClient:
             await self.__session.close()
             self.__session = None
 
-    async def request(self, route: Route, *, form: List[Dict] = None, **kwargs):
+    async def request(self, route: Route, *, via_form_data: bool = False, **kwargs):
         url = route.url
         method = route.method
         headers = { 'User-Agent': self.user_agent }
@@ -104,15 +117,15 @@ class HTTPClient:
             headers['Content-Type'] = 'application/json'
             kwargs['data'] = to_json(kwargs.pop('json'))
 
-
-        if form:
+        if via_form_data:
             form_data = aiohttp.FormData()
-            for file_payload in form:
-                form_data.add_field(**file_payload, content_type="multipart/form-data")
             if 'data' in kwargs:
-                _data = kwargs.pop('data')
-                for param in _data:
-                    form_data.add_field(param, parse_form_data(_data[param]))
+                for key, value in kwargs.pop('data', {}).items():
+                    if isinstance(value, InputFile):
+                        field_params = value.to_multipart_payload()
+                        form_data.add_field(key, **field_params)
+                    else:
+                        form_data.add_field(key, parse_form_data(value))
 
             kwargs['data'] = form_data
 
@@ -190,22 +203,22 @@ class HTTPClient:
         return self.request(Route("POST", "forwardMessage", self.token), json=params.payload)
 
     def send_document(self, *, params: RequestParams):
-        return self.request(Route("POST", "sendDocument", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "sendDocument", self.token), data=params.payload, via_form_data=True)
 
     def send_photo(self, *, params: RequestParams):
-        return self.request(Route("POST", "SendPhoto", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "SendPhoto", self.token), data=params.payload, via_form_data=True)
 
     def send_media_group(self, *, params: RequestParams):
-        return self.request(Route("POST", "SendMediaGroup", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "SendMediaGroup", self.token), data=params.payload, via_form_data=True)
 
     def send_video(self, *, params: RequestParams):
-        return self.request(Route("POST", "sendVideo", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "sendVideo", self.token), data=params.payload, via_form_data=True)
 
     def send_audio(self, *, params: RequestParams):
-        return self.request(Route("POST", "SendAudio", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "SendAudio", self.token), data=params.payload, via_form_data=True)
 
     def send_contact(self, *, params: RequestParams):
-        return self.request(Route("POST", "sendContact", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "sendContact", self.token), data=params.payload)
 
     def send_invoice(self, *, params: RequestParams):
         return self.request(Route("POST", "sendInvoice", self.token), json=params.payload)
@@ -214,7 +227,7 @@ class HTTPClient:
         return self.request(Route("POST", "sendLocation", self.token), json=params.payload)
 
     def send_animation(self, *, params: RequestParams):
-        return self.request(Route("POST", "sendAnimation", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "sendAnimation", self.token), data=params.payload, via_form_data=True)
 
     def edit_message(self, *, params: RequestParams):
         return self.request(Route("POST", "editMessageText", self.token), json=params.payload)
@@ -250,7 +263,7 @@ class HTTPClient:
         return self.request(Route("GET", "getChatMember", self.token), json=params.payload)
 
     def set_chat_photo(self, *, params: RequestParams):
-        return self.request(Route("POST", "setChatPhoto", self.token), data=params.payload, form=params.multipart)
+        return self.request(Route("POST", "setChatPhoto", self.token), data=params.payload, via_form_data=True)
 
     def ban_chat_member(self, *, params: RequestParams):
         return self.request(Route("POST", "banChatMember", self.token), json=params.payload)

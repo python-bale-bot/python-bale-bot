@@ -17,15 +17,9 @@ __all__ = (
 
 class RequestParams(NamedTuple):
     payload: Optional[Dict[str, Any]]
-    multipart: Optional[List[Dict[str, Any]]]
 
-def handle_payload_param(payload: Dict[str, Any]) -> Dict[str, Any]:
-    _payload = {}
-    for element in payload.keys():
-        if payload[element] is not None:
-            _payload[element] = payload[element]
+def remove_empty_keys(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {k : v for k, v in payload.items() if v is not None}
 
-    return _payload
-
-def handle_request_param(payload: Dict[str, Any]=None, form: List[Dict[str, Any]]=None):
-    return RequestParams(payload=handle_payload_param(payload), multipart=form)
+def handle_request_param(payload: Dict[str, Any]=None):
+    return RequestParams(payload=remove_empty_keys(payload))
