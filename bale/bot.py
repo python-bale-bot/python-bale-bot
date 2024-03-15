@@ -54,7 +54,7 @@ class Bot:
     Parameters
     ----------
         token: str 
-            Bot Token
+            Bot’s unique authentication token. obtained via `@BotFather <https://ble.ir/BotFather>`_.
 
     .. attention::
         When you create a bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
@@ -105,11 +105,13 @@ class Bot:
     def users(self) -> WeakValueDictionary[str, "User"]:
         """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
         return self._state.users
+        """:class:`weakref.WeakValueDictionary`[:obj:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
 
     @property
     def chats(self) -> WeakValueDictionary[str, "Chat"]:
         """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
         return self._state.chats
+        """:class:`weakref.WeakValueDictionary`[:obj:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
 
     async def _setup_hook(self):
         loop = asyncio.get_running_loop()
@@ -155,7 +157,7 @@ class Bot:
 
         Parameters
         ----------
-            event_name: :class:`str`
+            event_name: :obj:`str`
                 Name of the event to set.
         """
         def wrapper_function(func):
@@ -210,7 +212,7 @@ class Bot:
 
         Parameters
         ----------
-            event_name: :class:`str`
+            event_name: :obj:`str`
                 Name of the event
             wrapper: Callable[]
                 Function to add as wrapper for event
@@ -268,7 +270,7 @@ class Bot:
         ----------
             handler: :class:`bale.BaseHandler`
                 A BaseHandler instance.
-            check: Optional[Callable[..., :class:`bool`]]
+            check: Optional[Callable[..., :obj:`bool`]]
                 A predicate to check what to wait for. The arguments must meet the parameters of the handler being waited for.
             timeout: Optional[:class:`float`]
                 The number of seconds to wait before timing out and raising asyncio.TimeoutError.
@@ -292,11 +294,11 @@ class Bot:
         self._closed = True
 
     def is_closed(self):
-        """:class:`bool`: Bot Status"""
+        """:obj:`bool`: Bot Status"""
         return self._closed
 
     def http_is_closed(self):
-        """:class:`bool`: HTTPClient Status"""
+        """:obj:`bool`: HTTPClient Status"""
         return self._http.is_closed()
 
     async def run_event(self, core: CoroT, event_name: str, *args, **kwargs):
@@ -395,12 +397,12 @@ class Bot:
 
         Parameters
         ----------
-            url: :class:`str`
+            url: :obj:`str`
                 HTTPS url to send updates to. Use an empty string to remove webhook integration.
 
         Returns
         -------
-            :class:`bool`:
+            :obj:`bool`:
                 On success, True is returned.
         """
         response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
@@ -415,7 +417,7 @@ class Bot:
 
         Returns
         -------
-            :class:`bool`:
+            :obj:`bool`:
                 On success, True is returned.
         Raises
         ------
@@ -438,16 +440,16 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            text: :class:`str`
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            text: :obj:`str`
                 Text of the message to be sent. Max 4096 characters after entities parsing.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+            components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
                 Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
 
         Returns
         -------
@@ -504,11 +506,11 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            from_chat_id: Union[:class:`str`, :class:`int`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            from_chat_id: :obj:`str` | :obj:`int`
                 the chat where the original message was sent (or channel username in the format @channelusername).
-            message_id: Union[:class:`int`, :class:`str`]
+            message_id: :obj:`str` | :obj:`int`
                 Message in the chat specified in ``from_chat_id``.
         Returns
         -------
@@ -558,20 +560,18 @@ class Bot:
 
         Parameters
         ----------
-        chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-        document: :class:`bale.InputFile`
-                File to send. visit :class:`bale.InputFile` to see more info.
-        caption: Optional[:class:`str`]
-                Document caption.
-        components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
-                Message Components
-        reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-        delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+        chat_id: :obj:`str` | :obj:`int`
+            |chat_id|
         document: :class:`bale.Document` | |file_input|
             File to send.
+        caption: :obj:`str`, optional
+            Document caption.
+        components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
+            Message Components
+        reply_to_message_id: :obj:`str` | :obj:`int`, optional
+            |reply_to_message_id|
+        delete_after: :obj:`float` | :obj:`int`, optional
+            |delete_after|
         file_name: :obj:`str`, optional
             |file_name|
 
@@ -660,20 +660,18 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            photo: :class:`bale.InputFile`
-                File to send. visit :class:`bale.InputFile` to see more info.
-            caption: Optional[:class:`str`]
-                Photo caption.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
-                Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+        chat_id: :obj:`str` | :obj:`int`
+            |chat_id|
         photo: :class:`bale.PhotoSize` | |file_input|
             File to send.
+        caption: :obj:`str`, optional
+            Photo caption.
+        components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
+            Message Components
+        reply_to_message_id: :obj:`str` | :obj:`int`, optional
+            |reply_to_message_id|
+        delete_after: :obj:`float` | :obj:`int`, optional
+            |delete_after|
         file_name: :obj:`str`, optional 
             |file_name|
 
@@ -740,13 +738,7 @@ class Bot:
             payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_photo(
-            params=handle_request_param(
-                dict(
-                    chat_id=str(chat_id), caption=caption, reply_markup=components,
-                    reply_to_message_id=reply_to_message_id
-                ),
-                [photo.to_multipart_payload('photo')]
-            )
+            params=handle_request_param(payload)
 
         )
         result = Message.from_dict(data=response.result, bot=self)
@@ -759,7 +751,6 @@ class Bot:
     async def send_audio(self, chat_id: Union[str, int], audio: Union[Audio, FileInput], *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
                          reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
                          file_name: Optional[str] = None) -> "Message":
         """This service is used to send Audio.
@@ -770,20 +761,18 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            audio: :class:`bale.InputFile`
-                File to send. visit :class:`bale.InputFile` to see more info.
-            caption: Optional[:class:`str`]
-                Audio caption.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
-                Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+        chat_id: :obj:`str` | :obj:`int`
+            |chat_id|
         audio: :class:`bale.Audio` | |file_input|
             File to send.
+        caption: :obj:`str`, optional
+            Audio caption.
+        components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
+            Message Components
+        reply_to_message_id: :obj:`str` | :obj:`int`, optional
+            |reply_to_message_id|
+        delete_after: :obj:`float` | :obj:`int`, optional
+            |delete_after|
         file_name: :obj:`str`, optional
             |file_name|
 
@@ -872,20 +861,18 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            video: :class:`bale.InputFile`
-                File to send. visit :class:`bale.InputFile` to see more info.
-            caption: Optional[:class:`str`]
-                Video caption.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
-                Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+        chat_id: :obj:`str` | :obj:`int`
+            |chat_id|
         video: :class:`bale.Video` | |file_input|
             File to send.
+        caption: :obj:`str`, optional
+            Video caption.
+        components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
+            Message Components
+        reply_to_message_id: :obj:`str` | :obj:`int`, optional
+            |reply_to_message_id|
+        delete_after: :obj:`float` | :obj:`int`, optional
+            |delete_after|
         file_name: :obj:`str`, optional
             |file_name|
 
@@ -973,26 +960,24 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            animation: :class:`bale.InputFile`
-                File to send. visit :class:`bale.InputFile` to see more info.
-            duration: :class:`int`
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
             animation: :class:`bale.Animation` | |file_input|
                 File to send.
+            duration: :obj:`int`, optional
                 Duration of sent animation in seconds.
-            width: :class:`int`
+            width: :obj:`int`, optional
                 Animation width.
-            height: :class:`int`
+            height: :obj:`int`, optional
                 Animation height.
-            caption: Optional[:class:`str`]
+            caption: :obj:`str`, optional
                 Animation caption.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+            components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
                 Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional 
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
             file_name: :obj:`str`, optional
                 |file_name|
 
@@ -1103,16 +1088,16 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
             location: :class:`bale.Location`
                 The Location.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+            components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
                 Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+            reply_to_message_id: :obj:`str` | :obj:`int`
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
 
         Returns
         --------
@@ -1182,16 +1167,16 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                    Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :obj:`str` | :obj:`int`
+                    |chat_id|
             contact: :class:`bale.Contact`
                 The Contact.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+            components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
                 Message Components
-            reply_to_message_id: Optional[Union[:class:`str`, :class:`int`]]
-                If the message is a reply, ID of the original message.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
 
         Returns
         --------
@@ -1276,32 +1261,35 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                    Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            title: str
-                Product name. 1- 32 characters.
-            description: str
-                Product description. 1- 255 characters.
-            provider_token: str
-                You can use 3 methods to receive money: 1.Card number 2. Port number and acceptor number 3. Wallet number "Bale"
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            title: :obj:`str`
+                Product name. 1-32 characters.
+            description: :obj:`str`
+                Product description. 1-255 characters.
+            provider_token: :obj:`str`
+                You can use 3 methods to receive money:
+                    1. Card number
+                    2. Port number and acceptor number
+                    3. Wallet number "Bale"
             prices: List[:class:`bale.LabeledPrice`]
                 A list of prices.
-            payload: Optional[:class:`str`]
+            payload: :obj:`str`, optional
                 Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.
-            photo_url: Optional[:class:`str`]
+            photo_url: :obj:`str`, optional
                 URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
-            need_name: Optional[bool]
+            need_name: :obj:`bool`, optional
                 Pass True, if you require the user’s full name to complete the order.
-            need_phone_number: Optional[bool]
+            need_phone_number: :obj:`bool`, optional
                 Pass True, if you require the user’s phone number to complete the order.
-            need_email: Optional[bool]
+            need_email: :obj:`bool`, optional
                 Pass True, if you require the user’s email to complete the order.
-            need_shipping_address: Optional[bool]
+            need_shipping_address: :obj:`bool`, optional
                 Pass True, if you require the user’s shipping address to complete the order.
-            is_flexible: Optional[bool]
+            is_flexible: :obj:`bool`, optional
                 Pass True, if the final price depends on the shipping method.
-            delete_after: Optional[Union[:class:`float`, :class:`int`]]
-                If used, the sent message will be deleted after the specified number of seconds.
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
 
         Returns
         -------
@@ -1394,17 +1382,17 @@ class Bot:
 
         .. code:: python
 
-            await bot.edit_message(1234, 1234, "this is tested", components=None)
+            await bot.edit_message(1234, 1234, "the message edited!", components=None)
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            message_id: Union[:class:`str`, :class:`int`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            message_id: :obj:`str` | :obj:`int`
                 Unique identifier for the message to edit.
-            text: str
+            text: :obj:`str`
                 New text of the message, 1- 4096 characters after entities parsing.
-            components: Optional[Union[:class:`bale.InlineKeyboardMarkup`, :class:`bale.MenuKeyboardMarkup`]]
+            components: :class:`bale.InlineKeyboardMarkup`, optional
                 An object for an inline keyboard.
         Raises
         ------
@@ -1450,11 +1438,11 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            message_id: :class:`bale.Message`
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            message_id: :obj:`str` | :obj:`int`
                 Unique identifier for the message to delete.
-            delay: Optional[Union[:class:`int`, :class:`float`]]
+            delay: :obj:`int` | :obj:`float`, optional
                 If used, the message will be deleted after that number of seconds delay.
         Raises
         ------
@@ -1506,13 +1494,13 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`int`, :class:`str`]
-                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            use_cache: Optional[:class:`bool`]
+            chat_id: :obj:`str` | :obj:`int`
+                 |chat_id|
+            use_cache: :obj:`bool`, optional
                  Use of caches stored in relation to chats.
         Returns
         -------
-            Optional[:class:`bale.Chat`]
+            :class:`bale.Chat` | None
                 The chat or ``None`` if not found.
         Raises
         ------
@@ -1552,13 +1540,13 @@ class Bot:
 
         Parameters
         ----------
-            user_id: Union[:class:`int`, :class:`str`]
+            user_id: :obj:`str` | :obj:`int`
                  Unique identifier for the target chat.
-            use_cache: Optional[:class:`bool`]
+            use_cache: :obj:`bool`, optional
                 Use of caches stored in relation to chats.
         Returns
         -------
-            Optional[:class:`bale.User`]
+            :class:`bale.User` | None
                 The user or ``None`` if not found.
         Raises
         ------
@@ -1604,9 +1592,9 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`int`, :class:`str`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Union[:class:`int`, :class:`str`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            user_id: :obj:`str` | :obj:`int`
                 Unique identifier of the target user.
 
         Returns
@@ -1669,50 +1657,50 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`int`, :class:`str`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Union[:class:`int`, :class:`str`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            user_id: :obj:`str` | :obj:`int`
                 Unique identifier of the target user.
-            can_be_edited: :class:`bool`
+            can_be_edited: :obj:`bool`, optional
                 Pass :obj:`True`, if the bot is allowed to edit administrator privileges of that user.
-            can_change_info: :class:`bool`
+            can_change_info: :obj:`bool`, optional
                 Pass :obj:`True`, if the user can change the chat title, photo and other settings.
-            can_post_messages: :class:`bool`
+            can_post_messages: :obj:`bool`, optional
                 Pass :obj:`True`, if the administrator can post messages in the channel,
                 or access channel statistics; channels only.
-            can_edit_messages: :class:`bool`
+            can_edit_messages: :obj:`bool`, optional
                 Pass :obj:`True`,
                 if the administrator can edit messages of other users and can pin messages; channels only.
-            can_delete_messages: :class:`bool`
+            can_delete_messages: :obj:`bool`, optional
                 Pass :obj:`True`, if the administrator can delete messages of other users.
-            can_invite_users: :class:`bool`
+            can_invite_users: :obj:`bool`, optional
                 Pass :obj:`True`, if the user can invite new users to the chat.
-            can_restrict_members: :class:`bool`
+            can_restrict_members: :obj:`bool`, optional
                 Pass :obj:`True`, if the administrator can restrict, ban or unban chat members.
-            can_pin_messages: :class:`bool`
+            can_pin_messages: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to pin messages, groups, channels only.
-            can_promote_members: :class:`bool`
+            can_promote_members: :obj:`bool`, optional
                 Pass :obj:`True`,
                 if the administrator can add new administrators with a subset of his own privileges or demote administrators
                 that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user).
-            can_send_messages: :class:`bool`
+            can_send_messages: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to send messages.
-            can_send_media_messages: :class:`bool`
+            can_send_media_messages: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to send a media message.
-            can_reply_to_story: :class:`bool`
+            can_reply_to_story: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to reply to a story.
-            can_send_link_message: :class:`bool`
+            can_send_link_message: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to send a link message.
-            can_send_forwarded_message: :class:`bool`
+            can_send_forwarded_message: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to forward a message to chat.
-            can_see_members: :class:`bool`
+            can_see_members: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to see the list of chat members.
-            can_add_story: :class:`bool`
+            can_add_story: :obj:`bool`, optional
                 Pass :obj:`True`, if the user is allowed to post a story from chat.
 
         Returns
         -------
-            :class:`bool`
+            :obj:`bool`
                 On success, ``True`` is returned.
 
         Raises
@@ -1765,14 +1753,14 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`int`, :class:`str`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Union[:class:`int`, :class:`str`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            user_id: :obj:`str` | :obj:`int`
                 Unique identifier of the target user.
 
         Returns
         -------
-            :class:`bool`
+            :obj:`bool`
                 On success, ``True`` is returned.
 
         Raises
@@ -1807,15 +1795,15 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`int`, :class:`str`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Union[:class:`int`, :class:`str`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            user_id: :obj:`str` | :obj:`int`
                 Unique identifier of the target user.
-            only_if_banned: Optional[:class:`bool`]
+            only_if_banned: :obj:`bool`, optional
                  Do nothing if the user is not banned.
         Returns
         -------
-            :class:`bool`
+            :obj:`bool`
                 On success, ``True`` is returned.
 
         Raises
@@ -1854,15 +1842,14 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            photo: :class:`bale.InputFile`
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
             photo: :class:`bale.PhotoSize` | |file_input|
                 New chat photo. visit :class:`bale.InputFile` to see more info.
 
         Returns
         --------
-            :class:`bool`:
+            :obj:`bool`:
                 On success, True is returned.
 
         Raises
@@ -1917,7 +1904,7 @@ class Bot:
 
         Returns
         --------
-            :class:`int`:
+            :obj:`int`:
                 The members count of the chat
         """
         if not isinstance(chat_id, (str, int)):
@@ -1937,8 +1924,8 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
         Returns
         -------
             List[:class:`bale.ChatMember`]
@@ -1973,7 +1960,7 @@ class Bot:
 
         Parameters
         ----------
-            file_id: :class:`str`
+            file_id: :obj:`str`
                 Either the file identifier to get file information about.
 
         Returns
@@ -2006,9 +1993,9 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
-            user_id: Union[:class:`str`, :class:`int`]
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            user_id: :obj:`str` | :obj:`int`
                 Unique identifier for the target user.
 
         Raises
@@ -2042,8 +2029,8 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
 
         Raises
         ------
