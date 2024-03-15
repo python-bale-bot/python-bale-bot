@@ -1495,16 +1495,16 @@ class Bot:
                 )
             delay = float(delay)
 
-        async def delete_message_task(_delay: Optional[float] = None):
-            if _delay:
-                await asyncio.sleep(_delay)
+        async def delete_message_task():
+            if delay:
+                await asyncio.sleep(delay)
 
             response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
             if response.result:
                 self._state.remove_message(str(chat_id), message_id)
 
         if delay:
-            await asyncio.create_task(delete_message_task(delay))
+            await asyncio.create_task(delete_message_task())
         else:
             await delete_message_task()
 
@@ -1593,14 +1593,9 @@ class Bot:
             return founded_user
 
         chat = await self.get_chat(user_id)
+
         if chat and chat.is_private_chat:
-            payload = {
-                "username": chat.username,
-                "id": chat.id,
-                "first_name": chat.first_name,
-                "last_name": chat.last_name
-            }
-            result = User.from_dict(payload, self)
+            result = User.from_dict(chat.to_dict(), self)
             self._state.store_user(result)
             return result
 
