@@ -1,3 +1,4 @@
+from pathlib import Path
 # Configuration file for the Sphinx documentation builder.
 #
 # For the full list of built-in configuration values, see the documentation:
@@ -41,6 +42,7 @@ intersphinx_mapping = {
 todo_include_todos = False
 paramlinks_hyperlink_param = "name"
 
+rst_prolog = (Path.cwd() / "../substitutions/global.rst").read_text(encoding="utf-8")
 
 # -- Options for HTML output -------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#options-for-html-output
