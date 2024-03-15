@@ -79,6 +79,7 @@ class Bot:
     def __init__(self, token: str, **kwargs):
         if not isinstance(token, str):
             raise InvalidToken()
+
         self.loop: Union[asyncio.AbstractEventLoop, _Loop] = _loop
         self.token: str = token
         self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.get('http_kwargs', {}))
@@ -102,16 +103,18 @@ class Bot:
         return self._state
 
     @property
-    def users(self) -> WeakValueDictionary[str, "User"]:
-        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
-        return self._state.users
+    def cached_users(self) -> Optional[WeakValueDictionary[str, "User"]]:
         """:class:`weakref.WeakValueDictionary`[:obj:`str`, :class:`bale.User`]: Represents the users that the bot has ever encountered."""
+        if self._state:
+            return self._state.users
+        return None
 
     @property
-    def chats(self) -> WeakValueDictionary[str, "Chat"]:
-        """:class:`weakref.WeakValueDictionary`[:class:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
-        return self._state.chats
+    def cached_chats(self) -> Optional[WeakValueDictionary[str, "Chat"]]:
         """:class:`weakref.WeakValueDictionary`[:obj:`str`, :class:`bale.Chat`]: Represents the chats that the bot has ever encountered."""
+        if self._state:
+            return self._state.chats
+        return None
 
     async def _setup_hook(self):
         loop = asyncio.get_running_loop()
@@ -126,7 +129,7 @@ class Bot:
 
     async def __aexit__(self, exc_type, exc_value, traceback):
         await self.close()
-        return
+        return None
 
     def event(self, coro: CoroT) -> CoroT:
         """Set wrapper or listener for selected event (the name of function).
@@ -1075,8 +1078,7 @@ class Bot:
         return result
 
     async def send_location(
-            self, chat_id: Union[str, int],
-            location: "Location",
+            self, chat_id: Union[str, int], location: "Location",
             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
             reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None
     ) -> "Message":
@@ -1377,7 +1379,7 @@ class Bot:
         return result
 
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
-                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> "Message":
+                           components: Optional["InlineKeyboardMarkup"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         .. code:: python
@@ -1518,6 +1520,8 @@ class Bot:
             result = self._state.get_chat(chat_id)
             if result:
                 return result
+        if use_cache and (founded_chat := self._state.get_chat(str(chat_id))):
+            return founded_chat
 
         try:
             response = await self._http.get_chat(params=handle_request_param(dict(chat_id=str(chat_id))))
@@ -1560,10 +1564,8 @@ class Bot:
                 "user_id param must be type of int or str"
             )
 
-        if use_cache:
-            result = self._state.get_user(user_id)
-            if result:
-                return result
+        if use_cache and (founded_user := self._state.get_user(str(user_id))):
+            return founded_user
 
         chat = await self.get_chat(user_id)
         if chat and chat.is_private_chat:
@@ -1742,7 +1744,7 @@ class Bot:
             can_see_members=can_see_members,
             can_add_story=can_add_story
         )))
-        return response.result or False
+        return response.result
 
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
@@ -1890,8 +1892,8 @@ class Bot:
 
         Parameters
         ----------
-            chat_id: Union[:class:`str`, :class:`int`]
-                Unique identifier for the target chat or username of the target channel (in the format @channelusername).
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
 
         Raises
         ------
