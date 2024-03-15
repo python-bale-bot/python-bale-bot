@@ -10,7 +10,8 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List, Union
-from bale import BaleObject
+from bale import BaleObject, Document, PhotoSize, Video, Audio, Animation
+from bale.utils.types import FileInput
 if TYPE_CHECKING:
     from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile
 
@@ -77,7 +78,7 @@ class User(BaleObject):
         """
         return await self.get_bot().send_message(self.chat_id, text, components=components, delete_after=delete_after)
 
-    async def send_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def send_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -85,9 +86,9 @@ class User(BaleObject):
 
             await user.send_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_document(self.chat_id, document, caption=caption, components=components, delete_after=delete_after, file_name = file_name)
 
-    async def send_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def send_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -95,9 +96,9 @@ class User(BaleObject):
 
             await user.send_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def send_video(self, video: Union["Video", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -105,9 +106,9 @@ class User(BaleObject):
 
             await user.send_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def send_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -115,9 +116,9 @@ class User(BaleObject):
 
             await user.send_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def send_audio(self, audio: Union["Audio", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -125,7 +126,7 @@ class User(BaleObject):
 
             await user.send_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after)
+        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
     async def send_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """

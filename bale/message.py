@@ -19,6 +19,7 @@ from bale import (
     MenuKeyboardMarkup, Video, Voice, Audio, BaseFile, Sticker, SuccessfulPayment, Animation,
     InputFile
 )
+from bale.utils.types import FileInput
 from .helpers import parse_time
 
 
@@ -206,7 +207,7 @@ class Message(BaleObject):
         """
         return await self.get_bot().forward_message(chat_id, self.chat_id, self.message_id)
 
-    async def reply_document(self, document: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -214,12 +215,12 @@ class Message(BaleObject):
 
             await message.reply_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_document(self.chat_id, document, caption=caption,
-                                            components=components,
-                                            reply_to_message_id=self.message_id,
-                                            delete_after=delete_after)
+        return await self.get_bot().send_document(self.chat_id, document, caption=caption, components=components,
+                                            reply_to_message_id=self.message_id, delete_after=delete_after,
+                                            file_name=file_name
+                                            )
 
-    async def reply_photo(self, photo: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -228,11 +229,10 @@ class Message(BaleObject):
             await message.reply_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.get_bot().send_photo(self.chat_id, photo, caption=caption,
-                                         components=components,
-                                         reply_to_message_id=self.message_id,
-                                         delete_after=delete_after)
+                                         components=components, reply_to_message_id=self.message_id,
+                                         delete_after=delete_after, file_name=file_name)
 
-    async def reply_video(self, video: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_video(self, video: Union["Video", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -241,11 +241,10 @@ class Message(BaleObject):
             await message.reply_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.get_bot().send_video(self.chat_id, video, caption=caption,
-                                         components=components,
-                                         reply_to_message_id=self.message_id,
-                                         delete_after=delete_after)
+                                         components=components, reply_to_message_id=self.message_id,
+                                         delete_after=delete_after, file_name=file_name)
 
-    async def reply_animation(self, animation: "InputFile", *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -254,14 +253,11 @@ class Message(BaleObject):
             await message.reply_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.get_bot().send_animation(self.chat_id, animation, duration=duration,
-                                         width=width,
-                                         height=height,
-                                         caption=caption,
-                                         components=components,
-                                         reply_to_message_id=self.message_id,
-                                         delete_after=delete_after)
+                                         width=width, height=height, caption=caption,
+                                         components=components, reply_to_message_id=self.message_id,
+                                         delete_after=delete_after, file_name=file_name)
 
-    async def reply_audio(self, audio: "InputFile", *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_audio(self, audio: Union["Audio", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -270,9 +266,8 @@ class Message(BaleObject):
             await message.reply_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.get_bot().send_audio(self.chat_id, audio, caption=caption,
-                                         components=components,
-                                         reply_to_message_id=self.message_id,
-                                         delete_after=delete_after)
+                                         components=components, reply_to_message_id=self.message_id,
+                                         delete_after=delete_after, file_name=file_name)
 
     async def reply_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
