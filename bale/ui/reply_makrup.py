@@ -12,7 +12,7 @@ from __future__ import annotations
 from typing import List, Union, Dict, Optional
 from itertools import groupby
 from . import ReplyMarkupItem, InlineKeyboardButton, MenuKeyboardButton
-from bale.utils import to_json
+from bale.utils.request import to_json
 
 class BaseReplyMarkup:
     __slots__ = (
