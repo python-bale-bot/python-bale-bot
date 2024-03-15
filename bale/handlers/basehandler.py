@@ -12,7 +12,7 @@ from __future__ import annotations
 
 from typing import Coroutine, Callable, Tuple, Optional, TYPE_CHECKING
 
-from bale.utils import UT
+from bale.utils.types import UT
 
 if TYPE_CHECKING:
     from bale import Update
