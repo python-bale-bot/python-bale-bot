@@ -1,6 +1,6 @@
 from .input_file import InputFile
 from .photosize import PhotoSize
-from .file import BaseFile
+from .basefile import BaseFile
 from .document import Document
 from .voice import Voice
 from .audio import Audio
