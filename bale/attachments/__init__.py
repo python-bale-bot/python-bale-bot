@@ -1,4 +1,4 @@
-from .input_file import InputFile
+from .inputfile import InputFile
 from .photosize import PhotoSize
 from .basefile import BaseFile
 from .document import Document

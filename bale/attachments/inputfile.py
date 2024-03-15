@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-from typing import Optional, Dict
+from typing import Union, Optional, Dict
 from io import BufferedReader
 
 __all__ = (
@@ -27,45 +27,39 @@ class InputFile:
 
     Parameters
     ----------
-        file: :class:`io.BufferedReader` | :class:`str` | :class:`bytes`
+        file_input: :class:`io.BufferedReader` | :class:`str` | :class:`bytes`
             Your File. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
         file_name: Optional[:class:`str`]
             Additional interface options. It is used only when uploading a file.
     """
-    PHOTO_TYPE = "photo"
-    ANIMATION_TYPE = "animation"
-    VIDEO_TYPE = "video"
-    DOCUMENT_TYPE = "document"
-    AUDIO_TYPE = "audio"
     __slots__ = (
-        "file",
+        "file_input",
         "file_name"
     )
-    def __init__(self, file: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None):
-        if not isinstance(file, (str, BufferedReader, bytes)):
+    def __init__(self, file_input: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None):
+        if not isinstance(file_input, (str, BufferedReader, bytes)):
             raise TypeError(
-                "file param must be type of str, BufferedReader and bytes"
+                "file_input parameter must be one of str, BufferedReader, and byte types"
             )
+
+        if isinstance(file_input, str):
+            file_input = file_input.encode("utf-8")
+        elif isinstance(file_input, BufferedReader):
+            file_input = file_input.read()
+
         if file_name:
             if not isinstance(file_name, str):
                 raise TypeError(
                     "file_name param must be type of str"
                 )
-            if isinstance(file, str):
-                raise TypeError(
-                    "You can only enter the file name when you are uploading the file"
-                )
 
-        if isinstance(file, BufferedReader):
-            file = file.read()
-
-        self.file: bytes | str = file
+        self.file_input: Union[bytes, str] = file_input
         self.file_name: Optional[str] = file_name
 
-    def to_multipart_payload(self, media_type: str) -> Dict:
+    def to_multipart_payload(self) -> Dict:
         payload = {
-            "value": self.file,
-            "name": media_type
+            "value": self.file_input,
+            "content_type" : "multipart/form-data"
         }
         if self.file_name:
             payload["filename"] = self.file_name
@@ -73,7 +67,7 @@ class InputFile:
         return payload
 
     def __eq__(self, other) -> bool:
-        return isinstance(other, InputFile) and self.file == other.file
+        return isinstance(other, InputFile) and self.file_input == other.file_input
 
     def __ne__(self, other) -> bool:
         return not self.__eq__(other)
