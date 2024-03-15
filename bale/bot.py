@@ -18,13 +18,15 @@ from weakref import WeakValueDictionary
 
 from bale import (
     State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup,
-    Chat, LabeledPrice, ChatMember, Updater, Location,
-    Contact, InputFile, CallbackQuery, BaseHandler,
-    CommandHandler, CallbackQueryHandler, MessageHandler
+    Chat, LabeledPrice, ChatMember, Updater, InputFile, CallbackQuery,
+    BaseHandler, CommandHandler, CallbackQueryHandler, MessageHandler,
+    PhotoSize, Document, Audio, Contact, Location, Video, Animation
 )
 from bale.request import HTTPClient, handle_request_param
 from .error import NotFound, InvalidToken
-from .utils import setup_logging, CoroT
+from .utils.types import CoroT, FileInput
+from .utils.logging import setup_logging
+from .utils.files import parse_file_input
 
 __all__ = (
     "Bot"
@@ -543,10 +545,11 @@ class Bot:
         self._state.store_message(result)
         return result
 
-    async def send_document(self, chat_id: Union[str, int], document: "InputFile", *,
+    async def send_document(self, chat_id: Union[str, int], document: Union["Document", FileInput], *,
                             caption: Optional[str] = None,
                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
+                            file_name: Optional[str] = None) -> "Message":
         """This service is used to send document.
 
         .. code:: python
@@ -567,6 +570,10 @@ class Bot:
                 If the message is a reply, ID of the original message.
         delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
+        document: :class:`bale.Document` | |file_input|
+            File to send.
+        file_name: :obj:`str`, optional
+            |file_name|
 
         Returns
         --------
@@ -614,14 +621,24 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
-        response = await self._http.send_document(
-            params=handle_request_param(
-                dict(
-                    chat_id=chat_id, caption=caption, reply_markup=components,
-                    reply_to_message_id=reply_to_message_id
-                ),
-                [document.to_multipart_payload('document')]
+        if file_name and not isinstance(file_name, str):
+            raise TypeError(
+                "file_name param must be type of str"
             )
+
+        payload = {
+            "chat_id": chat_id,
+            "document": parse_file_input(document, Document, file_name)
+        }
+        if caption:
+            payload["caption"] = caption
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.send_document(
+            params=handle_request_param(payload)
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -630,10 +647,11 @@ class Bot:
 
         return result
 
-    async def send_photo(self, chat_id: Union[str, int], photo: "InputFile", *,
+    async def send_photo(self, chat_id: Union[str, int], photo: Union["PhotoSize", FileInput], *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[Union[str]] = None) -> "Message":
         """This service is used to send photo.
 
         .. code:: python
@@ -654,6 +672,10 @@ class Bot:
                 If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
+        photo: :class:`bale.PhotoSize` | |file_input|
+            File to send.
+        file_name: :obj:`str`, optional 
+            |file_name|
 
         Returns
         --------
@@ -701,6 +723,22 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
+        if file_name and not isinstance(file_name, str):
+            raise TypeError(
+                "file_name param must be type of str"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "photo": parse_file_input(photo, PhotoSize, file_name)
+        }
+        if caption:
+            payload["caption"] = caption
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
         response = await self._http.send_photo(
             params=handle_request_param(
                 dict(
@@ -718,10 +756,12 @@ class Bot:
 
         return result
 
-    async def send_audio(self, chat_id: Union[str, int], audio: "InputFile", *,
+    async def send_audio(self, chat_id: Union[str, int], audio: Union[Audio, FileInput], *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                          reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[str] = None) -> "Message":
         """This service is used to send Audio.
 
         .. code:: python
@@ -742,6 +782,10 @@ class Bot:
                 If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
+        audio: :class:`bale.Audio` | |file_input|
+            File to send.
+        file_name: :obj:`str`, optional
+            |file_name|
 
         Returns
         --------
@@ -789,12 +833,25 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
-        response = await self._http.send_audio(params=handle_request_param(
-            dict(
-                chat_id=str(chat_id), caption=caption, reply_markup=components,
-                reply_to_message_id=reply_to_message_id),
-            [audio.to_multipart_payload('audio')]
-        ))
+        if file_name and not isinstance(file_name, str):
+            raise TypeError(
+                "file_name param must be type of str"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "audio": parse_file_input(audio, Audio, file_name)
+        }
+        if caption:
+            payload["caption"] = caption
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.send_audio(
+            params=handle_request_param(payload)
+        )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -802,10 +859,11 @@ class Bot:
 
         return result
 
-    async def send_video(self, chat_id: Union[str, int], video: "InputFile", *,
+    async def send_video(self, chat_id: Union[str, int], video: Union[Video, FileInput], *,
                          caption: Optional[str] = None,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[str] = None) -> "Message":
         """This service is used to send Video.
 
         .. code:: python
@@ -826,6 +884,10 @@ class Bot:
                 If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
+        video: :class:`bale.Video` | |file_input|
+            File to send.
+        file_name: :obj:`str`, optional
+            |file_name|
 
         Returns
         --------
@@ -873,13 +935,23 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
-        response = await self._http.send_video(params=handle_request_param(
-              dict(
-                    chat_id=str(chat_id), caption=caption, reply_markup=components,
-                    reply_to_message_id=reply_to_message_id
-              ),
-              [video.to_multipart_payload('video')]
-        ))
+        if file_name and not isinstance(file_name, str):
+            raise TypeError(
+                "file_name param must be type of str"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "video": parse_file_input(video, Video, file_name)
+        }
+        if caption:
+            payload["caption"] = caption
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.send_video(params=handle_request_param(payload))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -887,11 +959,12 @@ class Bot:
 
         return result
 
-    async def send_animation(self, chat_id: Union[str, int], animation: "InputFile", *,
-                         duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
-                         caption: Optional[str] = None,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+    async def send_animation(self, chat_id: Union[str, int], animation: Union[Animation, FileInput], *,
+                             duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
+                             caption: Optional[str] = None,
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                             reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
+                             file_name: Optional[str] = None) -> "Message":
         """This service is used to send Animation.
 
         .. code:: python
@@ -905,6 +978,8 @@ class Bot:
             animation: :class:`bale.InputFile`
                 File to send. visit :class:`bale.InputFile` to see more info.
             duration: :class:`int`
+            animation: :class:`bale.Animation` | |file_input|
+                File to send.
                 Duration of sent animation in seconds.
             width: :class:`int`
                 Animation width.
@@ -918,6 +993,8 @@ class Bot:
                 If the message is a reply, ID of the original message.
             delete_after: Optional[Union[:class:`float`, :class:`int`]]
                 If used, the sent message will be deleted after the specified number of seconds.
+            file_name: :obj:`str`, optional
+                |file_name|
 
         Returns
         --------
@@ -980,15 +1057,30 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
+        if file_name and not isinstance(file_name, str):
+            raise TypeError(
+                "file_name param must be type of str"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "animation": parse_file_input(animation, Animation, file_name)
+        }
+        if duration:
+            payload["duration"] = duration
+        if width:
+            payload["width"] = width
+        if height:
+            payload["height"] = height
+        if caption:
+            payload["caption"] = caption
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
         response = await self._http.send_animation(params=handle_request_param(
-            dict(
-                chat_id=str(chat_id), duration=duration,
-                width=width, height=height,
-                caption=caption,
-                reply_markup=components,
-                reply_to_message_id=reply_to_message_id
-            ),
-            [animation.to_multipart_payload('animation')]
+            payload
         ))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -1753,7 +1845,7 @@ class Bot:
         response = await self._http.ban_chat_member(params=handle_request_param(dict(chat_id=str(chat_id), user_id=str(user_id), only_if_banned=only_if_banned)))
         return response.result
 
-    async def set_chat_photo(self, chat_id: Union[str, int], photo: "InputFile") -> bool:
+    async def set_chat_photo(self, chat_id: Union[str, int], photo: Union[PhotoSize, FileInput]) -> bool:
         """Use this method to set a new profile photo for the chat.
 
         .. code:: python
@@ -1765,6 +1857,7 @@ class Bot:
             chat_id: Union[:class:`str`, :class:`int`]
                 Unique identifier for the target chat or username of the target channel (in the format @channelusername).
             photo: :class:`bale.InputFile`
+            photo: :class:`bale.PhotoSize` | |file_input|
                 New chat photo. visit :class:`bale.InputFile` to see more info.
 
         Returns
@@ -1791,14 +1884,13 @@ class Bot:
                 "photo param must be type of InputFile"
             )
 
-        response = await self._http.set_chat_photo(
-            params=handle_request_param(
-                dict(
-                    chat_id=str(chat_id),
-                ),
-                [photo.to_multipart_payload('photo')]
-            )
+        payload = {
+            "chat_id": chat_id,
+            "photo": photo
+        }
 
+        response = await self._http.set_chat_photo(
+            params=handle_request_param(payload)
         )
         return response.result or False
 
