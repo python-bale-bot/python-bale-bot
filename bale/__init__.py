@@ -61,8 +61,19 @@ __all__ = (
 from .baleobject import BaleObject
 from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
 from .chatphoto import ChatPhoto
-from .error import BaleError, APIError, NetworkError, HTTPException, TimeOut, NotFound, Forbidden, HTTPClientError, \
-    InvalidToken, RateLimited, BadRequest
+from .error import (
+    BaleError,
+    APIError,
+    NetworkError,
+    HTTPException,
+    TimeOut,
+    NotFound,
+    Forbidden,
+    HTTPClientError,
+    InvalidToken,
+    RateLimited,
+    BadRequest
+)
 from .payments import LabeledPrice, Invoice, SuccessfulPayment
 from .state import State
 from .sticker import Sticker

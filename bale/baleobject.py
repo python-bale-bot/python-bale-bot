@@ -125,8 +125,8 @@ class BaleObject:
             return None
 
         existing_kwargs = {
-                key: data.get(key) for key in cls._get_signature_keys()
-            }
+            key: data.get(key) for key in cls._get_signature_keys()
+        }
         obj: Bale_obj = cls(**existing_kwargs)
 
         obj.set_bot(bot)

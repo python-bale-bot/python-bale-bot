@@ -111,7 +111,7 @@ class ChatMember(BaleObject):
         self.can_delete_messages = can_delete_messages
         self.can_invite_users = can_invite_users
         self.can_restrict_members = can_restrict_members
-        self.can_pin_messages = can_post_messages
+        self.can_pin_messages = can_pin_messages
         self.can_promote_members = can_promote_members
         self.can_send_messages = can_send_messages
         self.can_send_media_messages = can_send_media_messages
