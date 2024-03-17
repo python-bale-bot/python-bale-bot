@@ -83,7 +83,7 @@ class Bot:
         self.loop: Union[asyncio.AbstractEventLoop, _Loop] = _loop
         self.token: str = token
         self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.get('http_kwargs', {}))
-        self._state: "State" = State(self, **kwargs)
+        self._state: "State" = State(self, **kwargs.get('state_kwargs', {}))
         self._client_user = None
         self.events: Dict[str, List[Callable]] = {}
         self.listeners: List[Tuple[BaseHandler, asyncio.Future, Callable[["Update"], bool]]] = []
@@ -1576,6 +1576,36 @@ class Bot:
 
         self._state.remove_user(user_id)
         return None
+
+    async def get_message(self, chat_id: int, message_id: int) -> Optional["Message"]:
+        """Use this method to get cashed information about the message.
+
+        .. code:: python
+
+            await bot.get_message(1234)
+
+        Parameters
+        ----------
+            chat_id: :obj:`int`
+                 |chat_id|
+            message_id: :obj:`int`
+                 Unique identifier for the target message.
+        Returns
+        -------
+            :class:`bale.Message` | None
+                The message or ``None`` if not found.
+        """
+        if not isinstance(chat_id, int):
+            raise TypeError(
+                "chat_id param must be type of int"
+            )
+
+        if not isinstance(message_id, int):
+            raise TypeError(
+                "message_id param must be type of int"
+            )
+
+        return self._state.get_message(chat_id, message_id)
 
     async def get_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> Optional["ChatMember"]:
         """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
