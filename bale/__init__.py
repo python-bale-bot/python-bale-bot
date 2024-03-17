@@ -50,10 +50,6 @@ __all__ = (
     "Message",
     "CallbackQuery",
     "Update",
-    "BaseHandler",
-    "MessageHandler",
-    "CommandHandler",
-    "CallbackQueryHandler",
     "Bot",
     "__version__"
 )
@@ -85,7 +81,6 @@ from .chat import Chat
 from .message import Message
 from .callbackquery import CallbackQuery
 from .update import Update
-from .handlers import BaseHandler, MessageHandler, CommandHandler, CallbackQueryHandler
 from .bot import Bot
 from .version import __version__
 

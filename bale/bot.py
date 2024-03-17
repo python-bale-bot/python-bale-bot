@@ -18,10 +18,10 @@ from weakref import WeakValueDictionary
 
 from bale import (
     State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup,
-    Chat, LabeledPrice, ChatMember, Updater, InputFile, CallbackQuery,
-    BaseHandler, CommandHandler, CallbackQueryHandler, MessageHandler,
+    Chat, LabeledPrice, ChatMember, Updater, CallbackQuery,
     PhotoSize, Document, Audio, Contact, Location, Video, Animation
 )
+from bale.handlers import BaseHandler, CommandHandler, CallbackQueryHandler, MessageHandler
 from bale.request import HTTPClient, handle_request_param
 from .error import NotFound, InvalidToken
 from .utils.types import CoroT, FileInput
