@@ -597,11 +597,6 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(document, InputFile):
-            raise TypeError(
-                "document param must be type of InputFile"
-            )
-
         if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
             raise TypeError(
                 "reply_to_message_id param must be type of str or int"
@@ -695,11 +690,6 @@ class Bot:
         if not isinstance(chat_id, (str, int)):
             raise TypeError(
                 "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(photo, InputFile):
-            raise TypeError(
-                "photo param must be type of InputFile"
             )
 
         if components:
@@ -798,11 +788,6 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if not isinstance(audio, InputFile):
-            raise TypeError(
-                "audio param must be type of InputFile"
-            )
-
         if components:
             if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
                 raise TypeError(
@@ -896,11 +881,6 @@ class Bot:
         if not isinstance(chat_id, (str, int)):
             raise TypeError(
                 "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(video, InputFile):
-            raise TypeError(
-                "video param must be type of InputFile"
             )
 
         if components:
@@ -1001,11 +981,6 @@ class Bot:
         if not isinstance(chat_id, (str, int)):
             raise TypeError(
                 "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(animation, InputFile):
-            raise TypeError(
-                "animation param must be type of InputFile"
             )
 
         if duration and not isinstance(duration, int):

@@ -24,5 +24,9 @@ def parse_file_input(
             return result_path.open(mode="rb")
     elif attachment_type and isinstance(file_input, attachment_type):
         return file_input.file_id # type: ignore
+    elif isinstance(file_input, InputFile):
+        return file_input
 
-    return file_input
+    raise TypeError(
+        "You cannot give the file like this. Your file must be one of bytes, str and InputFile types."
+    )
