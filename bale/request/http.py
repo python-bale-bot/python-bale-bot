@@ -20,6 +20,8 @@ from ..error import (
     NotFound,
     Forbidden,
     APIError,
+    InvalidToken,
+    BadRequest,
     BaleError,
     HTTPClientError,
     RateLimited,
@@ -138,15 +140,20 @@ class HTTPClient:
                     response = await ResponseParser.from_response(original_response)
                     if original_response.status == ResponseStatusCode.OK:
                         return response
-                    elif not response.ok or original_response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
-                        if original_response.status == ResponseStatusCode.RATE_LIMIT or response.description in (HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT):
-                            if tries >= 4:
-                                raise RateLimited()
+                    elif not response.ok or original_response.status == ResponseStatusCode.NOT_INCORRECT: # request is done, but is not correct?
+                        # so we have to check which of the errors belong to the problem of that request?
+                        for error_obj in (NotFound, InvalidToken, Forbidden, BadRequest):
+                            if error_obj.check_response(response.description):
+                                raise error_obj(response.description)
 
-                            await asyncio.sleep(tries * 2)
-                            continue
+                    elif original_response.status == ResponseStatusCode.RATE_LIMIT or response.description in (
+                        HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT
+                    ):
+                        if tries >= 4:
+                            raise RateLimited()
 
-                        response.get_error()
+                        await asyncio.sleep(tries * 2)
+                        continue
 
                     elif original_response.status == ResponseStatusCode.NOT_FOUND:
                         raise NotFound(response.description)

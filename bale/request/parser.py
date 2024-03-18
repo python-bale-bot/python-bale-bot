@@ -9,70 +9,62 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from aiohttp import ClientResponse
-from typing import Any, Optional, NoReturn
+from typing import Any
 from json import loads
 from json.decoder import JSONDecodeError
-from bale.error import NotFound, InvalidToken, Forbidden, BadRequest
 
 async def json_or_text(response: "ClientResponse"):
-	text = await response.text()
+    text = await response.text()
 
-	try:
-		json = loads(text)
-	except JSONDecodeError:
-		return text
-	else:
-		return json
+    try:
+        json = loads(text)
+    except JSONDecodeError:
+        return text
+    else:
+        return json
 
 class ResponseParser:
-	"""a Parser for parse http response.
+    """A parser for parse http response.
 
-	Attributes
-	==========
-	ok: bool
-		Status of the response
+    Attributes
+    ==========
+        data: dict
+            Raw of the response data
+    """
 
-	result: Any
-		Result of the response
+    __slots__ = (
+        "result",
+        "error_code",
+        "description",
+        "ok",
+        "data"
+    )
 
-	error_code: Optional[:class:`int`]
-		Error Code.
-		``None`` when no error
+    def __init__(self, data: dict):
+        self.data = data
 
-	description: Optional[:class:`str`]
-		Description of the error.
-		``None`` when no error.
+    @property
+    def ok(self) -> bool:
+        return self.data.get('ok', False)
 
-	_raw: dict
-		Raw of the response data
-	"""
+    @property
+    def result(self) -> Any:
+        return self.data.get('result')
 
-	__slots__ = (
-		"result",
-		"error_code",
-		"description",
-		"ok",
-		"_raw"
-	)
+    @property
+    def error_code(self):
+        return self.data.get('error_code')
 
-	def __init__(self, ok: bool, result: Any = None, error_code: int = None, description: str = None, raw: dict = None):
-		self.ok = ok
+    @property
+    def description(self):
+        return self.data.get('description')
 
-		self.result = result
-		self.error_code = error_code
-		self.description = description
-		self._raw = raw
+    @classmethod
+    async def from_response(cls, data: "ClientResponse"):
+        fetched_data = await json_or_text(data)
 
-	def get_error(self) -> NoReturn:
-		for obj in (NotFound, InvalidToken, Forbidden, BadRequest):
-			if obj.check_response(self.description):
-				raise obj(self.description)
-
-	@classmethod
-	async def from_response(cls, data: "ClientResponse"):
-		data = await json_or_text(data)
-
-		if isinstance(data, str):
-			return cls(False, description=data, raw=dict(description=data))
-		else:
-			return cls(data.get("ok", False), data.get("result"), data.get("error_code"), data.get("description"), data)
+        if not isinstance(fetched_data, dict):
+            raise TypeError(
+                "The data sent by request cannot be parsed!"
+            )
+        return cls(fetched_data)
