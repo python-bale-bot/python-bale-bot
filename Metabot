@@ -1,0 +1,9 @@
+import bale
+
+bot = bale.Bot()
+
+@bot.on("message")
+def handle_message(message):
+    bot.reply(message, "سلام! من ربات شما هستم.")
+
+bot.run()
