@@ -94,12 +94,12 @@ class Bot:
 
     @property
     def user(self) -> Optional["User"]:
-        """Optional[:class:`bale.User`]: Represents the connected client. ``None`` if not logged in"""
+        """:class:`bale.User`, optional: Represents the connected client. ``None`` if not logged in"""
         return self._client_user
 
     @property
     def state(self) -> Optional["State"]:
-        """Optional[:class:`bale.State`]: Represents the state class for cache data. ``None`` if bot not logged in"""
+        """:class:`bale.State`, options: Represents the state class for cache data. ``None`` if bot not logged in"""
         return self._state
 
     @property
@@ -1484,7 +1484,7 @@ class Bot:
             await delete_message_task()
 
     async def get_chat(self, chat_id: Union[str, int], *, use_cache=True) -> Optional["Chat"]:
-        """Use this method to get up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
+        """Use this method to get cashed or up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
 
         .. code:: python
 
@@ -1913,11 +1913,6 @@ class Bot:
         if not isinstance(chat_id, (str, int)):
             raise TypeError(
                 "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(photo, InputFile):
-            raise TypeError(
-                "photo param must be type of InputFile"
             )
 
         payload = {
