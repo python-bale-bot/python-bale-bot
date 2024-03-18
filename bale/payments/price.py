@@ -20,9 +20,9 @@ class LabeledPrice(BaleObject):
 
     Attributes
     ----------
-        label: Optional[:class:`str`]
+        label: :obj:`str`, optional
             Label Price.
-        amount: Optional[:class:`int`]
+        amount: :obj:`int`, optional
             Amount Price.
     """
 	__slots__ = ("label", "amount")

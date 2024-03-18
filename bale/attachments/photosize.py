@@ -29,7 +29,7 @@ class PhotoSize(BaseFile):
             photo width.
         height: str
             photo height.
-        file_size: Optional[:class:`int`]
+        file_size: :obj:`int`, optional
             photo file size in bytes.
     """
     __slots__ = (

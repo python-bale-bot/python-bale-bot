@@ -27,9 +27,9 @@ class InputFile:
 
     Parameters
     ----------
-        file_input: :class:`io.BufferedReader` | :class:`str` | :class:`bytes`
+        file_input: :class:`io.BufferedReader` | :obj:`str` | :class:`bytes`
             Your File. Pass a file_id as String to send a file that exists on the Bale servers (recommended), pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-        file_name: Optional[:class:`str`]
+        file_name: :obj:`str`, optional
             Additional interface options. It is used only when uploading a file.
     """
     __slots__ = (

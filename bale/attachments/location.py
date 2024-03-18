@@ -21,11 +21,11 @@ class Location(BaleObject):
 
     Attributes
     ----------
-        longitude: :class:`int`
+        longitude: :obj:`int`
             Location longitude
-        latitude: :class:`int`
+        latitude: :obj:`int`
             Location latitude
-        horizontal_accuracy: Optional[:class:`int`]
+        horizontal_accuracy: :obj:`int`, optional
             The radius of uncertainty for the location, measured in meters; 0-1500.
     """
     __slots__ = (
@@ -45,6 +45,6 @@ class Location(BaleObject):
 
     @property
     def link(self) -> str:
-        """:class:`str`: Export location link from Google map"""
+        """:obj:`str`: Export location link from Google map"""
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
 

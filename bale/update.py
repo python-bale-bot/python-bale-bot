@@ -24,13 +24,13 @@ class Update(BaleObject):
 
     Attributes
     ----------
-        update_id: int
+        update_id: :obj:`int`
             The update’s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
-        callback_query: Optional[:class:`bale.CallbackQuery`]
+        callback_query: :class:`bale.CallbackQuery`, optional
             New incoming callback query.
-        message: Optional[:class:`bale.Message`]
+        message: :class:`bale.Message`, optional
             New incoming message of any kind - text, photo, sticker, etc.
-        edited_message: Optional[:class:`bale.Message`]
+        edited_message: :class:`bale.Message`, optional
             New version of a message that is known to the bot and was edited.
     """
     CALLBACK_QUERY: ClassVar[str] = "callback_query"

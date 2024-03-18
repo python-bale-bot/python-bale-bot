@@ -20,21 +20,21 @@ class Sticker(BaleObject):
 
     Attributes
     ----------
-        file_id: str
+        file_id: :obj:`str`
             Identifier for this sticker file, which can be used to download or reuse the file.
-        file_unique_id: str
+        file_unique_id: :obj:`str`
             Unique file identifier of sticker.
-        type: str
+        type: :obj:`str`
             Type of the sticker. Currently one of regular and mask.
-        width: int
+        width: :obj:`int`
             Sticker width.
-        height: str
+        height: :obj:`str`
             Sticker height.
-        thumb: Optional[:class:`bale.PhotoSize`]
+        thumb: :class:`bale.PhotoSize`, optional
             Sticker thumbnail.
-        set_name: Optional[:class:`str`]
+        set_name: :obj:`str`, optional
             Name of the sticker set to which the sticker belongs.
-        file_size: Optional[:class:`int`]
+        file_size: :obj:`int`, optional
             File size in bytes.
     """
     __slots__ = (

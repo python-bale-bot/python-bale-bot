@@ -28,7 +28,7 @@ class ReplyMarkupItem:
             item: Union[:class:`InlineKeyboardButton`, :class:`MenuKeyboardButton`]
                 The reply markup item.
 
-            row: Optional[:class:`int`]
+            row: :obj:`int`, optional
                 The row of item.
         """
         if not isinstance(item, (InlineKeyboardButton, MenuKeyboardButton)):
@@ -49,7 +49,7 @@ class ReplyMarkupItem:
 
     @property
     def row(self) -> int:
-        """Optional[:class:`int`]: The row of item."""
+        """:obj:`int`, optional: The row of item."""
         return self._row
 
     @property

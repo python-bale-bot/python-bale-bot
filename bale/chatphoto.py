@@ -9,10 +9,8 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import Optional, TYPE_CHECKING
+from typing import Optional
 from bale import BaleObject
-if TYPE_CHECKING:
-    from bale import BaseFile
 
 __all__ = (
     "ChatPhoto",
@@ -23,13 +21,13 @@ class ChatPhoto(BaleObject):
 
     Attributes
     ----------
-        small_file_id: Optional[:class:`str`]
+        small_file_id: :obj:`str`, optional
             File identifier of small (160 x 160) chat photo.
-        small_file_unique_id: Optional[:class:`str`]
+        small_file_unique_id: :obj:`str`, optional
             Unique file identifier of small (160 x 160) chat photo.
-        big_file_id: Optional[:class:`str`]
+        big_file_id: :obj:`str`, optional
             File identifier of big (640 x 640) chat photo.
-        big_file_unique_id: Optional[:class:`str`]
+        big_file_unique_id: :obj:`str`, optional
             Unique file identifier of big (640 x 640) chat photo.
     """
     __slots__ = (
@@ -47,18 +45,14 @@ class ChatPhoto(BaleObject):
         self.big_file_unique_id = big_file_unique_id
         self._lock()
 
-    @property
-    def small_file_object(self) -> "BaseFile":
-        """Optional[:class:`bale.BaseFile`]: Represents the small file object."""
-        from bale import BaseFile
-        obj = BaseFile(self.small_file_id, self.small_file_unique_id, None)
-        obj.set_bot(self.bot)
-        return obj
+    async def get_small_file(self):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
+        """
+        return self.get_bot().get_file(self.small_file_id)
 
-    @property
-    def big_file_object(self) -> "BaseFile":
-        """Optional[:class:`bale.BaseFile`]: Represents the big file object."""
-        from bale import BaseFile
-        obj = BaseFile(self.big_file_id, self.big_file_unique_id, None)
-        obj.set_bot(self.bot)
-        return obj
+    async def get_big_file(self):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
+        """
+        return self.get_bot().get_file(self.big_file_id)

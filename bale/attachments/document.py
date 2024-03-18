@@ -20,17 +20,17 @@ class Document(BaseFile):
 
     Attributes
     ----------
-        file_id: :class:`str`
+        file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
-        file_unique_id: :class:`str`
+        file_unique_id: :obj:`str`
             Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
-        thumbnail: Optional[:class:`bale.PhotoSize`]
+        thumbnail: :class:`bale.PhotoSize`, optional
             document thumbnail as defined by sender.
-        file_name: Optional[:class:`str`]
+        file_name: :obj:`str`, optional
             Original document filename as defined by sender.
-        mime_type: Optional[:class:`str`]
+        mime_type: :obj:`str`, optional
             MIME type of file as defined by sender.
-        file_size: Optional[:class:`int`]
+        file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
 	__slots__ = (

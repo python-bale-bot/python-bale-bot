@@ -28,7 +28,7 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
         ----------
             inline_keyboard_button: :class:`bale.InlineKeyboardButton`
                 The inline keyboard button.
-            row: Optional[:class:`int`]
+            row: :obj:`int`, optional
                 The row where you want the button to be placed.
 
                 .. warning::
@@ -58,7 +58,7 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
 
         Parameters
         ----------
-            row: :class:`int`
+            row: :obj:`int`
                 The row.
 
                 .. warning::

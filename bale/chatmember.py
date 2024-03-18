@@ -26,43 +26,43 @@ class ChatMember(BaleObject):
     ----------
         user: :class:`bale.User`
             Information about the chat member.
-        status: :class:`str`
+        status: :obj:`str`
             The member’s status in the chat.
-        can_be_edited: :class:`bool`
+        can_be_edited: :obj:`bool`, optional
                 :obj:`True`, if the bot is allowed to edit administrator privileges of that user.
-        can_change_info: :class:`bool`
+        can_change_info: :obj:`bool`, optional
             :obj:`True`, if the user can change the chat title, photo and other settings.
-        can_post_messages: :class:`bool`
+        can_post_messages: :obj:`bool`, optional
             :obj:`True`, if the administrator can post messages in the channel,
             or access channel statistics; channels only.
-        can_edit_messages: :class:`bool`
+        can_edit_messages: :obj:`bool`, optional
             :obj:`True`,
             if the administrator can edit messages of other users and can pin messages; channels only.
-        can_delete_messages: :class:`bool`
+        can_delete_messages: :obj:`bool`, optional
             :obj:`True`, if the administrator can delete messages of other users.
-        can_invite_users: :class:`bool`
+        can_invite_users: :obj:`bool`, optional
             :obj:`True`, if the user can invite new users to the chat.
-        can_restrict_members: :class:`bool`
+        can_restrict_members: :obj:`bool`, optional
             :obj:`True`, if the administrator can restrict, ban or unban chat members.
-        can_pin_messages: :class:`bool`
+        can_pin_messages: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to pin messages, groups, channels only.
-        can_promote_members: :class:`bool`
+        can_promote_members: :obj:`bool`, optional
             :obj:`True`,
             if the administrator can add new administrators with a subset of his own privileges or demote administrators
             that he has promoted, directly or indirectly (promoted by administrators that were appointed by the user).
-        can_send_messages: :class:`bool`
+        can_send_messages: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to send messages.
-        can_send_media_messages: :class:`bool`
+        can_send_media_messages: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to send a media message.
-        can_reply_to_story: :class:`bool`
+        can_reply_to_story: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to reply to a story.
-        can_send_link_message: :class:`bool`
+        can_send_link_message: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to send a link message.
-        can_send_forwarded_message: :class:`bool`
+        can_send_forwarded_message: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to forward a message to chat.
-        can_see_members: :class:`bool`
+        can_see_members: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to see the list of chat members.
-        can_add_story: :class:`bool`
+        can_add_story: :obj:`bool`, optional
             :obj:`True`, if the user is allowed to post a story from chat.
     """
     OWNER = "creator"

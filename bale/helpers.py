@@ -29,9 +29,9 @@ def create_deep_linked_url(bot_username: str, payload: str) -> str:
 
     Parameters
     ----------
-        bot_username: :class:`str`
+        bot_username: :obj:`str`
             The username of bot.
-        payload: :class:`str`
+        payload: :obj:`str`
             The Payload of deep link
     """
     if len(bot_username) < 4 or not bot_username.lower().endswith('bot'):
@@ -62,7 +62,7 @@ def find(predicate: Callable[[T], Any], iterable: Iterable[T]) -> Optional[T]:
     ----------
         predicate:
             A function to return boolean-like result.
-        iterable: :class:`str`
+        iterable: :obj:`str`
             An iterable to search through.
     """
     for element in iterable:

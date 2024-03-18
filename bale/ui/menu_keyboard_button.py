@@ -18,9 +18,9 @@ class MenuKeyboardButton:
     ----------
         text: str
             Keyboard Text.
-        request_contact: Optional[:class:`bool`]
+        request_contact: Optional[:obj:`bool`, optional]
             If ``True``, the user’s phone number will be sent as a contact when the button is pressed.
-        request_location: Optional[:class:`bool`]
+        request_location: Optional[:obj:`bool`, optional]
             If ``True``, the user’s current location will be sent when the button is pressed. Available in private chats only.
     """
     __slots__ = (

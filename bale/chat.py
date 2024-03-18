@@ -14,7 +14,7 @@ from bale.utils.types import FileInput
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
-    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile
+    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact
 
 
 __all__ = (
@@ -26,21 +26,21 @@ class Chat(BaleObject):
 
     Attributes
     ----------
-        id: :class:`str`
+        id: :obj:`str`
             Unique identifier for this chat.
-        type: :class:`str`
+        type: :obj:`str`
             Type of chat.
-        title: Optional[:class:`str`]
+        title: :obj:`str`, optional
             Title, for channels and group chats.
-        username: Optional[:class:`str`]
+        username: :obj:`str`, optional
             Username, for private chats, supergroups and channels if available.
-        first_name: Optional[:class:`str`]
+        first_name: :obj:`str`, optional
             First name of the other party in a private chat.
-        last_name: Optional[:class:`str`]
+        last_name: :obj:`str`, optional
             Last name of the other party in a private chat.
         photo: Optional[:class:`bale.ChatPhoto`]
             Chat photo.
-        invite_link: Optional[:class:`str`]
+        invite_link: :obj:`str`, optional
             Primary invite link, for groups and channel. Returned only in :meth:`bale.Bot.get_chat()`.
     """
     PRIVATE: ClassVar[str] = "private"
@@ -118,7 +118,7 @@ class Chat(BaleObject):
         """
         return await self.get_bot().send_photo(self.id, photo, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_video(self, video: Union["PhotoSize", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_video(self, video: Union["Video", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 

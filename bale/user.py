@@ -21,15 +21,15 @@ class User(BaleObject):
 
     Attributes
     ----------
-        id: :class:`int`
+        id: :obj:`int`
             Unique identifier for this user or bot.
-        is_bot: :class:`bool`
+        is_bot: :obj:`bool`, optional
             ``True``, if this user is a bot.
-        first_name: :class:`str`
+        first_name: :obj:`str`
             User’s or bot’s first name.
-        last_name: Optional[:class:`str`]
+        last_name: :obj:`str`, optional
             User’s or bot’s last name.
-        username: Optional[:class:`str`]
+        username: :obj:`str`, optional
             User’s or bot’s username.
     """
     __slots__ = (
@@ -55,7 +55,7 @@ class User(BaleObject):
 
     @property
     def mention(self) -> str | None:
-        """Optional[:class:`str`]: mention user with username."""
+        """:obj:`str`, optional: mention user with username."""
         return f"@{self.username}" if self.username else None
 
     @property

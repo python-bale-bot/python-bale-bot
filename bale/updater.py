@@ -44,7 +44,7 @@ class Updater:
 
     @property
     def current_offset(self) -> Optional[int]:
-        """Optional[:class:`int`]: Represents the last offset in updates. ``None`` if Updater is not started"""
+        """:obj:`int`, optional: Represents the last offset in updates. ``None`` if Updater is not started"""
         return self._last_offset
 
     async def start(self):

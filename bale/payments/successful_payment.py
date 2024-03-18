@@ -23,13 +23,13 @@ class SuccessfulPayment(BaleObject):
 
     Attributes
     ----------
-        currency: :class:`str`
+        currency: :obj:`str`
             The currency in which the transaction was made.
-        total_amount: :class:`int`
+        total_amount: :obj:`int`
             The total sum of the transaction amount.
-        invoice_payload: Optional[:class:`str`]
+        invoice_payload: :obj:`str`, optional
             Bot specified invoice payload.
-        shipping_option_id: Optional[:class:`str`]
+        shipping_option_id: :obj:`str`, optional
             Identifier of the shipping option chosen by the user.
     """
     __slots__ = (

@@ -26,15 +26,15 @@ class CallbackQuery(BaleObject):
 
     Attributes
     ----------
-        id: :class:`str`
+        id: :obj:`str`
             Unique identifier for this query.
         from_user: :class:`bale.User`
             Sender.
-        message: Optional[:class:`bale.Message`]
+        message: :class:`bale.Message`, optional
             Message with the callback button that originated the query. Note that message content and message date will not be available if the message is too old.
-        inline_message_id: Optional[:class:`str`]
+        inline_message_id: :obj:`str`, optional
             Identifier of the message sent via the bot in inline mode, that originated the query.
-        data: Optional[:class:`str`]
+        data: :obj:`str`, optional
              Data associated with the callback button. Be aware that the message, which originated the query, can contain no callback buttons with this data.
     """
     __slots__ = (

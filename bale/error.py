@@ -23,7 +23,7 @@ class BaleError(Exception):
 
     Attributes
     ------------
-    message: :class:`str`
+    message: :obj:`str`
         The text of the error. Could be an `None`.
     """
     __slots__ = (

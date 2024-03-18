@@ -20,9 +20,9 @@ class Video(BaseFile):
 
     Attributes
     ----------
-        file_id: :class:`str`
+        file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
-        file_unique_id: :class:`str`
+        file_unique_id: :obj:`str`
             Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
         width: int
             Video width as defined by sender.
@@ -30,11 +30,11 @@ class Video(BaseFile):
             Video height as defined by sender.
         duration: int
             Duration of the video in seconds as defined by sender.
-        file_name: Optional[:class:`str`]
+        file_name: :obj:`str`, optional
             Original video filename as defined by sender.
-        mime_type: Optional[:class:`str`]
+        mime_type: :obj:`str`, optional
             MIME type of file as defined by sender.
-        file_size: Optional[:class:`int`]
+        file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
     __slots__ = (

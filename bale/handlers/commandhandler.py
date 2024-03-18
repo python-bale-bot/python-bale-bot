@@ -30,8 +30,8 @@ class CommandHandler(BaseHandler):
 
            .. hint::
                Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
-       has_param: :class:`int` | :class:`bool` | :obj:`None`
-           A :class:`bool` and :class:`int` value that specifies how many parameters the entered command should have.
+       has_param: :obj:`int` | :obj:`bool`, optional | :obj:`None`
+           A :obj:`bool`, optional and :obj:`int` value that specifies how many parameters the entered command should have.
 
            - If the command should not have a parameter, its value should be ":obj:`False`".
            - If the command can have any parameter and the :attr:`callback` function can handle it, its value should be ":obj:`True`".

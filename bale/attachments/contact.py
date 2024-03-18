@@ -24,9 +24,9 @@ class Contact(BaleObject):
             Contact’s phone number.
         first_name: str
             Contact’s first name.
-        last_name: Optional[:class:`str`]
+        last_name: :obj:`str`, optional
             Contact’s last name.
-        user_id: Optional[:class:`int`]
+        user_id: :obj:`int`, optional
             Contact’s user identifier in Bale.
     """
     __slots__ = (

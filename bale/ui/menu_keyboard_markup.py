@@ -28,7 +28,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
         ----------
             keyboard_button: :class:`bale.MenuKeyboardButton`
                 The menu keyboard button.
-            row: Optional[:class:`int`]
+            row: :obj:`int`, optional
                 The row where you want the button to be placed.
 
                 .. warning::
@@ -58,7 +58,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
 
         Parameters
         ----------
-            row: :class:`int`
+            row: :obj:`int`
                 The row.
 
                 .. warning::

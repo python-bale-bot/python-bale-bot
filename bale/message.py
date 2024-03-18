@@ -30,50 +30,50 @@ class Message(BaleObject):
     ----------
         message_id: str
             Unique message identifier inside this chat.
-        from_user: Optional[:class:`bale.User`]
+        from_user: :class:`bale.User`, optional
             Sender of the message; empty for messages sent to channels. For backward compatibility, this will contain a
             fake sender user in non-channel chats, if the message was sent on behalf of a chat.
         chat: :class:`bale.Chat`
             Conversation the message belongs to.
         date: :class:`datetime.datetime`
             Date the message was sent in Unix time.
-        text: Optional[:class:`str`]
+        text: :obj:`str`, optional
             Message Content
-        caption: Optional[:class:`str`]
+        caption: :obj:`str`, optional
             Caption for the animation, audio, document, photo, video or voice.
-        forward_from: Optional[:class:`bale.User`]
+        forward_from: :class:`bale.User`, optional
             For forwarded messages, sender of the original message.
-        forward_from_chat: Optional[:class:`bale.Chat`]
+        forward_from_chat: :class:`bale.Chat`, optional
             For messages forwarded from channels or from anonymous administrators, information about the original sender chat.
-        reply_to_message: Optional[:class:`bale.Message`]
+        reply_to_message: :class:`bale.Message`, optional
             For replies, the original message. Note that the Message object in this field will not contain further
             reply_to_message fields even if it itself is a reply.
-        edit_date: Optional[:class:`datetime.datetime`]
+        edit_date: :class:`datetime.datetime`, optional
             Date the message was last edited.
-        contact: Optional[:class:`bale.Contact`]
+        contact: :class:`bale.Contact`, optional
             Message is a shared contact, information about the contact.
-        location: Optional[:class:`bale.Location`]
+        location: :class:`bale.Location`, optional
             Message is a shared location, information about the location.
-        document: Optional[:class:`bale.Document`]
+        document: :class:`bale.Document`, optional
             Message is a general file, information about the file.
-        video: Optional[:class:`bale.Video`]
+        video: :class:`bale.Video`, optional
             Message is a video, information about the video.
-        animation: Optional[:class:`bale.Animation`]
+        animation: :class:`bale.Animation`, optional
             Message is an animation, information about the animation.
-        audio: Optional[:class:`bale.Audio`]
+        audio: :class:`bale.Audio`, optional
             Message is an audio, information about the Audio.
-        voice: Optional[:class:`bale.Voice`]
+        voice: :class:`bale.Voice`, optional
             Message is a voice, information about the Voice.
-        sticker: Optional[:class:`bale.Sticker`]
+        sticker: :class:`bale.Sticker`, optional
             Message is a sticker, information about the sticker.
-        new_chat_members: Optional[List[:class:`bale.User`]]
+        new_chat_members: List[:class:`bale.User`], optional
             New members that were added to the group or supergroup and information about them (the bot itself may be
             one of these members). This list is empty if the message does not contain new chat members.
-        left_chat_member: Optional[:class:`bale.User`]
+        left_chat_member: :class:`bale.User`, optional
             A member was removed from the group, information about them (this member may be the bot itself).
-        invoice: Optional[:class:`bale.Invoice`]
+        invoice: :class:`bale.Invoice`, optional
             Message is an invoice for a payment, information about the invoice.
-        successful_payment: Optional[:class:`bale.SuccessfulPayment`]
+        successful_payment: :class:`bale.SuccessfulPayment`, optional
             Message is a service message about a successful payment, information about the payment.
     """
     __slots__ = (
@@ -130,7 +130,7 @@ class Message(BaleObject):
 
     @property
     def attachment(self) -> Optional["BaseFile"]:
-        """Optional[Union[:class:`bale.Video`, :class:`bale.PhotoSize`, :class:`bale.Document`, :class:`bale.Animation`]]: Represents the message attachment. ``None`` if the message don't have any attachments"""
+        """Union[:class:`bale.Video`, :class:`bale.PhotoSize`, :class:`bale.Document`, :class:`bale.Animation`], optional: Represents the message attachment. ``None`` if the message don't have any attachments"""
         attachment = self.video or self.photos or self.audio or self.document or self.animation or self.voice
         if not attachment:
             return
@@ -142,17 +142,17 @@ class Message(BaleObject):
 
     @property
     def content(self) -> Optional[str]:
-        """Optional[:class:`str`]: Represents the message content. ``None`` if the message don't have text or caption"""
+        """:obj:`str`, optional: Represents the message content. ``None`` if the message don't have text or caption"""
         return self.caption or self.text
 
     @property
     def chat_id(self) -> Optional[Union[str, int]]:
-        """:class:`str` | :class:`int`: Represents the Unique identifier of Conversation the message belongs to."""
+        """:obj:`str` | :obj:`int`: Represents the Unique identifier of Conversation the message belongs to."""
         return self.chat.id
 
     @property
     def reply_to_message_id(self) -> Optional[str]:
-        """Optional[:class:`str`]: Represents the Unique identifier of Original message, if the message has been replied. ``None`` If the message is not replied"""
+        """:obj:`str`, optional: Represents the Unique identifier of Original message, if the message has been replied. ``None`` If the message is not replied"""
         if not self.reply_to_message:
             return
 

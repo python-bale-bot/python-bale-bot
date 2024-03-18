@@ -18,15 +18,15 @@ class InlineKeyboardButton:
     ----------
         text: str
             Label text on the button.
-        callback_data: Optional[:class:`str`]
+        callback_data: :obj:`str`, optional
             If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
             inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-        url: Optional[:class:`str`]
+        url: :obj:`str`, optional
             HTTP url to be opened when the button is pressed. Defaults to None.
-        switch_inline_query: Optional[:class:`str`]
+        switch_inline_query: :obj:`str`, optional
             If set, pressing the button will prompt the user to select one of their chats, open that chat and insert the bot's username and the specified
             inline query in the input field. Can be empty, in which case just the bot's username will be inserted. Defaults to None.
-        switch_inline_query_current_chat: Optional[:class:`str`]
+        switch_inline_query_current_chat: :obj:`str`, optional
             If set, pressing the button will insert the bot's username and the specified inline query in the current chat's input field. Can be empty,
             in which case only the bot's username will be inserted. Defaults to None.
     """
