@@ -37,22 +37,22 @@ _log = logging.getLogger(__name__)
 class Route:
     __slots__ = (
         "base_url",
-        "method",
+        "request_method",
         "endpoint",
         "token"
     )
 
-    def __init__(self, method: str, endpoint: str, token: str):
+    def __init__(self, request_method: str, endpoint: str, token: str):
         if not isinstance(token, str):
             raise TypeError("token param must be str.")
-        self.base_url = BALE_API_BASE_URL
-        self.method = method
+        self.base_url = BALE_API_BASE_URL + token
+        self.request_method = request_method
         self.endpoint = endpoint
         self.token = token
 
     @property
     def url(self):
-        return "{base_url}bot{token}/{endpoint}".format(base_url = self.base_url, token = self.token, endpoint = self.endpoint)
+        return f"{self.base_url}/{self.endpoint}"
 
 def parse_form_data(value: Any):
     if isinstance(value, int):
@@ -110,7 +110,7 @@ class HTTPClient:
 
     async def request(self, route: Route, *, via_form_data: bool = False, **kwargs):
         url = route.url
-        method = route.method
+        method = route.request_method
         headers = { 'User-Agent': self.user_agent }
 
         if 'json' in kwargs:
@@ -135,7 +135,7 @@ class HTTPClient:
             try:
                 async with self.__session.request(method=method, url=url, **kwargs) as original_response:
                     original_response: aiohttp.ClientResponse
-                    response: ResponseParser = await ResponseParser.from_response(original_response)
+                    response = await ResponseParser.from_response(original_response)
                     if original_response.status == ResponseStatusCode.OK:
                         return response
                     elif not response.ok or original_response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.RATE_LIMIT):
@@ -170,9 +170,10 @@ class HTTPClient:
                 raise HTTPException(error)
 
     async def get_file(self, file_id: str):
+        base_file_url = BALE_API_FILE_URL + self.token
+
         try:
-            async with self.__session.get("{base_file_url}/bot{token}/{file_id}".format(base_file_url=BALE_API_FILE_URL, token=self.token, file_id=file_id)) as response:
-                response: aiohttp.ClientResponse
+            async with self.__session.get(f"{base_file_url}/{file_id}") as response:
                 if response.status == ResponseStatusCode.OK:
                     return await response.read()
                 elif response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.NOT_FOUND):
@@ -181,7 +182,7 @@ class HTTPClient:
                     raise Forbidden()
                 else:
                     error_payload = await response.json()
-                    raise APIError(error_payload.get('error_code', 0), error_payload.get('description', 'File not found'))
+                    raise APIError(error_payload.get('error_code'), error_payload.get('description'))
         except SSLCertVerificationError as error:
             _log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
             raise NetworkError(str(error))
