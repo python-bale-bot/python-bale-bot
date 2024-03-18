@@ -33,10 +33,6 @@ class ResponseParser:
     """
 
     __slots__ = (
-        "result",
-        "error_code",
-        "description",
-        "ok",
         "data"
     )
 
