@@ -9,6 +9,8 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
+from typing import Optional
+
 from bale import BaleObject
 
 __all__ = (
@@ -27,8 +29,9 @@ class LabeledPrice(BaleObject):
     """
 	__slots__ = ("label", "amount")
 
-	def __init__(self, label: str = None, amount: int = None):
+	def __init__(self, label: Optional[str] = None, amount: Optional[int] = None):
 		super().__init__()
+		self._id = (label, amount)
 		self.label = label
 		self.amount = amount
 

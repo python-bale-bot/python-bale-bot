@@ -1,3 +1,3 @@
 from .invoice import Invoice
-from .price import LabeledPrice
-from .successful_payment import SuccessfulPayment
+from .labeledprice import LabeledPrice
+from .successfulpayment import SuccessfulPayment
