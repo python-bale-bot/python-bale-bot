@@ -64,8 +64,19 @@ class State:
     def update_message(self, message: "Message"):
         for index, msg in enumerate(self._messages):
             if msg.message_id == message.message_id and msg.chat_id == message.chat_id:
-                self._messages[index] = message
+                self._messages[index] = self.merge_message(before=msg, after=message)
                 break
+
+    @staticmethod
+    def merge_message(before: "Message", after: "Message") -> "Message":
+        for variable in after.__slots__:
+            if variable[0] == '_':
+                continue
+
+            if (value := getattr(after, variable, None)) != getattr(before, variable, None):
+                setattr(before, variable, value)
+
+        return before
 
     def get_message(self, chat_id, message_id: int) -> Optional["Message"]:
         for msg in self._messages:
