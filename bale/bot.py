@@ -55,8 +55,6 @@ class Bot:
         token: str 
             Bot’s unique authentication token. obtained via `@BotFather <https://ble.ir/BotFather>`_.
 
-    .. attention::
-        When you create a bot and run for first-step, use :meth:`bale.Bot.delete_webhook` method in `on_before_ready` event.
     .. admonition:: Examples
 
         :any:`My First Bot <examples.basic>`
@@ -65,8 +63,8 @@ class Bot:
         "loop",
         "token",
         "loop",
-        "events",
-        "listeners",
+        "_events",
+        "_waiters",
         "_handlers",
         "_state",
         "_client_user",
@@ -84,8 +82,11 @@ class Bot:
         self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.get('http_kwargs', {}))
         self._state: "State" = State(self, **kwargs.get('state_kwargs', {}))
         self._client_user = None
-        self.events: Dict[str, List[Callable]] = {}
-        self.listeners: List[Tuple[BaseHandler, asyncio.Future, Callable[["Update"], bool]]] = []
+        self._events: Dict[str, Callable] = {
+            'event_error': self._on_event_error_callback,
+            'handler_error': self._on_handler_error_callback
+        }
+        self._waiters: List[Tuple[Dict[Union[int, str], BaseCheck], asyncio.Future]] = []
         self._handlers: List[BaseHandler] = []
         self._closed: bool = True
 
@@ -142,9 +143,6 @@ class Bot:
         .. hint::
             The name of the function for which you write the decorator is considered the name of the event.
         """
-        if not asyncio.iscoroutinefunction(coro):
-            raise TypeError('event handler must be a coroutine function')
-
         self.add_event(coro.__name__, coro)
         return coro
 
@@ -162,24 +160,24 @@ class Bot:
             event_name: :obj:`str`
                 Name of the event to set.
         """
-        def wrapper_function(func):
-            if not asyncio.iscoroutinefunction(func):
-                raise TypeError('event handler must be coroutine function')
-
+        def wrapper_function(func) -> Any:
             self.add_event(event_name, func)
 
         return wrapper_function
 
-    def handler(self, handler: object) -> CoroT:
-        def wrapper_function(func):
-            if not asyncio.iscoroutinefunction(func):
-                raise TypeError('event handler must be coroutine function')
+    def on_ready(self) -> CoroT:
+        def wrapper_function(func) -> Any:
+            self.add_event('ready', func)
 
+        return wrapper_function
+
+    def handle(self, handler: "BaseHandler") -> CoroT:
+        def wrapper_function(func) -> Any:
             self.add_handler(handler, func)
 
         return wrapper_function
 
-    def add_handler(self, handler: object, wrapper):
+    def add_handler(self, handler: "BaseHandler", wrapper):
         """Set wrapper or listener for an event.
 
         .. code:: python
@@ -194,7 +192,7 @@ class Bot:
                 Function to add as wrapper for handler
         """
         if not asyncio.iscoroutinefunction(wrapper):
-            raise TypeError(f"{wrapper.__name__} is not a Coroutine Function")
+            raise TypeError(f"{wrapper.__name__} is not a coroutine function")
 
         if not isinstance(handler, BaseHandler):
             raise TypeError('handler must be BaseHandler or subclass of that')
@@ -220,34 +218,11 @@ class Bot:
                 Function to add as wrapper for event
         """
         if not asyncio.iscoroutinefunction(wrapper):
-            raise TypeError(f"{wrapper.__name__} is not a Coroutine Function")
+            raise TypeError(f"{wrapper.__name__} is not a coroutine function")
 
-        if not self.events.get(event_name):
-            self.events[event_name] = []
+        self._events[event_name] = wrapper
 
-        self.events[event_name].append(wrapper)
-
-
-    @overload
-    async def wait_for(self, handler: "BaseHandler", *,
-                       check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None) -> "Update":
-        ...
-
-    @overload
-    async def wait_for(self, handler: "CallbackQueryHandler", *,
-                       check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None) -> "CallbackQuery":
-        ...
-
-    @overload
-    async def wait_for(self, handler: Union["MessageHandler", "CommandHandler"], *,
-                       check: Optional[Callable[..., bool]] = None,
-                       timeout: Optional[float] = None) -> "Message":
-        ...
-
-    def wait_for(self, handler: BaseHandler, *, check: Optional[Callable[["Update"], bool]] = None,
-                 timeout: Optional[float] = None):
+    def wait_for(self, checks: Union[Dict[Union[int, str], BaseCheck], List[BaseCheck], Tuple[BaseCheck], BaseCheck], timeout: Optional[float] = None):
         """Waits for an event to be dispatched.
 
         This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
@@ -263,18 +238,15 @@ class Bot:
                 message = await bot.wait_for(MessageHandler(), ..., timeout = 20.0)
             except asyncio.TimeoutError: # 20s A message with the conditions specified in the `check` parameter was not found.
                 pass
-
         .. admonition:: Examples
 
             :any:`conversation Bot <examples.conversation>`
 
         Parameters
         ----------
-            handler: :class:`bale.BaseHandler`
+            checks: :class:`bale.BaseCheck`
                 A BaseHandler instance.
-            check: Optional[Callable[..., :obj:`bool`]]
-                A predicate to check what to wait for. The arguments must meet the parameters of the handler being waited for.
-            timeout: Optional[:class:`float`]
+            timeout: :obj:`float`, optional
                 The number of seconds to wait before timing out and raising asyncio.TimeoutError.
 
         Raises
@@ -283,10 +255,21 @@ class Bot:
                 If a timeout is provided, and it was reached.
         """
         future = self.loop.create_future()
-        if not check:
-            check = lambda *args: True
 
-        self.listeners.append((handler, future, check))
+        if isinstance(checks, BaseCheck):
+            checks: List[BaseCheck] = [checks,]
+
+        if isinstance(checks, (tuple, list)) and len(checks) > 0:
+            _log.warning("Bot.wait_for: You have provided a list to the parameter “checks”; we have converted it into a dictionary with numeric keys ranging from 0 to %s.\n"
+                         "However, please use either the dictionary or a single BaseCheck instance in this parameter next time.", len(checks))
+            checks: Dict[int, BaseCheck] = dict(zip(range(len(checks)), checks))
+
+        if not isinstance(checks, dict):
+            raise TypeError(
+                "checks param must be type of BaseCheck instance or dict"
+            )
+
+        self._waiters.append((checks, future))
         return asyncio.wait_for(future, timeout=timeout)
 
     async def close(self):
@@ -309,11 +292,14 @@ class Bot:
         except asyncio.CancelledError:
             pass
         except Exception as ext:
-            await self.on_error(event_name, ext)
+            try:
+                self.dispatch('event_error', event_name, ext)
+            except asyncio.CancelledError:
+                pass
 
     def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
-        return self.loop.create_task(task, name=f"python-bale-bot:{event_name}")
+        return self.loop.create_task(task, name=f"python-bale-bot:process_event:{event_name}")
 
     async def run_handler(self, core: Coroutine, handler: "BaseHandler", update: "Update"):
         try:
@@ -321,7 +307,10 @@ class Bot:
         except asyncio.CancelledError:
             pass
         except Exception as ext:
-            await self.on_process_update_error(handler, update, ext)
+            try:
+                self.dispatch('handler_error', update, ext)
+            except asyncio.CancelledError:
+                pass
 
     def _create_handler_schedule(self, handler: "BaseHandler", update: "Update", *args):
         core = handler.handle_update(update, *args)
@@ -329,49 +318,44 @@ class Bot:
         return self.loop.create_task(task, name=f"python-bale-bot:process_update:{handler}")
 
     def process_update(self, update: "Update"):
+        _log.debug("Processing update %s", update)
         self.dispatch('update', update)
         removed = []
-        for index, (handler, future, check) in enumerate(self.listeners):
-            args = handler.check_new_update(update)
-            if not args or future.cancelled():
+        for index, (checks, future) in enumerate(self._waiters):
+            if future.cancelled():
                 removed.append(index)
                 continue
-            try:
-                check_result = check(update)
-            except Exception as _:
-                future.set_exception(_)
+
+            for key, check in checks.items():
+                is_correct = check.check_update(update)
+                if not is_correct:
+                    continue
+
+                waited_result = WaitContext(key, check, update)
+                future.set_result(waited_result)
                 removed.append(index)
-            else:
-                if check_result:
-                    if len(args) == 0:
-                        future.set_result(None)
-                    elif len(args) == 1:
-                        future.set_result(args[0])
-                    else:
-                        future.set_result(args)
-                    removed.append(index)
+                break
 
         for item in reversed(removed):
-            del self.listeners[item]
+            del self._waiters[item]
 
         for handler in self._handlers:
-            check = handler.check_new_update(update)
-            if check is not None:
-                self._create_handler_schedule(handler, update, *check)
+            args = handler.check_new_update(update)
+            if args is not None:
+                self._create_handler_schedule(handler, update, *args)
 
-    async def on_process_update_error(self, handler: "BaseHandler", update: "Update", error: Exception):
-        _log.exception(f'Exception in callback function of {handler} Ignored')
-
-    def dispatch(self, event_name: str, /, *args, **kwargs):
+    def dispatch(self, event_name: str, /, *args, **kwargs) -> None:
         method = 'on_' + event_name
-        events_core = self.events.get(method)
-        if events_core:
-            for event_core in events_core:
-                self._create_event_schedule(event_core, method, *args, **kwargs)
+        core = self._events.get(method)
+        if core:
+            self._create_event_schedule(core, method, *args, **kwargs)
 
-    async def on_error(self, event_name, error):
+    async def _on_handler_error_callback(self, handler: "BaseHandler", update: "Update", error: Exception):
+        _log.exception('Exception in callback function of %s Ignored', handler)
+
+    async def _on_event_error_callback(self, event_name: str, exc):
         """an Event for get errors when exceptions"""
-        _log.exception(f'Exception in {event_name} Ignored')
+        _log.exception('Exception in %s Ignored', event_name, exc_info=exc)
 
     async def get_me(self) -> User:
         """Get bot information
