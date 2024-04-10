@@ -25,21 +25,23 @@ __all__ = (
 class BaseHandler:
     """This object shows a Base Handler.
     This is a base class for all update handlers. You can create custom handlers by inheriting from it.
-
-    Attributes
-    ----------
-        callback: Optional[Callable[[UT], Coroutine[...]]]
-            The callback function for this handler.
-
-            .. hint::
-                If this handler is registered for the bot, it will be called during the new Update process after confirming the :meth:`check_new_update` function.
+    TODO: COMPLETE DOCSTRING
     """
-    __slots__ = (
-        "callback",
-    )
+    __slots__ = ("_callback",)
 
-    def __init__(self, callback: Optional[Callable[[UT], Coroutine[...]]] = None):
-        self.callback = callback
+    def __init__(self):
+        self._callback = None
+
+    @property
+    def callback(self) -> Optional[Callable[[UT], Coroutine[...]]]:
+        return self._callback
+
+    @callback.setter
+    def callback(self, _):
+        raise ValueError(
+            # TODO: MUST BE COMPLETE
+            "You can't set callback "
+        )
 
     def set_callback(self, callback: Callable[[UT, ...], Coroutine[...]]):
         """Register new handler callback.
@@ -50,7 +52,7 @@ class BaseHandler:
             callback: Callable[[UT, ...], Coroutine[...]]
                 The new callback function.
         """
-        self.callback = callback
+        self._callback = callback
 
     def check_new_update(self, update: "Update") -> Optional[Tuple]:
         """This function determines whether the "update" should be covered by the handler or not.
