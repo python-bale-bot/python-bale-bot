@@ -10,9 +10,10 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import Callable, Tuple, Optional
+from typing import Tuple, Optional
 
 from bale import Update, Message
+from bale.checks.basecheck import BaseCheck
 from .basehandler import BaseHandler
 
 
@@ -28,19 +29,21 @@ class MessageHandler(BaseHandler):
             .. hint::
                 Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
     """
-    __slots__ = (
-        "check",
-    )
+    __slots__ = ("check",)
 
-    def __init__(self, check: Optional[Callable[["Update"], bool]] = None):
+    def __init__(self, check: Optional[BaseCheck] = None):
         super().__init__()
-        if not check:
-            check = lambda *_: True
+
+        if check and not isinstance(check, BaseCheck):
+            raise TypeError(
+                "check param must be type of BaseCheck"
+            )
+
         self.check = check
 
     def check_new_update(self, update: "Update") -> Optional[Tuple["Message"]]:
         if update.message is not None and (
-                not self.check or self.check(update)
+                not self.check or self.check.check_update(update)
         ):
             return (
                 update.message,

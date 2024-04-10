@@ -11,9 +11,11 @@
 from __future__ import annotations
 
 import re
-from typing import Callable, Union, List, Optional, Tuple
+from typing import Union, List, Optional, Tuple
+from inspect import signature, Parameter
 
 from bale import Update, Message
+from bale.checks.basecheck import BaseCheck
 from .basehandler import BaseHandler
 
 
@@ -43,33 +45,39 @@ class CommandHandler(BaseHandler):
         "has_param"
     )
 
-    def __init__(self, command: Union[str, List[str]], check: Optional[Callable[["Update", ...], bool]] = None,
+    def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None,
                  has_param: Optional[Union[int, bool]] = None):
         super().__init__()
-        if not isinstance(command, list):
-            if not isinstance(command, str):
-                raise TypeError("command param must be type of list or str")
-            command = [command]
-        if not check:
-            check = lambda *_: True
+        command = list(command) if not isinstance(command, list) else command
 
         for comm in command:
             if not re.match(r"^[\da-z_]{1,32}$", comm):
                 raise ValueError(f"command {comm} must be has valid characters")
 
-        self.commands = ['/' + comm.lower() for comm in command]
+        if check and not isinstance(check, BaseCheck):
+            raise TypeError(
+                "check param must be type of BaseCheck"
+            )
+
+        self.commands = [comm.lower() for comm in command]
         self.check = check
         self.has_param = has_param
 
-    def _check_current_params(self, args: List[str]) -> bool:
-        if (
-                (self.has_param is None) or
-                (not self.has_param and not args) or
-                (self.has_param is True and args) or
-                (isinstance(self.has_param, int) and len(args) == self.has_param)
-        ):
-            return True
-        return False
+    def _check_params_correct(self, args: List[str]):
+        params = []
+        remaining_parameters_count = len(args)
+        sig = signature(self.callback)
+        for name, param_obj in sig.parameters.items():
+            if param_obj.kind in [Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD]:
+                return params + (args[len(params):])
+
+            params[len(params)] = (name, args[len(args) - remaining_parameters_count])
+            remaining_parameters_count -= 1
+
+        if remaining_parameters_count != 0:
+            return False
+
+        return params
 
     def check_new_update(self, update: "Update") -> Optional[Union[Tuple["Message", List[str]], Tuple["Message"]]]:
         if (
@@ -78,19 +86,20 @@ class CommandHandler(BaseHandler):
                 len(update.message.text) > 1
         ):
             message = update.message
-            args = message.text.split()
-            command = args[1]
+            args = message.text.split() # /command arg1 arg2 ...
+            command = args[0]
             args = args[1:]
             if not (
-                    message.text.find('/') == 0 and command in self.commands
+                    message.text[0] == '/' and command in self.commands
             ):
                 return None
 
-            if self.check and not self.check(update):
+            if self.check and not self.check.check_update(update):
                 return None
 
-            if not self._check_current_params(args):
-                return None
+            parameters = self._check_params_correct(args)
+            if not parameters:
+                return
 
             if not args:
                 return (
