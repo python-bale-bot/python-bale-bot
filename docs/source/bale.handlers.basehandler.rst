@@ -1,6 +1,6 @@
 Base Handler
 ============
 
-.. autoclass:: bale.BaseHandler
+.. autoclass:: bale.handlers.BaseHandler
     :members:
     :show-inheritance:

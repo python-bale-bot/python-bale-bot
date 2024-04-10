@@ -1,6 +1,6 @@
 Command Handler
 ===============
 
-.. autoclass:: bale.CommandHandler
+.. autoclass:: bale.handlers.CommandHandler
     :members:
     :show-inheritance:

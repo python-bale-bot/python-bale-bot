@@ -1,6 +1,6 @@
 Callback Query Handler
 ======================
 
-.. autoclass:: bale.CallbackQueryHandler
+.. autoclass:: bale.handlers.CallbackQueryHandler
     :members:
     :show-inheritance:

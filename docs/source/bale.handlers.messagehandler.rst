@@ -1,6 +1,6 @@
 Message Handler
 ===============
 
-.. autoclass:: bale.MessageHandler
+.. autoclass:: bale.handlers.MessageHandler
     :members:
     :show-inheritance:
