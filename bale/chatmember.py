@@ -121,7 +121,7 @@ class ChatMember(BaleObject):
         self.can_see_members = can_see_members
         self.can_add_story = can_add_story
         self.can_be_edited = can_be_edited
-        self._id = (self.user, self.status)
+        self._id = (self.user.id, self.status)
 
         self._lock()
 
