@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject
-from typing import Optional, Any
+from typing import Optional, Any, ClassVar
 from io import BufferedIOBase
 
 from .inputfile import InputFile
@@ -39,6 +39,12 @@ class BaseFile(BaleObject):
         "file_size",
         "kwargs_data"
     )
+    PHOTO: ClassVar[str] = "photo"
+    VIDEO: ClassVar[str] = "video"
+    DOCUMENT: ClassVar[str] = "document"
+    AUDIO: ClassVar[str] = "audio"
+    ANIMATION: ClassVar[str] = "animation"
+
     def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int], **kwargs):
         super().__init__()
         self._id = file_id
