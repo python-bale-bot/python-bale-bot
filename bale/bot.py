@@ -1625,7 +1625,7 @@ class Bot:
 
         Returns
         -------
-            Optional[:class:`bale.ChatMember`]
+            :class:`bale.ChatMember`, optional
                 The chat member of ``None`` if not found.
 
         Raises
@@ -2000,11 +2000,12 @@ class Bot:
         response = await self._http.get_chat_administrators(
             params=handle_request_param(payload)
         )
-        result = [ChatMember.from_dict(data=member_payload, bot=self) for member_payload in response.result or list()]
-        for member in result:
-            self._state.store_user(member.user)
+        members = ChatMember.from_list(response.result, self)
+        if members:
+            for member in members:
+                self._state.store_user(member.user)
 
-        return result
+        return members
 
     async def get_file(self, file_id: str):
         """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
