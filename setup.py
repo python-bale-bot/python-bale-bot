@@ -32,7 +32,7 @@ if __name__ == "__main__":
             "Changelog": "https://python-bale-bot.ir/changelog",
             "Bug Tracker": "https://github.com/python-bale-bot/python-bale-bot/issues",
             "Source Code": "https://github.com/python-bale-bot/python-bale-bot/",
-            "News": "https://t.me/pbblib"
+            "News": "https://ble.ir/pbblib"
         },
         download_url=f"https://pypi.org/project/python-bale-bot/",
         keywords="bale bale-bot framework bot",

@@ -18,8 +18,8 @@ __all__ = (
 class RequestParams(NamedTuple):
     payload: Optional[Dict[str, Any]]
 
-def remove_empty_keys(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {k : v for k, v in payload.items() if v is not None}
+def remove_empty_values(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {key: value for key, value in payload.items() if value is not None}
 
-def handle_request_param(payload: Dict[str, Any]=None):
-    return RequestParams(payload=remove_empty_keys(payload))
+def handle_request_param(payload: Dict[str, Any] = None):
+    return RequestParams(payload=remove_empty_values(payload))

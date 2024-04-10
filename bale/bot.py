@@ -113,7 +113,7 @@ class Bot:
 
     @property
     def state(self) -> Optional["State"]:
-        """:class:`bale.State`, options: Represents the state class for cache data. ``None`` if bot not logged in"""
+        """:class:`bale.State`, optional: Represents the state class for cache data. ``None`` if bot not logged in"""
         return self._state
 
     @property
@@ -288,9 +288,10 @@ class Bot:
 
     async def close(self):
         """Close http Events and bot"""
-        await self.updater.stop()
-        await self._http.close()
-        self._closed = True
+        if not self.is_closed():
+            await self.updater.stop()
+            await self._http.close()
+            self._closed = True
 
     def is_closed(self):
         """:obj:`bool`: Bot Status"""
@@ -376,7 +377,7 @@ class Bot:
 
         Returns
         -------
-            :class:`bale.User` :
+            :class:`bale.User`
                 Bot User information.
         Raises
         ------
@@ -2017,7 +2018,7 @@ class Bot:
 
         Returns
         --------
-            :obj:`int`:
+            :obj:`int`
                 The members count of the chat
         """
         if not isinstance(chat_id, (str, int)):
