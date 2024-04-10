@@ -41,8 +41,7 @@ class _Loop:
 
     def __getattr__(self, key):
         raise AttributeError((
-            'loop attribute cannot be accessed in non-async contexts. '
-            'Consider using either an asynchronous main function and passing it to asyncio.run or '
+            'loop attribute cannot be accessed in non-async contexts.'
         ))
 
 _loop = _Loop()
