@@ -40,7 +40,7 @@ if __name__ == "__main__":
         extras_require=extras_require,
         include_package_data=True,
         url="https://github.com/python-bale-bot/python-bale-bot/",
-        packages=find_packages(),
+        packages=find_packages(exclude=["*docs",]),
         long_description=get_readme_file(),
         long_description_content_type='text/x-rst',
         install_requires=["aiohttp>=3.6.0,<3.9.4", "asyncio~=3.4.3", "setuptools>=69.0.3,<69.3.0"]
