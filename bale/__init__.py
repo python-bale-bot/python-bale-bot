@@ -21,6 +21,12 @@ __all__ = (
     "Location",
     "Video",
     "Animation",
+    "InputMedia",
+    "InputMediaPhoto",
+    "InputMediaVideo",
+    "InputMediaAnimation",
+    "InputMediaAudio",
+    "InputMediaDocument",
     "ChatPhoto",
     "BaleError",
     "APIError",
@@ -55,7 +61,6 @@ __all__ = (
 )
 
 from .baleobject import BaleObject
-from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
 from .attachments.inputfile import InputFile
 from .attachments.basefile import BaseFile
 from .attachments.photosize import PhotoSize
@@ -66,6 +71,14 @@ from .attachments.contact import Contact
 from .attachments.location import Location
 from .attachments.video import Video
 from .attachments.animation import Animation
+from .attachments.inputmedia import (
+    InputMedia,
+    InputMediaPhoto,
+    InputMediaVideo,
+    InputMediaAnimation,
+    InputMediaAudio,
+    InputMediaDocument
+)
 from .chatphoto import ChatPhoto
 from .error import (
     BaleError,

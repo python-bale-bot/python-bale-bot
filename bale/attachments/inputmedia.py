@@ -48,26 +48,26 @@ class InputMedia(BaleObject):
 
 
 class InputMediaPhoto(InputMedia):
-    def __init__(self, media_type: str, media: Union[FileInput, PhotoSize], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
+    def __init__(self, media: Union[FileInput, PhotoSize], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
         media = parse_file_input(media, PhotoSize, file_name=file_name)
         super().__init__(BaseFile.PHOTO, media, caption)
 
 class InputMediaVideo(InputMedia):
-    def __init__(self, media_type: str, media: Union[FileInput, Video], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
+    def __init__(self, media: Union[FileInput, Video], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
         media = parse_file_input(media, Video, file_name=file_name)
         super().__init__(BaseFile.VIDEO, media, caption)
 
 class InputMediaAnimation(InputMedia):
-    def __init__(self, media_type: str, media: Union[FileInput, Animation], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
+    def __init__(self, media: Union[FileInput, Animation], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
         media = parse_file_input(media, Animation, file_name=file_name)
         super().__init__(BaseFile.ANIMATION, media, caption)
 
 class InputMediaAudio(InputMedia):
-    def __init__(self, media_type: str, media: Union[FileInput, Audio], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
+    def __init__(self, media: Union[FileInput, Audio], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
         media = parse_file_input(media, Audio, file_name=file_name)
         super().__init__(BaseFile.AUDIO, media, caption)
 
 class InputMediaDocument(InputMedia):
-    def __init__(self, media_type: str, media: Union[FileInput, Document], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
+    def __init__(self, media: Union[FileInput, Document], caption: Optional[str] = None, file_name: Optional[str] = None) -> None:
         media = parse_file_input(media, Document, file_name=file_name)
         super().__init__(BaseFile.DOCUMENT, media, caption)
