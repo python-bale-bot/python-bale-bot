@@ -321,6 +321,21 @@ class Message(BaleObject):
                                                reply_to_message_id=self.message_id,
                                                delete_after=delete_after)
 
+    async def reply_media_group(self, media: List[MediaInput], *,
+                    components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_media_group`.
+
+        .. code:: python
+
+            await message.reply_media_group([
+                InputMediaPhoto("File ID", caption="example caption"),
+                InputMediaPhoto("File ID"),
+                InputMediaPhoto("File ID")
+            ], ...)
+        """
+        return await self.get_bot().send_media_group(self.id, media, components=components)
+
     async def edit(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> Message:
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.edit_message`.

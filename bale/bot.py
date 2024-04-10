@@ -24,7 +24,7 @@ from bale import (
 from bale.handlers import BaseHandler, CommandHandler, CallbackQueryHandler, MessageHandler
 from bale.request import HTTPClient, handle_request_param
 from .error import NotFound, InvalidToken
-from .utils.types import CoroT, FileInput
+from .utils.types import CoroT, FileInput, MediaInput
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 
@@ -1050,6 +1050,78 @@ class Bot:
             await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
 
         return result
+
+    async def send_media_group(self, chat_id: Union[str, int], media: List[MediaInput], *,
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                             reply_to_message_id: Optional[Union[str, int]] = None) -> List["Message"]:
+        """This service is used to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped on an album with messages of the same type.
+        .. code:: python
+
+            await bot.send_media_group(1234, [
+                InputMediaPhoto("File ID", caption="example caption"),
+                InputMediaPhoto("File ID"),
+                InputMediaPhoto("File ID")
+            ], ...)
+
+        Parameters
+        ----------
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            media: |media_input|
+                Files to send.
+            components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
+                Message Components
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
+                |reply_to_message_id|
+
+        Raises
+        ------
+            NotFound
+                Invalid media.
+            Forbidden
+                You do not have permission to Send media group to chat.
+            APIError
+                Send media group Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(media, list):
+            raise TypeError(
+                "media param must be list of Media Inputs"
+            )
+
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "media": media
+        }
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.send_media_group(params=handle_request_param(
+            payload
+        ))
+        messages = Message.from_list(payloads_list=response.result, bot=self)
+        for msg in messages:
+            self._state.store_message(msg)
+
+        return messages
 
     async def send_location(
             self, chat_id: Union[str, int], location: "Location",

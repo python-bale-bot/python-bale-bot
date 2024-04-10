@@ -11,9 +11,9 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from bale import BaleObject, Document, PhotoSize, Video, Audio, Animation
-from bale.utils.types import FileInput
+from bale.utils.types import FileInput, MediaInput
 if TYPE_CHECKING:
-    from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile
+    from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile, Message
 
 
 class User(BaleObject):
@@ -170,6 +170,20 @@ class User(BaleObject):
                                            need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                            delete_after=delete_after)
 
+    async def send_media_group(self, media: List[MediaInput], *,
+                    components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> List["Message"]:
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_media_group`.
+
+        .. code:: python
+
+            await user.send_media_group([
+                InputMediaPhoto("File ID", caption="example caption"),
+                InputMediaPhoto("File ID"),
+                InputMediaPhoto("File ID")
+            ], ...)
+        """
+        return await self.get_bot().send_media_group(self.id, media, components=components, reply_to_message_id=self.id)
 
     @classmethod
     def from_dict(cls, data: Optional[Dict], bot):

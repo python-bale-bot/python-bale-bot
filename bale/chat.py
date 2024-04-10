@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject, User, ChatPhoto, Document, PhotoSize, Video, Animation, Audio
-from bale.utils.types import FileInput
+from bale.utils.types import FileInput, MediaInput
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
@@ -187,6 +187,21 @@ class Chat(BaleObject):
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                         delete_after=delete_after)
+
+    async def send_media_group(self, media: List[MediaInput], *,
+                    components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_media_group`.
+
+        .. code:: python
+
+            await chat.send_media_group([
+                InputMediaPhoto("File ID", caption="example caption"),
+                InputMediaPhoto("File ID"),
+                InputMediaPhoto("File ID")
+            ], ...)
+        """
+        return await self.get_bot().send_media_group(self.id, media, components=components)
 
     async def leave(self):
         """
