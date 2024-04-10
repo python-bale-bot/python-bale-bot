@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Any
 from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
-from bale.attachments import InputFile
+
 import asyncio
 import aiohttp
 import logging

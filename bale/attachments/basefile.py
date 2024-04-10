@@ -15,9 +15,7 @@ from io import BufferedIOBase
 
 from .inputfile import InputFile
 
-__all__ = (
-    "BaseFile",
-)
+__all__ = ("BaseFile",)
 
 class BaseFile(BaleObject):
     """This object shows a Base File Class.

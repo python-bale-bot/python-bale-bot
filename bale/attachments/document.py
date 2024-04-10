@@ -9,7 +9,8 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Dict, Optional
-from . import BaseFile, PhotoSize
+from .basefile import BaseFile
+from .photosize import PhotoSize
 
 __all__ = (
 	"Document",

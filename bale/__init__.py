@@ -56,6 +56,16 @@ __all__ = (
 
 from .baleobject import BaleObject
 from .attachments import InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation
+from .attachments.inputfile import InputFile
+from .attachments.basefile import BaseFile
+from .attachments.photosize import PhotoSize
+from .attachments.document import Document
+from .attachments.voice import Voice
+from .attachments.audio import Audio
+from .attachments.contact import Contact
+from .attachments.location import Location
+from .attachments.video import Video
+from .attachments.animation import Animation
 from .chatphoto import ChatPhoto
 from .error import (
     BaleError,
