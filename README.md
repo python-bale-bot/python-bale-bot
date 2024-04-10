@@ -59,7 +59,7 @@ async def on_ready():
 
 @client.event
 async def on_update(update: Update):
-	print(update.update_id, update.type)
+	print(update.update_id)
 
 @client.event
 async def on_message(message: Message):
