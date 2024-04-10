@@ -46,13 +46,13 @@ class CallbackQuery(BaleObject):
     )
 
     def __init__(
-            self, id: str, from_user: "User",
+            self, callback_id: str, from_user: "User",
             data: Optional[str], message: Optional["Message"],
             inline_message_id: Optional[str]
     ):
         super().__init__()
-        self._id = id
-        self.id = id
+        self._id = callback_id
+        self.id = callback_id
         self.from_user = from_user
 
         self.data = data
@@ -70,7 +70,8 @@ class CallbackQuery(BaleObject):
         if not data:
             return None
 
-        data['from_user'] = User.from_dict(data.pop('from', None), bot)
-        data['message'] = Message.from_dict(data.get('message'), bot)
+        data["callback_id"] = data.pop("id")
+        data["from_user"] = User.from_dict(data.pop("from", None), bot)
+        data["message"] = Message.from_dict(data.get("message"), bot)
 
         return super().from_dict(data, bot)
