@@ -9,7 +9,7 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Type, Set, Dict, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Type, List, Set, Dict, TypeVar, Optional
 import inspect
 from json import dumps
 if TYPE_CHECKING:
@@ -63,7 +63,7 @@ class BaleObject:
             return
 
         raise AttributeError(
-            "You can't set `{}` attribute to `{}`!".format(key, self.__class__.__name__)
+            "You can't set `%s` attribute to `%s`!", key, self.__class__.__name__
         )
 
     def __delattr__(self, item: str) -> None:
@@ -72,7 +72,7 @@ class BaleObject:
             return
 
         raise AttributeError(
-            "You can't delete `{}` attribute from `{}`!".format(item, self.__class__.__name__)
+            "You can't delete `%s` attribute from `%s`!", item, self.__class__.__name__
         )
 
     def __eq__(self, other: object) -> bool:
@@ -88,7 +88,8 @@ class BaleObject:
         return "<{} {}>".format(
             self.__class__.__name__,
             ", ".join([
-                "{}={}".format(key, repr(value)) for key, value in attrs.items() if not key.startswith("_") and value
+                "{}={}".format(k, repr(v))
+                for k, v in attrs.items() if not k.startswith("_") and v
             ])
         )
 
@@ -133,9 +134,24 @@ class BaleObject:
         return obj
 
     @classmethod
-    def from_dict(cls: Type[Bale_obj], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj]:
-        return cls._from_dict(data=data, bot=bot)
+    def from_dict(cls: Type[Bale_obj], payload: Optional[Dict], bot: "Bot") -> Optional[Bale_obj]:
+        return cls._from_dict(data=payload, bot=bot)
+
+    @classmethod
+    def from_list(cls: Type[Bale_obj], payloads_list: Optional[List[Dict]], bot: "Bot") -> Optional[List[Bale_obj]]:
+        if not payloads_list or not isinstance(payloads_list, list):
+            return None
+
+        objects = []
+        for obj_payload in payloads_list:
+            obj: Bale_obj = cls._from_dict(data=obj_payload, bot=bot)
+            objects.append(obj)
+
+        return objects
 
     @staticmethod
     def parse_data(data: Optional[Dict]) -> Optional[Dict]:
-        return None if not data else data.copy()
+        if not data:
+            return None
+
+        return data.copy()
