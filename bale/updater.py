@@ -52,7 +52,7 @@ class Updater:
         if self.running:
             raise RuntimeError("Updater is running")
         _log.debug("Updater is in the pre-start!")
-        self.bot.dispatch("before_ready")
+        self.bot.dispatch("startup")
         await self.polling()
 
     async def polling(self) -> NoReturn:
@@ -117,7 +117,7 @@ class Updater:
                     await asyncio.sleep(self.interval)
 
         except asyncio.CancelledError:
-            _log.debug("Get Updater Loop was cancelled!")
+            _log.debug("Get updater loop was cancelled!")
 
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
