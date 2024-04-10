@@ -13,24 +13,38 @@ from __future__ import annotations
 import asyncio
 import logging
 from builtins import enumerate, reversed
-from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, overload
+from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any
 from weakref import WeakValueDictionary
 
 from bale import (
-    State, Message, Update, User, MenuKeyboardMarkup, InlineKeyboardMarkup,
-    Chat, LabeledPrice, ChatMember, Updater, CallbackQuery,
-    PhotoSize, Document, Audio, Contact, Location, Video, Animation
+    State,
+    Message,
+    Update,
+    User,
+    MenuKeyboardMarkup,
+    InlineKeyboardMarkup,
+    Chat,
+    LabeledPrice,
+    ChatMember,
+    Updater,
+    PhotoSize,
+    Document,
+    Audio,
+    Contact,
+    Location,
+    Video,
+    Animation
 )
-from bale.handlers import BaseHandler, CommandHandler, CallbackQueryHandler, MessageHandler
+from bale.handlers import BaseHandler
+from bale.checks import BaseCheck
 from bale.request import HTTPClient, handle_request_param
+from .waitcontext import WaitContext
 from .error import NotFound, InvalidToken
 from .utils.types import CoroT, FileInput, MediaInput
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 
-__all__ = (
-    "Bot"
-)
+__all__ = ("Bot",)
 
 
 _log = logging.getLogger(__name__)
@@ -79,8 +93,8 @@ class Bot:
 
         self.loop: Union[asyncio.AbstractEventLoop, _Loop] = _loop
         self.token: str = token
-        self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.get('http_kwargs', {}))
-        self._state: "State" = State(self, **kwargs.get('state_kwargs', {}))
+        self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.pop('http_kwargs', {}))
+        self._state: "State" = State(self, **kwargs.pop('state_kwargs', {}))
         self._client_user = None
         self._events: Dict[str, Callable] = {
             'event_error': self._on_event_error_callback,

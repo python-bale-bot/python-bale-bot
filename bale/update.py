@@ -15,9 +15,7 @@ from bale import BaleObject, Message, CallbackQuery
 if TYPE_CHECKING:
     from bale import Bot
 
-__all__ = (
-    "Update",
-)
+__all__ = ("Update",)
 
 class Update(BaleObject):
     """This object represents an incoming update.
