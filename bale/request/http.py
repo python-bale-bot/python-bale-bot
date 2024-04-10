@@ -127,7 +127,8 @@ class HTTPClient:
             try:
                 async with self.__session.request(method=method, url=url, **kwargs) as original_response:
                     original_response: aiohttp.ClientResponse
-                    response = await ResponseParser.from_response(original_response)
+                    _log.debug('[%s] %s with %s has returned %s', method, url, kwargs.get('data'), original_response.status)
+                    response = await ResponseParser.parse_response(original_response)
                     if original_response.status == ResponseStatusCode.OK:
                         return response
                     elif not response.ok or original_response.status == ResponseStatusCode.NOT_INCORRECT: # request is done, but is not correct?
