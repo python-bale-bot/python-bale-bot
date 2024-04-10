@@ -1,5 +1,7 @@
 import asyncio
-from bale import Bot, Message
+from bale import Bot, Update, Message
+from bale.handlers import CommandHandler
+from bale.checks import Author, TEXT
 
 client = Bot(token="Your Token")
 
@@ -7,25 +9,21 @@ client = Bot(token="Your Token")
 async def on_ready():
     print(client.user, "is Ready!")
 
-@client.event
-async def on_message(message: Message):
-    if message.content == '/give_name_without_timeout':
-        await message.reply('what is your name?')
-        def answer_checker(m: Message):
-            return message.author == m.author and bool(message.text)
-        answer_obj: Message = await client.wait_for('message', check=answer_checker)
-        return await answer_obj.reply(f'Your name is {answer_obj.content}')
+@client.handle(CommandHandler('give_name_without_timeout'))
+async def conversation_handler(message: Message):
+    await message.reply('what is your name?')
+    received_update: Update = await client.wait_for(Author(message.author.id) & TEXT)
+    return await received_update.message.reply(f'Your name is {received_update.message.text}')
 
-    elif message.content == '/give_name_with_timeout':
-        await message.reply('what is your name?')
+@client.handle(CommandHandler('give_name_with_timeout'))
+async def conversation_handler_2(message: Message):
+    await message.reply('what is your name?')
 
-        def answer_checker(m: Message):
-            return message.author == m.author and bool(message.text)
-        try:
-            answer_obj: Message = await client.wait_for('message', check=answer_checker, timeout=10.0)
-        except asyncio.TimeoutError:
-            return await message.chat.send('No response received; Therefore, the operation was canceled.')
-        else:
-            return await answer_obj.reply(f'Your name is {answer_obj.content}')
+    try:
+        received_update: Update = await client.wait_for(Author(message.author.id) & TEXT, timeout=10.0)
+    except asyncio.TimeoutError:
+        return await message.chat.send('No response received; Therefore, the operation was canceled.')
+    else:
+        return await received_update.message.reply(f'Your name is {received_update.message.text}')
 
 client.run()

@@ -1,4 +1,6 @@
 from bale import Bot, Update, Message
+from bale.handlers import BaseHandler, CommandHandler
+from bale.checks import ChatType
 
 client = Bot(token="Your Token")
 
@@ -6,17 +8,14 @@ client = Bot(token="Your Token")
 async def on_ready():
 	print(client.user.username, "is Ready!")
 
-@client.event
-async def on_update(update: Update):
+@client.handle(BaseHandler())
+async def update_handler(update: Update):
 	print(update.update_id)
 
-@client.event
-async def on_message(message: Message):
-	if message.content == '/start': # to get caption or text of message
-		await message.reply('Hi, from python-bale-bot to everyone!')
-		if message.chat.is_group_chat:
-			await message.reply("It's is a special Hi for groups!") # work when message sent in a group
+@client.handle(CommandHandler(['start', 'help'], check=ChatType.PRIVATE | ChatType.GROUP))
+async def start_command(message: Message):
+	return await message.reply("Hello %s!".format(message.author.mention or message.author.first_name))
 
-# See https://docs.python-bale-bot.ir/en/stable/event.html to get more information about events!
+# See https://docs.python-bale-bot.ir/en/stable/bale.handlers.html to get more information about events!
 
 client.run()

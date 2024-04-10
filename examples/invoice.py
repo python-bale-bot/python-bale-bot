@@ -1,4 +1,6 @@
-from bale import Message, Bot, LabeledPrice, SuccessfulPayment
+from bale import Message, Bot, LabeledPrice
+from bale.handlers import CommandHandler, MessageHandler
+from bale.checks import ChatType, SUCCESSFUL_PAYMENT
 
 client = Bot(token="Your Token")
 
@@ -6,19 +8,18 @@ client = Bot(token="Your Token")
 async def on_ready():
 	print(client.user, "is Ready!")
 
-@client.event
+@client.handle(CommandHandler('invoice', check=~ChatType.CHANNEL))
 async def on_message(message: Message):
-	if message.content == "/donate":
-		await message.chat.send_invoice(
-			title="Example Donate",
-			description="Example Donate description",
-			provider_token="6037************",
-			payload="{}".format(message.author.user_id),
-			prices=[LabeledPrice(label="Milk", amount=20000)]
-		)
+	return await message.chat.send_invoice(
+		title="Example Donate",
+		description="Example Donate description",
+		provider_token="6037************",
+		payload=str(message.author.user_id),
+		prices=[LabeledPrice(label="Milk", amount=20000)]
+	)
 
-@client.event
-async def on_successful_payment(successful_payment: SuccessfulPayment):
-	print("We Receive an payment From {}".format(successful_payment.payload))
+@client.handle(MessageHandler(SUCCESSFUL_PAYMENT))
+async def on_successful_payment(message: Message):
+	print("We Receive an payment From {}".format(message.successful_payment.payload))
 
 client.run()
