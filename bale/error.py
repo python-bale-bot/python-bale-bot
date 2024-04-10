@@ -9,7 +9,24 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Any, Tuple, Type
+from bale.utils.request import ResponseStatusCode
+
+__all__ = (
+    "HTTPClientError",
+    "BaleError",
+    "InvalidToken",
+    "APIError",
+    "NetworkError",
+    "TimeOut",
+    "NotFound",
+    "Forbidden",
+    "BadRequest",
+    "RateLimited",
+    "HTTPException",
+    "__ERROR_CLASSES__"
+)
+
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
     TOKEN_NOT_FOUND = "Bad Request: Token not found"
@@ -26,23 +43,19 @@ class BaleError(Exception):
     message: :obj:`str`
         The text of the error. Could be an `None`.
     """
-    __slots__ = (
-        "message",
-    )
+    __slots__ = ("message",)
+    STATUS_CODE = None
 
     @staticmethod
     def check_response(description: Optional[str]) -> bool:
         return False
 
-    def __init__(self, message):
+    def __init__(self, message: Any):
         super().__init__()
         self.message = message
 
-    def __str__(self):
-        return self.message
-
     def __repr__(self):
-        return f"{self.__class__.__name__}\n('{self.message}')"
+        return f"{self.__class__.__name__}: {self.message}"
 
     def __reduce__(self):
         return self.__class__, (self.message,)
@@ -69,7 +82,7 @@ class APIError(BaleError):
     __slots__ = ()
 
     def __init__(self, error_code, message):
-        super().__init__("{}: {}".format(error_code, message))
+        super().__init__(f"{error_code}: {message}")
 
 
 class NetworkError(BaleError):
@@ -93,6 +106,7 @@ class NotFound(BaleError):
     Subclass of :exc:`BaleError`
     """
     __slots__ = ()
+    STATUS_CODE = ResponseStatusCode.NOT_FOUND
 
     def __init__(self, message=None):
         super().__init__(message or "Not Found")
@@ -107,9 +121,10 @@ class Forbidden(BaleError):
     Subclass of :exc:`BaleError`
     """
     __slots__ = ()
+    STATUS_CODE = ResponseStatusCode.PERMISSION_DENIED
 
-    def __init__(self, message=None):
-        super().__init__(message or "Forbidden")
+    def __init__(self, err=None):
+        super().__init__(err)
 
     @staticmethod
     def check_response(description: Optional[str]) -> bool:
@@ -122,8 +137,8 @@ class BadRequest(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self, error):
-        super().__init__(error)
+    def __init__(self, err: Any):
+        super().__init__(err)
 
     @staticmethod
     def check_response(description: Optional[str]) -> bool:
@@ -135,6 +150,7 @@ class RateLimited(BaleError):
     Subclass of :exc:`BaleError`
     """
     __slots__ = ()
+    STATUS_CODE = ResponseStatusCode.RATE_LIMIT
 
     def __init__(self):
         super().__init__("We are Rate Limited")
@@ -145,5 +161,19 @@ class HTTPException(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self, error):
-        super().__init__(str(error))
+    def __init__(self, err: Any):
+        super().__init__(err)
+
+
+__ERROR_CLASSES__: Tuple[Type[BaleError], ...] = (
+    BaleError,
+    InvalidToken,
+    APIError,
+    NetworkError,
+    TimeOut,
+    NotFound,
+    Forbidden,
+    BadRequest,
+    RateLimited,
+    HTTPException
+)
