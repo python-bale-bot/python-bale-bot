@@ -8,7 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Optional
+from typing import Optional, Dict
 from bale import BaleObject, PhotoSize
 
 __all__ = (
@@ -47,12 +47,12 @@ class Sticker(BaleObject):
         "set_name",
         "file_size"
     )
-    def __init__(self, file_id: str, file_unique_id: str, type: str, width: int, height: int, thumb: Optional["PhotoSize"], set_name: Optional[str] = None, file_size: Optional[int] = None):
+    def __init__(self, file_id: str, file_unique_id: str, sticker_type: str, width: int, height: int, thumb: Optional["PhotoSize"], set_name: Optional[str] = None, file_size: Optional[int] = None):
         super().__init__()
         self._id = file_id
         self.file_id = file_id
         self.file_unique_id = file_unique_id
-        self.type = type
+        self.type = sticker_type
         self.width = width
         self.height = height
         self.thumb = thumb
@@ -64,3 +64,13 @@ class Sticker(BaleObject):
         For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
         """
         return await self.get_bot().get_file(self.file_id)
+
+    @classmethod
+    def from_dict(cls, data: Optional[Dict], bot):
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
+
+        data["sticker_type"] = data.pop("type")
+
+        return super().from_dict(data, bot)
