@@ -9,27 +9,17 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Any
-from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
 
 import asyncio
 import aiohttp
 import logging
-from ..error import (
-    NetworkError,
-    TimeOut,
-    NotFound,
-    Forbidden,
-    APIError,
-    InvalidToken,
-    BadRequest,
-    BaleError,
-    HTTPClientError,
-    RateLimited,
-    HTTPException
-)
 from ssl import SSLCertVerificationError
+from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
+from bale.attachments.inputfile import InputFile
+from bale.error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkError, TimeOut, BaleError, HTTPException
 from .parser import ResponseParser
 from .params import RequestParams
+
 from bale.utils.request import ResponseStatusCode, to_json
 
 __all__ = ("HTTPClient", "Route")
@@ -93,24 +83,24 @@ class HTTPClient:
         return self._loop
 
     @loop.setter
-    def loop(self, _value):
-        self._loop = _value
+    def loop(self, value: asyncio.AbstractEventLoop) -> None:
+        self._loop = value
 
-    def reload_session(self):
+    def reload_session(self) -> None:
         if self.__session and self.__session.closed:
             self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
-    async def start(self):
+    async def start(self) -> None:
         if self.__session:
             raise RuntimeError("HTTPClient has already started.")
         self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
-    async def close(self):
+    async def close(self) -> None:
         if self.__session:
             await self.__session.close()
             self.__session = None
 
-    async def request(self, route: Route, *, via_form_data: bool = False, **kwargs):
+    async def request(self, route: Route, *, via_form_data: bool = False, **kwargs) -> ResponseParser:
         url = route.url
         method = route.request_method
         headers = { 'User-Agent': self.user_agent }
@@ -142,23 +132,17 @@ class HTTPClient:
                         return response
                     elif not response.ok or original_response.status == ResponseStatusCode.NOT_INCORRECT: # request is done, but is not correct?
                         # so we have to check which of the errors belong to the problem of that request?
-                        for error_obj in (NotFound, InvalidToken, Forbidden, BadRequest):
-                            if error_obj.check_response(response.description):
+                        if original_response.status == ResponseStatusCode.RATE_LIMIT or response.description in (
+                            HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT
+                        ):
+                            _log.debug('[%s] %s Received a 429 status code')
+                            if tries < 4:
+                                await asyncio.sleep(tries * 2)
+                                continue
+
+                        for error_obj in __ERROR_CLASSES__:
+                            if error_obj.STATUS_CODE == original_response.status or error_obj.check_response(response.description):
                                 raise error_obj(response.description)
-
-                    elif original_response.status == ResponseStatusCode.RATE_LIMIT or response.description in (
-                        HTTPClientError.RATE_LIMIT, HTTPClientError.LOCAL_RATE_LIMIT
-                    ):
-                        if tries >= 4:
-                            raise RateLimited()
-
-                        await asyncio.sleep(tries * 2)
-                        continue
-
-                    elif original_response.status == ResponseStatusCode.NOT_FOUND:
-                        raise NotFound(response.description)
-                    elif original_response.status == ResponseStatusCode.PERMISSION_DENIED:
-                        raise Forbidden()
 
                     raise APIError(response.error_code, response.description)
 
@@ -180,16 +164,17 @@ class HTTPClient:
         base_file_url = BALE_API_FILE_URL + self.token
 
         try:
-            async with self.__session.get(f"{base_file_url}/{file_id}") as response:
-                if response.status == ResponseStatusCode.OK:
-                    return await response.read()
-                elif response.status in (ResponseStatusCode.NOT_INCORRECT, ResponseStatusCode.NOT_FOUND):
-                    raise NotFound("File is not Found")
-                elif response.status == ResponseStatusCode.PERMISSION_DENIED:
-                    raise Forbidden()
-                else:
-                    error_payload = await response.json()
-                    raise APIError(error_payload.get('error_code'), error_payload.get('description'))
+            async with self.__session.get(f"{base_file_url}/{file_id}") as original_response:
+                if original_response.status == ResponseStatusCode.OK:
+                    original_response: aiohttp.ClientResponse
+                    return await original_response.read()
+
+                for error_obj in __ERROR_CLASSES__:
+                    if error_obj.STATUS_CODE == original_response.status:
+                        raise error_obj(None)
+
+                error_payload = await original_response.json()
+                raise APIError(error_payload.get('error_code'), error_payload.get('description'))
         except SSLCertVerificationError as error:
             _log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
             raise NetworkError(str(error))

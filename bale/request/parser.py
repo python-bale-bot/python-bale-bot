@@ -56,7 +56,7 @@ class ResponseParser:
         return self.data.get('description')
 
     @classmethod
-    async def from_response(cls, data: "ClientResponse"):
+    async def parse_response(cls, data: "ClientResponse"):
         fetched_data = await json_or_text(data)
 
         if not isinstance(fetched_data, dict):
