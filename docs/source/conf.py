@@ -7,8 +7,8 @@ from pathlib import Path
 # -- Project information -----------------------------------------------------
 # https://www.sphinx-doc.org/en/master/usage/configuration.html#project-information
 
-project = 'python-bale-bot'
-project_copyright = '2020-Present, Kian Ahmadian'
+project = repository = 'python-bale-bot'
+project_copyright = '2022-Present, Kian Ahmadian'
 author = 'Kian Ahmadian'
 release = version = '2.5.0'
 
