@@ -38,7 +38,7 @@ class Chat(BaleObject):
             First name of the other party in a private chat.
         last_name: :obj:`str`, optional
             Last name of the other party in a private chat.
-        photo: Optional[:class:`bale.ChatPhoto`]
+        photo: :class:`bale.ChatPhoto`, optional
             Chat photo.
         invite_link: :obj:`str`, optional
             Primary invite link, for groups and channel. Returned only in :meth:`bale.Bot.get_chat()`.
@@ -61,12 +61,12 @@ class Chat(BaleObject):
         "bot"
     )
 
-    def __init__(self, id: int, type: str, title: Optional[str], username: Optional[str], first_name: Optional[str], last_name: Optional[str],
+    def __init__(self, chat_id: int, chat_type: str, title: Optional[str], username: Optional[str], first_name: Optional[str], last_name: Optional[str],
                  photo: Optional["ChatPhoto"], invite_link: Optional[str]):
         super().__init__()
-        self._id = id
-        self.id = id
-        self.type = type
+        self._id = chat_id
+        self.id = chat_id
+        self.type = chat_type
         self.title = title
         self.username = username
         self.first_name = first_name
@@ -297,6 +297,8 @@ class Chat(BaleObject):
         if not data:
             return None
 
+        data["chat_id"] = data.pop("id")
+        data["chat_type"] = data.pop("type")
         data["photo"] = ChatPhoto.from_dict(data.get('photo'), bot)
 
         return super().from_dict(data, bot)

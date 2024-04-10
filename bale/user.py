@@ -9,7 +9,7 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import TYPE_CHECKING, Optional, List, Union
+from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from bale import BaleObject, Document, PhotoSize, Video, Audio, Animation
 from bale.utils.types import FileInput
 if TYPE_CHECKING:
@@ -41,32 +41,35 @@ class User(BaleObject):
         "id"
     )
 
-    def __init__(self, id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
+    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
                  username: Optional[str] = None):
         super().__init__()
-        self._id = id
+        self._id = user_id
         self.is_bot = is_bot
         self.first_name = first_name
         self.last_name = last_name
         self.username = username
-        self.id = id
+        self.id = user_id
 
         self._lock()
 
     @property
     def mention(self) -> str | None:
         """:obj:`str`, optional: mention user with username."""
-        return f"@{self.username}" if self.username else None
+        if self.username:
+            return "@" + self.username
+
+        return None
 
     @property
-    def chat_id(self) -> str:
+    def chat_id(self) -> int:
         """Aliases for :attr:`id`"""
-        return str(self.id)
+        return self.id
 
     @property
-    def user_id(self) -> str:
+    def user_id(self) -> int:
         """Aliases for :attr:`id`"""
-        return str(self.id)
+        return self.id
 
     async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
@@ -166,3 +169,14 @@ class User(BaleObject):
                                            payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                            need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                            delete_after=delete_after)
+
+
+    @classmethod
+    def from_dict(cls, data: Optional[Dict], bot):
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
+
+        data["user_id"] = data.pop("id")
+
+        return super().from_dict(data, bot)

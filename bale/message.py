@@ -16,10 +16,10 @@ from typing import List, Dict, Optional, Union
 from bale import (
     BaleObject,
     Chat, User, Document, Contact, Location, PhotoSize, Invoice, InlineKeyboardMarkup,
-    MenuKeyboardMarkup, Video, Voice, Audio, BaseFile, Sticker, SuccessfulPayment, Animation,
+    MenuKeyboardMarkup, Video, Voice, Audio, Sticker, SuccessfulPayment, Animation,
     InputFile
 )
-from bale.utils.types import FileInput
+from bale.utils.types import FileInput, AttachmentType, MediaInput
 from .helpers import parse_time
 
 
@@ -77,13 +77,34 @@ class Message(BaleObject):
             Message is a service message about a successful payment, information about the payment.
     """
     __slots__ = (
-        "text", "caption", "from_user", "contact", "location", "chat", "message_id", "forward_from",
-        "forward_from_chat", "forward_from_message_id", "date", "edit_date",
-        "audio", "voice", "document", "video", "animation", "photos", "location", "sticker","invoice",
-        "new_chat_members", "left_chat_member", "reply_to_message", "successful_payment"
+        "text",
+        "caption",
+        "from_user",
+        "contact",
+        "location",
+        "chat",
+        "message_id",
+        "forward_from",
+        "forward_from_chat",
+        "forward_from_message_id",
+        "date",
+        "edit_date",
+        "audio",
+        "voice",
+        "document",
+        "video",
+        "animation",
+        "photos",
+        "location",
+        "sticker",
+        "invoice",
+        "new_chat_members",
+        "left_chat_member",
+        "reply_to_message",
+        "successful_payment"
     )
 
-    def __init__(self, message_id: str, date: datetime, text: Optional[str], caption: Optional[str],
+    def __init__(self, message_id: int, date: datetime, text: Optional[str], caption: Optional[str],
                  forward_from: Optional["User"], forward_from_chat: Optional["Chat"],
                  forward_from_message_id: Optional[str], from_user: Optional["User"],
                  document: Optional["Document"], contact: Optional["Contact"], edit_date: Optional[datetime],
@@ -124,14 +145,19 @@ class Message(BaleObject):
         self._lock()
 
     @property
+    def id(self) -> int:
+        """An alias for :attr:`message_id`"""
+        return self.message_id
+
+    @property
     def author(self):
         """An alias for :attr:`from_user`"""
         return self.from_user
 
     @property
-    def attachment(self) -> Optional["BaseFile"]:
+    def attachment(self) -> Optional[AttachmentType]:
         """Union[:class:`bale.Video`, :class:`bale.PhotoSize`, :class:`bale.Document`, :class:`bale.Animation`], optional: Represents the message attachment. ``None`` if the message don't have any attachments"""
-        attachment = self.video or self.photos or self.audio or self.document or self.animation or self.voice
+        attachment = self.video or self.photos or self.audio or self.animation or self.voice or self.document
         if not attachment:
             return
 
@@ -151,7 +177,7 @@ class Message(BaleObject):
         return self.chat.id
 
     @property
-    def reply_to_message_id(self) -> Optional[str]:
+    def reply_to_message_id(self) -> Optional[int]:
         """:obj:`str`, optional: Represents the Unique identifier of Original message, if the message has been replied. ``None`` If the message is not replied"""
         if not self.reply_to_message:
             return
