@@ -15,20 +15,18 @@ from . import ReplyMarkupItem, InlineKeyboardButton, MenuKeyboardButton
 from bale.utils.request import to_json
 
 class BaseReplyMarkup:
-    __slots__ = (
-        "__keyboards"
-    )
+    __slots__ = ("__keyboards",)
     def __init__(self):
         self.__keyboards: List["ReplyMarkupItem"] = []
 
-    def _add(self, item: Union["InlineKeyboardButton", "MenuKeyboardButton"], row: Optional[int]=None):
+    def add(self, item: Union["InlineKeyboardButton", "MenuKeyboardButton"], row: Optional[int] = None):
         reply_markup_item = ReplyMarkupItem(item, row)
         self.__keyboards.append(reply_markup_item)
 
-    def _remove(self, item: "ReplyMarkupItem"):
+    def remove(self, item: "ReplyMarkupItem"):
         self.__keyboards.remove(item)
 
-    def _remove_row(self, row: int):
+    def remove_row(self, row: int):
         if not isinstance(row, int):
             raise TypeError(
                 "row param must be type of number"
@@ -43,7 +41,7 @@ class BaseReplyMarkup:
         """List[:class:`bale.ReplyMarkupItem`]: The keyboards in order."""
         return self.__keyboards
 
-    def _to_components(self) -> List[List[Union["InlineKeyboardButton", "MenuKeyboardButton"]]]:
+    def get_rows_list(self) -> List[List[Union["InlineKeyboardButton", "MenuKeyboardButton"]]]:
         components = []
         def key(i: "ReplyMarkupItem"):
             return i.row
@@ -52,6 +50,16 @@ class BaseReplyMarkup:
             components.append([i.item for i in group])
 
         return components
+
+    def get_rows_list_payload(self) -> List[List[Dict]]:
+        rows = []
+
+        for row in self.get_rows_list():
+            rows.append(
+                [button.to_dict() for button in row]
+            )
+
+        return rows
 
     def to_dict(self) -> Dict:
         return {}

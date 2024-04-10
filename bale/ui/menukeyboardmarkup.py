@@ -10,9 +10,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from typing import Optional, Dict
-from . import BaseReplyMarkup, InlineKeyboardButton, ReplyMarkupItem
+from . import BaseReplyMarkup, MenuKeyboardButton, ReplyMarkupItem
 
-class InlineKeyboardMarkup(BaseReplyMarkup):
+class MenuKeyboardMarkup(BaseReplyMarkup):
     """
     .. admonition:: Examples
 
@@ -21,28 +21,28 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
     def __init__(self):
         super().__init__()
 
-    def add(self, inline_keyboard_button: "InlineKeyboardButton", row: Optional[int] = None) -> "InlineKeyboardMarkup":
-        """Add an Inline Keyboard button to keyboards.
+    def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> "MenuKeyboardMarkup":
+        """Add a Menu Keyboard button to keyboards.
 
         Parameters
         ----------
-            inline_keyboard_button: :class:`bale.InlineKeyboardButton`
-                The inline keyboard button.
+            keyboard_button: :class:`bale.MenuKeyboardButton`
+                The menu keyboard button.
             row: :obj:`int`, optional
                 The row where you want the button to be placed.
 
                 .. warning::
                     Your numbers in the "row" param must be natural and greater than 0.
         """
-        if not isinstance(inline_keyboard_button, InlineKeyboardButton):
+        if not isinstance(keyboard_button, MenuKeyboardButton):
             raise TypeError(
-                "inline_keyboard_button must be type of InlineKeyboardButton"
+                "keyboard_button param must be type of KeyboardButton"
             )
 
-        super()._add(inline_keyboard_button, row)
+        super().add(keyboard_button, row)
         return self
 
-    def remove(self, item: "ReplyMarkupItem") -> "InlineKeyboardMarkup":
+    def remove(self, item: "ReplyMarkupItem") -> "MenuKeyboardMarkup":
         """Remove a Reply Markup item from keyboards.
 
         Parameters
@@ -50,11 +50,11 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
             item: :class:`bale.ReplyMarkupItem`
                 The reply markup item.
         """
-        super()._remove(item)
+        super().remove(item)
         return self
 
-    def remove_row(self, row: int) -> "InlineKeyboardMarkup":
-        """Remove a row along with the inline keyboards located in that row.
+    def remove_row(self, row: int) -> "MenuKeyboardMarkup":
+        """Remove a row along with the menu keyboards located in that row.
 
         Parameters
         ----------
@@ -64,15 +64,10 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
                 .. warning::
                     Your numbers in the "row" param must be natural and greater than 0.
         """
-        super()._remove_row(row)
+        super().remove_row(row)
         return self
 
     def to_dict(self) -> Dict:
-        components = []
-        payload = {
-            "inline_keyboard": components
+        return {
+            "keyboard": self.get_rows_list_payload()
         }
-        for group in super()._to_components():
-            components.append([inline_button.to_dict() for inline_button in group])
-
-        return payload

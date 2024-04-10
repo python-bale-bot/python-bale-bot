@@ -9,9 +9,13 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import Optional
+from typing import Optional, Dict, TYPE_CHECKING
+if TYPE_CHECKING:
+    from bale import Bot
 
-class InlineKeyboardButton:
+from bale import BaleObject
+
+class InlineKeyboardButton(BaleObject):
     """This object shows an inline keyboard button (within the message).
 
     Attributes
@@ -31,38 +35,34 @@ class InlineKeyboardButton:
             in which case only the bot's username will be inserted. Defaults to None.
     """
     __slots__ = (
-        "text", "callback_data", "url", "switch_inline_query", "switch_inline_query_current_chat"
+        "text",
+        "callback_data",
+        "url",
+        "switch_inline_query",
+        "switch_inline_query_current_chat"
     )
 
     def __init__(self, text: str, *, callback_data: Optional[str] = None, url: Optional[str] = None, switch_inline_query: Optional[str] = None,
                  switch_inline_query_current_chat: str = None):
+        super().__init__()
         self.text = text
         self.callback_data = callback_data
         self.url = url
         self.switch_inline_query = switch_inline_query
         self.switch_inline_query_current_chat = switch_inline_query_current_chat
 
+        self._lock()
+
     @classmethod
-    def from_dict(cls, data: dict):
-        return cls(text=data["text"], callback_data=data.get("callback_data"), url=data.get("url"),
-                   switch_inline_query=data.get("switch_inline_query"),
-                   switch_inline_query_current_chat=data.get("switch_inline_query_current_chat"))
+    def from_dict(cls, data: Optional[Dict], bot: "Bot") -> Optional["InlineKeyboardButton"]:
+        data = BaleObject.parse_data(data)
+        if not data:
+            return None
 
-    def to_dict(self) -> dict:
-        data = {
-            "text": self.text
-        }
 
-        if self.callback_data:
-            data["callback_data"] = self.callback_data
+        data["callback_data"] = data.get("callback_data")
+        data["url"] = data.get("url")
+        data["switch_inline_query"] = data.get("switch_inline_query")
+        data["switch_inline_query_current_chat"] = data.get("switch_inline_query_current_chat")
 
-        if self.url:
-            data["url"] = self.url
-
-        if self.switch_inline_query:
-            data["switch_inline_query"] = self.switch_inline_query
-
-        if self.switch_inline_query_current_chat:
-            data["switch_inline_query_current_chat"] = self.switch_inline_query_current_chat
-
-        return data
+        return super().from_dict(data, bot)
