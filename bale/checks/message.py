@@ -51,12 +51,12 @@ class MessageCheck(BaseCheck):
     __slots__ = ("for_what",)
     def __init__(self, name: Optional[str] = None, for_what: Optional[Callable[[Update], Message]] = None):
         super().__init__(name)
-        if not inspect.isfunction(for_what):
+        if for_what and not inspect.isfunction(for_what):
             raise TypeError(
                 "for_what param must be a function"
             )
 
-        self.for_what: Callable[[Update], Message] = for_what
+        self.for_what: Optional[Callable[[Update], Message]] = for_what
 
     def check_update(self, update: "Update") -> bool:
         target_message: Optional[Message] = None
