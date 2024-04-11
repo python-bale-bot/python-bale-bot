@@ -3,6 +3,8 @@ python-bale-bot Library
 
 .. container::
 
+   |Package Banner|
+
    An API wrapper for Bale written in Python.
 
    |Python Version| |PyPi Version| |Codacy Badge| |python-bale-bot
@@ -70,6 +72,8 @@ Contact to Developers
 
 |Email| |Discord| |Telegram Channel| |Our Site|
 
+.. |Package Banner| image:: https://python-bale-bot.ir/assets/images/banner.png
+   :target: https://python-bale-bot.ir
 .. |Python Version| image:: https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_%7C_3.12_-red?logo=python&style=plastic
    :target: https://python.org
 .. |PyPi Version| image:: https://img.shields.io/pypi/v/python-bale-bot?color=blue&label=pypi&style=plastic
