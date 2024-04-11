@@ -14,7 +14,7 @@ from bale.utils.types import FileInput, MediaInput
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
-    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact
+    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, Sticker
 
 
 __all__ = (
@@ -187,6 +187,28 @@ class Chat(BaleObject):
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                         delete_after=delete_after)
+
+    async def copy_message(self, chat_id: Union[int, str], message_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
+
+        .. code:: python
+
+            await chat.copy_message(
+                1234, 1234
+            )
+        """
+        return await self.get_bot().copy_message(chat_id, self.id, message_id, reply_to_message_id=reply_to_message_id, delete_after=delete_after)
+
+    async def send_sticker(self, sticker: Union["Sticker", FileInput], *, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_sticker`.
+
+        .. code:: python
+
+            await chat.send_sticker("FILE_ID", ...)
+        """
+        return await self.get_bot().send_sticker(self.id, sticker, delete_after=delete_after)
 
     async def send_media_group(self, media: List[MediaInput], *,
                     components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):

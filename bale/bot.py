@@ -33,7 +33,8 @@ from bale import (
     Contact,
     Location,
     Video,
-    Animation
+    Animation,
+    Sticker
 )
 from bale.handlers import BaseHandler
 from bale.checks import BaseCheck
@@ -1437,6 +1438,71 @@ class Bot:
 
         return result
 
+    async def send_sticker(self, chat_id: Union[str, int], sticker: Union["Sticker", FileInput], *,
+                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+        """This service is used to send sticker.
+
+        .. code:: python
+
+            await bot.send_sticker(1234, "FILE ID", ...)
+
+        Parameters
+        ----------
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            sticker: :class:`bale.Sticker` | |file_input|
+                Sticker file to send.
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
+
+        Returns
+        --------
+            :class:`bale.Message`
+                The Message.
+
+        Raises
+        ------
+            NotFound
+                Invalid Chat ID.
+            Forbidden
+                You do not have permission to Send Sticker to chat.
+            APIError
+                Send sticker Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
+        payload = {
+            "chat_id": chat_id,
+            "sticker": parse_file_input(sticker, Sticker, None)
+        }
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.send_sticker(
+            params=handle_request_param(payload)
+        )
+        result = Message.from_dict(data=response.result, bot=self)
+        self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
+        return result
+
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
                            components: Optional["InlineKeyboardMarkup"] = None) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
@@ -1488,11 +1554,83 @@ class Bot:
         }
         if components:
             payload["reply_markup"] = components
-        response = await self._http.edit_message(
+        response = await self._http.edit_message_text(
             params=handle_request_param(payload)
         )
         result = Message.from_dict(response.result, self)
         self._state.update_message(result)
+        return result
+
+    async def copy_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int], *,
+                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+        """You can use this service to copy a message and send it in another chat.
+
+        .. code:: python
+
+            await bot.copy_message(1234, 1234, 1234)
+
+        Parameters
+        ----------
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            from_chat_id: :obj:`str` | :obj:`int`
+                Unique identifier for the chat where the original message was sent (or channel username in the format @channelusername).
+            message_id: :obj:`str` | :obj:`int`
+                Message identifier in the chat specified in from_chat_id.
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
+                |reply_to_message_id|
+            delete_after: :obj:`float` | :obj:`int`, optional
+                |delete_after|
+        Raises
+        ------
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Copy or Send Message.
+            APIError
+                Copy Message Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(from_chat_id, (str, int)):
+            raise TypeError(
+                "from_chat_id param must be type of str or int"
+            )
+
+        if not isinstance(message_id, (str, int)):
+            raise TypeError(
+                "message_id param must be type of str or int"
+            )
+
+        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
+            raise TypeError(
+                "reply_to_message_id param must be type of str or int"
+            )
+
+        if delete_after and not isinstance(delete_after, (int, float)):
+            raise TypeError(
+                "delete_after param must be type of int or float"
+            )
+
+        payload = {
+            "chat_id": str(chat_id),
+            "from_chat_id": str(from_chat_id),
+            "message_id": str(message_id)
+        }
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
+        response = await self._http.copy_message(
+            params=handle_request_param(payload)
+        )
+        result = Message.from_dict(response.result, self)
+        self._state.store_message(result)
+        if delete_after:
+            await self.delete_message(result.chat_id, result.message_id, delay=delete_after)
+
         return result
 
     async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = None) -> None:
@@ -1540,11 +1678,16 @@ class Bot:
                 )
             delay = float(delay)
 
+        payload = {
+            "chat_id": str(chat_id),
+            "message_id": message_id
+        }
+
         async def delete_message_task():
             if delay:
                 await asyncio.sleep(delay)
 
-            response = await self._http.delete_message(params=handle_request_param(dict(chat_id=str(chat_id), message_id=message_id)))
+            response = await self._http.delete_message(params=handle_request_param(payload))
             if response.result:
                 self._state.remove_message(str(chat_id), message_id)
 
@@ -2210,10 +2353,10 @@ class Bot:
         response = await self._http.get_updates(
             params=handle_request_param(payload)
         )
-        result = [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
+        updates = [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
                 if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
-        if result:
-            for update in result:
+        if updates:
+            for update in updates:
                 message = update.message
                 callback = update.callback_query
                 if message:
@@ -2224,7 +2367,7 @@ class Bot:
                 if callback:
                     self._state.store_user(callback.user)
 
-        return result
+        return updates
 
     async def connect(self):
         await self.get_me()

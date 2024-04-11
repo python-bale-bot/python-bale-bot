@@ -223,8 +223,14 @@ class HTTPClient:
     def send_animation(self, *, params: RequestParams):
         return self.request(Route("POST", "sendAnimation", self.token), data=params.payload, via_form_data=True)
 
-    def edit_message(self, *, params: RequestParams):
+    def send_sticker(self, *, params: RequestParams):
+        return self.request(Route("POST", "sendSticker", self.token), data=params.payload, via_form_data=True)
+
+    def edit_message_text(self, *, params: RequestParams):
         return self.request(Route("POST", "editMessageText", self.token), json=params.payload)
+
+    def copy_message(self, *, params: RequestParams):
+        return self.request(Route("POST", "copyMessage", self.token), json=params.payload)
 
     def delete_message(self, *, params: RequestParams):
         return self.request(Route("GET", "deleteMessage", self.token), json=params.payload)

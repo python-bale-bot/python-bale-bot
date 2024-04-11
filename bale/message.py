@@ -258,6 +258,17 @@ class Message(BaleObject):
                                          components=components, reply_to_message_id=self.message_id,
                                          delete_after=delete_after, file_name=file_name)
 
+    async def reply_sticker(self, sticker: Union["Sticker", FileInput], *, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_sticker`.
+
+        .. code:: python
+
+            await message.reply_sticker("File ID", ...)
+        """
+        return await self.get_bot().send_sticker(self.chat_id, sticker, reply_to_message_id=self.message_id,
+                                         delete_after=delete_after)
+
     async def reply_video(self, video: Union["Video", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
@@ -335,6 +346,18 @@ class Message(BaleObject):
             ], ...)
         """
         return await self.get_bot().send_media_group(self.id, media, components=components)
+
+    async def copy(self, chat_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None):
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
+
+        .. code:: python
+
+            await message.copy(
+                1234, ...
+            )
+        """
+        return await self.get_bot().copy_message(chat_id, self.chat_id, self.id, reply_to_message_id=reply_to_message_id, delete_after=delete_after)
 
     async def edit(self, text: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> Message:
         """
