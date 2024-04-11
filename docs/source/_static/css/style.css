@@ -2,8 +2,8 @@
 	opacity: 50%;
 }
 
-.icons {
-    font-size: 13px !important;
+.fa-2x {
+    font-size: 1.8em !important;
 }
 
 article a.reference.external:not([href*="/python-bale-bot/blob/"])::after {
