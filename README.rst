@@ -70,7 +70,7 @@ Contact to Developers
 
 |Email| |Discord| |Telegram Channel| |Our Site|
 
-.. |Python Version| image:: https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_-red?logo=python&style=plastic
+.. |Python Version| image:: https://img.shields.io/badge/Python-3.8_%7C_3.9_%7C_3.10_%7C_3.11_%7C_3.12_-red?logo=python&style=plastic
    :target: https://python.org
 .. |PyPi Version| image:: https://img.shields.io/pypi/v/python-bale-bot?color=blue&label=pypi&style=plastic
    :target: https://pypi.org/p/python-bale-bot
