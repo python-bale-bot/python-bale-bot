@@ -179,12 +179,6 @@ class Bot:
 
         return wrapper_function
 
-    def on_ready(self) -> CoroT:
-        def wrapper_function(func) -> Any:
-            self.add_event('ready', func)
-
-        return wrapper_function
-
     def handle(self, handler: "BaseHandler") -> CoroT:
         def wrapper_function(func) -> Any:
             self.add_handler(handler, func)
