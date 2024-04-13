@@ -49,21 +49,18 @@ $ python setup.py install
 To get started, learn how the library works through the library. In addition, there are examples in the "[Examples](https://docs.python-bale-bot.ir/en/stable/examples.html)" section of the library.
 
 ```python
-from bale import Bot, Update, Message
+from bale import Bot, Message
+from bale.handlers import CommandHandler
 
-client = Bot(token="Your Token")
+client = Bot(token="YOUR TOKEN")
 
 @client.event
 async def on_ready():
 	print(client.user, "is Ready!")
 
-@client.event
-async def on_update(update: Update):
-	print(update.update_id)
-
-@client.event
+@client.handle(CommandHandler("start"))
 async def on_message(message: Message):
-	await message.reply(text="Hi!")
+	await message.reply(f'Hi {message.author.first_name}!')
 
 client.run()
 ```
