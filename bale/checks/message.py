@@ -48,20 +48,32 @@ __all__ = (
 # TODO: COMPLETE DOCS
 
 class MessageCheck(BaseCheck):
-    __slots__ = ("for_what",)
-    def __init__(self, name: Optional[str] = None, for_what: Optional[Callable[[Update], Message]] = None):
+    __slots__ = ("__for_what",)
+    def __init__(self, name: Optional[str] = None):
         super().__init__(name)
-        if for_what and not inspect.isfunction(for_what):
+
+        self.__for_what: Optional[Callable[[Update], Message]] = None
+
+    @property
+    def for_what(self) -> Callable[[Update], Message]:
+        return self.__for_what
+
+    @for_what.setter
+    def for_what(self, value: Callable[[Update], Message]) -> None:
+        self.set_for_what(value)
+
+    def set_for_what(self, value: Callable[[Update], Message]) -> None:
+        if not inspect.isfunction(value):
             raise TypeError(
                 "for_what param must be a function"
             )
-
-        self.for_what: Optional[Callable[[Update], Message]] = for_what
+        self.__for_what = value
 
     def check_update(self, update: "Update") -> bool:
         target_message: Optional[Message] = None
-        if self.for_what:
-            target_message = self.for_what(update)
+        if self.for_what and (result := self.for_what(update)):
+            if isinstance(result, Message):
+                target_message = self.for_what(update)
         else:
             if update.message:
                 target_message = update.message
