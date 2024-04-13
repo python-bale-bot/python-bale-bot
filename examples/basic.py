@@ -14,7 +14,7 @@ async def update_handler(update: Update):
 
 @client.handle(CommandHandler(['start', 'help'], check=ChatType.PRIVATE | ChatType.GROUP))
 async def start_command(message: Message):
-	return await message.reply("Hello %s!".format(message.author.mention or message.author.first_name))
+	return await message.reply("Hello {}!".format(message.author.mention or message.author.first_name))
 
 # See https://docs.python-bale-bot.ir/en/stable/bale.handlers.html to get more information about events!
 

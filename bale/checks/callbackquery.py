@@ -39,13 +39,13 @@ class Data(CallbackQueryCheck):
     __slots__ = ("strings",)
 
     def __init__(self, strings: Optional[Union[List[str], str]] = None) -> None:
+        if isinstance(strings, str):
+            strings = [strings]
         super().__init__(
             "Data" + (
                 repr(strings) if strings else ""
             )
         )
-        if isinstance(strings, str):
-            strings = [strings]
         self.strings = strings
 
     async def check(self, callback_query: CallbackQuery) -> bool:
@@ -54,5 +54,6 @@ class Data(CallbackQueryCheck):
                 return True
 
         return False
+
 
 DATA = Data()

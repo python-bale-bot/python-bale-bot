@@ -30,7 +30,7 @@ class BaseHandler:
     __slots__ = ("_callback",)
 
     def __init__(self):
-        self._callback = None
+        self._callback: Optional[Callable[[UT], Coroutine[...]]] = None
 
     @property
     def callback(self) -> Optional[Callable[[UT], Coroutine[...]]]:
@@ -64,9 +64,10 @@ class BaseHandler:
 
         Returns
         -------
-            If :obj:`False` or :obj:`None` is returned, the update should not be wrapped by the handler, otherwise the handler is required to wrapp that update.
+            If :obj:`False` or :obj:`None` is returned, the update should not be wrapped by the handler,
+            otherwise the handler is required to wrapp that update.
         """
-        pass
+
 
     async def handle_update(self, update: "Update", *args):
         """This function works if the handler is required to cover the new Update and calls the :attr:`callback` function.

@@ -61,7 +61,8 @@ class BaseFile(BaleObject):
         return await self.get_bot().get_file(self.file_id)
 
     async def save_to_memory(self, out: "BufferedIOBase" | Any):
-        """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`, the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
+        """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`,
+        the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
 
         Parameters
         ----------
@@ -79,10 +80,10 @@ class BaseFile(BaleObject):
             data['file_size'] = self.file_size
 
         for key, value in self.kwargs_data.items():
-            if value is not None:
+            if value is None:
                 continue
 
-            data['key'] = value
+            data[key] = value
 
         return data
 

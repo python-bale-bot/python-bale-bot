@@ -5,7 +5,6 @@ if TYPE_CHECKING:
     from bale import (
         Audio,
         Document,
-        Location,
         PhotoSize,
         Video,
         Animation,

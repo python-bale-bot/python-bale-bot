@@ -99,8 +99,8 @@ class _Animation(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.animation)
 
-ANIMATION = _Animation("Animation")
 
+ANIMATION = _Animation("Animation")
 
 class _Attachment(MessageCheck):
     __slots__ = ()
@@ -108,8 +108,8 @@ class _Attachment(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.attachment)
 
-ATTACHMENT = _Attachment("Attachment")
 
+ATTACHMENT = _Attachment("Attachment")
 
 class _Audio(MessageCheck):
     __slots__ = ()
@@ -117,8 +117,8 @@ class _Audio(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.audio)
 
-AUDIO = _Audio("Audio")
 
+AUDIO = _Audio("Audio")
 
 class _Video(MessageCheck):
     __slots__ = ()
@@ -126,8 +126,8 @@ class _Video(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.video)
 
-VIDEO = _Video("Video")
 
+VIDEO = _Video("Video")
 
 class _Contact(MessageCheck):
     __slots__ = ()
@@ -135,8 +135,8 @@ class _Contact(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.contact)
 
-CONTACT = _Contact("Contact")
 
+CONTACT = _Contact("Contact")
 
 class _Document(MessageCheck):
     __slots__ = ()
@@ -144,8 +144,8 @@ class _Document(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.document)
 
-DOCUMENT = _Document("Document")
 
+DOCUMENT = _Document("Document")
 
 class _Voice(MessageCheck):
     __slots__ = ()
@@ -153,20 +153,20 @@ class _Voice(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.voice)
 
-VOICE = _Voice("Voice")
 
+VOICE = _Voice("Voice")
 
 class Content(MessageCheck):
     __slots__ = ("strings",)
 
     def __init__(self, strings: Optional[Union[List[str], str]] = None) -> None:
+        if isinstance(strings, str):
+            strings = [strings]
         super().__init__(
             "Content" + (
                 repr(strings) if strings else ""
             )
         )
-        if isinstance(strings, str):
-            strings = [strings]
         self.strings = strings
 
     def check(self, message: Message) -> bool:
@@ -176,8 +176,8 @@ class Content(MessageCheck):
 
         return False
 
-CONTENT = Content()
 
+CONTENT = Content()
 
 class _Invoice(MessageCheck):
     __slots__ = ()
@@ -185,14 +185,15 @@ class _Invoice(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.invoice)
 
-INVOICE = _Invoice("Invoice")
 
+INVOICE = _Invoice("Invoice")
 
 class _Location(MessageCheck):
     __slots__ = ()
 
     def check(self, message: Message) -> bool:
         return bool(message.location)
+
 
 LOCATION = _Location("Location")
 
@@ -202,8 +203,8 @@ class _Photos(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.photos)
 
-PHOTOS = _Photos("Photos")
 
+PHOTOS = _Photos("Photos")
 
 class _Reply(MessageCheck):
     __slots__ = ()
@@ -211,8 +212,8 @@ class _Reply(MessageCheck):
     def check(self, message: Message):
         return bool(message.reply_to_message)
 
-REPLY = _Reply("Reply")
 
+REPLY = _Reply("Reply")
 
 class _SuccessfulPayment(MessageCheck):
     __slots__ = ()
@@ -220,20 +221,20 @@ class _SuccessfulPayment(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.successful_payment)
 
-SUCCESSFUL_PAYMENT = _SuccessfulPayment("SuccessfulPayment")
 
+SUCCESSFUL_PAYMENT = _SuccessfulPayment("SuccessfulPayment")
 
 class Text(MessageCheck):
     __slots__ = ("strings",)
 
     def __init__(self, strings: Optional[Union[List[str], str]] = None) -> None:
+        if isinstance(strings, str):
+            strings = [strings]
         super().__init__(
             "Text" + (
                 repr(strings) if strings else ""
             )
         )
-        if isinstance(strings, str):
-            strings = [strings]
         self.strings = strings
 
     def check(self, message: Message) -> bool:
@@ -243,19 +244,20 @@ class Text(MessageCheck):
 
         return False
 
+
 TEXT = Text()
 
 class Caption(MessageCheck):
     __slots__ = ("strings",)
 
     def __init__(self, strings: Optional[Union[List[str], str]] = None) -> None:
+        if isinstance(strings, str):
+            strings = [strings]
         super().__init__(
             "Caption" + (
                 repr(strings) if strings else ""
             )
         )
-        if isinstance(strings, str):
-            strings = [strings]
         self.strings = strings
 
     def check(self, message: Message) -> bool:
@@ -264,6 +266,7 @@ class Caption(MessageCheck):
                 return True
 
         return False
+
 
 CAPTION = Caption()
 
@@ -281,6 +284,7 @@ class Chat(MessageCheck):
             return chat.id in self.chat_ids
         return False
 
+
 CHAT = Chat()
 
 class Author(MessageCheck):
@@ -297,13 +301,15 @@ class Author(MessageCheck):
             return author.id in self.chat_ids
         return False
 
+
 AUTHOR = Author()
 
 class _LeftChatMember(MessageCheck):
     __slots__ = ()
     def check(self, message: Message) -> bool:
         return bool(message.left_chat_member)
-    
+
+
 LEFT_CHAT_MEMBER = _LeftChatMember("LeftChatMember")
 
 class _NewChatMembers(MessageCheck):
@@ -311,12 +317,14 @@ class _NewChatMembers(MessageCheck):
     def check(self, message: Message) -> bool:
         return bool(message.new_chat_members)
 
+
 NEW_CHAT_MEMBERS = _NewChatMembers("NewChatMembers")
 
 class _Sticker(MessageCheck):
     __slots__ = ()
     def check(self, message: Message) -> bool:
         return bool(message.sticker)
+
 
 STICKER = _Sticker("Sticker")
 

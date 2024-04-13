@@ -14,7 +14,7 @@ from bale.utils.types import FileInput, MediaInput
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
-    from bale import Message, User, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, Sticker
+    from bale import Message, InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, Sticker
 
 
 __all__ = (
@@ -98,7 +98,9 @@ class Chat(BaleObject):
         """
         return await self.get_bot().send_message(self.id, text, components=components, delete_after=delete_after)
 
-    async def send_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None,
+                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                            delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -108,7 +110,9 @@ class Chat(BaleObject):
         """
         return await self.get_bot().send_document(self.id, document, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                         delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -118,7 +122,9 @@ class Chat(BaleObject):
         """
         return await self.get_bot().send_photo(self.id, photo, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_video(self, video: Union["Video", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_video(self, video: Union["Video", FileInput], *, caption: Optional[str] = None,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                         delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -128,7 +134,10 @@ class Chat(BaleObject):
         """
         return await self.get_bot().send_video(self.id, video, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
-    async def send_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None, width: Optional[int] = None,
+                             height: Optional[int] = None, caption: Optional[str] = None,
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                             delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -136,9 +145,12 @@ class Chat(BaleObject):
 
             await chat.send_animation(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
-        return await self.get_bot().send_animation(self.id, animation, duration=duration, width=width, height=height, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
+        return await self.get_bot().send_animation(self.id, animation, duration=duration, width=width, height=height, caption=caption, components=components,
+                                                   delete_after=delete_after, file_name=file_name)
 
-    async def send_audio(self, audio: Union["Audio", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def send_audio(self, audio: Union["Audio", FileInput], *, caption: Optional[str] = None,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                         delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -188,7 +200,8 @@ class Chat(BaleObject):
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                         delete_after=delete_after)
 
-    async def copy_message(self, chat_id: Union[int, str], message_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def copy_message(self, chat_id: Union[int, str], message_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None,
+                           delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
 

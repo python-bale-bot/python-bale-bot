@@ -233,7 +233,9 @@ class Message(BaleObject):
         """
         return await self.get_bot().forward_message(chat_id, self.chat_id, self.message_id)
 
-    async def reply_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def reply_document(self, document: Union["Document", FileInput], *, caption: Optional[str] = None,
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                             delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
 
@@ -246,7 +248,9 @@ class Message(BaleObject):
                                             file_name=file_name
                                             )
 
-    async def reply_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def reply_photo(self, photo: Union["PhotoSize", FileInput], *, caption: Optional[str] = None,
+                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
 
@@ -269,7 +273,9 @@ class Message(BaleObject):
         return await self.get_bot().send_sticker(self.chat_id, sticker, reply_to_message_id=self.message_id,
                                          delete_after=delete_after)
 
-    async def reply_video(self, video: Union["Video", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def reply_video(self, video: Union["Video", InputFile], *, caption: Optional[str] = None,
+                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
 
@@ -281,7 +287,10 @@ class Message(BaleObject):
                                          components=components, reply_to_message_id=self.message_id,
                                          delete_after=delete_after, file_name=file_name)
 
-    async def reply_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def reply_animation(self, animation: Union["Animation", FileInput], *, duration: Optional[int] = None,
+                              width: Optional[int] = None, height: Optional[int] = None, caption: Optional[str] = None,
+                              components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                              delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
 
@@ -294,7 +303,9 @@ class Message(BaleObject):
                                          components=components, reply_to_message_id=self.message_id,
                                          delete_after=delete_after, file_name=file_name)
 
-    async def reply_audio(self, audio: Union["Audio", InputFile], *, caption: Optional[str] = None, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
+    async def reply_audio(self, audio: Union["Audio", InputFile], *, caption: Optional[str] = None,
+                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -306,7 +317,8 @@ class Message(BaleObject):
                                          components=components, reply_to_message_id=self.message_id,
                                          delete_after=delete_after, file_name=file_name)
 
-    async def reply_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_location(self, location: "Location", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                             delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
 
@@ -319,7 +331,8 @@ class Message(BaleObject):
                                                reply_to_message_id=self.message_id,
                                                delete_after=delete_after)
 
-    async def reply_contact(self, contact: "Contact", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def reply_contact(self, contact: "Contact", *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
+                            delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
 
@@ -347,7 +360,8 @@ class Message(BaleObject):
         """
         return await self.get_bot().send_media_group(self.id, media, components=components)
 
-    async def copy(self, chat_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None):
+    async def copy(self, chat_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None,
+                   delete_after: Optional[Union[float, int]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
 

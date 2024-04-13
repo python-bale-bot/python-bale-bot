@@ -61,7 +61,6 @@ class _Loop:
 
 _loop = _Loop()
 
-
 class Bot:
     """This object represents a Bale Bot.
 
@@ -241,7 +240,8 @@ class Bot:
         """Waits for an event to be dispatched.
 
         This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
-        The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``. Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
+        The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``.
+        Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
         In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
         This function returns the first event that meets the requirements.
 
@@ -275,7 +275,8 @@ class Bot:
             checks: List[BaseCheck] = [checks,]
 
         if isinstance(checks, (tuple, list)) and len(checks) > 0:
-            _log.warning("Bot.wait_for: You have provided a list to the parameter “checks”; we have converted it into a dictionary with numeric keys ranging from 0 to %s.\n"
+            _log.warning("Bot.wait_for: You have provided a list to the parameter “checks”;"
+                         " we have converted it into a dictionary with numeric keys ranging from 0 to %s.\n"
                          "However, please use either the dictionary or a single BaseCheck instance in this parameter next time.", len(checks))
             checks: Dict[int, BaseCheck] = dict(zip(range(len(checks)), checks))
 
@@ -391,7 +392,9 @@ class Bot:
         return client_user
 
     async def set_webhook(self, url: str) -> bool:
-        """Use this method to specify an url and receive incoming updates via an outgoing webhook. Whenever there is an update for the bot, Bale will send an HTTPS POST request to the specified url, containing An Update. In case of an unsuccessful request, Bale will give up after a reasonable amount of attempts.
+        """Use this method to specify an url and receive incoming updates via an outgoing webhook.
+        Whenever there is an update for the bot, Bale will send an HTTPS POST request to the specified url, containing An Update.
+        In case of an unsuccessful request, Bale will give up after a reasonable amount of attempts.
 
         .. code:: python
 
@@ -1054,7 +1057,8 @@ class Bot:
     async def send_media_group(self, chat_id: Union[str, int], media: List[MediaInput], *,
                              components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                              reply_to_message_id: Optional[Union[str, int]] = None) -> List["Message"]:
-        """This service is used to send a group of photos, videos, documents or audios as an album. Documents and audio files can be only grouped on an album with messages of the same type.
+        """This service is used to send a group of photos, videos, documents or audios as an album.
+        Documents and audio files can be only grouped on an album with messages of the same type.
         .. code:: python
 
             await bot.send_media_group(1234, [
@@ -1325,7 +1329,8 @@ class Bot:
             payload: :obj:`str`, optional
                 Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.
             photo_url: :obj:`str`, optional
-                URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service. People like it better when they see what they are paying for.
+                URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
+                People like it better when they see what they are paying for.
             need_name: :obj:`bool`, optional
                 Pass True, if you require the user’s full name to complete the order.
             need_phone_number: :obj:`bool`, optional
@@ -1697,7 +1702,8 @@ class Bot:
             await delete_message_task()
 
     async def get_chat(self, chat_id: Union[str, int], *, use_cache=True) -> Optional["Chat"]:
-        """Use this method to get cashed or up-to-date information about the chat (current name of the user for one-on-one conversations, current username of a user, group or channel, etc.).
+        """Use this method to get cashed or up-to-date information about the chat (current name of the user for one-on-one conversations,
+        current username of a user, group or channel, etc.).
 
         .. code:: python
 
@@ -1821,7 +1827,8 @@ class Bot:
         return self._state.get_message(chat_id, message_id)
 
     async def get_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> Optional["ChatMember"]:
-        """Use this method to get information about a member of a chat. The method is only guaranteed to work for other users if the bot is an administrator in the chat.
+        """Use this method to get information about a member of a chat.
+        The method is only guaranteed to work for other users if the bot is an administrator in the chat.
 
         .. code:: python
 
@@ -1992,7 +1999,8 @@ class Bot:
         return response.result
 
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
-        """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels, the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
+        """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels,
+        the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
 
         .. code:: python
 
@@ -2041,7 +2049,10 @@ class Bot:
 
     async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = None) -> bool:
         """Use this method to unban a previously kicked user in a group or channel.
-        The user will not return to the group or channel automatically, but will be able to join via link, etc. The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat, but will be able to join it. So if the user is a member of the chat they will also be removed from the chat. If you don’t want this, use the parameter only_if_banned.
+        The user will not return to the group or channel automatically, but will be able to join via link, etc.
+        The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat,
+        but will be able to join it. So if the user is a member of the chat they will also be removed from the chat.
+        If you don’t want this, use the parameter only_if_banned.
 
         .. code:: python
 

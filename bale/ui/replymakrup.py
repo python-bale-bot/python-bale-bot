@@ -43,6 +43,7 @@ class BaseReplyMarkup:
 
     def get_rows_list(self) -> List[List[Union["InlineKeyboardButton", "MenuKeyboardButton"]]]:
         components = []
+
         def key(i: "ReplyMarkupItem"):
             return i.row
 

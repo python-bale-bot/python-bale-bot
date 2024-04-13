@@ -23,7 +23,11 @@ async def start_command(message: Message):
 @client.handle(CallbackQueryHandler(Data("help")))
 async def on_callback(callback: CallbackQuery):
 	return await callback.message.reply(
-		"*python-bale-bot* is a Python library for building bots on the Bale messenger platform. Bale is a messaging app that provides a secure and private messaging experience for users. The python-bale-bot library provides a simple and easy-to-use interface for building bots on the Bale platform, allowing developers to create bots that can send and receive messages, handle events, and perform various actions on behalf of users."
+		"*python-bale-bot* is a Python library for building bots on the Bale messenger platform. "
+		"Bale is a messaging app that provides a secure and private messaging experience for users. "
+		"The python-bale-bot library provides a simple and easy-to-use interface for building bots on the Bale platform, "
+		"allowing developers to create bots that can send and receive messages, handle events, "
+		"and perform various actions on behalf of users."
 	)
 
 @client.handle(CommandHandler('keyboard'))

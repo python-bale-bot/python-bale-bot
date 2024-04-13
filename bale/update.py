@@ -23,7 +23,12 @@ class Update(BaleObject):
     Attributes
     ----------
         update_id: :obj:`int`
-            The update’s unique identifier. Update identifiers start from a certain positive number and increase sequentially. This ID becomes especially handy if you’re using Webhooks, since it allows you to ignore repeated updates or to restore the correct update sequence, should they get out of order. If there are no new updates for at least a week, then identifier of the next update will be chosen randomly instead of sequentially.
+            The update’s unique identifier.
+            Update identifiers start from a certain positive number and increase sequentially.
+            This ID becomes especially handy if you’re using Webhooks,
+            since it allows you to ignore repeated updates or to restore the correct update sequence,
+            should they get out of order. If there are no new updates for at least a week,
+            then identifier of the next update will be chosen randomly instead of sequentially.
         callback_query: :class:`bale.CallbackQuery`, optional
             New incoming callback query.
         message: :class:`bale.Message`, optional
@@ -65,19 +70,19 @@ class Update(BaleObject):
 
     def __le__(self, other):
         if not isinstance(other, Update):
-            raise NotImplemented
+            raise NotImplementedError
 
         return self.update_id <= other.update_id
 
     def __ge__(self, other):
         if not isinstance(other, Update):
-            raise NotImplemented
+            raise NotImplementedError
 
         return self.update_id >= other.update_id
 
     def __lt__(self, other):
         if not isinstance(other, Update):
-            raise NotImplemented
+            raise NotImplementedError
 
         return self.update_id < other.update_id
 
