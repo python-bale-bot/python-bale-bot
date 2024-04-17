@@ -32,21 +32,13 @@ class CommandHandler(BaseHandler):
 
            .. hint::
                Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
-       has_param: :obj:`int` | :obj:`bool`, optional | :obj:`None`
-           A :obj:`bool`, optional and :obj:`int` value that specifies how many parameters the entered command should have.
-
-           - If the command should not have a parameter, its value should be ":obj:`False`".
-           - If the command can have any parameter and the :attr:`callback` function can handle it, its value should be ":obj:`True`".
-           - If the command must have limited parameters, its value must be the number of parameters that can be covered.
    """
     __slots__ = (
         "commands",
-        "check",
-        "has_param"
+        "check"
     )
 
-    def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None,
-                 has_param: Optional[Union[int, bool]] = None):
+    def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None):
         super().__init__()
         command = list(command) if not isinstance(command, list) else command
 
@@ -61,7 +53,6 @@ class CommandHandler(BaseHandler):
 
         self.commands = [comm.lower() for comm in command]
         self.check = check
-        self.has_param = has_param
 
     def _check_params_correct(self, args: List[str]):
         params = []

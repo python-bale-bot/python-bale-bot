@@ -23,8 +23,8 @@ class MessageHandler(BaseHandler):
 
     Parameters
     ----------
-        check: Optional[Callable[["Update"], bool]]
-            The check function for this handler.
+        check: Callable, optional
+            The check for this handler.
 
             .. hint::
                 Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
