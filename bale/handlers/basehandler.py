@@ -39,8 +39,7 @@ class BaseHandler:
     @callback.setter
     def callback(self, _):
         raise ValueError(
-            # TODO: MUST BE COMPLETE
-            "You can't set callback "
+            "You can't set callback because it's not an public attribute"
         )
 
     def set_callback(self, callback: Callable[[UT, ...], Coroutine[...]]):
@@ -67,6 +66,9 @@ class BaseHandler:
             If :obj:`False` or :obj:`None` is returned, the update should not be wrapped by the handler,
             otherwise the handler is required to wrapp that update.
         """
+        return (
+            update,
+        )
 
 
     async def handle_update(self, update: "Update", *args):
