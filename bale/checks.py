@@ -10,12 +10,13 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import Optional, List, Union, Callable
+from typing import List, Union, Optional, Callable, TYPE_CHECKING
 import inspect
-from bale import Message, Update
-from .basecheck import BaseCheck
+if TYPE_CHECKING:
+    from bale import Update, Message, CallbackQuery
 
 __all__ = (
+    "BaseCheck",
     "MessageCheck",
     "MessageId",
     "ANIMATION",
@@ -42,10 +43,69 @@ __all__ = (
     "AUTHOR",
     "LEFT_CHAT_MEMBER",
     "NEW_CHAT_MEMBERS",
-    "ChatType"
+    "ChatType",
+    "CallbackQueryCheck",
+    "Data",
+    "DATA"
 )
 
-# TODO: COMPLETE DOCS
+class BaseCheck:
+    __slots__ = ("name",)
+    def __init__(self, name: Optional[str] = None):
+        self.name = name if name else self.__class__.__name__
+
+    def check_update(self, update: "Update") -> bool:
+        return True
+
+    def __and__(self, other: "BaseCheck") -> "BaseCheck":
+        return _MergedCheck(self, and_check=other)
+
+    def __or__(self, other: "BaseCheck") -> "BaseCheck":
+        return _MergedCheck(self, or_check=other)
+
+    def __invert__(self) -> "BaseCheck":
+        return _InvertedCheck(self)
+
+    def __repr__(self) -> str:
+        return self.name
+
+class _MergedCheck(BaseCheck):
+    __slots__ = (
+        "base_check",
+        "and_check",
+        "or_check"
+    )
+    def __init__(self, base_check: BaseCheck, and_check: Optional[BaseCheck] = None, or_check: Optional[BaseCheck] = None):
+        super().__init__()
+        if and_check and or_check:
+            raise ValueError(
+                "You can use and_check and or_check together"
+            )
+
+        self.base_check = base_check
+        self.and_check = and_check
+        self.or_check = or_check
+
+        self.name = f"MergedCheck({base_check}, {and_check or or_check})"
+
+    def check_update(self, update: "Update") -> bool:
+        base_check = self.base_check.check_update(update)
+
+        if self.and_check and base_check:
+            return self.and_check.check_update(update)
+        elif self.or_check:
+            return self.or_check.check_update(update)
+
+        return False
+
+class _InvertedCheck(BaseCheck):
+    __slots__ = ("base_check",)
+    def __init__(self, base_check: BaseCheck):
+        super().__init__()
+        self.base_check = base_check
+
+    def check_update(self, update: "Update") -> bool:
+        return not self.base_check.check_update(update)
 
 class MessageCheck(BaseCheck):
     __slots__ = ("__for_what",)
@@ -366,3 +426,39 @@ class ChatType:
             return message.chat.is_channel_chat
 
     CHANNEL = _Channel("ChatType.Channel")
+
+class CallbackQueryCheck(BaseCheck):
+    __slots__ = ("for_what",)
+    def check_update(self, update: "Update") -> bool:
+        target_callback_query: Optional[CallbackQuery] = update.callback_query
+
+        if target_callback_query and self.check(target_callback_query):
+            return True
+        return False
+
+    async def check(self, callback_query: CallbackQuery) -> bool:
+        return callback_query is not None
+
+
+class Data(CallbackQueryCheck):
+    __slots__ = ("strings",)
+
+    def __init__(self, strings: Optional[Union[List[str], str]] = None) -> None:
+        if isinstance(strings, str):
+            strings = [strings]
+        super().__init__(
+            "Data" + (
+                repr(strings) if strings else ""
+            )
+        )
+        self.strings = strings
+
+    async def check(self, callback_query: CallbackQuery) -> bool:
+        if data := callback_query.data:
+            if not self.strings or data in self.strings:
+                return True
+
+        return False
+
+
+DATA = Data()

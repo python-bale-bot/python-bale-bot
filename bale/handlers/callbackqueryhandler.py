@@ -13,7 +13,7 @@ from __future__ import annotations
 from typing import Tuple, Optional
 
 from bale import Update, CallbackQuery
-from bale.checks.basecheck import BaseCheck
+from bale.checks import BaseCheck
 from .basehandler import BaseHandler
 
 

@@ -15,7 +15,7 @@ from typing import Union, List, Optional, Tuple
 from inspect import signature, Parameter
 
 from bale import Update, Message
-from bale.checks.basecheck import BaseCheck
+from bale.checks import BaseCheck
 from .basehandler import BaseHandler
 
 
