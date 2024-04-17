@@ -145,29 +145,18 @@ class Bot:
         await self.close()
         return None
 
-    def event(self, coro: CoroT) -> CoroT:
-        """Set wrapper or listener for selected event (the name of function).
+    def listen(self, event_name: str) -> CoroT:
+        """A decorator to set wrapper for an event.
 
-        .. code:: python
-
-            @bot.event
-            async def on_message(message: bale.Message):
-                ...
+        .. seealso::
+            :any:`What is event? <events>`
 
         .. hint::
-            The name of the function for which you write the decorator is considered the name of the event.
-        """
-        self.add_event(coro.__name__, coro)
-        return coro
+            .. code:: python
 
-    def listen(self, event_name: str) -> CoroT:
-        """Set wrapper or listener for selected event (custom function name).
-
-        .. code:: python
-
-            @bot.listen("on_message")
-            async def _message(message: bale.Message):
-                ...
+                @bot.listen("on_ready")
+                async def ready_event_wrapper():
+                    print(bot.user)
 
         Parameters
         ----------
@@ -180,49 +169,81 @@ class Bot:
         return wrapper_function
 
     def handle(self, handler: "BaseHandler") -> CoroT:
+        """A decorator to set callback for a handler.
+
+        .. seealso::
+            :any:`What is handler? <handlers>`
+
+        .. important::
+            The parameters of your wrapper function will vary depending on your handler.
+
+        .. hint::
+            .. code:: python
+                from bale.handlers import MessageHandler
+
+                ...
+
+                @bot.handle(MessageHandler(...))
+                async def message_handler_wrapper(message: bale.Message) -> None:
+                    await message.reply("Cool!")
+
+        Parameters
+        ----------
+            handler: :class:`bale.BaseHandler`
+                a :class:`bale.BaseHandler` instance
+        """
         def wrapper_function(func) -> Any:
             self.add_handler(handler, func)
 
         return wrapper_function
 
-    def add_handler(self, handler: "BaseHandler", wrapper):
-        """Set wrapper or listener for an event.
+    def add_handler(self, handler: "BaseHandler", wrapper) -> None:
+        """Set wrapper or listener for a handler.
 
-        .. code:: python
+        .. hint::
+            .. code:: python
+                from bale.handlers import MessageHandler
 
-            // must be complete
+                ...
+
+                async def message_handler_wrapper(message: bale.Message) -> None:
+                    await message.reply("Cool!")
+
+                bot.add_handler(MessageHandler(), message_handler_wrapper)
 
         Parameters
         ----------
-            handler: :class:`object`
-                Name of the event
-            wrapper: Callable[]
-                Function to add as wrapper for handler
+            handler: :class:`bale.BaseHandler`
+                a :class:`bale.BaseHandler` instance
+            wrapper: Callable
+                Function to add as wrapper for handler.
         """
         if not asyncio.iscoroutinefunction(wrapper):
             raise TypeError(f"{wrapper.__name__} is not a coroutine function")
 
         if not isinstance(handler, BaseHandler):
-            raise TypeError('handler must be BaseHandler or subclass of that')
+            raise TypeError('handler must be a BaseHandler instance')
 
         handler.set_callback(wrapper)
         self._handlers.append(handler)
 
-    def add_event(self, event_name: str, wrapper):
+    def add_event(self, event_name: str, wrapper) -> None:
         """Set wrapper or listener for an event.
 
-        .. code:: python
-
-            def message_handler(message: bale.Message):
+        .. hint::
+            .. code:: python
                 ...
 
-            bot.add_event("on_message", message_handler)
+                async def ready_event_wrapper() -> None:
+                    print(bot.user)
+
+                bot.add_event('on_ready', ready_event_wrapper)
 
         Parameters
         ----------
             event_name: :obj:`str`
                 Name of the event
-            wrapper: Callable[]
+            wrapper: Callable
                 Function to add as wrapper for event
         """
         if not asyncio.iscoroutinefunction(wrapper):
@@ -237,27 +258,71 @@ class Bot:
         The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``.
         Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
         In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
-        This function returns the first event that meets the requirements.
 
-        .. code:: python
+        .. important::
+            This function returns the first check that meets the requirements.
 
-            message = await bot.wait_for(MessageHandler(check=lambda update: update.message.author.user_id == '1234'))
-            ...
-            try:
-                message = await bot.wait_for(MessageHandler(), ..., timeout = 20.0)
-            except asyncio.TimeoutError: # 20s A message with the conditions specified in the `check` parameter was not found.
-                pass
+        .. hint::
+            In the Examples "..." symbol in code means that you can customize fill that.
+
+
         .. admonition:: Examples
 
             :any:`conversation Bot <examples.conversation>`
 
         Parameters
         ----------
-            checks: :class:`bale.BaseCheck`
-                A BaseHandler instance.
-            timeout: :obj:`float`, optional
-                The number of seconds to wait before timing out and raising asyncio.TimeoutError.
+            checks: Dict[:obj:`int` | :obj:`str`, :class:`bale.BaseCheck`] | :class:`bale.BaseCheck` | List[:class:`bale.BaseCheck`]
+                The checks must be of the following types:
+                - an instance of :class:`bale.BaseCheck` object
+                    .. code:: python
 
+                        from bale.checks import MessageId
+
+                        ...
+                        context = await bot.wait_for(MessageId(...), ...)
+
+                - a list that contains the :class:`bale.BaseCheck` object
+                    .. code:: python
+
+                        from bale.checks import ATTACHMENT, MessageId, CAPTION
+
+                        ...
+                        context = await bot.wait_for([
+                            ATTACHMENT, # message has any attachment (voice, audio, document, ...)
+                            MessageId(1234), # The unique identifier of the message must be equal to "1234"
+                            CAPTION  # message has any caption
+                        ], ...)
+
+                - a dict whose keys is types of :obj:`int` or :obj:`str` and it's values is types of instances of :class:`bale.BaseCheck` object
+                    .. code:: python
+
+                        from bale.checks import ATTACHMENT, MessageId, CAPTION
+
+                        ...
+                        context = await bot.wait_for({
+                            1: ATTACHMENT, # message has any attachment (voice, audio, document, ...)
+                            2: MessageId(1234), # The unique identifier of the message must be equal to "1234"
+                            3: CAPTION  # message has any caption
+                        }, ...)
+                        if context.key == 1: # is the check key "1"?
+                            await context.update.message.reply("you're sent a message with caption")
+
+            timeout: :obj:`float`, optional
+                The number of seconds to wait before timing out and raising :class:`asyncio.TimeoutError`.
+
+                .. hint::
+                    An example with use `timeout` argument:
+
+                    .. code:: python
+
+                        from bale.checks import MessageCheck
+
+                        ...
+                        try:
+                            context = await bot.wait_for(MessageCheck(), timeout=20.0) # MessageCheck is a simple check to get a message
+                        except asyncio.TimeoutError: # 20s A message with the conditions specified in the `checks` parameter was not found.
+                            pass
         Raises
         ------
             asyncio.TimeoutError
@@ -266,7 +331,7 @@ class Bot:
         future = self.loop.create_future()
 
         if isinstance(checks, BaseCheck):
-            checks: List[BaseCheck] = [checks,]
+            checks: List[BaseCheck] = [checks]
 
         if isinstance(checks, (tuple, list)) and len(checks) > 0:
             _log.warning("Bot.wait_for: You have provided a list to the parameter “checks”;"
@@ -485,9 +550,17 @@ class Bot:
                 "delete_after param must be type of int or float"
             )
 
+        payload = {
+            "chat_id": chat_id,
+            "text": text
+        }
+        if components:
+            payload["reply_markup"] = components
+        if reply_to_message_id:
+            payload["reply_to_message_id"] = reply_to_message_id
+
         response = await self._http.send_message(
-            params=handle_request_param(dict(chat_id=str(chat_id), text=text, reply_markup=components,
-            reply_to_message_id=reply_to_message_id))
+            params=handle_request_param(payload)
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -539,8 +612,14 @@ class Bot:
                 "message_id param must be type of str or int"
             )
 
+        payload = {
+            "chat_id": chat_id,
+            "from_chat_id": from_chat_id,
+            "message_id": message_id
+        }
+
         response = await self._http.forward_message(
-            params=handle_request_param(dict(chat_id=str(chat_id), from_chat_id=str(from_chat_id), message_id=str(message_id)))
+            params=handle_request_param(payload)
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
