@@ -263,48 +263,48 @@ class Chat(BaleObject):
 
         await self.get_bot().invite_user(self.id, user)
 
-    async def get_chat_member(self, user: Union["User", str, int]):
+    async def get_member(self, user: Union["User", str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
 
         .. code:: python
 
-            user = await bot.get_user(1234)
-            await chat.get_chat_member(user)
-            ...
-            await chat.get_chat_member(1234)
+                user = await bot.get_user(1234)
+                await chat.get_member(user)
+                ...
+                await chat.get_member(1234)
         """
         if isinstance(user, User):
             user = user.user_id
 
         return await self.get_bot().get_chat_member(self.id, user_id=user)
 
-    async def ban_chat_member(self, user: Union["User", str, int]):
+    async def ban_member(self, user: Union["User", str, int]):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
 
         .. code:: python
 
-            user = await bot.get_user(1234)
-            await chat.ban_chat_member(user)
-            ...
-            await chat.ban_chat_member(1234)
+                user = await bot.get_user(1234)
+                await chat.ban_member(user)
+                ...
+                await chat.ban_member(1234)
         """
         if isinstance(user, User):
             user = user.user_id
 
         return await self.get_bot().ban_chat_member(self.id, user)
 
-    async def unban_chat_member(self, user: Union["User", str, int], *, only_if_banned: Optional[bool] = None):
+    async def unban_member(self, user: Union["User", str, int], *, only_if_banned: Optional[bool] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.unban_chat_member`.
 
         .. code:: python
 
-            user = await bot.get_user(1234)
-            await chat.unban_chat_member(user)
-            ...
-            await chat.unban_chat_member(1234)
+                user = await bot.get_user(1234)
+                await chat.unban_member(user)
+                ...
+                await chat.unban_member(1234)
         """
         if isinstance(user, User):
             user = user.user_id
@@ -321,23 +321,23 @@ class Chat(BaleObject):
         """
         return await self.get_bot().set_chat_photo(self.id, photo)
 
-    async def get_chat_members_count(self):
+    async def get_members_count(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
 
         .. code:: python
 
-            await chat.get_chat_members_count()
+                await chat.get_members_count()
         """
         return await self.get_bot().get_chat_members_count(self.id)
 
-    async def get_chat_administrators(self):
+    async def get_administrators(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
 
         .. code:: python
 
-            await chat.get_chat_administrators()
+                await chat.get_administrators()
         """
         return await self.get_bot().get_chat_administrators(self.id)
 
