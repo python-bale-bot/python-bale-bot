@@ -9,8 +9,10 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from bale import Update
-from bale.checks import BaseCheck
+from typing import TYPE_CHECKING
+if TYPE_CHECKING:
+    from bale import Update
+    from bale.checks import BaseCheck
 
 class WaitContext:
     """A class represents information obtained from the :meth:`bale.Bot.wait_for` method. This class provides details related to the received data.
@@ -31,6 +33,7 @@ class WaitContext:
 
     @property
     def key(self) -> str:
+        """:obj:`str`: The key of waiter."""
         return self._key
 
     @key.setter
@@ -41,6 +44,7 @@ class WaitContext:
 
     @property
     def check(self) -> "BaseCheck":
+        """:class:`bale.BaseCheck` instance: A check whose conditions match "update"."""
         return self._check
 
     @check.setter
@@ -51,6 +55,7 @@ class WaitContext:
 
     @property
     def update(self) -> "Update":
+        """:class:`bale.Update`: An update that matches the :attr:`check` conditions."""
         return self._update
 
     @update.setter
