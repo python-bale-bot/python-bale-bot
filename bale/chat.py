@@ -90,11 +90,20 @@ class Chat(BaleObject):
 
     async def send(self, text: str, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None, delete_after: Optional[Union[float, int]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send("hi, python-bale-bot!", components = None)
+            await bot.send_message(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_message`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send("hi, python-bale-bot!", components = None)
         """
         return await self.get_bot().send_message(self.id, text, components=components, delete_after=delete_after)
 
@@ -102,11 +111,20 @@ class Chat(BaleObject):
                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                             delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_document(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
+            await bot.send_document(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_document`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_document(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.get_bot().send_document(self.id, document, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
@@ -114,11 +132,20 @@ class Chat(BaleObject):
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_photo(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
+            await bot.send_photo(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_photo`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_photo(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.get_bot().send_photo(self.id, photo, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
@@ -126,11 +153,20 @@ class Chat(BaleObject):
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_video(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
+            await bot.send_video(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_video`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_video(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.get_bot().send_video(self.id, video, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
@@ -139,11 +175,20 @@ class Chat(BaleObject):
                              components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                              delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_animation(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
+            await bot.send_animation(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_animation`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_animation(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.get_bot().send_animation(self.id, animation, duration=duration, width=width, height=height, caption=caption, components=components,
                                                    delete_after=delete_after, file_name=file_name)
@@ -152,31 +197,58 @@ class Chat(BaleObject):
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_audio(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
+            await bot.send_audio(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_audio`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_audio(bale.InputFile("FILE_ID"), caption = "this is caption", ...)
         """
         return await self.get_bot().send_audio(self.id, audio, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
 
     async def send_location(self, location: "Location", delete_after: Optional[Union[float, int]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_location(bale.Location(35.71470468031143, 51.8568519168293))
+            await bot.send_location(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_location`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
         return await self.get_bot().send_location(self.id, location, delete_after=delete_after)
 
     async def send_contact(self, contact: "Contact", delete_after: Optional[Union[float, int]] = None) -> "Message":
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_contact(Contact('09****', 'first name', 'last name))
+            await bot.send_contact(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_contact`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_contact(Contact('09****', 'first name', 'last name))
         """
         return await self.get_bot().send_contact(self.id, contact, delete_after=delete_after)
 
@@ -186,14 +258,23 @@ class Chat(BaleObject):
                    need_shipping_address: Optional[bool] = False, is_flexible: Optional[bool] = True,
                    delete_after: Optional[Union[float, int]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_invoice(
-                "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
-                payload = "unique invoice payload", ...
+            await bot.send_invoice(
+                chat_id=chat.id, *args, **kwargs
             )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_invoice`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_invoice(
+                    "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
+                    payload = "unique invoice payload", ...
+                )
         """
         return await self.get_bot().send_invoice(self.id, title, description, provider_token, prices,
                                         payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
@@ -203,60 +284,105 @@ class Chat(BaleObject):
     async def copy_message(self, chat_id: Union[int, str], message_id: Union[int, str], reply_to_message_id: Optional[Union[str, int]] = None,
                            delete_after: Optional[Union[float, int]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.copy_message(
-                1234, 1234
+            await bot.copy_message(
+                from_chat_id=chat.id, message_id=message.id, *args, **kwargs
             )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.copy_message`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.copy_message(
+                    1234, 1234
+                )
         """
         return await self.get_bot().copy_message(chat_id, self.id, message_id, reply_to_message_id=reply_to_message_id, delete_after=delete_after)
 
     async def send_sticker(self, sticker: Union["Sticker", FileInput], *, delete_after: Optional[Union[float, int]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_sticker`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_sticker("FILE_ID", ...)
+            await bot.send_sticker(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_sticker`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_sticker("FILE_ID", ...)
         """
         return await self.get_bot().send_sticker(self.id, sticker, delete_after=delete_after)
 
     async def send_media_group(self, media: List[MediaInput], *,
                     components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.send_media_group`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.send_media_group([
-                InputMediaPhoto("File ID", caption="example caption"),
-                InputMediaPhoto("File ID"),
-                InputMediaPhoto("File ID")
-            ], ...)
+            await bot.send_media_group(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.send_media_group`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.send_media_group([
+                    InputMediaPhoto("File ID", caption="example caption"),
+                    InputMediaPhoto("File ID"),
+                    InputMediaPhoto("File ID")
+                ], ...)
         """
         return await self.get_bot().send_media_group(self.id, media, components=components)
 
     async def leave(self):
         """
-        For the documentation of the method, please see :meth:`bale.Bot.leave_chat`.
+        Shortcut method for:
 
         .. code:: python
 
-            chat = await bot.get_chat(1234)
-            await chat.leave()
+            await bot.leave_chat(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the method, please see :meth:`bale.Bot.leave_chat`.
+
+        .. hint::
+            .. code:: python
+
+                chat = await bot.get_chat(1234)
+                await chat.leave()
         """
         await self.get_bot().leave_chat(self.id)
 
     async def add_user(self, user: Union["User", str, int]):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.invite_user`.
+        Shortcut method for:
 
         .. code:: python
 
-            user = await bot.get_user(1234)
-            await chat.add_user(user)
+            await bot.invite_user(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.invite_user`.
+
+        .. hint::
+            .. code:: python
+
+                user = await bot.get_user(1234)
+                await chat.add_user(user)
         """
         if isinstance(user, User):
             user = user.user_id
@@ -265,9 +391,18 @@ class Chat(BaleObject):
 
     async def get_member(self, user: Union["User", str, int]):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
+        Shortcut method for:
 
         .. code:: python
+
+            await bot.get_chat_member(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_member`.
+
+        .. hint::
+            .. code:: python
 
                 user = await bot.get_user(1234)
                 await chat.get_member(user)
@@ -281,9 +416,18 @@ class Chat(BaleObject):
 
     async def ban_member(self, user: Union["User", str, int]):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+        Shortcut method for:
 
         .. code:: python
+
+            await bot.ban_chat_member(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.ban_chat_member`.
+
+        .. hint::
+            .. code:: python
 
                 user = await bot.get_user(1234)
                 await chat.ban_member(user)
@@ -297,9 +441,18 @@ class Chat(BaleObject):
 
     async def unban_member(self, user: Union["User", str, int], *, only_if_banned: Optional[bool] = None):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.unban_chat_member`.
+        Shortcut method for:
 
         .. code:: python
+
+            await bot.unban_chat_member(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.unban_chat_member`.
+
+        .. hint::
+            .. code:: python
 
                 user = await bot.get_user(1234)
                 await chat.unban_member(user)
@@ -313,19 +466,37 @@ class Chat(BaleObject):
 
     async def set_photo(self, photo: Union[PhotoSize, FileInput]):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.set_chat_photo`.
+        Shortcut method for:
 
         .. code:: python
 
-            await chat.set_photo(bale.InputFile("FILE_ID"))
+            await bot.set_chat_photo(
+                chat_id=chat.id, *args, **kwargs
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.set_chat_photo`.
+
+        .. hint::
+            .. code:: python
+
+                await chat.set_photo(bale.InputFile("FILE_ID"))
         """
         return await self.get_bot().set_chat_photo(self.id, photo)
 
     async def get_members_count(self):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
+        Shortcut method for:
 
         .. code:: python
+
+            await bot.get_chat_members_count(
+                chat_id=chat.id
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_members_count`.
+
+        .. hint::
+            .. code:: python
 
                 await chat.get_members_count()
         """
@@ -333,9 +504,18 @@ class Chat(BaleObject):
 
     async def get_administrators(self):
         """
-        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
+        Shortcut method for:
 
         .. code:: python
+
+            await bot.get_chat_administrators(
+                chat_id=chat.id
+            )
+
+        For the documentation of the arguments, please see :meth:`bale.Bot.get_chat_administrators`.
+
+        .. hint::
+            .. code:: python
 
                 await chat.get_administrators()
         """
