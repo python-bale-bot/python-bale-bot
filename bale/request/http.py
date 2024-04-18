@@ -238,6 +238,9 @@ class HTTPClient:
     def get_updates(self, *, params: RequestParams):
         return self.request(Route("POST", "getUpdates", self.token), json=params.payload)
 
+    def get_webhook_info(self):
+        return self.request(Route("GET", "getWebhookInfo", self.token))
+
     def delete_webhook(self):
         return self.request(Route("GET", "deleteWebhook", self.token))
 

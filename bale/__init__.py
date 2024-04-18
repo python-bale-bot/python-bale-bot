@@ -11,6 +11,7 @@ An API wrapper for Bale written in Python.
 
 __all__ = (
     "BaleObject",
+    "WebhookInfo",
     "InputFile",
     "BaseFile",
     "PhotoSize",
@@ -61,6 +62,7 @@ __all__ = (
 )
 
 from .baleobject import BaleObject
+from .webhookinfo import WebhookInfo
 from .attachments.inputfile import InputFile
 from .attachments.basefile import BaseFile
 from .attachments.photosize import PhotoSize

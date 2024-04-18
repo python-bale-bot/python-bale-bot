@@ -17,6 +17,7 @@ from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any
 from weakref import WeakValueDictionary
 
 from bale import (
+    WebhookInfo,
     State,
     Message,
     Update,
@@ -2416,6 +2417,26 @@ class Bot:
         if response.result:
             self._state.remove_chat(chat_id)
         return response.result or False
+
+    async def get_webhook_info(self, chat_id: Union[str, int], *, use_cache=True) -> "WebhookInfo":
+        """Use this method to get current webhook status.
+
+        .. code:: python
+
+            await bot.get_webhook_info()
+
+        Returns
+        -------
+            :class:`bale.WebhookInfo`
+                The webhook info.
+        Raises
+        ------
+            APIError
+                Get Webhook Info Failed.
+        """
+        response = await self._http.get_webhook_info()
+        webhook_info = WebhookInfo.from_dict(response.result, bot=self)
+        return webhook_info
 
     async def get_updates(self, offset: Optional[int] = None, limit: Optional[int] = None) -> List["Update"]:
         if offset and not isinstance(offset, int):
