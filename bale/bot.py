@@ -96,6 +96,7 @@ class Bot:
         | :meth:`bale.Bot.send_sticker`     | sending sticker                |
         +-----------------------------------+--------------------------------+
         | :meth:`bale.Bot.send_video`       | sending video                  |
+        +-----------------------------------+--------------------------------+
 
     .. tab:: Work with messages
 
@@ -144,9 +145,9 @@ class Bot:
         +------------------------------------------+-----------------------------------------+
         | :meth:`bale.Bot.leave_chat`              | leaving from a chat                     |
         +------------------------------------------+-----------------------------------------+
-        | :meth:`bale.Bot.get_chat_memebr`         | getting information about a chat member |
+        | :meth:`bale.Bot.get_chat_member`         | getting information about a chat member |
         +------------------------------------------+-----------------------------------------+
-        | :meth:`bale.Bot.get_chat_memebrs_count`  | getting the number of members in a chat |
+        | :meth:`bale.Bot.get_chat_members_count`  | getting the number of members in a chat |
         +------------------------------------------+-----------------------------------------+
         | :meth:`bale.Bot.invite_user`             | inviting a user to chat                 |
         +------------------------------------------+-----------------------------------------+
@@ -349,6 +350,7 @@ class Bot:
 
         .. hint::
             To get better hints in the IDE, you should add a typehint to the result of this method.
+
             .. code:: python
 
                 from bale import WaitContext

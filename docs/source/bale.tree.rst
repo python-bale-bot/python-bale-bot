@@ -12,3 +12,5 @@ Available Types
     bale.user
     bale.callbackquery
     bale.sticker
+    bale.waitcontext
+    bale.webhookinfo
