@@ -20,12 +20,12 @@ class MenuKeyboardButton(BaleObject):
 
     Attributes
     ----------
-        text: str
+        text: :obj:`str`
             Keyboard Text.
-        request_contact: Optional[:obj:`bool`, optional]
-            If ``True``, the user’s phone number will be sent as a contact when the button is pressed.
+        request_contact: :obj:`bool`, optional
+            If :obj:`True`, the user’s phone number will be sent as a contact when the button is pressed.
         request_location: Optional[:obj:`bool`, optional]
-            If ``True``, the user’s current location will be sent when the button is pressed. Available in private chats only.
+            If :obj:`True`, the user’s current location will be sent when the button is pressed. Available in private chats only.
     """
     __slots__ = (
         "text",

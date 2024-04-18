@@ -48,9 +48,7 @@ class CallbackQuery(BaleObject):
     )
 
     def __init__(
-            self, callback_id: str, from_user: "User",
-            data: Optional[str], message: Optional["Message"],
-            inline_message_id: Optional[str]
+            self, callback_id: str, from_user: "User", data: Optional[str], message: Optional["Message"], inline_message_id: Optional[str]
     ):
         super().__init__()
         self._id = callback_id

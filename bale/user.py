@@ -24,7 +24,7 @@ class User(BaleObject):
         id: :obj:`int`
             Unique identifier for this user or bot.
         is_bot: :obj:`bool`, optional
-            ``True``, if this user is a bot.
+            :obj:`True`, if this user is a bot.
         first_name: :obj:`str`
             User’s or bot’s first name.
         last_name: :obj:`str`, optional

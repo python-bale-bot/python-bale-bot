@@ -13,6 +13,12 @@ from bale import Update
 from bale.checks import BaseCheck
 
 class WaitContext:
+    """A class represents information obtained from the :meth:`bale.Bot.wait_for` method. This class provides details related to the received data.
+
+    .. admonition:: Examples
+
+            :any:`conversation Bot <examples.conversation>`
+    """
     __slots__ = (
         "_check",
         "_key",

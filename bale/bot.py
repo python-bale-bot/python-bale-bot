@@ -70,6 +70,89 @@ class Bot:
         token: str 
             Bot’s unique authentication token. obtained via `@BotFather <https://ble.ir/BotFather>`_.
 
+    All wrapped methods of Bale web services at a glance:
+
+    .. tab:: Sending message
+
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_animation`   | sending animation              |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_audio`       | sending audio                  |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_contact`     | sending contact                |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_document`    | sending document               |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_invoice`     | sending an invoice             |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_location`    | sending location               |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_media_group` | sending media grouped together |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_message`     | sending normal message         |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_photo`       | sending photo                  |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_sticker`     | sending sticker                |
+        +-----------------------------------+--------------------------------+
+        | :meth:`bale.Bot.send_video`       | sending video                  |
+
+    .. tab:: Work with messages
+
+        +---------------------------------------+----------------------------------------------+
+        | :meth:`bale.Bot.copy_message`         | copying the contents of an arbitrary message |
+        +---------------------------------------+----------------------------------------------+
+        | :meth:`bale.Bot.delete_message`       | deleting message                             |
+        +---------------------------------------+----------------------------------------------+
+        | :meth:`bale.Bot.edit_message`         | editing message                              |
+        +---------------------------------------+----------------------------------------------+
+        | :meth:`bale.Bot.edit_message_caption` | editing captions                             |
+        +---------------------------------------+----------------------------------------------+
+        | :meth:`bale.Bot.forward_message`      | forwarding message                           |
+        +---------------------------------------+----------------------------------------------+
+
+    .. tab:: Get information
+
+        +------------------------------+-------------------------------------+
+        | :meth:`bale.Bot.get_chat`    | getting information about a chat    |
+        +------------------------------+-------------------------------------+
+        | :meth:`bale.Bot.get_me`      | getting information about bot       |
+        +------------------------------+-------------------------------------+
+        | :meth:`bale.Bot.get_message` | getting information about a message |
+        +------------------------------+-------------------------------------+
+        | :meth:`bale.Bot.get_user`    | getting information about a user    |
+        +------------------------------+-------------------------------------+
+
+    .. tab:: Update system
+
+        +-----------------------------------+--------------------------------------+
+        | :meth:`bale.Bot.delete_webhook`   | removing webhook integration         |
+        +-----------------------------------+--------------------------------------+
+        | :meth:`bale.Bot.set_webhook`      | setting a webhook to receive updates |
+        +-----------------------------------+--------------------------------------+
+        | :meth:`bale.Bot.get_updates`      | getting pending updates              |
+        +-----------------------------------+--------------------------------------+
+        | :meth:`bale.Bot.get_webhook_info` | getting current webhook status       |
+        +-----------------------------------+--------------------------------------+
+
+    .. tab:: Chat moderation and others
+
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.ban_chat_member`         | banning a member from chat              |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.get_chat_administrators` | getting the list of admins in a chat    |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.leave_chat`              | leaving from a chat                     |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.get_chat_memebr`         | getting information about a chat member |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.get_chat_memebrs_count`  | getting the number of members in a chat |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.invite_user`             | inviting a user to chat                 |
+        +------------------------------------------+-----------------------------------------+
+        | :meth:`bale.Bot.unban_chat_member`       | unbanning a user from chat              |
+        +------------------------------------------+-----------------------------------------+
+
     .. admonition:: Examples
 
         :any:`My First Bot <examples.basic>`
@@ -180,6 +263,7 @@ class Bot:
 
         .. hint::
             .. code:: python
+
                 from bale.handlers import MessageHandler
 
                 ...
@@ -203,10 +287,10 @@ class Bot:
 
         .. hint::
             .. code:: python
+
                 from bale.handlers import MessageHandler
 
                 ...
-
                 async def message_handler_wrapper(message: bale.Message) -> None:
                     await message.reply("Cool!")
 
@@ -233,8 +317,8 @@ class Bot:
 
         .. hint::
             .. code:: python
-                ...
 
+                ...
                 async def ready_event_wrapper() -> None:
                     print(bot.user)
 
@@ -253,19 +337,24 @@ class Bot:
         self._events[event_name] = wrapper
 
     def wait_for(self, checks: Union[Dict[Union[int, str], BaseCheck], List[BaseCheck], Tuple[BaseCheck], BaseCheck], timeout: Optional[float] = None):
-        """Waits for an event to be dispatched.
+        """Waits for a handler to be dispatched.
 
         This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
-        The timeout parameter is passed onto asyncio.wait_for(). By default, it does not ``timeout``.
-        Note that this does propagate the asyncio.TimeoutError for you in case of timeout and is provided for ease of use.
+        The timeout parameter is passed onto :meth:`asyncio.wait_for`. By default, it does not ``timeout``.
+        Note that this does propagate the :class:`asyncio.TimeoutError` for you in case of timeout and is provided for ease of use.
         In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
 
         .. important::
             This function returns the first check that meets the requirements.
 
         .. hint::
-            In the Examples "..." symbol in code means that you can customize fill that.
+            To get better hints in the IDE, you should add a typehint to the result of this method.
+            .. code:: python
 
+                from bale import WaitContext
+
+                ...
+                ctx: WaitContext = await bot.wait_for(...)
 
         .. admonition:: Examples
 
@@ -275,6 +364,7 @@ class Bot:
         ----------
             checks: Dict[:obj:`int` | :obj:`str`, :class:`bale.BaseCheck`] | :class:`bale.BaseCheck` | List[:class:`bale.BaseCheck`]
                 The checks must be of the following types:
+
                 - an instance of :class:`bale.BaseCheck` object
                     .. code:: python
 
@@ -468,7 +558,7 @@ class Bot:
         Returns
         -------
             :obj:`bool`:
-                On success, True is returned.
+                On success, :obj:`True` is returned.
         """
         response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
         return response.result or False
@@ -1133,6 +1223,7 @@ class Bot:
                              reply_to_message_id: Optional[Union[str, int]] = None) -> List["Message"]:
         """This service is used to send a group of photos, videos, documents or audios as an album.
         Documents and audio files can be only grouped on an album with messages of the same type.
+
         .. code:: python
 
             await bot.send_media_group(1234, [
@@ -2497,6 +2588,26 @@ class Bot:
         return webhook_info
 
     async def get_updates(self, offset: Optional[int] = None, limit: Optional[int] = None) -> List["Update"]:
+        """Use this method to get pending updates.
+
+        .. code:: python
+
+            updates = await bot.get_updates()
+
+        Parameters
+        ----------
+            offset: :obj:`int`, optional
+                Identifier of the first update to be returned. Must be greater by one than the highest among the identifiers of previously received updates.
+            limit: :obj:`int`, optional
+                Limits the number of updates to be retrieved. Values between `1`-`100` are accepted. Defaults to `100`.
+
+        Raises
+        ------
+            Forbidden
+                You do not have permission to get updates.
+            APIError
+                Get updates Failed.
+        """
         if offset and not isinstance(offset, int):
             raise TypeError(
                 "offset param must be int"
