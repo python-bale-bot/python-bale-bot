@@ -229,6 +229,9 @@ class HTTPClient:
     def edit_message_text(self, *, params: RequestParams):
         return self.request(Route("POST", "editMessageText", self.token), json=params.payload)
 
+    def edit_message_caption(self, *, params: RequestParams):
+        return self.request(Route("POST", "editMessageCaption", self.token), json=params.payload)
+
     def copy_message(self, *, params: RequestParams):
         return self.request(Route("POST", "copyMessage", self.token), json=params.payload)
 

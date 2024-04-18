@@ -1640,6 +1640,64 @@ class Bot:
         self._state.update_message(result)
         return result
 
+    async def edit_message_caption(self, chat_id: Union[str, int], message_id: Union[str, int], caption: str, *,
+                           components: Optional["InlineKeyboardMarkup"] = None) -> "Message":
+        """You can use this service to edit captions of messages that you have already sent through the arm.
+
+        .. code:: python
+
+            await bot.edit_message_caption(1234, 1234, "the message edited!", components=None)
+
+        Parameters
+        ----------
+            chat_id: :obj:`str` | :obj:`int`
+                |chat_id|
+            message_id: :obj:`str` | :obj:`int`
+                Unique identifier for the message to edit.
+            caption: :obj:`str`
+                New caption of the message, 1-1024 characters after entities parsing.
+            components: :class:`bale.InlineKeyboardMarkup`, optional
+                An object for an inline keyboard.
+        Raises
+        ------
+            NotFound
+                Invalid Message or Chat ID.
+            Forbidden
+                You do not have permission to Edit Message.
+            APIError
+                Edit Message Failed.
+        """
+        if not isinstance(chat_id, (str, int)):
+            raise TypeError(
+                "chat_id param must be type of str or int"
+            )
+
+        if not isinstance(message_id, (str, int)):
+            raise TypeError(
+                "message_id param must be type of str or int"
+            )
+
+        if components:
+            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
+                raise TypeError(
+                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
+                )
+            components = components.to_json()
+
+        payload = {
+            "chat_id": chat_id,
+            "message_id": message_id,
+            "caption": caption
+        }
+        if components:
+            payload["reply_markup"] = components
+        response = await self._http.edit_message_caption(
+            params=handle_request_param(payload)
+        )
+        result = Message.from_dict(response.result, self)
+        self._state.update_message(result)
+        return result
+
     async def copy_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int], *,
                            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """You can use this service to copy a message and send it in another chat.

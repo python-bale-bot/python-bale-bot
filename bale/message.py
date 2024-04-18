@@ -383,6 +383,16 @@ class Message(BaleObject):
         """
         return await self.get_bot().edit_message(self.chat_id, self.message_id, text, components=components)
 
+    async def edit_caption(self, caption: str, *, components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None) -> Message:
+        """
+        For the documentation of the arguments, please see :meth:`bale.Bot.edit_message_caption`.
+
+        .. code:: python
+
+            await message.edit_caption("Edited!", components = None)
+        """
+        return await self.get_bot().edit_message_caption(self.chat_id, self.message_id, caption, components=components)
+
     async def delete(self, *, delay: Optional[Union[int, float]] = None):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.delete_message`.
