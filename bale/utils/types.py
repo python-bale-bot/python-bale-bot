@@ -35,7 +35,6 @@ AttachmentType = Union[
 ]
 
 MediaInput = Union[
-    "InputMedia",
     "InputMediaPhoto",
     "InputMediaVideo",
     "InputMediaAnimation",
