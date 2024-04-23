@@ -22,11 +22,8 @@ build:
 
 search:
    ranking:
-      telegram.bot.html: 7
-      telegram.message.html: 3
-      telegram.update.html: 3
-      telegram.user.html: 2
-      telegram.chat.html: 2
-
-   ignore:
-      - changelog.html
+      bale.bot.html: 7
+      bale.message.html: 3
+      bale.update.html: 3
+      bale.user.html: 2
+      bale.chat.html: 2
