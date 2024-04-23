@@ -31,7 +31,7 @@ class Voice(BaseFile):
         file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
-	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str], mime_type: Optional[str], file_size: Optional[int]):
+	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = None, mime_type: Optional[str] = None, file_size: Optional[int] = None):
 		super().__init__(file_id, file_unique_id, file_size)
 		self.file_name = file_name
 		self.mime_type = mime_type

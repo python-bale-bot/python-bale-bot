@@ -36,7 +36,7 @@ class Contact(BaleObject):
         "user_id"
     )
 
-    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str], user_id: Optional[int]):
+    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str] = None, user_id: Optional[int] = None):
         super().__init__()
         self._id = user_id
         self.phone_number = phone_number

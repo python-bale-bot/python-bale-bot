@@ -45,8 +45,8 @@ class Video(BaseFile):
         "mime_type"
     )
 
-    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int, file_name: Optional[str],
-                 mime_type: Optional[str], file_size: Optional[int]):
+    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int, file_name: Optional[str] = None,
+                 mime_type: Optional[str] = None, file_size: Optional[int] = None):
         super().__init__(file_id, file_unique_id, file_size)
 
         self.width = width
