@@ -263,7 +263,7 @@ class HTTPClient:
         return self.request(Route("GET", "getChatAdministrators", self.token), json=params.payload)
 
     def get_chat_members_count(self, *, params: RequestParams):
-        return self.request(Route("GET", "getChatMemberCount", self.token), json=params.payload)
+        return self.request(Route("GET", "getChatMembersCount", self.token), json=params.payload)
 
     def get_chat_member(self, *, params: RequestParams):
         return self.request(Route("GET", "getChatMember", self.token), json=params.payload)
