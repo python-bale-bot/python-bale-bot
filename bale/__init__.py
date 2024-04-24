@@ -1,11 +1,10 @@
 """
-Bale API Wrapper
-~~~~~~~~~~~~~~~~~~~
+Python Bale Bot
+~~~~~~~~~~~~~~~
 
 An API wrapper for Bale written in Python.
 
-:copyright: (c) 2022-present, Kian Ahmadian
-:license: GPL-2.0, see LICENSE for more details.
+Copyright (C) 2024. All Rights Reserved.
 
 """
 
@@ -61,6 +60,17 @@ __all__ = (
     "Bot",
     "__version__"
 )
+
+#  An API wrapper for Bale written in Python
+#  Copyright (c) 2022-2024
+#  Kian Ahmadian <devs@python-bale-bot.ir>
+#  All rights reserved.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 
 from .baleobject import BaleObject
 from .webhookinfo import WebhookInfo
