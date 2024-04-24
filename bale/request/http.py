@@ -8,7 +8,7 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Any
+from typing import Any, Optional, Type
 
 import asyncio
 import aiohttp
@@ -55,19 +55,18 @@ class HTTPClient:
     """Send a Request to BALE API Server"""
 
     __slots__ = (
-        "_loop",
         "token",
         "__session",
         "__extra"
     )
 
-    def __init__(self, loop: asyncio.AbstractEventLoop, token: str, /, **kwargs):
+    def __init__(self, token: str, /, **kwargs):
         if not isinstance(token, str):
             raise TypeError(
                 "token param must be type of str."
             )
+
         self.__session = None
-        self._loop = loop
         self.token = token
         self.__extra = kwargs
 
@@ -78,22 +77,14 @@ class HTTPClient:
     def is_closed(self) -> bool:
         return self.__session is None
 
-    @property
-    def loop(self) -> asyncio.AbstractEventLoop:
-        return self._loop
-
-    @loop.setter
-    def loop(self, value: asyncio.AbstractEventLoop) -> None:
-        self._loop = value
-
     def reload_session(self) -> None:
         if self.__session and self.__session.closed:
-            self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
+            self.__session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
     async def start(self) -> None:
         if self.__session:
             raise RuntimeError("HTTPClient has already started.")
-        self.__session = aiohttp.ClientSession(loop=self.loop, connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
+        self.__session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
 
     async def close(self) -> None:
         if self.__session:

@@ -17,6 +17,7 @@ if TYPE_CHECKING:
         InputMediaDocument
     )
 
+STOP_UPDATER_MARKER = object()
 JSONDICT = Dict[str, Any]
 T = TypeVar('T')
 UT = TypeVar('UT')

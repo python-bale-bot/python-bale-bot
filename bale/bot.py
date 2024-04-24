@@ -11,9 +11,10 @@
 from __future__ import annotations
 
 import asyncio
+from asyncio import BoundedSemaphore
 import logging
 from builtins import enumerate, reversed
-from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any
+from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any, Set
 from weakref import WeakValueDictionary
 
 from bale import (
@@ -42,25 +43,13 @@ from bale.checks import BaseCheck
 from bale.request import HTTPClient, handle_request_param
 from .waitcontext import WaitContext
 from .error import NotFound, InvalidToken
-from .utils.types import CoroT, FileInput, MediaInput
+from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 
 __all__ = ("Bot",)
 
-
 _log = logging.getLogger(__name__)
-
-
-class _Loop:
-    __slots__ = ()
-
-    def __getattr__(self, key):
-        raise AttributeError((
-            'loop attribute cannot be accessed in non-async contexts.'
-        ))
-
-_loop = _Loop()
 
 class Bot:
     """This object represents a Bale Bot.
@@ -159,9 +148,7 @@ class Bot:
         :any:`My First Bot <examples.basic>`
     """
     __slots__ = (
-        "loop",
         "token",
-        "loop",
         "_events",
         "_waiters",
         "_handlers",
@@ -169,6 +156,9 @@ class Bot:
         "_client_user",
         "_http",
         "_closed",
+        "__tasks",
+        "__semaphore",
+        "update_queue",
         "updater"
     )
 
@@ -176,9 +166,8 @@ class Bot:
         if not isinstance(token, str):
             raise InvalidToken()
 
-        self.loop: Union[asyncio.AbstractEventLoop, _Loop] = _loop
         self.token: str = token
-        self._http: HTTPClient = HTTPClient(self.loop, token, **kwargs.pop('http_kwargs', {}))
+        self._http: HTTPClient = HTTPClient(token, **kwargs.pop('http_kwargs', {}))
         self._state: "State" = State(self, **kwargs.pop('state_kwargs', {}))
         self._client_user = None
         self._events: Dict[str, Callable] = {
@@ -188,7 +177,9 @@ class Bot:
         self._waiters: List[Tuple[Dict[Union[int, str], BaseCheck], asyncio.Future]] = []
         self._handlers: List[BaseHandler] = []
         self._closed: bool = True
-
+        self.__tasks: Set[asyncio.Task] = set()
+        self.__semaphore = BoundedSemaphore(value=kwargs.get('max_concurrent_updates', 10))
+        self.update_queue: asyncio.Queue["Update" | STOP_UPDATER_MARKER] = asyncio.Queue()
         self.updater: Updater = Updater(self)
 
     @property
@@ -216,9 +207,6 @@ class Bot:
         return None
 
     async def _setup_hook(self):
-        loop = asyncio.get_running_loop()
-        self.loop = loop
-        self._http.loop = loop
         self._closed = False
         await self._http.start()
 
@@ -421,7 +409,8 @@ class Bot:
             asyncio.TimeoutError
                 If a timeout is provided, and it was reached.
         """
-        future = self.loop.create_future()
+        loop = asyncio.get_event_loop()
+        future = loop.create_future()
 
         if isinstance(checks, BaseCheck):
             checks: List[BaseCheck] = [checks]
@@ -443,9 +432,14 @@ class Bot:
     async def close(self):
         """Close http Events and bot"""
         if not self.is_closed():
-            await self.updater.stop()
-            await self._http.close()
+            await self.update_queue.put(STOP_UPDATER_MARKER)
+            await self.update_queue.join()
+
+            await asyncio.gather(*self.__tasks)
+
             self._closed = True
+
+            _log.info("Closing operation was successfully completed")
 
     def is_closed(self):
         """:obj:`bool`: Bot Status"""
@@ -468,50 +462,7 @@ class Bot:
 
     def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
         task = self.run_event(core, event_name, *args, **kwargs)
-        return self.loop.create_task(task, name=f"python-bale-bot:process_event:{event_name}")
-
-    async def run_handler(self, core: Coroutine, handler: "BaseHandler", update: "Update"):
-        try:
-            await core
-        except asyncio.CancelledError:
-            pass
-        except Exception as ext:
-            try:
-                self.dispatch('handler_error', update, ext)
-            except asyncio.CancelledError:
-                pass
-
-    def _create_handler_schedule(self, handler: "BaseHandler", update: "Update", *args):
-        core = handler.handle_update(update, *args)
-        task = self.run_handler(core, handler, update)
-        return self.loop.create_task(task, name=f"python-bale-bot:process_update:{handler}")
-
-    def process_update(self, update: "Update"):
-        _log.debug("Processing update %s", update)
-        self.dispatch('update', update)
-        removed = []
-        for index, (checks, future) in enumerate(self._waiters):
-            if future.cancelled():
-                removed.append(index)
-                continue
-
-            for key, check in checks.items():
-                is_correct = check.check_update(update)
-                if not is_correct:
-                    continue
-
-                waited_result = WaitContext(key, check, update)
-                future.set_result(waited_result)
-                removed.append(index)
-                break
-
-        for item in reversed(removed):
-            del self._waiters[item]
-
-        for handler in self._handlers:
-            args = handler.check_new_update(update)
-            if args is not None:
-                self._create_handler_schedule(handler, update, *args)
+        return self.create_task(task, name=f"Bot:process_event:{event_name}")
 
     def dispatch(self, event_name: str, /, *args, **kwargs) -> None:
         method = 'on_' + event_name
@@ -2645,21 +2596,118 @@ class Bot:
 
         return updates
 
-    async def connect(self):
-        await self.get_me()
-        await self.updater.start()
+    def done_task_callback(self, task: asyncio.Task) -> None:
+        self.__tasks.discard(task)
 
-    def run(self):
-        """Starting the bot, updater and HTTPClient."""
+    def create_task(self, coroutine: Coroutine, *, name: str = None) -> asyncio.Task:
+        task = asyncio.create_task(coroutine, name=name)
+        task.add_done_callback(self.done_task_callback)
 
-        async def main():
-            async with self:
-                await self.connect()
+        return task
 
-        setup_logging()
+    async def __run_handler(self, core: Coroutine, handler: "BaseHandler", update: "Update"):
         try:
-            asyncio.run(main())
-        except KeyboardInterrupt:
+            await core
+        except asyncio.CancelledError:
             pass
-        except SystemExit:
-            pass
+        except Exception as ext:
+            try:
+                self.dispatch('handler_error', update, ext)
+            except asyncio.CancelledError:
+                pass
+
+    async def _process_handler(self, handler: "BaseHandler", update: "Update", params: Tuple[Any, ...] = None):
+        core = handler.handle_update(update, *params)
+        await self.__run_handler(core, handler, update)
+
+    async def process_update(self, update: "Update"):
+        _log.debug("Processing update %s", update)
+        self.dispatch('update', update)
+        removed = []
+        for index, (checks, future) in enumerate(self._waiters):
+            if future.cancelled():
+                removed.append(index)
+                continue
+
+            for key, check in checks.items():
+                is_correct = check.check_update(update)
+                if not is_correct:
+                    continue
+
+                waited_result = WaitContext(key, check, update)
+                future.set_result(waited_result)
+                removed.append(index)
+                break
+
+        for item in reversed(removed):
+            del self._waiters[item]
+
+        for handler in self._handlers:
+            if (args := handler.check_new_update(update)) is not None:
+                await self.create_task(
+                    self._process_handler(handler, update, params=args),
+                    name="Bot:process_handler"
+                )
+
+    async def _process_update_wrapper(self, update: "Update"):
+        self.dispatch('update', update)
+        async with self.__semaphore:
+            await self.process_update(update)
+        self.update_queue.task_done()
+
+    async def __updater_fetcher(self) -> None:
+        async def wrapper():
+            while True:
+                try:
+                    item = await self.update_queue.get()
+                    if item is STOP_UPDATER_MARKER:
+                        while not self.update_queue.empty():
+                            self.update_queue.task_done()
+
+                        self.update_queue.task_done() # for the last item: STOP_UPDATER_MARKER
+                        break
+
+                    self.create_task(self._process_update_wrapper(item), name="Bot:updater_fetcher:process_update")
+                except asyncio.CancelledError:
+                    _log.warning("The update fetcher can only be closed with Bot.close.")
+
+        self.create_task(wrapper(), name="Bot:updater_fetcher")
+
+    def __run(self):
+        loop = asyncio.get_event_loop()
+
+        polling_future = self.updater.start_polling()
+
+        try:
+            loop.run_until_complete(self._setup_hook())
+            loop.run_until_complete(polling_future)
+            loop.run_until_complete(self.__updater_fetcher())
+            loop.run_forever()
+        except (KeyboardInterrupt, SystemExit):
+            _log.debug("The request to stop receiving has been received. Currently in the process of shutting down...")
+        except Exception as exc:
+            polling_future.close()
+            _log.debug("We encountered the error, currently in the process of shutting down...", exc_info=exc)
+        finally:
+            if self.updater:
+                loop.run_until_complete(self.updater.stop())
+            loop.run_until_complete(self._http.close())
+            loop.run_until_complete(self.close())
+
+    def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None):
+        """This method is used to run the bot, updater, and update fetcher process.
+
+        Parameters
+        ----------
+            log_handler: :class:`logging.Handler`, optional
+                Your File. Pass a file_id as String to send a file that exists on the Bale servers (recommended),
+                pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
+            log_level: :obj:`int`, optional
+                Additional interface options. It is used only when uploading a file.
+            log_format: :obj:`str`, optional
+                Additional interface options. It is used only when uploading a file.
+
+        """
+        setup_logging(handler=log_handler, level=log_level, formatter=log_format)
+
+        return self.__run()
