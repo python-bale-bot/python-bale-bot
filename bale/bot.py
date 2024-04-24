@@ -2520,7 +2520,7 @@ class Bot:
             self._state.remove_chat(chat_id)
         return response.result or False
 
-    async def get_webhook_info(self, chat_id: Union[str, int], *, use_cache=True) -> "WebhookInfo":
+    async def get_webhook_info(self) -> "WebhookInfo":
         """Use this method to get current webhook status.
 
         .. code:: python
