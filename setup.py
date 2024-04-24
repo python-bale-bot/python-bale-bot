@@ -7,7 +7,7 @@ def get_readme_file() -> str:
 
 extras_require = {
     'docs': [
-        'sphinx==7.2.6',
+        'sphinx==7.3.7',
         'sphinx-pypi-upload',
         'sphinx-paramlinks==0.6.0',
         'sphinxcontrib-mermaid==0.8.1',
@@ -43,7 +43,7 @@ if __name__ == "__main__":
         packages=find_packages(exclude=["*docs",]),
         long_description=get_readme_file(),
         long_description_content_type='text/x-rst',
-        install_requires=["aiohttp>=3.6.0,<3.9.5", "asyncio~=3.4.3", "setuptools>=69.0.3,<69.3.0"]
+        install_requires=["aiohttp>=3.6.0,<3.9.6", "asyncio~=3.4.3", "setuptools>=69.0.3,<69.6.0"]
     )
 
 
