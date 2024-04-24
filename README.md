@@ -54,12 +54,12 @@ from bale.handlers import CommandHandler
 
 client = Bot(token="YOUR TOKEN")
 
-@client.event
-async def on_ready():
+@client.listen('on_ready')
+async def on_ready_handler():
 	print(client.user, "is Ready!")
 
 @client.handle(CommandHandler("start"))
-async def on_message(message: Message):
+async def start_command(message: Message):
 	await message.reply(f'Hi {message.author.first_name}!')
 
 client.run()
