@@ -20,7 +20,7 @@ from bale.error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkErro
 from .parser import ResponseParser
 from .params import RequestParams
 
-from bale.utils.request import ResponseStatusCode, to_json
+from bale.utils.request import ResponseStatusCode, to_json, find_error_class
 
 __all__ = ("HTTPClient", "Route")
 
@@ -132,9 +132,9 @@ class HTTPClient:
                                 await asyncio.sleep(tries * 2)
                                 continue
 
-                        for error_obj in __ERROR_CLASSES__:
-                            if error_obj.STATUS_CODE == original_response.status or error_obj.check_response(response.description):
-                                raise error_obj(response.description)
+                        error_obj: Optional[Type[BaleError]] = find_error_class(response)
+                        if error_obj:
+                            raise error_obj(response.description)
 
                     raise APIError(response.error_code, response.description)
 

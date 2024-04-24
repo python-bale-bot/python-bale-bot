@@ -8,10 +8,11 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from aiohttp import ClientResponse
-from typing import Any
+from typing import Dict, Any, TYPE_CHECKING
 from json import loads
 from json.decoder import JSONDecodeError
+if TYPE_CHECKING:
+    from aiohttp import ClientResponse
 
 async def json_or_text(response: "ClientResponse"):
     text = await response.text()
@@ -33,11 +34,13 @@ class ResponseParser:
     """
 
     __slots__ = (
-        "data"
+        "data",
+        "original_response"
     )
 
-    def __init__(self, data: dict):
+    def __init__(self, data: Dict[str, Any], response: "ClientResponse"):
         self.data = data
+        self.original_response = response
 
     @property
     def ok(self) -> bool:
@@ -56,11 +59,12 @@ class ResponseParser:
         return self.data.get('description')
 
     @classmethod
-    async def parse_response(cls, data: "ClientResponse"):
-        fetched_data = await json_or_text(data)
+    async def parse_response(cls, response: "ClientResponse"):
+        fetched_data = await json_or_text(response)
 
         if not isinstance(fetched_data, dict):
             raise TypeError(
                 "The data sent by request cannot be parsed!"
             )
-        return cls(fetched_data)
+
+        return cls(fetched_data, response)

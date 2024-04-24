@@ -9,8 +9,11 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import Optional, Any, Tuple, Type
+from typing import Optional, Any, Tuple, Type, TYPE_CHECKING
+
 from bale.utils.request import ResponseStatusCode
+if TYPE_CHECKING:
+    from bale.request.parser import ResponseParser
 
 __all__ = (
     "HTTPClientError",
@@ -47,7 +50,11 @@ class BaleError(Exception):
     STATUS_CODE = None
 
     @staticmethod
-    def check_response(description: Optional[str]) -> bool:
+    def check_response(response: Optional["ResponseParser"]) -> bool:
+        return BaleError.check_description(response.description)
+
+    @staticmethod
+    def check_description(description: Optional[str]) -> bool:
         return False
 
     def __init__(self, message: Any):
@@ -71,7 +78,7 @@ class InvalidToken(BaleError):
         super().__init__(message or "Invalid Token")
 
     @staticmethod
-    def check_response(description: Optional[str]) -> bool:
+    def check_description(description: Optional[str]) -> bool:
         return description and "token not found" in description.lower()
 
 class APIError(BaleError):
@@ -112,7 +119,7 @@ class NotFound(BaleError):
         super().__init__(message or "Not Found")
 
     @staticmethod
-    def check_response(description: Optional[str]) -> bool:
+    def check_description(description: Optional[str]) -> bool:
         return description and HTTPClientError.USER_OR_CHAT_NOT_FOUND in description
 
 class Forbidden(BaleError):
@@ -127,7 +134,7 @@ class Forbidden(BaleError):
         super().__init__(err)
 
     @staticmethod
-    def check_response(description: Optional[str]) -> bool:
+    def check_description(description: Optional[str]) -> bool:
         return description and description.startswith("Forbidden:")
 
 class BadRequest(BaleError):
@@ -141,7 +148,7 @@ class BadRequest(BaleError):
         super().__init__(err)
 
     @staticmethod
-    def check_response(description: Optional[str]) -> bool:
+    def check_description(description: Optional[str]) -> bool:
         return description and description.startswith("Bad Request:")
 
 class RateLimited(BaleError):
