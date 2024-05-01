@@ -13,7 +13,7 @@ from typing import Optional, Any, Tuple, Type, TYPE_CHECKING
 
 from bale.utils.request import ResponseStatusCode
 if TYPE_CHECKING:
-    from bale.request.parser import ResponseParser
+    from bale.request._parser import ResponseParser
 
 __all__ = (
     "HTTPClientError",

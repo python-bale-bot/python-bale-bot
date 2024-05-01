@@ -9,15 +9,14 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Dict, Optional
-from .basefile import BaseFile
-from .photosize import PhotoSize
+from ._basefile import BaseFile
 
 __all__ = (
-	"Document",
+	"Voice",
 )
 
-class Document(BaseFile):
-	"""This object shows a Document.
+class Voice(BaseFile):
+	"""This object shows a Voice.
 
     Attributes
     ----------
@@ -25,25 +24,15 @@ class Document(BaseFile):
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
             Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
-        thumbnail: :class:`bale.PhotoSize`, optional
-            document thumbnail as defined by sender.
         file_name: :obj:`str`, optional
-            Original document filename as defined by sender.
+            Original voice filename as defined by sender.
         mime_type: :obj:`str`, optional
             MIME type of file as defined by sender.
         file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
-	__slots__ = (
-        "thumbnail",
-        "file_name",
-        "mime_type"
-	)
-
-	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = None, thumbnail: Optional["PhotoSize"] = None,
-				 mime_type: Optional[str] = None, file_size: Optional[int] = None):
+	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = None, mime_type: Optional[str] = None, file_size: Optional[int] = None):
 		super().__init__(file_id, file_unique_id, file_size)
-		self.thumbnail = thumbnail
 		self.file_name = file_name
 		self.mime_type = mime_type
 		self.file_size = file_size
@@ -55,7 +44,5 @@ class Document(BaseFile):
 		data = BaseFile.parse_data(data)
 		if not data:
 			return None
-
-		data["thumbnail"] = PhotoSize.from_dict(data.get('thumbnail'), bot)
 
 		return super().from_dict(data, bot)

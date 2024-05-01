@@ -9,7 +9,7 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from .basefile import BaseFile
+from ._basefile import BaseFile
 from typing import Optional
 
 __all__ = (

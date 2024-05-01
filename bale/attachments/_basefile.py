@@ -13,7 +13,7 @@ from bale import BaleObject
 from typing import Optional, Any, ClassVar
 from io import BufferedIOBase
 
-from .inputfile import InputFile
+from ._inputfile import InputFile
 
 __all__ = ("BaseFile",)
 

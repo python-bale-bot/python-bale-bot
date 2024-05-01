@@ -16,7 +16,7 @@ from inspect import signature, Parameter
 
 from bale import Update, Message
 from bale.checks import BaseCheck
-from .basehandler import BaseHandler
+from ._basehandler import BaseHandler
 
 
 class CommandHandler(BaseHandler):
@@ -40,7 +40,7 @@ class CommandHandler(BaseHandler):
 
     def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None):
         super().__init__()
-        command = list(command) if not isinstance(command, list) else command
+        command = [command] if not isinstance(command, list) else command
 
         for comm in command:
             if not re.match(r"^[\da-z_]{1,32}$", comm):
@@ -57,6 +57,9 @@ class CommandHandler(BaseHandler):
     def _check_params_correct(self, args: List[str]):
         params = []
         remaining_parameters_count = len(args)
+        if remaining_parameters_count == 0:
+            return params
+
         sig = signature(self.callback)
         for name, param_obj in sig.parameters.items():
             if param_obj.kind in [Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD]:
@@ -77,11 +80,11 @@ class CommandHandler(BaseHandler):
                 len(update.message.text) > 1
         ):
             message = update.message
-            args = message.text.split() # /command arg1 arg2 ...
+            args = message.text[1:].split() # /command arg1 arg2 ...
             command = args[0]
             args = args[1:]
             if not (
-                    message.text[0] == '/' and command in self.commands
+                message.text[0] == '/' and command in self.commands
             ):
                 return None
 
@@ -89,8 +92,8 @@ class CommandHandler(BaseHandler):
                 return None
 
             parameters = self._check_params_correct(args)
-            if not parameters:
-                return
+            if parameters is False:
+                return None
 
             if not args:
                 return (

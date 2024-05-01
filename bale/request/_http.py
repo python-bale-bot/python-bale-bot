@@ -14,11 +14,11 @@ import asyncio
 import aiohttp
 import logging
 from ssl import SSLCertVerificationError
-from bale.version import BALE_API_BASE_URL, BALE_API_FILE_URL
-from bale.attachments.inputfile import InputFile
-from bale.error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkError, TimeOut, BaleError, HTTPException
-from .parser import ResponseParser
-from .params import RequestParams
+from bale._version import BALE_API_BASE_URL, BALE_API_FILE_URL
+from bale.attachments import InputFile
+from bale._error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkError, TimeOut, BaleError, HTTPException
+from ._parser import ResponseParser
+from ._params import RequestParams
 
 from bale.utils.request import ResponseStatusCode, to_json, find_error_class
 

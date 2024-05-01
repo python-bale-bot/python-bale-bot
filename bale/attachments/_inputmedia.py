@@ -12,13 +12,13 @@ from __future__ import annotations
 
 from typing import Optional, Union
 from bale import BaleObject
-from .inputfile import InputFile
-from .basefile import BaseFile
-from .photosize import PhotoSize
-from .document import Document
-from .audio import Audio
-from .video import Video
-from .animation import Animation
+from ._inputfile import InputFile
+from ._basefile import BaseFile
+from ._photosize import PhotoSize
+from ._document import Document
+from ._audio import Audio
+from ._video import Video
+from ._animation import Animation
 
 from bale.utils.files import parse_file_input
 from bale.utils.types import AttachmentType, FileInput

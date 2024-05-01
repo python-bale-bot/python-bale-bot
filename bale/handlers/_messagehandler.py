@@ -12,14 +12,22 @@ from __future__ import annotations
 
 from typing import Tuple, Optional
 
-from bale import Update, CallbackQuery
+from bale import Update, Message
 from bale.checks import BaseCheck
-from .basehandler import BaseHandler
+from ._basehandler import BaseHandler
 
 
-class CallbackQueryHandler(BaseHandler):
-    """This object shows a Callback Query Handler.
-    It's a handler class to handle Callback Queries.
+class MessageHandler(BaseHandler):
+    """This object shows a Message Handler.
+    It's a handler class to handle Messages.
+
+    Parameters
+    ----------
+        check: Callable, optional
+            The check for this handler.
+
+            .. hint::
+                Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
     """
     __slots__ = ("check",)
 
@@ -33,13 +41,12 @@ class CallbackQueryHandler(BaseHandler):
 
         self.check = check
 
-    def check_new_update(self, update: "Update") -> Optional[Tuple["CallbackQuery"]]:
-        if not update.callback_query:
-            return None
+    def check_new_update(self, update: "Update") -> Optional[Tuple["Message"]]:
+        if update.message is not None and (
+                not self.check or self.check.check_update(update)
+        ):
+            return (
+                update.message,
+            )
 
-        if self.check and not self.check.check_update(update):
-            return None
-
-        return (
-            update.callback_query,
-        )
+        return None

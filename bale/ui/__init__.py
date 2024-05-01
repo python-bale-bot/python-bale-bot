@@ -1,9 +1,9 @@
-from .inlinekeyboardbutton import InlineKeyboardButton
-from .menukeyboardbutton import MenuKeyboardButton
-from .replymarkupitem import ReplyMarkupItem
-from .replymakrup import BaseReplyMarkup
-from .inlinekeyboardmarkup import InlineKeyboardMarkup
-from .menukeyboardmarkup import MenuKeyboardMarkup
+from ._inlinekeyboardbutton import InlineKeyboardButton
+from ._menukeyboardbutton import MenuKeyboardButton
+from ._replymarkupitem import ReplyMarkupItem
+from ._replymakrup import BaseReplyMarkup
+from ._inlinekeyboardmarkup import InlineKeyboardMarkup
+from ._menukeyboardmarkup import MenuKeyboardMarkup
 
 __all__ = (
     "InlineKeyboardButton",

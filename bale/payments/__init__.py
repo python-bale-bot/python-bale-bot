@@ -1,6 +1,6 @@
-from .invoice import Invoice
-from .labeledprice import LabeledPrice
-from .successfulpayment import SuccessfulPayment
+from ._invoice import Invoice
+from ._labeledprice import LabeledPrice
+from ._successfulpayment import SuccessfulPayment
 
 __all__ = (
     "Invoice",

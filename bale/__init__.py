@@ -73,28 +73,14 @@ __all__ = (
 #  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 
 from .baleobject import BaleObject
-from .webhookinfo import WebhookInfo
-from .waitcontext import WaitContext
-from .attachments.inputfile import InputFile
-from .attachments.basefile import BaseFile
-from .attachments.photosize import PhotoSize
-from .attachments.document import Document
-from .attachments.voice import Voice
-from .attachments.audio import Audio
-from .attachments.contact import Contact
-from .attachments.location import Location
-from .attachments.video import Video
-from .attachments.animation import Animation
-from .attachments.inputmedia import (
-    InputMedia,
-    InputMediaPhoto,
-    InputMediaVideo,
-    InputMediaAnimation,
-    InputMediaAudio,
-    InputMediaDocument
+from ._webhookinfo import WebhookInfo
+from ._waitcontext import WaitContext
+from .attachments import (
+    InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation, InputMedia, InputMediaPhoto,
+    InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument
 )
-from .chatphoto import ChatPhoto
-from .error import (
+from ._chatphoto import ChatPhoto
+from ._error import (
     BaleError,
     APIError,
     NetworkError,
@@ -108,18 +94,18 @@ from .error import (
     BadRequest
 )
 from .payments import LabeledPrice, Invoice, SuccessfulPayment
-from .state import State
-from .sticker import Sticker
+from ._state import State
+from ._sticker import Sticker
 from .ui import InlineKeyboardMarkup, MenuKeyboardMarkup, MenuKeyboardButton, InlineKeyboardButton, ReplyMarkupItem
-from .updater import Updater
-from .user import User
-from .chatmember import ChatMember
-from .chat import Chat
-from .message import Message
-from .callbackquery import CallbackQuery
-from .update import Update
-from .bot import Bot
-from .version import __version__
+from ._updater import Updater
+from ._user import User
+from ._chatmember import ChatMember
+from ._chat import Chat
+from ._message import Message
+from ._callbackquery import CallbackQuery
+from ._update import Update
+from ._bot import Bot
+from ._version import __version__
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"

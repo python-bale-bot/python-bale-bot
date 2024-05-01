@@ -10,10 +10,9 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 import asyncio
 import logging
-import contextlib
-from typing import TYPE_CHECKING, Callable, Coroutine, Any, Optional, NoReturn
+from typing import TYPE_CHECKING, Callable, Coroutine, Any, Optional
 
-from .error import InvalidToken, BaleError, TimeOut
+from ._error import InvalidToken, BaleError, TimeOut
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -57,6 +56,7 @@ class Updater:
 
     async def setup(self):
         """setup the updater object"""
+        # TODO: FILL THE DOCSTRINGS
         if self._running:
             raise RuntimeError(
                 "Updater already is running!"
@@ -81,7 +81,7 @@ class Updater:
             self._running = False
             raise exc
 
-    async def _polling(self) -> NoReturn:
+    async def _polling(self) -> None:
         async def action_getupdates() -> bool: # When False is returned, the operation stops.
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
@@ -112,23 +112,9 @@ class Updater:
     async def __start_worker(self, work_coroutine: Callable[..., Coroutine], error_handler: Callable[[BaleError], bool]) -> None:
         interval = self.interval
 
-        async def wrapped_action():
-            work_task = asyncio.create_task(work_coroutine())
-            wait_stop_worker_task = asyncio.create_task(self.__stop_worker_event.wait())
-
-            done, pending = await asyncio.wait((work_task, wait_stop_worker_task), return_when=asyncio.FIRST_COMPLETED)
-            with contextlib.suppress(asyncio.CancelledError): # to ignore the asyncio.CancelledError error
-                for future in pending:
-                    future.cancel()
-
-            if wait_stop_worker_task in done:
-                _log.debug('Updater Worker was cancelled.')
-
-            return work_task.result()
-
         while self._running:
             try:
-                if not await work_coroutine():
+                if self.__stop_worker_event.is_set() or not await work_coroutine():
                     break
             except InvalidToken as exc:
                 _log.error('Token was invalid')
@@ -141,6 +127,8 @@ class Updater:
                     raise exc
 
                 interval = 10 # 10 seconds to show errors
+            else: # back interval to normal
+                interval = self.interval
 
             if interval:
                 await asyncio.sleep(interval)
@@ -148,9 +136,7 @@ class Updater:
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
         if self._running:
-            if self.__stop_worker_event:
-                self.__stop_worker_event.set()
+            self.__worker_task.cancel()
 
-        self.__stop_worker_event = None
         self.__worker_task = None
         self._running = False

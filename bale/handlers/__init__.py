@@ -1,9 +1,9 @@
-from .basehandler import BaseHandler
-from .callbackqueryhandler import CallbackQueryHandler
-from .commandhandler import CommandHandler
-from .messagehandler import MessageHandler
-from .editedmessagehandler import EditedMessageHandler
-from .regexhandler import RegexHandler
+from ._basehandler import BaseHandler
+from ._callbackqueryhandler import CallbackQueryHandler
+from ._commandhandler import CommandHandler
+from ._messagehandler import MessageHandler
+from ._editedmessagehandler import EditedMessageHandler
+from ._regexhandler import RegexHandler
 
 __all__ = (
     "BaseHandler",

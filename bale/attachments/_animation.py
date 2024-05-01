@@ -8,15 +8,16 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Optional
-from .basefile import BaseFile
+from typing import Optional, Dict
+from ._basefile import BaseFile
+from ._photosize import PhotoSize
 
 __all__ = (
-    "Audio",
+    "Animation",
 )
 
-class Audio(BaseFile):
-    """This object shows an Audio.
+class Animation(BaseFile):
+    """This object shows an Animation.
 
     Attributes
     ----------
@@ -24,31 +25,49 @@ class Audio(BaseFile):
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
             Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
+        width: int
+            Animation width as defined by sender.
+        height: str
+            Animation height as defined by sender.
         duration: int
-            Duration of the audio in seconds as defined by sender.
-        title: :obj:`str`, optional
-            Title of the audio as defined by sender or by audio tags.
+            Duration of the animation in seconds as defined by sender.
+        thumbnail: :class:`bale.PhotoSize`, optional
+            Animation thumbnail as defined by sender.
         file_name: :obj:`str`, optional
-            Original audio filename as defined by sender.
+            Original animation filename as defined by sender.
         mime_type: :obj:`str`, optional
             MIME type of file as defined by sender.
         file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
     __slots__ = (
+        "width",
+        "height",
         "duration",
-        "title",
+        "thumbnail",
         "file_name",
         "mime_type"
     )
 
-    def __init__(self, file_id: str, file_unique_id: str, duration: int, file_name: Optional[str] = None, title: Optional[str] = None,
-                 mime_type: Optional[str] = None, file_size: Optional[int] = None):
+    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int, file_name: Optional[str] = None,
+                 thumbnail: Optional["PhotoSize"] = None, mime_type: Optional[str] = None, file_size: Optional[int] = None):
         super().__init__(file_id, file_unique_id, file_size)
 
+        self.width = width
+        self.height = height
         self.duration = duration
         self.file_name = file_name
-        self.title = title
+        self.thumbnail = thumbnail
         self.mime_type = mime_type
 
         self._lock()
+
+    @classmethod
+    def from_dict(cls, data: Optional[Dict], bot):
+        data = BaseFile.parse_data(data)
+        if not data:
+            return None
+
+        data["thumbnail"] = PhotoSize.from_dict(data.get('thumbnail'), bot)
+
+        return super().from_dict(data, bot)

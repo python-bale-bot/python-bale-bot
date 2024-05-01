@@ -25,7 +25,20 @@ __all__ = (
 class BaseHandler:
     """This object shows a Base Handler.
     This is a base class for all update handlers. You can create custom handlers by inheriting from it.
-    TODO: COMPLETE DOCSTRING
+
+    .. important::
+        Follow the steps below to create a custom handler:
+        1. Create a subclass of :class:`bale.BaseHandler`.
+
+            .. code:: python
+                from bale.handlers import BaseHandler
+
+                class MyHandler(BaseHandler):
+                    pass
+        2. Create the method :meth:`check_new_update` inside the class
+        When processing updates, the "Mohammed" method is called. This method must return either None or a tuple.
+
+
     """
     __slots__ = ("_callback",)
 

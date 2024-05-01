@@ -14,7 +14,7 @@ import re
 from typing import Union, Pattern, Tuple, Optional, Match
 
 from bale import Update, Message
-from .basehandler import BaseHandler
+from ._basehandler import BaseHandler
 
 
 class RegexHandler(BaseHandler):
