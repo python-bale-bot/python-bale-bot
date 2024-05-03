@@ -12,7 +12,7 @@ extras_require = {
         'sphinx-paramlinks==0.6.0',
         'sphinxcontrib-mermaid==0.8.1',
         'sphinx-copybutton==0.5.2',
-        'furo==2024.1.29',
+        'furo==2024.4.27',
         'sphinx-inline-tabs==2023.4.21'
     ]
 }
