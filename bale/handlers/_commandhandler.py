@@ -65,7 +65,7 @@ class CommandHandler(BaseHandler):
             if param_obj.kind in [Parameter.VAR_POSITIONAL, Parameter.VAR_KEYWORD]:
                 return params + (args[len(params):])
 
-            params[len(params)] = (name, args[len(args) - remaining_parameters_count])
+            params.append((name, args[len(args) - remaining_parameters_count]))
             remaining_parameters_count -= 1
 
         if remaining_parameters_count != 0:
