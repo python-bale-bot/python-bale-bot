@@ -10,6 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Optional
 from ._basefile import BaseFile
+from bale.utils.types import MissingValue
 
 __all__ = (
     "Audio",
@@ -42,8 +43,8 @@ class Audio(BaseFile):
         "mime_type"
     )
 
-    def __init__(self, file_id: str, file_unique_id: str, duration: int, file_name: Optional[str] = None, title: Optional[str] = None,
-                 mime_type: Optional[str] = None, file_size: Optional[int] = None):
+    def __init__(self, file_id: str, file_unique_id: str, duration: int, file_name: Optional[str] = MissingValue, title: Optional[str] = MissingValue,
+                 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
         super().__init__(file_id, file_unique_id, file_size)
 
         self.duration = duration

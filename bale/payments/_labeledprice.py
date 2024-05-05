@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Optional
 
 from bale import BaleObject
+from bale.utils.types import MissingValue
 
 __all__ = (
 	"LabeledPrice",
@@ -29,7 +30,7 @@ class LabeledPrice(BaleObject):
     """
 	__slots__ = ("label", "amount")
 
-	def __init__(self, label: Optional[str] = None, amount: Optional[int] = None):
+	def __init__(self, label: Optional[str] = MissingValue, amount: Optional[int] = MissingValue):
 		super().__init__()
 		self._id = (label, amount)
 		self.label = label

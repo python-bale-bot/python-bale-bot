@@ -19,7 +19,7 @@ from bale import (
     MenuKeyboardMarkup, Video, Voice, Audio, Sticker, SuccessfulPayment, Animation,
     InputFile
 )
-from bale.utils.types import FileInput, AttachmentType, MediaInput
+from bale.utils.types import FileInput, AttachmentType, MediaInput, MissingValue
 from .helpers import parse_time
 
 
@@ -108,16 +108,16 @@ class Message(BaleObject):
         "successful_payment"
     )
 
-    def __init__(self, message_id: int, date: datetime, text: Optional[str], caption: Optional[str],
-                 forward_from: Optional["User"], forward_from_chat: Optional["Chat"],
-                 forward_from_message_id: Optional[str], from_user: Optional["User"],
-                 document: Optional["Document"], contact: Optional["Contact"], edit_date: Optional[datetime],
-                 location: Optional["Location"], chat: Optional["Chat"], video: Optional["Video"],
-                 photos: Optional[List["PhotoSize"]], sticker: Optional["Sticker"],
-                 reply_to_message: Optional["Message"], invoice: Optional["Invoice"],
-                 audio: Optional["Audio"], voice: Optional["Voice"],
-                 successful_payment: Optional["SuccessfulPayment"], animation: Optional["Animation"],
-                 new_chat_members: Optional[List["User"]], left_chat_member: Optional["User"]):
+    def __init__(self, message_id: int, date: datetime, text: Optional[str] = MissingValue, caption: Optional[str] = MissingValue,
+                 forward_from: Optional["User"] = MissingValue, forward_from_chat: Optional["Chat"] = MissingValue,
+                 forward_from_message_id: Optional[str] = MissingValue, from_user: Optional["User"] = MissingValue,
+                 document: Optional["Document"] = MissingValue, contact: Optional["Contact"] = MissingValue, edit_date: Optional[datetime] = MissingValue,
+                 location: Optional["Location"] = MissingValue, chat: Optional["Chat"] = MissingValue, video: Optional["Video"] = MissingValue,
+                 photos: Optional[List["PhotoSize"]] = MissingValue, sticker: Optional["Sticker"] = MissingValue,
+                 reply_to_message: Optional["Message"] = MissingValue, invoice: Optional["Invoice"] = MissingValue,
+                 audio: Optional["Audio"] = MissingValue, voice: Optional["Voice"] = MissingValue,
+                 successful_payment: Optional["SuccessfulPayment"] = MissingValue, animation: Optional["Animation"] = MissingValue,
+                 new_chat_members: Optional[List["User"]] = MissingValue, left_chat_member: Optional["User"] = MissingValue):
         super().__init__()
         self._id = message_id
         self.message_id = message_id

@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject, User, ChatPhoto, Document, PhotoSize, Video, Animation, Audio
-from bale.utils.types import FileInput, MediaInput
+from bale.utils.types import FileInput, MediaInput, MissingValue
 from typing import TYPE_CHECKING, Optional, List, Union, ClassVar, Dict
 
 if TYPE_CHECKING:
@@ -61,8 +61,9 @@ class Chat(BaleObject):
         "bot"
     )
 
-    def __init__(self, chat_id: int, chat_type: str, title: Optional[str], username: Optional[str], first_name: Optional[str], last_name: Optional[str],
-                 photo: Optional["ChatPhoto"], invite_link: Optional[str]):
+    def __init__(self, chat_id: int, chat_type: str, title: Optional[str] = MissingValue, username: Optional[str] = MissingValue,
+                 first_name: Optional[str] = MissingValue, last_name: Optional[str] = MissingValue, photo: Optional["ChatPhoto"] = MissingValue,
+                 invite_link: Optional[str] = MissingValue):
         super().__init__()
         self._id = chat_id
         self.id = chat_id
@@ -277,7 +278,7 @@ class Chat(BaleObject):
                 )
         """
         return await self.get_bot().send_invoice(self.id, title, description, provider_token, prices,
-                                        payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                        invoice_payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                         need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                         delete_after=delete_after)
 

@@ -11,6 +11,7 @@
 from typing import Dict, Optional
 from ._basefile import BaseFile
 from ._photosize import PhotoSize
+from bale.utils.types import MissingValue
 
 __all__ = (
 	"Document",
@@ -40,8 +41,8 @@ class Document(BaseFile):
         "mime_type"
 	)
 
-	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = None, thumbnail: Optional["PhotoSize"] = None,
-				 mime_type: Optional[str] = None, file_size: Optional[int] = None):
+	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = MissingValue, thumbnail: Optional["PhotoSize"] = MissingValue,
+				 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
 		super().__init__(file_id, file_unique_id, file_size)
 		self.thumbnail = thumbnail
 		self.file_name = file_name

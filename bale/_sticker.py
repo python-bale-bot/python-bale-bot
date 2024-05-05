@@ -10,6 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Optional, Dict
 from bale import BaleObject, PhotoSize
+from bale.utils.types import MissingValue
 
 __all__ = (
     "Sticker",
@@ -47,8 +48,8 @@ class Sticker(BaleObject):
         "set_name",
         "file_size"
     )
-    def __init__(self, file_id: str, file_unique_id: str, sticker_type: str, width: int, height: int, thumb: Optional["PhotoSize"],
-                 set_name: Optional[str] = None, file_size: Optional[int] = None):
+    def __init__(self, file_id: str, file_unique_id: str, sticker_type: str, width: int, height: int, thumb: Optional["PhotoSize"] = MissingValue,
+                 set_name: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
         super().__init__()
         self._id = file_id
         self.file_id = file_id

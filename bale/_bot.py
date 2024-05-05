@@ -43,7 +43,7 @@ from bale.checks import BaseCheck
 from bale.request import HTTPClient, handle_request_param
 from ._waitcontext import WaitContext
 from ._error import NotFound, InvalidToken
-from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER
+from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER, MissingValue
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 
@@ -538,8 +538,8 @@ class Bot:
         return response.result or False
 
     async def send_message(self, chat_id: Union[str, int], text: str, *,
-                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
         """This service is used to send text messages.
 
         .. code:: python
@@ -577,29 +577,12 @@ class Bot:
                 "chat_id param must be type of str or int"
             )
 
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of int or str"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
         payload = {
             "chat_id": chat_id,
             "text": text
         }
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -641,21 +624,6 @@ class Bot:
             APIError
                 Forward Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(from_chat_id, (str, int)):
-            raise TypeError(
-                "from_chat_id param must be type of str or int"
-            )
-
-        if not isinstance(message_id, (str, int)):
-            raise TypeError(
-                "message_id param must be type of str or int"
-            )
-
         payload = {
             "chat_id": chat_id,
             "from_chat_id": from_chat_id,
@@ -670,10 +638,10 @@ class Bot:
         return result
 
     async def send_document(self, chat_id: Union[str, int], document: Union["Document", FileInput], *,
-                            caption: Optional[str] = None,
-                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
-                            file_name: Optional[str] = None) -> "Message":
+                            caption: Optional[str] = MissingValue,
+                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                            file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send document.
 
         .. code:: python
@@ -711,38 +679,6 @@ class Bot:
             APIError
                 Send Document Failed.        
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if caption and not isinstance(caption, str):
-            raise TypeError(
-                "caption param must be type of str"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        if file_name and not isinstance(file_name, str):
-            raise TypeError(
-                "file_name param must be type of str"
-            )
-
         payload = {
             "chat_id": chat_id,
             "document": parse_file_input(document, Document, file_name)
@@ -750,7 +686,7 @@ class Bot:
         if caption:
             payload["caption"] = caption
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -765,10 +701,10 @@ class Bot:
         return result
 
     async def send_photo(self, chat_id: Union[str, int], photo: Union["PhotoSize", FileInput], *,
-                         caption: Optional[str] = None,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[Union[str]] = None) -> "Message":
+                         caption: Optional[str] = MissingValue,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         file_name: Optional[Union[str]] = MissingValue) -> "Message":
         """This service is used to send photo.
 
         .. code:: python
@@ -806,38 +742,6 @@ class Bot:
             APIError
                 Send photo Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if caption and not isinstance(caption, str):
-            raise TypeError(
-                "caption param must be type of str"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        if file_name and not isinstance(file_name, str):
-            raise TypeError(
-                "file_name param must be type of str"
-            )
-
         payload = {
             "chat_id": chat_id,
             "photo": parse_file_input(photo, PhotoSize, file_name)
@@ -845,7 +749,7 @@ class Bot:
         if caption:
             payload["caption"] = caption
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -861,10 +765,10 @@ class Bot:
         return result
 
     async def send_audio(self, chat_id: Union[str, int], audio: Union[Audio, FileInput], *,
-                         caption: Optional[str] = None,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[str] = None) -> "Message":
+                         caption: Optional[str] = MissingValue,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Audio.
 
         .. code:: python
@@ -902,38 +806,6 @@ class Bot:
             APIError
                 Send Audio Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if caption and not isinstance(caption, str):
-            raise TypeError(
-                "caption param must be type of str"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        if file_name and not isinstance(file_name, str):
-            raise TypeError(
-                "file_name param must be type of str"
-            )
-
         payload = {
             "chat_id": chat_id,
             "audio": parse_file_input(audio, Audio, file_name)
@@ -941,7 +813,7 @@ class Bot:
         if caption:
             payload["caption"] = caption
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -956,10 +828,10 @@ class Bot:
         return result
 
     async def send_video(self, chat_id: Union[str, int], video: Union[Video, FileInput], *,
-                         caption: Optional[str] = None,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[str] = None) -> "Message":
+                         caption: Optional[str] = MissingValue,
+                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Video.
 
         .. code:: python
@@ -997,38 +869,6 @@ class Bot:
             APIError
                 Send Video Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if caption and not isinstance(caption, str):
-            raise TypeError(
-                "caption param must be type of str"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        if file_name and not isinstance(file_name, str):
-            raise TypeError(
-                "file_name param must be type of str"
-            )
-
         payload = {
             "chat_id": chat_id,
             "video": parse_file_input(video, Video, file_name)
@@ -1036,7 +876,7 @@ class Bot:
         if caption:
             payload["caption"] = caption
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -1049,11 +889,11 @@ class Bot:
         return result
 
     async def send_animation(self, chat_id: Union[str, int], animation: Union[Animation, FileInput], *,
-                             duration: Optional[int] = None, width: Optional[int] = None, height: Optional[int] = None,
-                             caption: Optional[str] = None,
-                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                             reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None,
-                             file_name: Optional[str] = None) -> "Message":
+                             duration: Optional[int] = MissingValue, width: Optional[int] = MissingValue, height: Optional[int] = MissingValue,
+                             caption: Optional[str] = MissingValue,
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                             reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                             file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Animation.
 
         .. code:: python
@@ -1097,53 +937,6 @@ class Bot:
             APIError
                 Send Animation Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if duration and not isinstance(duration, int):
-            raise TypeError(
-                "duration param must be type of int"
-            )
-
-        if width and not isinstance(width, int):
-            raise TypeError(
-                "width param must be type of int"
-            )
-
-        if height and not isinstance(height, int):
-            raise TypeError(
-                "height param must be type of int"
-            )
-
-        if caption and not isinstance(caption, str):
-            raise TypeError(
-                "caption param must be type of str"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        if file_name and not isinstance(file_name, str):
-            raise TypeError(
-                "file_name param must be type of str"
-            )
-
         payload = {
             "chat_id": chat_id,
             "animation": parse_file_input(animation, Animation, file_name)
@@ -1157,7 +950,7 @@ class Bot:
         if caption:
             payload["caption"] = caption
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -1172,8 +965,8 @@ class Bot:
         return result
 
     async def send_media_group(self, chat_id: Union[str, int], media: List[MediaInput], *,
-                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                             reply_to_message_id: Optional[Union[str, int]] = None) -> List["Message"]:
+                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                             reply_to_message_id: Optional[Union[str, int]] = MissingValue) -> List["Message"]:
         """This service is used to send a group of photos, videos, documents or audios as an album.
         Documents and audio files can be only grouped on an album with messages of the same type.
 
@@ -1205,34 +998,12 @@ class Bot:
             APIError
                 Send media group Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(media, list):
-            raise TypeError(
-                "media param must be list of Media Inputs"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
         payload = {
             "chat_id": chat_id,
             "media": media
         }
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
         if reply_to_message_id:
             payload["reply_to_message_id"] = reply_to_message_id
 
@@ -1247,8 +1018,8 @@ class Bot:
 
     async def send_location(
             self, chat_id: Union[str, int], location: "Location",
-            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-            reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None
+            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue
     ) -> "Message":
         """Use this method to send point on the map.
 
@@ -1283,41 +1054,18 @@ class Bot:
             APIError
                 Send Location Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(location, Location):
-            raise TypeError(
-                "location param must be type of Location"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
+        payload = {
+            "chat_id": chat_id,
+            "latitude": location.latitude,
+            "longitude": location.longitude,
+            "horizontal_accuracy": location.horizontal_accuracy,
+            "reply_to_message_id": reply_to_message_id
+        }
+        if components is not MissingValue:
+            payload["reply_markup"] = components.to_json()
 
         response = await self._http.send_location(
-            params=handle_request_param(
-                dict(
-                    chat_id=str(chat_id), latitude=location.latitude, longitude=location.longitude,
-                    horizontal_accuracy=location.horizontal_accuracy, reply_markup=components,
-                    reply_to_message_id=reply_to_message_id
-                )
-            )
+            params=handle_request_param(payload)
         )
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
@@ -1327,8 +1075,8 @@ class Bot:
         return result
 
     async def send_contact(self, chat_id: Union[str, int], contact: "Contact",
-                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = None,
-                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -1362,40 +1110,18 @@ class Bot:
             APIError
                 Send Contact Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat param must be type of str or int"
-            )
+        payload = {
+            "chat_id": chat_id,
+            "phone_number": contact.phone_number,
+            "first_name": contact.first_name,
+            "reply_to_message_id": reply_to_message_id
+        }
+        if contact.last_name:
+            payload["last_name"] = contact.last_name
+        if components is not MissingValue:
+            payload["components"] = components.to_json()
 
-        if not isinstance(contact, Contact):
-            raise TypeError(
-                "contact param must be type of Contact"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
-        response = await self._http.send_contact(params=handle_request_param(
-            dict(
-                chat_id=str(chat_id), phone_number=contact.phone_number, first_name=contact.first_name,
-                last_name=contact.last_name, reply_markup=components,
-                reply_to_message_id=reply_to_message_id
-            )
-        ))
+        response = await self._http.send_contact(params=handle_request_param(payload))
         result = Message.from_dict(data=response.result, bot=self)
         self._state.store_message(result)
         if delete_after:
@@ -1405,7 +1131,7 @@ class Bot:
 
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
                            prices: List["LabeledPrice"], *,
-                           payload: Optional[str] = None,
+                           invoice_payload: Optional[str] = None,
                            photo_url: Optional[str] = None, need_name: Optional[bool] = False,
                            need_phone_number: Optional[bool] = False,
                            need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
@@ -1444,7 +1170,7 @@ class Bot:
                     3. Wallet number "Bale"
             prices: List[:class:`bale.LabeledPrice`]
                 A list of prices.
-            payload: :obj:`str`, optional
+            invoice_payload: :obj:`str`, optional
                 Bot-defined invoice payload. This will not be displayed to the user, use for your internal processes.
             photo_url: :obj:`str`, optional
                 URL of the product photo for the invoice. Can be a photo of the goods or a marketing image for a service.
@@ -1475,66 +1201,6 @@ class Bot:
             APIError
                 Send Invoice Failed.  
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat param must be type of str or int"
-            )
-
-        if not isinstance(title, str):
-            raise TypeError(
-                "title param must be type of str"
-            )
-
-        if not isinstance(provider_token, str):
-            raise TypeError(
-                "provider_token param must be type of str"
-            )
-
-        if not isinstance(prices, list):
-            raise TypeError(
-                "prices must param must be type of list"
-            )
-
-        if payload and not isinstance(payload, str):
-            raise TypeError(
-                "payload param must be type of str"
-            )
-
-        if photo_url and not isinstance(photo_url, str):
-            raise TypeError(
-                "photo_url param must be type of str"
-            )
-
-        if need_name is not None and not isinstance(need_name, bool):
-            raise TypeError(
-                "need_name param must be type of boolean"
-            )
-
-        if need_phone_number is not None and not isinstance(need_phone_number, bool):
-            raise TypeError(
-                "need_phone_number param must be type of boolean"
-            )
-
-        if need_email is not None and not isinstance(need_email, bool):
-            raise TypeError(
-                "need_email param must be type of boolean"
-            )
-
-        if need_shipping_address is not None and not isinstance(need_shipping_address, bool):
-            raise TypeError(
-                "need_shipping_address param must be type of boolean"
-            )
-
-        if is_flexible is not None and not isinstance(is_flexible, bool):
-            raise TypeError(
-                "is_flexible param must be type of boolean"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
         prices = [price.to_dict() for price in prices if isinstance(price, LabeledPrice)]
         payload = {
             "chat_id": chat_id,
@@ -1542,7 +1208,7 @@ class Bot:
             "description": description,
             "provider_token": provider_token,
             "prices": prices,
-            "payload": payload,
+            "payload": invoice_payload,
             "photo_url": photo_url,
             "need_name": need_name,
             "need_phone_number": need_phone_number,
@@ -1562,7 +1228,7 @@ class Bot:
         return result
 
     async def send_sticker(self, chat_id: Union[str, int], sticker: Union["Sticker", FileInput], *,
-                         reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
         """This service is used to send sticker.
 
         .. code:: python
@@ -1594,27 +1260,11 @@ class Bot:
             APIError
                 Send sticker Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
         payload = {
             "chat_id": chat_id,
-            "sticker": parse_file_input(sticker, Sticker, None)
+            "sticker": parse_file_input(sticker, Sticker, None),
+            "reply_to_message_id": reply_to_message_id
         }
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_sticker(
             params=handle_request_param(payload)
@@ -1627,7 +1277,7 @@ class Bot:
         return result
 
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
-                           components: Optional["InlineKeyboardMarkup"] = None) -> "Message":
+                           components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         .. code:: python
@@ -1653,30 +1303,14 @@ class Bot:
             APIError
                 Edit Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(message_id, (str, int)):
-            raise TypeError(
-                "message_id param must be type of str or int"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
         payload = {
             "chat_id": chat_id,
             "message_id": message_id,
             "text": text
         }
         if components:
-            payload["reply_markup"] = components
+            payload["reply_markup"] = components.to_json()
+
         response = await self._http.edit_message_text(
             params=handle_request_param(payload)
         )
@@ -1685,7 +1319,7 @@ class Bot:
         return result
 
     async def edit_message_caption(self, chat_id: Union[str, int], message_id: Union[str, int], caption: str, *,
-                           components: Optional["InlineKeyboardMarkup"] = None) -> "Message":
+                           components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit captions of messages that you have already sent through the arm.
 
         .. code:: python
@@ -1711,23 +1345,6 @@ class Bot:
             APIError
                 Edit Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(message_id, (str, int)):
-            raise TypeError(
-                "message_id param must be type of str or int"
-            )
-
-        if components:
-            if not isinstance(components, (InlineKeyboardMarkup, MenuKeyboardMarkup)):
-                raise TypeError(
-                    "components param must be type of InlineKeyboardMarkup or MenuKeyboardMarkup"
-                )
-            components = components.to_json()
-
         payload = {
             "chat_id": chat_id,
             "message_id": message_id,
@@ -1743,7 +1360,7 @@ class Bot:
         return result
 
     async def copy_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int], *,
-                           reply_to_message_id: Optional[Union[str, int]] = None, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
         """You can use this service to copy a message and send it in another chat.
 
         .. code:: python
@@ -1771,38 +1388,12 @@ class Bot:
             APIError
                 Copy Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(from_chat_id, (str, int)):
-            raise TypeError(
-                "from_chat_id param must be type of str or int"
-            )
-
-        if not isinstance(message_id, (str, int)):
-            raise TypeError(
-                "message_id param must be type of str or int"
-            )
-
-        if reply_to_message_id and not isinstance(reply_to_message_id, (str, int)):
-            raise TypeError(
-                "reply_to_message_id param must be type of str or int"
-            )
-
-        if delete_after and not isinstance(delete_after, (int, float)):
-            raise TypeError(
-                "delete_after param must be type of int or float"
-            )
-
         payload = {
-            "chat_id": str(chat_id),
-            "from_chat_id": str(from_chat_id),
-            "message_id": str(message_id)
+            "chat_id": chat_id,
+            "from_chat_id": from_chat_id,
+            "message_id": message_id,
+            "reply_to_message_id": reply_to_message_id
         }
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.copy_message(
             params=handle_request_param(payload)
@@ -1814,7 +1405,7 @@ class Bot:
 
         return result
 
-    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = None) -> None:
+    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = MissingValue) -> None:
         """You can use this service to delete a message that you have already sent through the arm.
 
         .. code:: python
@@ -1842,25 +1433,8 @@ class Bot:
             APIError
                 Delete Message Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(message_id, (str, int)):
-            raise TypeError(
-                "message_id param must be type of str or int"
-            )
-
-        if delay:
-            if not isinstance(delay, (float, int)):
-                raise TypeError(
-                    "delay param must be type of float or int"
-                )
-            delay = float(delay)
-
         payload = {
-            "chat_id": str(chat_id),
+            "chat_id": chat_id,
             "message_id": message_id
         }
 
@@ -1954,11 +1528,6 @@ class Bot:
             APIError
                 Get user Failed.
         """
-        if not isinstance(user_id, (int, str)):
-            raise TypeError(
-                "user_id param must be type of int or str"
-            )
-
         if use_cache and (founded_user := self._state.get_user(str(user_id))):
             return founded_user
 
@@ -1990,16 +1559,6 @@ class Bot:
             :class:`bale.Message` | None
                 The message or ``None`` if not found.
         """
-        if not isinstance(chat_id, int):
-            raise TypeError(
-                "chat_id param must be type of int"
-            )
-
-        if not isinstance(message_id, int):
-            raise TypeError(
-                "message_id param must be type of int"
-            )
-
         return self._state.get_message(chat_id, message_id)
 
     async def get_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> Optional["ChatMember"]:
@@ -2034,16 +1593,6 @@ class Bot:
             APIError
                 Get chat member Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat param must be type of Chat"
-            )
-
-        if not isinstance(user_id, (str, int)):
-            raise TypeError(
-                "user_id must be type of str or int"
-            )
-
         payload = {
             "chat_id": chat_id,
             "user_id": user_id
@@ -2061,22 +1610,22 @@ class Bot:
     async def promote_chat_member(self,
           chat_id: Union[str, int],
           user_id: Union[str, int],
-          can_be_edited: Optional[bool] = None,
-          can_change_info: Optional[bool] = None,
-          can_post_messages: Optional[bool] = None,
-          can_edit_messages: Optional[bool] = None,
-          can_delete_messages: Optional[bool] = None,
-          can_invite_users: Optional[bool] = None,
-          can_restrict_members: Optional[bool] = None,
-          can_pin_messages: Optional[bool] = None,
-          can_promote_members: Optional[bool] = None,
-          can_send_messages: Optional[bool] = None,
-          can_send_media_messages: Optional[bool] = None,
-          can_reply_to_story: Optional[bool] = None,
-          can_send_link_message: Optional[bool] = None,
-          can_send_forwarded_message: Optional[bool] = None,
-          can_see_members: Optional[bool] = None,
-          can_add_story: Optional[bool] = None
+          can_be_edited: Optional[bool] = MissingValue,
+          can_change_info: Optional[bool] = MissingValue,
+          can_post_messages: Optional[bool] = MissingValue,
+          can_edit_messages: Optional[bool] = MissingValue,
+          can_delete_messages: Optional[bool] = MissingValue,
+          can_invite_users: Optional[bool] = MissingValue,
+          can_restrict_members: Optional[bool] = MissingValue,
+          can_pin_messages: Optional[bool] = MissingValue,
+          can_promote_members: Optional[bool] = MissingValue,
+          can_send_messages: Optional[bool] = MissingValue,
+          can_send_media_messages: Optional[bool] = MissingValue,
+          can_reply_to_story: Optional[bool] = MissingValue,
+          can_send_link_message: Optional[bool] = MissingValue,
+          can_send_forwarded_message: Optional[bool] = MissingValue,
+          can_see_members: Optional[bool] = MissingValue,
+          can_add_story: Optional[bool] = MissingValue
     ):
         """an administrator in the chat for this to work and must have the appropriate admin rights.
         Pass :obj:`False` for all boolean parameters to demote a user.
@@ -2142,16 +1691,6 @@ class Bot:
             APIError
                 Promote chat member Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat param must be type of Chat"
-            )
-
-        if not isinstance(user_id, (str, int)):
-            raise TypeError(
-                "user_id must be type of str or int"
-            )
-
         response = await self._http.get_chat_member(params=handle_request_param(dict(
             chat_id=str(chat_id),
             user_id=str(user_id),
@@ -2203,16 +1742,6 @@ class Bot:
             APIError
                 ban chat member Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(user_id, (str, int)):
-            raise TypeError(
-                "user_id must be type of str or int"
-            )
-
         payload = {
             "chat_id": chat_id,
             "user_id": user_id
@@ -2223,7 +1752,7 @@ class Bot:
         )
         return response.result or False
 
-    async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = None) -> bool:
+    async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = MissingValue) -> bool:
         """Use this method to unban a previously kicked user in a group or channel.
         The user will not return to the group or channel automatically, but will be able to join via link, etc.
         The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat,
@@ -2256,21 +1785,6 @@ class Bot:
             APIError
                 unban chat member Failed.
         """
-        if not isinstance(chat_id, (str, int)):
-            raise TypeError(
-                "chat_id param must be type of str or int"
-            )
-
-        if not isinstance(user_id, (str, int)):
-            raise TypeError(
-                "user_id must be type of str or int"
-            )
-
-        if only_if_banned and not isinstance(only_if_banned, bool):
-            raise TypeError(
-                "only_if_banned param must be type of bool"
-            )
-
         payload = {
             "chat_id": chat_id,
             "user_id": user_id,
@@ -2540,7 +2054,7 @@ class Bot:
         webhook_info = WebhookInfo.from_dict(response.result, bot=self)
         return webhook_info
 
-    async def get_updates(self, offset: Optional[int] = None, limit: Optional[int] = None) -> List["Update"]:
+    async def get_updates(self, offset: Optional[int] = MissingValue, limit: Optional[int] = MissingValue) -> List["Update"]:
         """Use this method to get pending updates.
 
         .. code:: python
@@ -2561,21 +2075,10 @@ class Bot:
             APIError
                 Get updates Failed.
         """
-        if offset and not isinstance(offset, int):
-            raise TypeError(
-                "offset param must be int"
-            )
-
-        if limit and not isinstance(limit, int):
-            raise TypeError(
-                "limit param must be int"
-            )
-
-        payload = {}
-        if offset:
-            payload["offset"] = offset
-        if limit:
-            payload["limit"] = limit
+        payload = {
+            "offset": offset,
+            "limit": limit
+        }
 
         response = await self._http.get_updates(
             params=handle_request_param(payload)
@@ -2590,7 +2093,6 @@ class Bot:
                     self._state.store_message(message)
                     if message.author:
                         self._state.store_user(message.author)
-
                 if callback:
                     self._state.store_user(callback.user)
 

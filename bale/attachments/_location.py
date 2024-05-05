@@ -11,6 +11,7 @@
 from __future__ import annotations
 from typing import Optional
 from bale import BaleObject
+from bale.utils.types import MissingValue
 
 __all__ = (
     "Location",
@@ -34,7 +35,7 @@ class Location(BaleObject):
         "horizontal_accuracy"
     )
 
-    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = None):
+    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = MissingValue):
         super().__init__()
         self.longitude = longitude
         self.latitude = latitude

@@ -11,6 +11,7 @@
 from __future__ import annotations
 from typing import Optional
 from bale import BaleObject
+from bale.utils.types import MissingValue
 
 __all__ = (
     "ChatPhoto",
@@ -36,8 +37,8 @@ class ChatPhoto(BaleObject):
         "big_file_id",
         "big_file_unique_id"
     )
-    def __init__(self, small_file_id: Optional[str] = None, small_file_unique_id: Optional[str] = None,
-                 big_file_id: Optional[str] = None, big_file_unique_id: Optional[str] = None):
+    def __init__(self, small_file_id: Optional[str] = MissingValue, small_file_unique_id: Optional[str] = MissingValue,
+                 big_file_id: Optional[str] = MissingValue, big_file_unique_id: Optional[str] = MissingValue):
         super().__init__()
         self.small_file_id = small_file_id
         self.small_file_unique_id = small_file_unique_id

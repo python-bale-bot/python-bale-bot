@@ -11,7 +11,7 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from bale import BaleObject, Document, PhotoSize, Video, Audio, Animation
-from bale.utils.types import FileInput, MediaInput
+from bale.utils.types import FileInput, MediaInput, MissingValue
 if TYPE_CHECKING:
     from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile, Message
 
@@ -41,8 +41,8 @@ class User(BaleObject):
         "id"
     )
 
-    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
-                 username: Optional[str] = None):
+    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = MissingValue,
+                 username: Optional[str] = MissingValue):
         super().__init__()
         self._id = user_id
         self.is_bot = is_bot
@@ -263,7 +263,7 @@ class User(BaleObject):
                 )
         """
         return await self.get_bot().send_invoice(self.chat_id, title, description, provider_token, prices,
-                                           payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
+                                           invoice_payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
                                            need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
                                            delete_after=delete_after)
 
