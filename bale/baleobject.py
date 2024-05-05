@@ -9,13 +9,15 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
-from typing import TYPE_CHECKING, Any, Type, List, Set, Dict, TypeVar, Optional
+from typing import TYPE_CHECKING, Any, Type, List, Dict, TypeVar, Optional
+import logging
 import inspect
 from json import dumps
 if TYPE_CHECKING:
     from bale import Bot
 
-Bale_obj = TypeVar("Bale_obj", bound="BaleObject", covariant=True)
+_log = logging.getLogger(__name__)
+Bale_obj_instance = TypeVar("Bale_obj_instance", bound="BaleObject", covariant=True)
 
 __all__ = (
     "BaleObject",
@@ -94,10 +96,10 @@ class BaleObject:
         )
 
     @classmethod
-    def _get_signature_keys(cls) -> Set:
-        return set(inspect.signature(cls).parameters.keys())
+    def _get_signature_parameters(cls):
+        return inspect.signature(cls).parameters
 
-    def _get_attrs(self, *, to_dict: bool) -> Dict:
+    def _get_attrs(self, *, to_dict: bool) -> Dict[str, Any]:
         attributes = {item: getattr(self, item, None) for cls in self.__class__.__mro__[:-1] for item in cls.__slots__}
         for key, value in attributes.items():
             if not to_dict:
@@ -114,37 +116,52 @@ class BaleObject:
         return dumps(self.to_dict())
 
     def to_dict(self) -> Dict:
-        data = {k: v for k, v in self._get_attrs(to_dict=True).items() if not k.startswith('_')}
+        data = {
+            key: value
+            for key, value in self._get_attrs(to_dict=True).items()
+            if not key.startswith('_')
+        }
 
         if "from_user" in data:
             data["from"] = data.pop("from_user")
         return data
 
     @classmethod
-    def _from_dict(cls: Type[Bale_obj], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj]:
+    def _from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
         if not data:
             return None
 
+        def has_default(key: str) -> bool:
+            param = parameters[key]
+            return not param.default is param.empty
+
+        def get_attr(key: str) -> Any:
+            if not key in data and not has_default(key):
+                _log.warning("The %s argument is required in the %s class, but this value was not found in the given data.", key, cls.__name__)
+
+            return data.get(key)
+
+        parameters = cls._get_signature_parameters()
         existing_kwargs = {
-            key: data.get(key) for key in cls._get_signature_keys()
+            key: get_attr(key) for key in parameters
         }
-        obj: Bale_obj = cls(**existing_kwargs)
+        obj: Bale_obj_instance = cls(**existing_kwargs)
 
         obj.set_bot(bot)
         return obj
 
     @classmethod
-    def from_dict(cls: Type[Bale_obj], payload: Optional[Dict], bot: "Bot") -> Optional[Bale_obj]:
+    def from_dict(cls: Type[Bale_obj_instance], payload: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
         return cls._from_dict(data=payload, bot=bot)
 
     @classmethod
-    def from_list(cls: Type[Bale_obj], payloads_list: Optional[List[Dict]], bot: "Bot") -> Optional[List[Bale_obj]]:
+    def from_list(cls: Type[Bale_obj_instance], payloads_list: Optional[List[Dict]], bot: "Bot") -> Optional[List[Bale_obj_instance]]:
         if not payloads_list or not isinstance(payloads_list, list):
             return None
 
         objects = []
         for obj_payload in payloads_list:
-            obj: Bale_obj = cls._from_dict(data=obj_payload, bot=bot)
+            obj: Bale_obj_instance = cls._from_dict(data=obj_payload, bot=bot)
             objects.append(obj)
 
         return objects
