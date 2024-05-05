@@ -171,8 +171,8 @@ class Bot:
         self._state: "State" = State(self, **kwargs.pop('state_kwargs', {}))
         self._client_user = None
         self._events: Dict[str, Callable] = {
-            'event_error': self._on_event_error_callback,
-            'handler_error': self._on_handler_error_callback
+            'on_event_error': self._on_event_error_callback,
+            'on_handler_error': self._on_handler_error_callback
         }
         self._waiters: List[Tuple[Dict[Union[int, str], BaseCheck], asyncio.Future]] = []
         self._handlers: List[BaseHandler] = []
@@ -470,8 +470,8 @@ class Bot:
         if core:
             self._create_event_schedule(core, method, *args, **kwargs)
 
-    async def _on_handler_error_callback(self, handler: "BaseHandler", update: "Update", error: Exception):
-        _log.exception('Exception in callback function of %s Ignored', handler)
+    async def _on_handler_error_callback(self, handler: "BaseHandler", update: "Update", exc: Exception):
+        _log.exception('Exception in callback function of %s Ignored', handler.callback.__qualname__, exc_info=exc)
 
     async def _on_event_error_callback(self, event_name: str, exc):
         """an Event for get errors when exceptions"""
@@ -2114,7 +2114,7 @@ class Bot:
             pass
         except Exception as ext:
             try:
-                self.dispatch('handler_error', update, ext)
+                self.dispatch('handler_error', handler, update, ext)
             except asyncio.CancelledError:
                 pass
 
