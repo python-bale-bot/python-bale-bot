@@ -22,4 +22,4 @@ def setup_logging(level: int = logging.INFO, handler: logging.Handler = None, fo
     library = __name__.partition('.')[0]
     logger = logging.getLogger(library)
     logger.addHandler(handler)
-    logger.setLevel(logging.INFO)
+    logger.setLevel(level)
