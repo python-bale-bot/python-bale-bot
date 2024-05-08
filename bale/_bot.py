@@ -2152,9 +2152,7 @@ class Bot:
                 )
 
     async def _process_update_wrapper(self, update: "Update"):
-        self.dispatch('update', update)
-        async with self.__semaphore:
-            await self.process_update(update)
+        await self.process_update(update)
         self.update_queue.task_done()
 
     async def __updater_fetcher(self) -> None:
@@ -2178,22 +2176,18 @@ class Bot:
     def __run(self):
         loop = asyncio.get_event_loop()
 
-        polling_future = self.updater.start_polling()
-
         try:
             loop.run_until_complete(self._setup_hook())
-            loop.run_until_complete(polling_future)
-            loop.run_until_complete(self.__updater_fetcher())
+            loop.run_until_complete(self.updater.setup())
+            asyncio.ensure_future(self.__updater_fetcher())
+            asyncio.ensure_future(self.updater.start_polling())
             loop.run_forever()
         except (KeyboardInterrupt, SystemExit):
             _log.debug("The request to stop receiving has been received. Currently in the process of shutting down...")
         except Exception as exc:
-            polling_future.close()
-            _log.debug("We encountered the error, currently in the process of shutting down...", exc_info=exc)
+            _log.info("We encountered the error, currently in the process of shutting down...", exc_info=exc)
         finally:
-            if self.updater:
-                loop.run_until_complete(self.updater.stop())
-            loop.run_until_complete(self._http.close())
+            loop.run_until_complete(self.updater.stop())
             loop.run_until_complete(self.close())
 
     def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None):

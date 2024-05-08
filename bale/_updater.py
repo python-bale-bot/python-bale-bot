@@ -24,7 +24,7 @@ __all__ = (
 _log = logging.getLogger(__name__)
 
 class Updater:
-    """This object represents a Bale Bot.
+    """This object represents a Updater.
 
         Attributes:
             bot (:class:`bale.Bot`): The bot used with this Updater.
@@ -36,7 +36,6 @@ class Updater:
         "_running",
         "__worker_task",
         "__stop_worker_event",
-        "__lock",
         "interval"
     )
 
@@ -45,7 +44,6 @@ class Updater:
         self._last_offset: Optional[int] = None
         self._running: bool = False
         self.interval: Optional[float] = None
-        self.__lock: asyncio.Lock = asyncio.Lock()
         self.__worker_task: Optional[asyncio.Task] = None
         self.__stop_worker_event: Optional[asyncio.Event] = None
 
@@ -55,8 +53,6 @@ class Updater:
         return self._last_offset
 
     async def setup(self):
-        """setup the updater object"""
-        # TODO: FILL THE DOCSTRINGS
         if self._running:
             raise RuntimeError(
                 "Updater already is running!"
@@ -64,7 +60,7 @@ class Updater:
 
         self.__stop_worker_event = asyncio.Event()
 
-    async def start_polling(self) -> None:
+    async def start_polling(self):
         if self._running:
             raise RuntimeError("Updater is running")
 
@@ -75,13 +71,9 @@ class Updater:
         self.bot.dispatch("ready")
         _log.debug("Updater is started!")
 
-        try:
-            await self._polling()
-        except Exception as exc:
-            self._running = False
-            raise exc
+        return await self._polling()
 
-    async def _polling(self) -> None:
+    async def _polling(self):
         async def action_getupdates() -> bool: # When False is returned, the operation stops.
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
@@ -93,7 +85,7 @@ class Updater:
 
             if updates:
                 for update in updates:
-                    await self.bot.update_queue.put(update) # we need to clear the queue and subsequently handle its updates!
+                    await self.bot.update_queue.put(update)
                 self._last_offset = updates[-1].update_id
 
             return True
@@ -111,10 +103,17 @@ class Updater:
 
     async def __start_worker(self, work_coroutine: Callable[..., Coroutine], error_handler: Callable[[BaleError], bool]) -> None:
         interval = self.interval
+        wait_stop_task = asyncio.create_task(self.__stop_worker_event.wait())
 
         while self._running:
             try:
-                if self.__stop_worker_event.is_set() or not await work_coroutine():
+                work_task = asyncio.create_task(work_coroutine())
+
+                done, pending = await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED)
+                if wait_stop_task in done:
+                    _log.debug("Update was canceled by stop worker event")
+
+                if not (work_task in done and work_task.result()):
                     break
             except InvalidToken as exc:
                 _log.error('Token was invalid')
@@ -136,7 +135,7 @@ class Updater:
     async def stop(self):
         """Stop running and Stop `poll_event` loop"""
         if self._running:
-            self.__worker_task.cancel()
+            self.__stop_worker_event.set()
 
         self.__worker_task = None
         self._running = False
