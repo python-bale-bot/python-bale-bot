@@ -14,7 +14,7 @@ import asyncio
 import aiohttp
 import logging
 from ssl import SSLCertVerificationError
-from bale._version import BALE_API_BASE_URL, BALE_API_FILE_URL
+from .._version import BALE_API_BASE_URL, BALE_API_FILE_URL
 from bale.attachments import InputFile
 from bale.utils.request import RequestParams
 from bale._error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkError, TimeOut, BaleError, HTTPException
