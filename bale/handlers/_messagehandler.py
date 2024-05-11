@@ -31,7 +31,7 @@ class MessageHandler(BaseHandler):
     """
     __slots__ = ("check",)
 
-    def __init__(self, check: Optional[BaseCheck] = None):
+    def __init__(self, check: Optional[BaseCheck] = None) -> None:
         super().__init__()
 
         if check and not isinstance(check, BaseCheck):

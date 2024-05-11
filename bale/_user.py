@@ -42,7 +42,7 @@ class User(BaleObject):
     )
 
     def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = MissingValue,
-                 username: Optional[str] = MissingValue):
+                 username: Optional[str] = MissingValue) -> None:
         super().__init__()
         self._id = user_id
         self.is_bot = is_bot

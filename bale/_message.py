@@ -117,7 +117,7 @@ class Message(BaleObject):
                  reply_to_message: Optional["Message"] = MissingValue, invoice: Optional["Invoice"] = MissingValue,
                  audio: Optional["Audio"] = MissingValue, voice: Optional["Voice"] = MissingValue,
                  successful_payment: Optional["SuccessfulPayment"] = MissingValue, animation: Optional["Animation"] = MissingValue,
-                 new_chat_members: Optional[List["User"]] = MissingValue, left_chat_member: Optional["User"] = MissingValue):
+                 new_chat_members: Optional[List["User"]] = MissingValue, left_chat_member: Optional["User"] = MissingValue) -> None:
         super().__init__()
         self._id = message_id
         self.message_id = message_id

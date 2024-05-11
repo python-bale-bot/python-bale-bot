@@ -47,7 +47,7 @@ class InputFile:
         "file_input",
         "file_name"
     )
-    def __init__(self, file_input: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None):
+    def __init__(self, file_input: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None) -> None:
         if not isinstance(file_input, (str, BufferedReader, bytes)):
             raise TypeError(
                 "file_input parameter must be one of str, BufferedReader, and byte types"

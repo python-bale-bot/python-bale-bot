@@ -32,13 +32,39 @@ class BaseHandler:
         1. Create a subclass of :class:`bale.BaseHandler`.
 
             .. code:: python
+
                 from bale.handlers import BaseHandler
 
                 class MyHandler(BaseHandler):
                     pass
-        2. Create the method :meth:`check_new_update` inside the class
-        When processing updates, the "Mohammed" method is called. This method must return either None or a tuple.
 
+        2. Create the method :meth:`check_new_update` inside the class
+        When processing updates, the :meth:`check_new_update` method is called. This method must return either None or a tuple.
+
+            .. code:: python
+
+                from bale.handlers import BaseHandler
+
+                class MyHandler(BaseHandler):
+                    def check_new_update(self, update: "Update") -> Optional[Tuple["Message"]]:
+                        target_message = update.message or update.edited_message
+                        if target_message:
+                            return (
+                                target_message,
+                            )
+
+                        return None
+
+        3. Now, use that customized handler!
+
+            .. code:: python
+
+                ...
+                bot = bale.Bot(token="YOUR_TOKEN_HERE")
+
+                @bot.handle(MyHandler())
+                async def my_custom_handler(message: Message) -> Message:
+                    return await message.reply("Hello World!")
 
     """
     __slots__ = (
@@ -46,7 +72,7 @@ class BaseHandler:
         "_on_error"
     )
 
-    def __init__(self):
+    def __init__(self) -> None:
         self._callback: Optional[Callable[[UT], Coroutine[...]]] = None
         self._on_error: Callable[[Update, Exception], Coroutine] = self._default_on_error
 

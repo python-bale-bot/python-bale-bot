@@ -47,7 +47,7 @@ class Video(BaseFile):
     )
 
     def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int, file_name: Optional[str] = MissingValue,
-                 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
+                 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue) -> None:
         super().__init__(file_id, file_unique_id, file_size)
 
         self.width = width

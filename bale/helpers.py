@@ -19,7 +19,7 @@ __all__ = (
     "find"
 )
 
-T = TypeVar('T')
+PF = TypeVar('PF')
 
 def create_deep_linked_url(bot_username: str, payload: str) -> str:
     """Creating a deep link for the bot.
@@ -55,7 +55,7 @@ def parse_time(data: Optional[int]) -> Optional[datetime]:
             raise exc
         return None
 
-def find(predicate: Callable[[T], Any], iterable: Iterable[T]) -> Optional[T]:
+def find(predicate: Callable[[PF], Any], iterable: Iterable[PF]) -> Optional[PF]:
     """A helper to return the first element in the sequence that meets the predicate.
 
     Parameters

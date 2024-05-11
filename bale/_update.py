@@ -49,7 +49,7 @@ class Update(BaleObject):
     )
 
     def __init__(self, update_id: int, callback_query: "CallbackQuery" = MissingValue, message: "Message" = MissingValue,
-                 edited_message: "Message" = MissingValue):
+                 edited_message: "Message" = MissingValue) -> None:
         super().__init__()
         self._id = update_id
         self.update_id = int(update_id)

@@ -31,7 +31,7 @@ class WebhookInfo(BaleObject):
         "has_custom_certificate",
         "pending_update_count"
     )
-    def __init__(self, url: str, has_custom_certificate: int, pending_update_count: int):
+    def __init__(self, url: str, has_custom_certificate: int, pending_update_count: int) -> None:
         super().__init__()
         self.url = url
         self.has_custom_certificate = has_custom_certificate

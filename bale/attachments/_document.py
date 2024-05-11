@@ -42,7 +42,7 @@ class Document(BaseFile):
 	)
 
 	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = MissingValue, thumbnail: Optional["PhotoSize"] = MissingValue,
-				 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
+				 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue) -> None:
 		super().__init__(file_id, file_unique_id, file_size)
 		self.thumbnail = thumbnail
 		self.file_name = file_name

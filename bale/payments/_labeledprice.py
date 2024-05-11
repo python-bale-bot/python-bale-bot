@@ -30,7 +30,7 @@ class LabeledPrice(BaleObject):
     """
 	__slots__ = ("label", "amount")
 
-	def __init__(self, label: Optional[str] = MissingValue, amount: Optional[int] = MissingValue):
+	def __init__(self, label: Optional[str] = MissingValue, amount: Optional[int] = MissingValue) -> None:
 		super().__init__()
 		self._id = (label, amount)
 		self.label = label

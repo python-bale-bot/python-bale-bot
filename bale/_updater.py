@@ -39,11 +39,11 @@ class Updater:
         "interval"
     )
 
-    def __init__(self, bot: "Bot"):
+    def __init__(self, bot: "Bot") -> None:
         self.bot = bot
+        self.interval: Optional[float] = None
         self._last_offset: Optional[int] = None
         self._running: bool = False
-        self.interval: Optional[float] = None
         self.__worker_task: Optional[asyncio.Task] = None
         self.__stop_worker_event: Optional[asyncio.Event] = None
 

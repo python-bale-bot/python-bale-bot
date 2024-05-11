@@ -101,7 +101,7 @@ class ChatMember(BaleObject):
             can_reply_to_story: Optional[bool] = MissingValue, can_send_link_message: Optional[bool] = MissingValue,
             can_send_forwarded_message: Optional[bool] = MissingValue, can_see_members: Optional[bool] = MissingValue,
             can_add_story: Optional[bool] = MissingValue, can_be_edited: Optional[bool] = MissingValue
-    ):
+    ) -> None:
         super().__init__()
         self.status = status
         self.user = user

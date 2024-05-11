@@ -18,7 +18,7 @@ class InlineKeyboardMarkup(BaseReplyMarkup):
 
             :any:`Components Bot <examples.inlinemarkup>`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def add(self, inline_keyboard_button: "InlineKeyboardButton", row: Optional[int] = None) -> "InlineKeyboardMarkup":

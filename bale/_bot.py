@@ -51,6 +51,7 @@ from .utils.request import handle_request_param
 __all__ = ("Bot",)
 
 _log = logging.getLogger(__name__)
+H = TypeVar("H", bound=BaseHandler)
 
 class Bot:
     """This object represents a Bale Bot.
@@ -162,7 +163,7 @@ class Bot:
         "updater"
     )
 
-    def __init__(self, token: str, **kwargs):
+    def __init__(self, token: str, **kwargs) -> None:
         if not isinstance(token, str):
             raise InvalidToken()
 
@@ -235,12 +236,12 @@ class Bot:
             event_name: :obj:`str`
                 Name of the event to set.
         """
-        def wrapper_function(func) -> Any:
+        def wrapper(func) -> Any:
             self.add_event(event_name, func)
 
-        return wrapper_function
+        return wrapper
 
-    def handle(self, handler: "BaseHandler") -> CoroT:
+    def handle(self, handler: H) -> Callable[[Callable], H]:
         """A decorator to set callback for a handler.
 
         .. seealso::
@@ -265,10 +266,11 @@ class Bot:
             handler: :class:`bale.BaseHandler`
                 a :class:`bale.BaseHandler` instance
         """
-        def wrapper_function(func) -> Any:
+        def wrapper(func) -> H:
             self.add_handler(handler, func)
+            return handler
 
-        return wrapper_function
+        return wrapper
 
     def add_handler(self, handler: "BaseHandler", wrapper) -> None:
         """Set wrapper or listener for a handler.
@@ -428,7 +430,7 @@ class Bot:
         self._waiters.append((checks, future))
         return asyncio.wait_for(future, timeout=timeout)
 
-    async def close(self):
+    async def close(self) -> None:
         """Close http Events and bot"""
         if not self.is_closed():
             await self.update_queue.put(STOP_UPDATER_MARKER)
@@ -440,11 +442,11 @@ class Bot:
 
             _log.info("Closing operation was successfully completed")
 
-    def is_closed(self):
+    def is_closed(self) -> bool:
         """:obj:`bool`: Bot Status"""
         return self._closed
 
-    def http_is_closed(self):
+    def http_is_closed(self) -> bool:
         """:obj:`bool`: HTTPClient Status"""
         return self._http.is_closed()
 
@@ -671,7 +673,7 @@ class Bot:
         --------
             :class:`bale.Message`
                 The Message.
-                
+
         Raises
         ------
             NotFound
@@ -679,7 +681,7 @@ class Bot:
             Forbidden
                 You do not have permission to send Document to this chat.
             APIError
-                Send Document Failed.        
+                Send Document Failed.
         """
         payload = {
             "chat_id": chat_id,
@@ -725,7 +727,7 @@ class Bot:
             |reply_to_message_id|
         delete_after: :obj:`float` | :obj:`int`, optional
             |delete_after|
-        file_name: :obj:`str`, optional 
+        file_name: :obj:`str`, optional
             |file_name|
 
         Returns
@@ -910,7 +912,7 @@ class Bot:
                 Animation caption.
             components: :class:`bale.InlineKeyboardMarkup` | :class:`bale.MenuKeyboardMarkup`, optional
                 Message Components
-            reply_to_message_id: :obj:`str` | :obj:`int`, optional 
+            reply_to_message_id: :obj:`str` | :obj:`int`, optional
                 |reply_to_message_id|
             delete_after: :obj:`float` | :obj:`int`, optional
                 |delete_after|
@@ -1178,7 +1180,7 @@ class Bot:
         Returns
         -------
             :class:`bale.Message`
-            
+
         Raises
         ------
             NotFound
@@ -1186,7 +1188,7 @@ class Bot:
             Forbidden
                 You do not have permission to send Invoice to this chat.
             APIError
-                Send Invoice Failed.  
+                Send Invoice Failed.
         """
         prices = [price.to_dict() for price in prices if isinstance(price, LabeledPrice)]
         payload = {

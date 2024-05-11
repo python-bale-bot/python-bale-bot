@@ -24,7 +24,7 @@ class RegexHandler(BaseHandler):
     """
     __slots__ = ("pattern",)
 
-    def __init__(self, pattern: Union[str, Pattern[str]]):
+    def __init__(self, pattern: Union[str, Pattern[str]]) -> None:
         super().__init__()
 
         if isinstance(pattern, str):

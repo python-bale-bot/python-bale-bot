@@ -29,7 +29,7 @@ class State:
         "_cash_max_size"
     )
 
-    def __init__(self, bot: "Bot", **kwargs):
+    def __init__(self, bot: "Bot", **kwargs) -> None:
         self._bot: "Bot" = bot
         self._cash_max_size: int = kwargs.get('max_messages', 1000)
         self._messages: Deque["Message"] = deque(maxlen=self._cash_max_size)

@@ -18,7 +18,7 @@ class MenuKeyboardMarkup(BaseReplyMarkup):
 
             :any:`Components Bot <examples.inlinemarkup>`
     """
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__()
 
     def add(self, keyboard_button: MenuKeyboardButton, row: Optional[int] = None) -> "MenuKeyboardMarkup":

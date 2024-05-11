@@ -43,7 +43,7 @@ class InlineKeyboardButton(BaleObject):
     )
 
     def __init__(self, text: str, *, callback_data: Optional[str] = None, url: Optional[str] = None, switch_inline_query: Optional[str] = None,
-                 switch_inline_query_current_chat: str = None):
+                 switch_inline_query_current_chat: str = None) -> None:
         super().__init__()
         self.text = text
         self.callback_data = callback_data

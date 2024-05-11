@@ -49,7 +49,7 @@ class Sticker(BaleObject):
         "file_size"
     )
     def __init__(self, file_id: str, file_unique_id: str, sticker_type: str, width: int, height: int, thumb: Optional["PhotoSize"] = MissingValue,
-                 set_name: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue):
+                 set_name: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue) -> None:
         super().__init__()
         self._id = file_id
         self.file_id = file_id

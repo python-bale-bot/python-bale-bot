@@ -46,7 +46,7 @@ class BaseFile(BaleObject):
     AUDIO: ClassVar[str] = "audio"
     ANIMATION: ClassVar[str] = "animation"
 
-    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = MissingValue, **kwargs):
+    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = MissingValue, **kwargs) -> None:
         super().__init__()
         self._id = file_id
         self.file_id = file_id

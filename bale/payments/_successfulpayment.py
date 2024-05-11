@@ -40,7 +40,7 @@ class SuccessfulPayment(BaleObject):
         "shipping_option_id"
     )
 
-    def __init__(self, currency: str, total_amount: int, invoice_payload: Optional[str] = MissingValue, shipping_option_id: Optional[str] = MissingValue):
+    def __init__(self, currency: str, total_amount: int, invoice_payload: Optional[str] = MissingValue, shipping_option_id: Optional[str] = MissingValue) -> None:
         super().__init__()
         self.currency = currency
         self.total_amount = total_amount

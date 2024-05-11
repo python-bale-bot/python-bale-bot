@@ -34,7 +34,7 @@ class Route:
         "token"
     )
 
-    def __init__(self, request_method: str, endpoint: str, token: str):
+    def __init__(self, request_method: str, endpoint: str, token: str) -> None:
         if not isinstance(token, str):
             raise TypeError("token param must be str.")
         self.base_url = BALE_API_BASE_URL + token
@@ -60,7 +60,7 @@ class HTTPClient:
         "__extra"
     )
 
-    def __init__(self, token: str, /, **kwargs):
+    def __init__(self, token: str, /, **kwargs) -> None:
         if not isinstance(token, str):
             raise TypeError(
                 "token param must be type of str."

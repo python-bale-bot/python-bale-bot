@@ -16,7 +16,7 @@ from bale.utils.request import to_json
 
 class BaseReplyMarkup:
     __slots__ = ("__keyboards",)
-    def __init__(self):
+    def __init__(self) -> None:
         self.__keyboards: List["ReplyMarkupItem"] = []
 
     def add(self, item: Union["InlineKeyboardButton", "MenuKeyboardButton"], row: Optional[int] = None):

@@ -13,7 +13,7 @@ from typing import Optional, Any, Tuple, Type, TYPE_CHECKING
 
 from bale.utils.request import ResponseStatusCode
 if TYPE_CHECKING:
-    from bale.request._parser import ResponseParser
+    from bale.request.parser import ResponseParser
 
 __all__ = (
     "HTTPClientError",
@@ -57,7 +57,7 @@ class BaleError(Exception):
     def check_description(description: Optional[str]) -> bool:
         return False
 
-    def __init__(self, message: Any):
+    def __init__(self, message: Any) -> None:
         super().__init__()
         self.message = message
 
@@ -74,7 +74,7 @@ class InvalidToken(BaleError):
     """
     __slots__ = ("_message",)
 
-    def __init__(self, message=None):
+    def __init__(self, message=None) -> None:
         super().__init__(message or "Invalid Token")
 
     @staticmethod
@@ -88,7 +88,7 @@ class APIError(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self, error_code, message):
+    def __init__(self, error_code, message) -> None:
         super().__init__(f"{error_code}: {message}")
 
 
@@ -103,7 +103,7 @@ class NetworkError(BaleError):
 class TimeOut(BaleError):
     __slots__ = ()
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("Time Out")
 
 
@@ -115,7 +115,7 @@ class NotFound(BaleError):
     __slots__ = ()
     STATUS_CODE = ResponseStatusCode.NOT_FOUND
 
-    def __init__(self, message=None):
+    def __init__(self, message=None) -> None:
         super().__init__(message or "Not Found")
 
     @staticmethod
@@ -130,7 +130,7 @@ class Forbidden(BaleError):
     __slots__ = ()
     STATUS_CODE = ResponseStatusCode.PERMISSION_DENIED
 
-    def __init__(self, err=None):
+    def __init__(self, err=None) -> None:
         super().__init__(err)
 
     @staticmethod
@@ -144,7 +144,7 @@ class BadRequest(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self, err: Any):
+    def __init__(self, err: Any) -> None:
         super().__init__(err)
 
     @staticmethod
@@ -159,7 +159,7 @@ class RateLimited(BaleError):
     __slots__ = ()
     STATUS_CODE = ResponseStatusCode.RATE_LIMIT
 
-    def __init__(self):
+    def __init__(self) -> None:
         super().__init__("We are Rate Limited")
 
 class HTTPException(BaleError):
@@ -168,7 +168,7 @@ class HTTPException(BaleError):
     """
     __slots__ = ()
 
-    def __init__(self, err: Any):
+    def __init__(self, err: Any) -> None:
         super().__init__(err)
 
 

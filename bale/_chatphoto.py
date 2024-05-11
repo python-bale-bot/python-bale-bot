@@ -38,7 +38,7 @@ class ChatPhoto(BaleObject):
         "big_file_unique_id"
     )
     def __init__(self, small_file_id: Optional[str] = MissingValue, small_file_unique_id: Optional[str] = MissingValue,
-                 big_file_id: Optional[str] = MissingValue, big_file_unique_id: Optional[str] = MissingValue):
+                 big_file_id: Optional[str] = MissingValue, big_file_unique_id: Optional[str] = MissingValue) -> None:
         super().__init__()
         self.small_file_id = small_file_id
         self.small_file_unique_id = small_file_unique_id

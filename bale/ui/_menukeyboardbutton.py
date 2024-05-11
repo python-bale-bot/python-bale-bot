@@ -33,7 +33,7 @@ class MenuKeyboardButton(BaleObject):
         "request_location"
     )
 
-    def __init__(self, text: str, *, request_contact: Optional[bool] = False, request_location: Optional[bool] = False):
+    def __init__(self, text: str, *, request_contact: Optional[bool] = False, request_location: Optional[bool] = False) -> None:
         super().__init__()
         self.text = text
         self.request_contact = request_contact

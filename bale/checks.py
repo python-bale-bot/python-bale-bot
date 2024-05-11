@@ -14,6 +14,7 @@ from typing import List, Union, Optional, Callable, TYPE_CHECKING
 import inspect
 if TYPE_CHECKING:
     from bale import Update, Message, CallbackQuery
+    from typing_extensions import Self
 
 __all__ = (
     "BaseCheck",
@@ -51,17 +52,17 @@ __all__ = (
 
 class BaseCheck:
     __slots__ = ("name",)
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None) -> None:
         self.name = name if name else self.__class__.__name__
 
     async def check_update(self, update: "Update") -> bool:
         return True
 
     def __and__(self, other: "BaseCheck") -> "BaseCheck":
-        return _MergedCheck(self, and_check=other)
+        return _MergedTwoCheck(self, and_check=other)
 
     def __or__(self, other: "BaseCheck") -> "BaseCheck":
-        return _MergedCheck(self, or_check=other)
+        return _MergedTwoCheck(self, or_check=other)
 
     def __invert__(self) -> "BaseCheck":
         return _InvertedCheck(self)
@@ -69,13 +70,13 @@ class BaseCheck:
     def __repr__(self) -> str:
         return self.name
 
-class _MergedCheck(BaseCheck):
+class _MergedTwoCheck(BaseCheck):
     __slots__ = (
         "base_check",
         "and_check",
         "or_check"
     )
-    def __init__(self, base_check: BaseCheck, and_check: Optional[BaseCheck] = None, or_check: Optional[BaseCheck] = None):
+    def __init__(self, base_check: BaseCheck, and_check: Optional[BaseCheck] = None, or_check: Optional[BaseCheck] = None) -> None:
         super().__init__()
         if and_check and or_check:
             raise ValueError(
@@ -100,7 +101,7 @@ class _MergedCheck(BaseCheck):
 
 class _InvertedCheck(BaseCheck):
     __slots__ = ("base_check",)
-    def __init__(self, base_check: BaseCheck):
+    def __init__(self, base_check: BaseCheck) -> None:
         super().__init__()
         self.base_check = base_check
 
@@ -109,9 +110,8 @@ class _InvertedCheck(BaseCheck):
 
 class MessageCheck(BaseCheck):
     __slots__ = ("__for_what",)
-    def __init__(self, name: Optional[str] = None):
+    def __init__(self, name: Optional[str] = None) -> None:
         super().__init__(name)
-
         self.__for_what: Optional[Callable[[Update], Message]] = None
 
     @property
@@ -122,12 +122,14 @@ class MessageCheck(BaseCheck):
     def for_what(self, value: Callable[[Update], Message]) -> None:
         self.set_for_what(value)
 
-    def set_for_what(self, value: Callable[[Update], Message]) -> None:
+    def set_for_what(self, value: Callable[[Update], Message]) -> "Self":
         if not inspect.isfunction(value):
             raise TypeError(
                 "for_what param must be a function"
             )
+
         self.__for_what = value
+        return self
 
     async def check_update(self, update: "Update") -> bool:
         target_message: Optional[Message] = None
@@ -158,7 +160,7 @@ class _Message(MessageCheck):
 class MessageId(MessageCheck):
     __slots__ = ("message_id",)
 
-    def __init__(self, message_id: int):
+    def __init__(self, message_id: int) -> None:
         super().__init__(name=f"MessageId({message_id})")
         self.message_id = message_id
 

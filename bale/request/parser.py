@@ -32,13 +32,12 @@ class ResponseParser:
         data: dict
             Raw of the response data
     """
-
     __slots__ = (
         "data",
         "original_response"
     )
 
-    def __init__(self, data: Dict[str, Any], response: "ClientResponse"):
+    def __init__(self, data: Dict[str, Any], response: "ClientResponse") -> None:
         self.data = data
         self.original_response = response
 

@@ -63,7 +63,7 @@ class Chat(BaleObject):
 
     def __init__(self, chat_id: int, chat_type: str, title: Optional[str] = MissingValue, username: Optional[str] = MissingValue,
                  first_name: Optional[str] = MissingValue, last_name: Optional[str] = MissingValue, photo: Optional["ChatPhoto"] = MissingValue,
-                 invite_link: Optional[str] = MissingValue):
+                 invite_link: Optional[str] = MissingValue) -> None:
         super().__init__()
         self._id = chat_id
         self.id = chat_id

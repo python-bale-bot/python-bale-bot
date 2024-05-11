@@ -38,7 +38,7 @@ class CommandHandler(BaseHandler):
         "check"
     )
 
-    def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None):
+    def __init__(self, command: Union[str, List[str]], check: Optional[BaseCheck] = None) -> None:
         super().__init__()
         command = [command] if not isinstance(command, list) else command
 
