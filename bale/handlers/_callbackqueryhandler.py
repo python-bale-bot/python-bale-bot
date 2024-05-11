@@ -33,13 +33,12 @@ class CallbackQueryHandler(BaseHandler):
 
         self.check = check
 
-    def check_new_update(self, update: "Update") -> Optional[Tuple["CallbackQuery"]]:
-        if not update.callback_query:
-            return None
+    async def check_new_update(self, update: "Update") -> Optional[Tuple["CallbackQuery"]]:
+        if update.callback_query and (
+            self.check and await self.check.check_update(update)
+        ):
+            return (
+                update.callback_query,
+            )
 
-        if self.check and not self.check.check_update(update):
-            return None
-
-        return (
-            update.callback_query,
-        )
+        return None

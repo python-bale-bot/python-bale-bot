@@ -10,8 +10,8 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import Coroutine, Callable, Tuple, Optional, TYPE_CHECKING
-
+from typing import Coroutine, Callable, Tuple, Optional, TYPE_CHECKING, TypeVar
+import asyncio
 from bale.utils.types import UT
 
 if TYPE_CHECKING:
@@ -21,6 +21,7 @@ __all__ = (
     "BaseHandler",
 )
 
+ER = TypeVar("ER")
 
 class BaseHandler:
     """This object shows a Base Handler.
@@ -40,10 +41,14 @@ class BaseHandler:
 
 
     """
-    __slots__ = ("_callback",)
+    __slots__ = (
+        "_callback",
+        "_on_error"
+    )
 
     def __init__(self):
         self._callback: Optional[Callable[[UT], Coroutine[...]]] = None
+        self._on_error: Callable[[Update, Exception], Coroutine] = self._default_on_error
 
     @property
     def callback(self) -> Optional[Callable[[UT], Coroutine[...]]]:
@@ -54,6 +59,12 @@ class BaseHandler:
         raise ValueError(
             "You can't set callback because it's not an public attribute"
         )
+
+    async def _default_on_error(self, update: Update, exc: Exception):
+        try:
+            update.get_bot().dispatch('handler_error', self, update, exc)
+        except asyncio.CancelledError:
+            pass
 
     def set_callback(self, callback: Callable[[UT, ...], Coroutine[...]]):
         """Register new handler callback.
@@ -66,7 +77,7 @@ class BaseHandler:
         """
         self._callback = callback
 
-    def check_new_update(self, update: "Update") -> Optional[Tuple]:
+    async def check_new_update(self, update: "Update") -> Optional[Tuple]:
         """This function determines whether the "update" should be covered by the handler or not.
 
         Parameters
@@ -83,6 +94,30 @@ class BaseHandler:
             update,
         )
 
+    def error(self, func: ER) -> ER:
+        """
+        A decorator to set the `on_error` function for a handler.
+
+         .. code:: python
+
+                from bale import Update, Message
+                from bale.handlers import MessageHandler
+
+                ...
+
+                @bot.handle(MessageHandler())
+                async def message_handler(message: Message):
+                    return await message.reply("Hello World!")
+
+                @message_handler.error
+                async def message_handler_error(update: Update, exc: Exception):
+                    if update.message:
+                        return
+                    return await update.message.reply("The handler encountered an error")
+
+        """
+        self._on_error = func
+        return self
 
     async def handle_update(self, update: "Update", *args):
         """This function works if the handler is required to cover the new Update and calls the :attr:`callback` function.
@@ -95,6 +130,9 @@ class BaseHandler:
                 Additional objects, if given to this parameter, will be passed directly to the :attr:`callback` function.
         """
         if self.callback:
-            if self is BaseHandler:
-                return await self.callback(update)
-            return await self.callback(*args)
+            try:
+                if self is BaseHandler:
+                    return await self.callback(update)
+                return await self.callback(*args)
+            except Exception as exc:
+                return await self._on_error(update, exc)

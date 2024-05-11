@@ -31,7 +31,7 @@ class RegexHandler(BaseHandler):
             pattern: Pattern[str] = re.compile(pattern)
         self.pattern: Pattern = pattern
 
-    def check_new_update(self, update: "Update") -> Optional[Tuple["Message", Match[str]]]:
+    async def check_new_update(self, update: "Update") -> Optional[Tuple["Message", Match[str]]]:
         if update.message is not None and (
             (match := self.pattern.match(update.message.text))
         ):

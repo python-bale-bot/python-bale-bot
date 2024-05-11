@@ -11,10 +11,9 @@
 from __future__ import annotations
 
 import asyncio
-from asyncio import BoundedSemaphore
 import logging
 from builtins import enumerate, reversed
-from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any, Set
+from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any, Set, TypeVar
 from weakref import WeakValueDictionary
 
 from bale import (
@@ -158,7 +157,6 @@ class Bot:
         "_http",
         "_closed",
         "__tasks",
-        "__semaphore",
         "update_queue",
         "updater"
     )
@@ -179,7 +177,6 @@ class Bot:
         self._handlers: List[BaseHandler] = []
         self._closed: bool = True
         self.__tasks: Set[asyncio.Task] = set()
-        self.__semaphore = BoundedSemaphore(value=kwargs.get('max_concurrent_updates', 10))
         self.update_queue: asyncio.Queue["Update" | STOP_UPDATER_MARKER] = asyncio.Queue()
         self.updater: Updater = Updater(self)
 
@@ -207,7 +204,7 @@ class Bot:
             return self._state.chats
         return None
 
-    async def _setup_hook(self):
+    async def _setup_hook(self) -> None:
         self._closed = False
         await self._http.start()
 
@@ -215,7 +212,7 @@ class Bot:
         await self._setup_hook()
         return self
 
-    async def __aexit__(self, exc_type, exc_value, traceback):
+    async def __aexit__(self, exc_type, exc_value, traceback) -> None:
         await self.close()
         return None
 
@@ -455,13 +452,13 @@ class Bot:
             await core(*args, **kwargs)
         except asyncio.CancelledError:
             pass
-        except Exception as ext:
+        except Exception as exc:
             try:
-                self.dispatch('event_error', event_name, ext)
+                self.dispatch('event_error', event_name, exc)
             except asyncio.CancelledError:
                 pass
 
-    def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs):
+    def _create_event_schedule(self, core: CoroT, event_name: str, *args, **kwargs) -> asyncio.Task:
         task = self.run_event(core, event_name, *args, **kwargs)
         return self.create_task(task, name=f"Bot:process_event:{event_name}")
 
@@ -2146,11 +2143,12 @@ class Bot:
             await core
         except asyncio.CancelledError:
             pass
-        except Exception as ext:
-            try:
-                self.dispatch('handler_error', handler, update, ext)
-            except asyncio.CancelledError:
-                pass
+        # except Exception as exc:
+        #     try:
+        #         self.dispatch('handler_error', handler, update, exc)
+        #     except asyncio.CancelledError:
+        #         pass
+        # In Handler, errors are handled by their on_error function.
 
     async def _process_handler(self, handler: "BaseHandler", update: "Update", params: Tuple[Any, ...] = None):
         core = handler.handle_update(update, *params)
@@ -2160,13 +2158,14 @@ class Bot:
         _log.debug("Processing update %s", update)
         self.dispatch('update', update)
         removed = []
-        for index, (checks, future) in enumerate(self._waiters):
+
+        async def do_waiter(index, checks, future):
             if future.cancelled():
                 removed.append(index)
-                continue
+                return
 
             for key, check in checks.items():
-                is_correct = check.check_update(update)
+                is_correct = await check.check_update(update)
                 if not is_correct:
                     continue
 
@@ -2175,15 +2174,24 @@ class Bot:
                 removed.append(index)
                 break
 
+        for i, (checks_, future_) in enumerate(self._waiters):
+            self.create_task(
+                do_waiter(i, checks_, future_),
+                name=f"Bot:do_waiter:{update.update_id}"
+            )
+
         for item in reversed(removed):
             del self._waiters[item]
 
-        for handler in self._handlers:
-            if (args := handler.check_new_update(update)) is not None:
-                await self.create_task(
-                    self._process_handler(handler, update, params=args),
-                    name="Bot:process_handler"
-                )
+        async def do_handler(handler: "BaseHandler"):
+            if (args := await handler.check_new_update(update)) is not None:
+                await self._process_handler(handler, update, params=args),
+
+        for _handler in self._handlers:
+            self.create_task(
+                do_handler(_handler),
+                name=f"Bot:do_handler:{update.update_id}:{_handler}"
+            )
 
     async def _process_update_wrapper(self, update: "Update"):
         await self.process_update(update)
@@ -2193,7 +2201,7 @@ class Bot:
         async def wrapper():
             while True:
                 try:
-                    item = await self.update_queue.get()
+                    item: Union["Update", STOP_UPDATER_MARKER] = await self.update_queue.get()
                     if item is STOP_UPDATER_MARKER:
                         while not self.update_queue.empty():
                             self.update_queue.task_done()
@@ -2201,7 +2209,7 @@ class Bot:
                         self.update_queue.task_done() # for the last item: STOP_UPDATER_MARKER
                         break
 
-                    self.create_task(self._process_update_wrapper(item), name="Bot:updater_fetcher:process_update")
+                    self.create_task(self._process_update_wrapper(item), name=f"Bot:updater_fetcher:process_update:{item.update_id}")
                 except asyncio.CancelledError:
                     _log.warning("The update fetcher can only be closed with Bot.close.")
 

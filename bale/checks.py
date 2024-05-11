@@ -54,7 +54,7 @@ class BaseCheck:
     def __init__(self, name: Optional[str] = None):
         self.name = name if name else self.__class__.__name__
 
-    def check_update(self, update: "Update") -> bool:
+    async def check_update(self, update: "Update") -> bool:
         return True
 
     def __and__(self, other: "BaseCheck") -> "BaseCheck":
@@ -88,13 +88,13 @@ class _MergedCheck(BaseCheck):
 
         self.name = f"MergedCheck({base_check}, {and_check or or_check})"
 
-    def check_update(self, update: "Update") -> bool:
-        base_check = self.base_check.check_update(update)
+    async def check_update(self, update: "Update") -> bool:
+        base_check = await self.base_check.check_update(update)
 
         if self.and_check and base_check:
-            return self.and_check.check_update(update)
+            return await self.and_check.check_update(update)
         elif self.or_check:
-            return self.or_check.check_update(update)
+            return await self.or_check.check_update(update)
 
         return False
 
@@ -104,8 +104,8 @@ class _InvertedCheck(BaseCheck):
         super().__init__()
         self.base_check = base_check
 
-    def check_update(self, update: "Update") -> bool:
-        return not self.base_check.check_update(update)
+    async def check_update(self, update: "Update") -> bool:
+        return not await self.base_check.check_update(update)
 
 class MessageCheck(BaseCheck):
     __slots__ = ("__for_what",)
@@ -129,7 +129,7 @@ class MessageCheck(BaseCheck):
             )
         self.__for_what = value
 
-    def check_update(self, update: "Update") -> bool:
+    async def check_update(self, update: "Update") -> bool:
         target_message: Optional[Message] = None
         if self.for_what and (result := self.for_what(update)):
             if isinstance(result, Message):
@@ -142,17 +142,17 @@ class MessageCheck(BaseCheck):
             elif update.edited_message:
                 target_message = update.edited_message
 
-        if target_message and self.check(target_message):
+        if target_message and await self.check(target_message):
             return True
         return False
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return message is not None
 
 class _Message(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return message is not None
 
 class MessageId(MessageCheck):
@@ -162,13 +162,13 @@ class MessageId(MessageCheck):
         super().__init__(name=f"MessageId({message_id})")
         self.message_id = message_id
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return message.message_id == self.message_id
 
 class _Animation(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.animation)
 
 
@@ -177,7 +177,7 @@ ANIMATION = _Animation("Animation")
 class _Attachment(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.attachment)
 
 
@@ -186,7 +186,7 @@ ATTACHMENT = _Attachment("Attachment")
 class _Audio(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.audio)
 
 
@@ -195,7 +195,7 @@ AUDIO = _Audio("Audio")
 class _Video(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.video)
 
 
@@ -204,7 +204,7 @@ VIDEO = _Video("Video")
 class _Contact(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.contact)
 
 
@@ -213,7 +213,7 @@ CONTACT = _Contact("Contact")
 class _Document(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.document)
 
 
@@ -222,7 +222,7 @@ DOCUMENT = _Document("Document")
 class _Voice(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.voice)
 
 
@@ -241,7 +241,7 @@ class Content(MessageCheck):
         )
         self.strings = strings
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         if content := message.content:
             if not self.strings or content in self.strings:
                 return True
@@ -254,7 +254,7 @@ CONTENT = Content()
 class _Invoice(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.invoice)
 
 
@@ -263,7 +263,7 @@ INVOICE = _Invoice("Invoice")
 class _Location(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.location)
 
 
@@ -272,7 +272,7 @@ LOCATION = _Location("Location")
 class _Photos(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.photos)
 
 
@@ -290,7 +290,7 @@ REPLY = _Reply("Reply")
 class _SuccessfulPayment(MessageCheck):
     __slots__ = ()
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.successful_payment)
 
 
@@ -309,7 +309,7 @@ class Text(MessageCheck):
         )
         self.strings = strings
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         if text := message.text:
             if not self.strings or text in self.strings:
                 return True
@@ -332,7 +332,7 @@ class Caption(MessageCheck):
         )
         self.strings = strings
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         if text := message.caption:
             if not self.strings or text in self.strings:
                 return True
@@ -351,7 +351,7 @@ class Chat(MessageCheck):
             self.chat_ids = [chat_ids]
         self.chat_ids = chat_ids
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         if chat := message.chat:
             return chat.id in self.chat_ids
         return False
@@ -368,7 +368,7 @@ class Author(MessageCheck):
             self.chat_ids = [chat_ids]
         self.chat_ids = chat_ids
 
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         if author := message.from_user:
             return author.id in self.chat_ids
         return False
@@ -378,7 +378,7 @@ AUTHOR = Author()
 
 class _LeftChatMember(MessageCheck):
     __slots__ = ()
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.left_chat_member)
 
 
@@ -386,7 +386,7 @@ LEFT_CHAT_MEMBER = _LeftChatMember("LeftChatMember")
 
 class _NewChatMembers(MessageCheck):
     __slots__ = ()
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.new_chat_members)
 
 
@@ -394,7 +394,7 @@ NEW_CHAT_MEMBERS = _NewChatMembers("NewChatMembers")
 
 class _Sticker(MessageCheck):
     __slots__ = ()
-    def check(self, message: Message) -> bool:
+    async def check(self, message: Message) -> bool:
         return bool(message.sticker)
 
 
@@ -406,7 +406,7 @@ class ChatType:
     class _Private(MessageCheck):
         __slots__ = ()
 
-        def check(self, message: Message) -> bool:
+        async def check(self, message: Message) -> bool:
             return message.chat.is_private_chat
 
     PRIVATE = _Private("ChatType.Private")
@@ -414,7 +414,7 @@ class ChatType:
     class _Group(MessageCheck):
         __slots__ = ()
 
-        def check(self, message: Message) -> bool:
+        async def check(self, message: Message) -> bool:
             return message.chat.is_group_chat
 
     GROUP = _Group("ChatType.Group")
@@ -422,17 +422,17 @@ class ChatType:
     class _Channel(MessageCheck):
         __slots__ = ()
 
-        def check(self, message: Message) -> bool:
+        async def check(self, message: Message) -> bool:
             return message.chat.is_channel_chat
 
     CHANNEL = _Channel("ChatType.Channel")
 
 class CallbackQueryCheck(BaseCheck):
     __slots__ = ("for_what",)
-    def check_update(self, update: "Update") -> bool:
+    async def check_update(self, update: "Update") -> bool:
         target_callback_query: Optional[CallbackQuery] = update.callback_query
 
-        if target_callback_query and self.check(target_callback_query):
+        if target_callback_query and await self.check(target_callback_query):
             return True
         return False
 

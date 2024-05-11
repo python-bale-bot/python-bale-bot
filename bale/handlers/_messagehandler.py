@@ -41,9 +41,9 @@ class MessageHandler(BaseHandler):
 
         self.check = check
 
-    def check_new_update(self, update: "Update") -> Optional[Tuple["Message"]]:
+    async def check_new_update(self, update: "Update") -> Optional[Tuple["Message"]]:
         if update.message is not None and (
-                not self.check or self.check.check_update(update)
+                not self.check or await self.check.check_update(update)
         ):
             return (
                 update.message,

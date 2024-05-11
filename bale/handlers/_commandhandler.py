@@ -73,22 +73,20 @@ class CommandHandler(BaseHandler):
 
         return params
 
-    def check_new_update(self, update: "Update") -> Optional[Union[Tuple["Message", List[str]], Tuple["Message"]]]:
+    async def check_new_update(self, update: "Update") -> Optional[Union[Tuple["Message", List[str]], Tuple["Message"]]]:
         if (
-                update.message and
-                update.message.text and
-                len(update.message.text) > 1
+            update.message and
+            update.message.text and
+            len(update.message.text) > 1
         ):
             message = update.message
             args = message.text[1:].split() # /command arg1 arg2 ...
             command = args[0]
             args = args[1:]
-            if not (
-                message.text[0] == '/' and command in self.commands
+            if (
+                not (message.text[0] == '/' and command in self.commands) or
+                (self.check and not await self.check.check_update(update))
             ):
-                return None
-
-            if self.check and not self.check.check_update(update):
                 return None
 
             parameters = self._check_params_correct(args)

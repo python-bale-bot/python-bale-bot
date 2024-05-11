@@ -102,7 +102,6 @@ class Updater:
         )
 
     async def __start_worker(self, work_coroutine: Callable[..., Coroutine], error_handler: Callable[[BaleError], bool]) -> None:
-        interval = self.interval
         wait_stop_task = asyncio.create_task(self.__stop_worker_event.wait())
 
         while self._running:
