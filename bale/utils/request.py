@@ -8,33 +8,48 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Any, Type, TYPE_CHECKING, Optional
+from typing import Any, Type, TYPE_CHECKING, Optional, Dict, NamedTuple
+from bale.utils.types import MissingValue
 import json
 if TYPE_CHECKING:
-	from bale.request import ResponseParser
-	from bale._error import BaleError
+    from bale.request import ResponseParser
+    from bale._error import BaleError
 
 __all__ = (
-	"ResponseStatusCode",
-	"to_json",
-	"find_error_class"
+    "ResponseStatusCode",
+    "to_json",
+    "find_error_class",
+	"RequestParams",
+    "handle_request_param"
 )
 
 class ResponseStatusCode:
-	OK = 200
-	NOT_INCORRECT = 400
-	NOT_FOUND = 440
-	PERMISSION_DENIED = 403
-	RATE_LIMIT = 429
+    OK = 200
+    NOT_INCORRECT = 400
+    NOT_FOUND = 440
+    PERMISSION_DENIED = 403
+    RATE_LIMIT = 429
 
 def to_json(obj: Any) -> str:
-	return json.dumps(obj)
+    return json.dumps(obj)
 
 def find_error_class(response: "ResponseParser") -> Optional[Type["BaleError"]]:
-	from bale._error import __ERROR_CLASSES__
+    from bale._error import __ERROR_CLASSES__
 
-	for err_obj in __ERROR_CLASSES__:
-		if err_obj.STATUS_CODE == response.original_response.status or err_obj.check_response(response):
-			return err_obj
+    for err_obj in __ERROR_CLASSES__:
+        if err_obj.STATUS_CODE == response.original_response.status or err_obj.check_response(response):
+            return err_obj
 
-	return None
+    return None
+
+class RequestParams(NamedTuple):
+    payload: Optional[Dict[str, Any]]
+
+def convert_to_json(payload: Dict[str, Any]) -> Dict[str, Any]:
+    return {
+        key: value.to_json() if hasattr(value, 'to_json') else value
+        for key, value in payload.items() if value is not MissingValue
+    }
+
+def handle_request_param(payload: Dict[str, Any] = None):
+    return RequestParams(payload=convert_to_json(payload))

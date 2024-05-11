@@ -16,9 +16,9 @@ import logging
 from ssl import SSLCertVerificationError
 from bale._version import BALE_API_BASE_URL, BALE_API_FILE_URL
 from bale.attachments import InputFile
+from bale.utils.request import RequestParams
 from bale._error import __ERROR_CLASSES__, HTTPClientError, APIError, NetworkError, TimeOut, BaleError, HTTPException
-from ._parser import ResponseParser
-from ._params import RequestParams
+from .parser import ResponseParser
 
 from bale.utils.request import ResponseStatusCode, to_json, find_error_class
 
@@ -140,13 +140,13 @@ class HTTPClient:
 
             except SSLCertVerificationError as error:
                 _log.warning("Failed connection with ssl. you can set the ssl off.", exc_info=error)
-                raise NetworkError(str(error))
+                raise NetworkError(error)
             except aiohttp.ClientConnectorError as error:
-                raise NetworkError(str(error))
+                raise NetworkError(error)
             except aiohttp.ServerTimeoutError:
                 raise TimeOut()
             except aiohttp.ClientOSError as error:
-                raise BaleError(str(error))
+                raise BaleError(error)
             except BaleError as error:
                 raise error
             except Exception as error:

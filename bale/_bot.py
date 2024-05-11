@@ -39,13 +39,14 @@ from bale import (
 )
 from bale.handlers import BaseHandler
 from bale.checks import BaseCheck
-from bale.request import HTTPClient, handle_request_param
+from bale.request import HTTPClient
 from ._waitcontext import WaitContext
 from ._error import NotFound, InvalidToken
 from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER, MissingValue
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 from .utils.params import arguments_shield
+from .utils.request import handle_request_param
 
 __all__ = ("Bot",)
 
