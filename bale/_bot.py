@@ -581,12 +581,10 @@ class Bot:
 
         payload = {
             "chat_id": chat_id,
-            "text": text
+            "text": text,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_message(
             params=handle_request_param(payload)
@@ -685,14 +683,11 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "document": parse_file_input(document, Document, file_name)
+            "document": parse_file_input(document, Document, file_name),
+            "caption": caption,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if caption:
-            payload["caption"] = caption
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_document(
             params=handle_request_param(payload)
@@ -749,14 +744,11 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "photo": parse_file_input(photo, PhotoSize, file_name)
+            "photo": parse_file_input(photo, PhotoSize, file_name),
+            "caption": caption,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if caption:
-            payload["caption"] = caption
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_photo(
             params=handle_request_param(payload)
@@ -814,14 +806,11 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "audio": parse_file_input(audio, Audio, file_name)
+            "audio": parse_file_input(audio, Audio, file_name),
+            "caption": caption,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if caption:
-            payload["caption"] = caption
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_audio(
             params=handle_request_param(payload)
@@ -878,14 +867,11 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "video": parse_file_input(video, Video, file_name)
+            "video": parse_file_input(video, Video, file_name),
+            "caption": caption,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if caption:
-            payload["caption"] = caption
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_video(params=handle_request_param(payload))
         result = Message.from_dict(data=response.result, bot=self)
@@ -947,20 +933,14 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "animation": parse_file_input(animation, Animation, file_name)
+            "animation": parse_file_input(animation, Animation, file_name),
+            "duration": duration,
+            "width": width,
+            "height": height,
+            "caption": caption,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if duration:
-            payload["duration"] = duration
-        if width:
-            payload["width"] = width
-        if height:
-            payload["height"] = height
-        if caption:
-            payload["caption"] = caption
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_animation(params=handle_request_param(
             payload
@@ -1009,12 +989,10 @@ class Bot:
         """
         payload = {
             "chat_id": chat_id,
-            "media": media
+            "media": media,
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id
         }
-        if components:
-            payload["reply_markup"] = components.to_json()
-        if reply_to_message_id:
-            payload["reply_to_message_id"] = reply_to_message_id
 
         response = await self._http.send_media_group(params=handle_request_param(
             payload
@@ -1069,10 +1047,9 @@ class Bot:
             "latitude": location.latitude,
             "longitude": location.longitude,
             "horizontal_accuracy": location.horizontal_accuracy,
-            "reply_to_message_id": reply_to_message_id
+            "reply_markup": components,
+            "reply_to_message_id": reply_to_message_id,
         }
-        if components is not MissingValue:
-            payload["reply_markup"] = components.to_json()
 
         response = await self._http.send_location(
             params=handle_request_param(payload)
@@ -1125,12 +1102,10 @@ class Bot:
             "chat_id": chat_id,
             "phone_number": contact.phone_number,
             "first_name": contact.first_name,
+            "last_name": contact.last_name,
+            "reply_markup": components,
             "reply_to_message_id": reply_to_message_id
         }
-        if contact.last_name:
-            payload["last_name"] = contact.last_name
-        if components is not MissingValue:
-            payload["components"] = components.to_json()
 
         response = await self._http.send_contact(params=handle_request_param(payload))
         result = Message.from_dict(data=response.result, bot=self)
@@ -1320,10 +1295,9 @@ class Bot:
         payload = {
             "chat_id": chat_id,
             "message_id": message_id,
-            "text": text
+            "text": text,
+            "reply_markup": components
         }
-        if components:
-            payload["reply_markup"] = components.to_json()
 
         response = await self._http.edit_message_text(
             params=handle_request_param(payload)
@@ -1363,10 +1337,10 @@ class Bot:
         payload = {
             "chat_id": chat_id,
             "message_id": message_id,
-            "caption": caption
+            "caption": caption,
+            "reply_markup": components
         }
-        if components:
-            payload["reply_markup"] = components
+
         response = await self._http.edit_message_caption(
             params=handle_request_param(payload)
         )
