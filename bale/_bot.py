@@ -46,6 +46,7 @@ from ._error import NotFound, InvalidToken
 from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER, MissingValue
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
+from .utils.params import arguments_shield
 
 __all__ = ("Bot",)
 
@@ -494,6 +495,7 @@ class Bot:
         self._client_user = client_user
         return client_user
 
+    @arguments_shield
     async def set_webhook(self, url: str) -> bool:
         """Use this method to specify an url and receive incoming updates via an outgoing webhook.
         Whenever there is an update for the bot, Bale will send an HTTPS POST request to the specified url, containing An Update.
@@ -516,6 +518,7 @@ class Bot:
         response = await self._http.set_webhook(params=handle_request_param(dict(url=url)))
         return response.result or False
 
+    @arguments_shield
     async def delete_webhook(self) -> bool:
         """This service is used to remove the webhook set for the bot.
 
@@ -537,9 +540,10 @@ class Bot:
         response = await self._http.delete_webhook()
         return response.result or False
 
+    @arguments_shield
     async def send_message(self, chat_id: Union[str, int], text: str, *,
                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send text messages.
 
         .. code:: python
@@ -596,6 +600,7 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def forward_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int]):
         """This service is used to send text messages.
 
@@ -637,10 +642,11 @@ class Bot:
         self._state.store_message(result)
         return result
 
+    @arguments_shield
     async def send_document(self, chat_id: Union[str, int], document: Union["Document", FileInput], *,
                             caption: Optional[str] = MissingValue,
                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
                             file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send document.
 
@@ -700,10 +706,11 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_photo(self, chat_id: Union[str, int], photo: Union["PhotoSize", FileInput], *,
                          caption: Optional[str] = MissingValue,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
                          file_name: Optional[Union[str]] = MissingValue) -> "Message":
         """This service is used to send photo.
 
@@ -764,10 +771,11 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_audio(self, chat_id: Union[str, int], audio: Union[Audio, FileInput], *,
                          caption: Optional[str] = MissingValue,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
                          file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Audio.
 
@@ -827,10 +835,11 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_video(self, chat_id: Union[str, int], video: Union[Video, FileInput], *,
                          caption: Optional[str] = MissingValue,
                          components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
                          file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Video.
 
@@ -888,11 +897,12 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_animation(self, chat_id: Union[str, int], animation: Union[Animation, FileInput], *,
                              duration: Optional[int] = MissingValue, width: Optional[int] = MissingValue, height: Optional[int] = MissingValue,
                              caption: Optional[str] = MissingValue,
                              components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                             reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue,
+                             reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
                              file_name: Optional[str] = MissingValue) -> "Message":
         """This service is used to send Animation.
 
@@ -964,6 +974,7 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_media_group(self, chat_id: Union[str, int], media: List[MediaInput], *,
                              components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
                              reply_to_message_id: Optional[Union[str, int]] = MissingValue) -> List["Message"]:
@@ -1016,10 +1027,11 @@ class Bot:
 
         return messages
 
+    @arguments_shield
     async def send_location(
             self, chat_id: Union[str, int], location: "Location",
             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue
+            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None
     ) -> "Message":
         """Use this method to send point on the map.
 
@@ -1074,9 +1086,10 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_contact(self, chat_id: Union[str, int], contact: "Contact",
                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -1129,6 +1142,7 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
                            prices: List["LabeledPrice"], *,
                            invoice_payload: Optional[str] = None,
@@ -1227,8 +1241,9 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def send_sticker(self, chat_id: Union[str, int], sticker: Union["Sticker", FileInput], *,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
+                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send sticker.
 
         .. code:: python
@@ -1276,6 +1291,7 @@ class Bot:
 
         return result
 
+    @arguments_shield
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
                            components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
@@ -1318,6 +1334,7 @@ class Bot:
         self._state.update_message(result)
         return result
 
+    @arguments_shield
     async def edit_message_caption(self, chat_id: Union[str, int], message_id: Union[str, int], caption: str, *,
                            components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit captions of messages that you have already sent through the arm.
@@ -1359,8 +1376,9 @@ class Bot:
         self._state.update_message(result)
         return result
 
+    @arguments_shield
     async def copy_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int], *,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = MissingValue) -> "Message":
+                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """You can use this service to copy a message and send it in another chat.
 
         .. code:: python
@@ -1405,7 +1423,8 @@ class Bot:
 
         return result
 
-    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = MissingValue) -> None:
+    @arguments_shield
+    async def delete_message(self, chat_id: Union[str, int], message_id: Union[str, int], *, delay: Optional[Union[int, float]] = None) -> None:
         """You can use this service to delete a message that you have already sent through the arm.
 
         .. code:: python
@@ -1451,6 +1470,7 @@ class Bot:
         else:
             await delete_message_task()
 
+    @arguments_shield
     async def get_chat(self, chat_id: Union[str, int], *, use_cache=True) -> Optional["Chat"]:
         """Use this method to get cashed or up-to-date information about the chat (current name of the user for one-on-one conversations,
         current username of a user, group or channel, etc.).
@@ -1502,6 +1522,7 @@ class Bot:
             self._state.store_chat(chat)
             return chat
 
+    @arguments_shield
     async def get_user(self, user_id: Union[str, int], *, use_cache=True) -> Optional["User"]:
         """This Method almost like :meth:`bale.Bot.get_chat` , but this a filter that only get user.
 
@@ -1541,6 +1562,7 @@ class Bot:
         self._state.remove_user(user_id)
         return None
 
+    @arguments_shield
     async def get_message(self, chat_id: int, message_id: int) -> Optional["Message"]:
         """Use this method to get cashed information about the message.
 
@@ -1561,6 +1583,7 @@ class Bot:
         """
         return self._state.get_message(chat_id, message_id)
 
+    @arguments_shield
     async def get_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> Optional["ChatMember"]:
         """Use this method to get information about a member of a chat.
         The method is only guaranteed to work for other users if the bot is an administrator in the chat.
@@ -1607,6 +1630,7 @@ class Bot:
         else:
             return ChatMember.from_dict(response.result, self)
 
+    @arguments_shield
     async def promote_chat_member(self,
           chat_id: Union[str, int],
           user_id: Union[str, int],
@@ -1713,6 +1737,7 @@ class Bot:
         )))
         return response.result
 
+    @arguments_shield
     async def ban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
         """Use this method to ban a user from a group, supergroup or a channel. In the case of supergroups and channels,
         the user will not be able to return to the group on their own using invite links, etc., unless unbanned first.
@@ -1752,6 +1777,7 @@ class Bot:
         )
         return response.result or False
 
+    @arguments_shield
     async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = MissingValue) -> bool:
         """Use this method to unban a previously kicked user in a group or channel.
         The user will not return to the group or channel automatically, but will be able to join via link, etc.
@@ -1796,6 +1822,7 @@ class Bot:
         )
         return response.result
 
+    @arguments_shield
     async def set_chat_photo(self, chat_id: Union[str, int], photo: Union[PhotoSize, FileInput]) -> bool:
         """Use this method to set a new profile photo for the chat.
 
@@ -1839,6 +1866,7 @@ class Bot:
         )
         return response.result or False
 
+    @arguments_shield
     async def get_chat_members_count(self, chat_id: Union[str, int]) -> int:
         """Use this method to get the number of members in a chat.
 
@@ -1879,6 +1907,7 @@ class Bot:
         )
         return response.result
 
+    @arguments_shield
     async def get_chat_administrators(self, chat_id: Union[str, int]) -> Optional[List["ChatMember"]]:
         """Use this method to get a list of administrators in a chat.
 
@@ -1922,6 +1951,7 @@ class Bot:
 
         return members
 
+    @arguments_shield
     async def get_file(self, file_id: str):
         """Use this method to get basic info about a file and prepare it for downloading. For the moment, bots can download files of up to ``20`` MB in size.
 
@@ -1955,6 +1985,7 @@ class Bot:
 
         return await self._http.get_file(file_id)
 
+    @arguments_shield
     async def invite_user(self, chat_id: Union[str, int], user_id: Union[str, int]) -> bool:
         """Invite user to the chat
 
@@ -1998,6 +2029,7 @@ class Bot:
         )
         return response.result or False
 
+    @arguments_shield
     async def leave_chat(self, chat_id: Union[str, int]) -> bool:
         """Use this method for your bot to leave a group, channel.
 
@@ -2034,6 +2066,7 @@ class Bot:
             self._state.remove_chat(chat_id)
         return response.result or False
 
+    @arguments_shield
     async def get_webhook_info(self) -> "WebhookInfo":
         """Use this method to get current webhook status.
 
@@ -2054,6 +2087,7 @@ class Bot:
         webhook_info = WebhookInfo.from_dict(response.result, bot=self)
         return webhook_info
 
+    @arguments_shield
     async def get_updates(self, offset: Optional[int] = MissingValue, limit: Optional[int] = MissingValue) -> List["Update"]:
         """Use this method to get pending updates.
 

@@ -30,6 +30,7 @@ if TYPE_CHECKING:
 STOP_UPDATER_MARKER = object()
 JSONDICT = Dict[str, Any]
 T = TypeVar('T')
+F = TypeVar('F')
 UT = TypeVar('UT')
 Coro = Coroutine[Any, Any, T]
 CoroT = TypeVar('CoroT', bound=Callable[..., Coro[Any]])
