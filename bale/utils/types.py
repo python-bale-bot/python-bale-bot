@@ -56,18 +56,31 @@ MediaInput = Union[
 class _MissingValue:
     __slots__ = ()
 
-    def reject_function(self):
-        return False
-
     def __str__(self):
-        return None
+        return "Missing"
 
     def __repr__(self):
-        return "Default None Value"
+        return "MissingValue"
+
+    def __eq__(self, _):
+        return False
+
+    def __ne__(self, _):
+        return False
+
+    def __le__(self, _):
+        return False
+
+    def __ge__(self, _):
+        return False
+
+    def __lt__(self, _):
+        return False
+
+    def __gt__(self, _):
+        return False
 
     def __hash__(self):
         return 0
-
-    __eq__ = __ne__ = __le__ = __ge__ = __lt__ = __gt__ = reject_function
 
 MissingValue: Any = _MissingValue()

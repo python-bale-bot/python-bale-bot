@@ -29,7 +29,7 @@ class BaleObject:
         "_id",
         "_locked"
     )
-    def __init__(self):
+    def __init__(self) -> None:
         self.__bot: Optional["Bot"] = None
         self._id = None
         self._locked: bool = False
@@ -39,7 +39,7 @@ class BaleObject:
         return self.__bot
 
     @bot.setter
-    def bot(self, value):
+    def bot(self, value) -> None:
         self.set_bot(value)
 
     def _lock(self) -> None:
@@ -56,7 +56,7 @@ class BaleObject:
 
         return self.__bot
 
-    def set_bot(self, bot: "Bot"):
+    def set_bot(self, bot: "Bot") -> None:
         self.__bot = bot
 
     def __setattr__(self, key: str, value: Any) -> None:
@@ -90,7 +90,7 @@ class BaleObject:
         return "<{} {}>".format(
             self.__class__.__name__,
             ", ".join([
-                "{}={}".format(k, repr(v))
+                f"{k}={repr(v)}"
                 for k, v in attrs.items() if not k.startswith("_") and v
             ])
         )
