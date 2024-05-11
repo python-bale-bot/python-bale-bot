@@ -96,7 +96,7 @@ from ._message import Message
 from ._callbackquery import CallbackQuery
 from ._update import Update
 from ._bot import Bot
-from ._version import __version__
+from .version import __version__
 
 __title__ = "python-bale-bot"
 __author__ = "Kian Ahmadian"
