@@ -9,6 +9,7 @@ Copyright (C) 2024. All Rights Reserved.
 """
 
 __all__ = (
+    "MissingObject",
     "MissingValue",
     "BaleObject",
     "WebhookInfo",
@@ -62,7 +63,7 @@ __all__ = (
     "__version__"
 )
 
-from .utils.types import MissingValue
+from .utils.types import MissingObject, MissingValue
 from ._baleobject import BaleObject
 from ._webhookinfo import WebhookInfo
 from ._waitcontext import WaitContext

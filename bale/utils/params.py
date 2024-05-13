@@ -10,27 +10,32 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 import functools
 from typing import Any, Tuple, get_type_hints
-import inspect
+from inspect import signature as _signature, Parameter
 from .types import F
 
-def check_annotation(item: Tuple[str, Any], annotation: Any):
-    value = item[1]
-    if hasattr(annotation, '__origin__') and (
-            isinstance(annotation.__origin__, list) and isinstance(value, list)
-    ):
-        for i in value:
-            check_annotation(i, annotation)
+def _tuple_to_str(tup: Tuple[Any, ...]) -> str:
+    return ", ".join(
+        item.__name__ for item in tup
+    )
 
+def check_annotation(item: Tuple[str, Any], annotation: Any) -> None:
+    param_name, value = item
     expected_class_type = annotation
-    if hasattr(annotation,
-               '__args__'):  # Optional[Test], Union[int, float] and all typing objects has __attr__ variable
+
+    if hasattr(annotation, '__args__'):  # Optional[Test], Union[int, float] and all typing objects has __attr__ variable
         expected_class_type = annotation.__args__
 
-    if not inspect.Parameter.empty in (annotation, expected_class_type) and not isinstance(value, expected_class_type):
+        # must be check all of that
+        if isinstance(value, list) and getattr(annotation, '__origin__', None) is list:
+            for i in value:
+                check_annotation((param_name, i), expected_class_type)
+            return
+
+    if not Parameter.empty in (annotation, expected_class_type) and not isinstance(value, expected_class_type):
         raise TypeError(
             '{param_name} param must be type of {expected_class_type}'.format(
-                param_name=item[0],
-                expected_class_type=expected_class_type
+                param_name=param_name,
+                expected_class_type=_tuple_to_str(expected_class_type)
             )
         )
 
@@ -53,16 +58,19 @@ def arguments_shield(func: F) -> F:
     """
     @functools.wraps(func)
     async def wrapper(*args, **kwargs):
-        signature = inspect.signature(func)
+        signature = _signature(func)
         type_hints = get_type_hints(func)
         try:
             bound_obj = signature.bind(*args, **kwargs)
         except TypeError: # a parameter is missing. so, to obtain a better error, we execute it.
             return func(*args, **kwargs)
+        else:
+            bound_obj.apply_defaults()
 
         for param in signature.parameters.keys():
-            if param == 'self':
+            if not param in type_hints:
                 continue
+
             check_annotation(
                 (
                     param,

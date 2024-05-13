@@ -8,8 +8,9 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Union, Dict, Any, TypeVar, Callable, Coroutine, TYPE_CHECKING
 from pathlib import Path
+from typing import Union, Dict, Any, TypeVar, Callable, Coroutine, TYPE_CHECKING
+
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
     from bale import (
@@ -54,7 +55,7 @@ MediaInput = Union[
     "InputMediaDocument"
 ]
 
-class _MissingValue:
+class MissingObject:
     __slots__ = ()
 
     def __str__(self):
@@ -84,4 +85,14 @@ class _MissingValue:
     def __hash__(self):
         return 0
 
-MissingValue: Any = _MissingValue()
+MissingValue: Any = MissingObject()
+
+class _MaybeMissingGenerator:
+    __slots__ = ()
+
+    def __getitem__(self, item: Union[tuple, Any]) -> Union[MissingValue, ...]:
+        if not isinstance(item, tuple):
+            item = (item, )
+        return Union[(MissingObject, ) + item]
+
+OptionalParam = _MaybeMissingGenerator()

@@ -42,7 +42,7 @@ from bale.checks import BaseCheck
 from bale.request import HTTPClient
 from ._waitcontext import WaitContext
 from ._error import NotFound, InvalidToken
-from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER, MissingValue
+from .utils.types import CoroT, FileInput, MediaInput, STOP_UPDATER_MARKER, MissingValue, OptionalParam
 from .utils.logging import setup_logging
 from .utils.files import parse_file_input
 from .utils.params import arguments_shield
@@ -542,8 +542,8 @@ class Bot:
 
     @arguments_shield
     async def send_message(self, chat_id: Union[str, int], text: str, *,
-                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                           reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send text messages.
 
         .. code:: python
@@ -642,10 +642,10 @@ class Bot:
 
     @arguments_shield
     async def send_document(self, chat_id: Union[str, int], document: Union["Document", FileInput], *,
-                            caption: Optional[str] = MissingValue,
-                            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
-                            file_name: Optional[str] = MissingValue) -> "Message":
+                            caption: OptionalParam[str] = MissingValue,
+                            components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                            reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None,
+                            file_name: Optional[str] = None) -> "Message":
         """This service is used to send document.
 
         .. code:: python
@@ -703,10 +703,10 @@ class Bot:
 
     @arguments_shield
     async def send_photo(self, chat_id: Union[str, int], photo: Union["PhotoSize", FileInput], *,
-                         caption: Optional[str] = MissingValue,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[Union[str]] = MissingValue) -> "Message":
+                         caption: OptionalParam[str] = MissingValue,
+                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                         reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[Union[str]] = None) -> "Message":
         """This service is used to send photo.
 
         .. code:: python
@@ -765,10 +765,10 @@ class Bot:
 
     @arguments_shield
     async def send_audio(self, chat_id: Union[str, int], audio: Union[Audio, FileInput], *,
-                         caption: Optional[str] = MissingValue,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[str] = MissingValue) -> "Message":
+                         caption: OptionalParam[str] = MissingValue,
+                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                         reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[str] = None) -> "Message":
         """This service is used to send Audio.
 
         .. code:: python
@@ -826,10 +826,10 @@ class Bot:
 
     @arguments_shield
     async def send_video(self, chat_id: Union[str, int], video: Union[Video, FileInput], *,
-                         caption: Optional[str] = MissingValue,
-                         components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
-                         file_name: Optional[str] = MissingValue) -> "Message":
+                         caption: OptionalParam[str] = MissingValue,
+                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                         reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None,
+                         file_name: Optional[str] = None) -> "Message":
         """This service is used to send Video.
 
         .. code:: python
@@ -885,11 +885,11 @@ class Bot:
 
     @arguments_shield
     async def send_animation(self, chat_id: Union[str, int], animation: Union[Animation, FileInput], *,
-                             duration: Optional[int] = MissingValue, width: Optional[int] = MissingValue, height: Optional[int] = MissingValue,
-                             caption: Optional[str] = MissingValue,
-                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                             reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None,
-                             file_name: Optional[str] = MissingValue) -> "Message":
+                             duration: OptionalParam[int] = MissingValue, width: OptionalParam[int] = MissingValue, height: OptionalParam[int] = MissingValue,
+                             caption: OptionalParam[str] = MissingValue,
+                             components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                             reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None,
+                             file_name: Optional[str] = None) -> "Message":
         """This service is used to send Animation.
 
         .. code:: python
@@ -956,8 +956,8 @@ class Bot:
 
     @arguments_shield
     async def send_media_group(self, chat_id: Union[str, int], media: List[MediaInput], *,
-                             components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                             reply_to_message_id: Optional[Union[str, int]] = MissingValue) -> List["Message"]:
+                             components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                             reply_to_message_id: OptionalParam[str, int] = MissingValue) -> List["Message"]:
         """This service is used to send a group of photos, videos, documents or audios as an album.
         Documents and audio files can be only grouped on an album with messages of the same type.
 
@@ -1008,8 +1008,8 @@ class Bot:
     @arguments_shield
     async def send_location(
             self, chat_id: Union[str, int], location: "Location",
-            components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-            reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None
+            components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+            reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None
     ) -> "Message":
         """Use this method to send point on the map.
 
@@ -1065,8 +1065,8 @@ class Bot:
 
     @arguments_shield
     async def send_contact(self, chat_id: Union[str, int], contact: "Contact",
-                           components: Optional[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+                           reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send contact.
 
         .. code:: python
@@ -1120,11 +1120,11 @@ class Bot:
     @arguments_shield
     async def send_invoice(self, chat_id: Union[str, int], title: str, description: str, provider_token: str,
                            prices: List["LabeledPrice"], *,
-                           invoice_payload: Optional[str] = None,
-                           photo_url: Optional[str] = None, need_name: Optional[bool] = False,
-                           need_phone_number: Optional[bool] = False,
-                           need_email: Optional[bool] = False, need_shipping_address: Optional[bool] = False,
-                           is_flexible: Optional[bool] = True, delete_after: Optional[Union[float, int]] = None) -> Message:
+                           invoice_payload: OptionalParam[str] = MissingValue,
+                           photo_url: OptionalParam[str] = MissingValue, need_name: OptionalParam[bool] = False,
+                           need_phone_number: OptionalParam[bool] = False,
+                           need_email: OptionalParam[bool] = False, need_shipping_address: OptionalParam[bool] = False,
+                           is_flexible: OptionalParam[bool] = True, delete_after: Optional[Union[float, int]] = None) -> Message:
         """You can use this service to send money request messages.
 
         .. important::
@@ -1137,7 +1137,7 @@ class Bot:
 
             await bot.send_invoice(
                 1234, "invoice title", "invoice description", "6037************", [bale.LabeledPrice("label", 2000)],
-                payload = "unique invoice payload", ...
+                invoice_payload = "unique invoice payload", ...
             )
 
         .. admonition:: Examples
@@ -1218,7 +1218,7 @@ class Bot:
 
     @arguments_shield
     async def send_sticker(self, chat_id: Union[str, int], sticker: Union["Sticker", FileInput], *,
-                         reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                         reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """This service is used to send sticker.
 
         .. code:: python
@@ -1268,7 +1268,7 @@ class Bot:
 
     @arguments_shield
     async def edit_message(self, chat_id: Union[str, int], message_id: Union[str, int], text: str, *,
-                           components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
+                           components: OptionalParam["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit text messages that you have already sent through the arm.
 
         .. code:: python
@@ -1310,7 +1310,7 @@ class Bot:
 
     @arguments_shield
     async def edit_message_caption(self, chat_id: Union[str, int], message_id: Union[str, int], caption: str, *,
-                           components: Optional["InlineKeyboardMarkup"] = MissingValue) -> "Message":
+                           components: OptionalParam["InlineKeyboardMarkup"] = MissingValue) -> "Message":
         """You can use this service to edit captions of messages that you have already sent through the arm.
 
         .. code:: python
@@ -1352,7 +1352,7 @@ class Bot:
 
     @arguments_shield
     async def copy_message(self, chat_id: Union[str, int], from_chat_id: Union[str, int], message_id: Union[str, int], *,
-                           reply_to_message_id: Optional[Union[str, int]] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
+                           reply_to_message_id: OptionalParam[str, int] = MissingValue, delete_after: Optional[Union[float, int]] = None) -> "Message":
         """You can use this service to copy a message and send it in another chat.
 
         .. code:: python
@@ -1608,22 +1608,22 @@ class Bot:
     async def promote_chat_member(self,
           chat_id: Union[str, int],
           user_id: Union[str, int],
-          can_be_edited: Optional[bool] = MissingValue,
-          can_change_info: Optional[bool] = MissingValue,
-          can_post_messages: Optional[bool] = MissingValue,
-          can_edit_messages: Optional[bool] = MissingValue,
-          can_delete_messages: Optional[bool] = MissingValue,
-          can_invite_users: Optional[bool] = MissingValue,
-          can_restrict_members: Optional[bool] = MissingValue,
-          can_pin_messages: Optional[bool] = MissingValue,
-          can_promote_members: Optional[bool] = MissingValue,
-          can_send_messages: Optional[bool] = MissingValue,
-          can_send_media_messages: Optional[bool] = MissingValue,
-          can_reply_to_story: Optional[bool] = MissingValue,
-          can_send_link_message: Optional[bool] = MissingValue,
-          can_send_forwarded_message: Optional[bool] = MissingValue,
-          can_see_members: Optional[bool] = MissingValue,
-          can_add_story: Optional[bool] = MissingValue
+          can_be_edited: OptionalParam[bool] = MissingValue,
+          can_change_info: OptionalParam[bool] = MissingValue,
+          can_post_messages: OptionalParam[bool] = MissingValue,
+          can_edit_messages: OptionalParam[bool] = MissingValue,
+          can_delete_messages: OptionalParam[bool] = MissingValue,
+          can_invite_users: OptionalParam[bool] = MissingValue,
+          can_restrict_members: OptionalParam[bool] = MissingValue,
+          can_pin_messages: OptionalParam[bool] = MissingValue,
+          can_promote_members: OptionalParam[bool] = MissingValue,
+          can_send_messages: OptionalParam[bool] = MissingValue,
+          can_send_media_messages: OptionalParam[bool] = MissingValue,
+          can_reply_to_story: OptionalParam[bool] = MissingValue,
+          can_send_link_message: OptionalParam[bool] = MissingValue,
+          can_send_forwarded_message: OptionalParam[bool] = MissingValue,
+          can_see_members: OptionalParam[bool] = MissingValue,
+          can_add_story: OptionalParam[bool] = MissingValue
     ):
         """an administrator in the chat for this to work and must have the appropriate admin rights.
         Pass :obj:`False` for all boolean parameters to demote a user.
@@ -1752,7 +1752,7 @@ class Bot:
         return response.result or False
 
     @arguments_shield
-    async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: Optional[bool] = MissingValue) -> bool:
+    async def unban_chat_member(self, chat_id: Union[str, int], user_id: Union[str, int], *, only_if_banned: OptionalParam[bool] = MissingValue) -> bool:
         """Use this method to unban a previously kicked user in a group or channel.
         The user will not return to the group or channel automatically, but will be able to join via link, etc.
         The bot must be an administrator for this to work. By default, this method guarantees that after the call the user is not a member of the chat,
@@ -2062,7 +2062,7 @@ class Bot:
         return webhook_info
 
     @arguments_shield
-    async def get_updates(self, offset: Optional[int] = MissingValue, limit: Optional[int] = MissingValue) -> List["Update"]:
+    async def get_updates(self, offset: OptionalParam[int] = MissingValue, limit: OptionalParam[int] = MissingValue) -> List["Update"]:
         """Use this method to get pending updates.
 
         .. code:: python
