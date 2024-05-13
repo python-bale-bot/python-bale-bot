@@ -74,7 +74,7 @@ class BaseHandler:
 
     def __init__(self) -> None:
         self._callback: Optional[Callable[[UT], Coroutine[...]]] = None
-        self._on_error: Callable[[Update, Exception], Coroutine] = self._default_on_error
+        self._on_error: Optional[Callable[[Update, Exception], Coroutine]] = None
 
     @property
     def callback(self) -> Optional[Callable[[UT], Coroutine[...]]]:
@@ -86,11 +86,14 @@ class BaseHandler:
             "You can't set callback because it's not an public attribute"
         )
 
-    async def _default_on_error(self, update: Update, exc: Exception):
+    async def _on_error_wrapper(self, update: Update, exc: Exception):
         try:
             update.get_bot().dispatch('handler_error', self, update, exc)
         except asyncio.CancelledError:
             pass
+
+        if self._on_error:
+            await self._on_error(update, exc)
 
     def set_callback(self, callback: Callable[[UT, ...], Coroutine[...]]):
         """Register new handler callback.
