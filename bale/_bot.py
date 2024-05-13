@@ -12,6 +12,7 @@ from __future__ import annotations
 
 import asyncio
 import logging
+from signal import SIGINT, SIGTERM
 from builtins import enumerate, reversed
 from typing import Callable, Coroutine, Dict, Tuple, List, Union, Optional, Any, Set, TypeVar
 from weakref import WeakValueDictionary
@@ -159,13 +160,18 @@ class Bot:
         "_http",
         "_closed",
         "__tasks",
+        "__updater_fetcher_task",
         "update_queue",
-        "updater"
+        "_updater"
     )
 
-    def __init__(self, token: str, **kwargs) -> None:
+    def __init__(self, token: str, updater: Updater = None, **kwargs) -> None:
         if not isinstance(token, str):
             raise InvalidToken()
+        if updater and not isinstance(updater, Updater):
+            raise TypeError(
+                'updater param must be type of Updater'
+            )
 
         self.token: str = token
         self._http: HTTPClient = HTTPClient(token, **kwargs.pop('http_kwargs', {}))
@@ -179,6 +185,7 @@ class Bot:
         self._handlers: List[BaseHandler] = []
         self._closed: bool = True
         self.__tasks: Set[asyncio.Task] = set()
+        self.__updater_fetcher_task: Optional[asyncio.Task] = None
         self.update_queue: asyncio.Queue["Update" | STOP_UPDATER_MARKER] = asyncio.Queue()
         self.updater: Updater = Updater(self)
 
@@ -2175,54 +2182,95 @@ class Bot:
         self.update_queue.task_done()
 
     async def __updater_fetcher(self) -> None:
-        async def wrapper():
-            while True:
-                try:
-                    item: Union["Update", STOP_UPDATER_MARKER] = await self.update_queue.get()
-                    if item is STOP_UPDATER_MARKER:
-                        while not self.update_queue.empty():
-                            self.update_queue.task_done()
+        while True:
+            try:
+                item: Union["Update", STOP_UPDATER_MARKER] = await self.update_queue.get()
+                if item is STOP_UPDATER_MARKER:
+                    while not self.update_queue.empty():
+                        self.update_queue.task_done()
 
-                        self.update_queue.task_done() # for the last item: STOP_UPDATER_MARKER
-                        break
+                    self.update_queue.task_done() # for the last item: STOP_UPDATER_MARKER
+                    break
 
-                    self.create_task(self._process_update_wrapper(item), name=f"Bot:updater_fetcher:process_update:{item.update_id}")
-                except asyncio.CancelledError:
-                    _log.warning("The update fetcher can only be closed with Bot.close.")
+                self.create_task(self._process_update_wrapper(item), name=f"Bot:updater_fetcher:process_update:{item.update_id}")
+            except asyncio.CancelledError:
+                _log.warning("The update fetcher can only be closed with Bot.close.")
 
-        self.create_task(wrapper(), name="Bot:updater_fetcher")
+    async def _updater_fetcher_wrapper(self) -> None:
+        self.__updater_fetcher_task = self.create_task(self.__updater_fetcher(), name="Bot:updater_fetcher")
 
-    def __run(self):
-        loop = asyncio.get_event_loop()
+    def _get_loop(self) -> asyncio.AbstractEventLoop:
+        try:
+            loop = asyncio.get_event_loop()
+        except RuntimeError: # https://github.com/python/cpython/blob/main/Lib/asyncio/events.py#L715-L717
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+
+        def signal_handler():
+            raise SystemExit
+
+        for sig in (SIGINT, SIGTERM):
+            loop.add_signal_handler(sig, signal_handler)
+        return loop
+
+    def run_until_complete_functions(self, functions: List[Callable], loop: asyncio.AbstractEventLoop) -> None:
+        for func in functions:
+            if asyncio.iscoroutinefunction(func):
+                loop.run_until_complete(func)
+            else:
+                func()
+
+    def __run(self, startup_functions: List[Callable], operation_coroutine: List[Coroutine], stop_functions: List[Callable]) -> None:
+        loop = self._get_loop()
 
         try:
             loop.run_until_complete(self._setup_hook())
-            loop.run_until_complete(self.updater.setup())
-            asyncio.ensure_future(self.__updater_fetcher())
-            asyncio.ensure_future(self.updater.start_polling())
+            self.run_until_complete_functions(startup_functions, loop)
+            asyncio.ensure_future(self._updater_fetcher_wrapper())
+            for coro in operation_coroutine:
+                asyncio.ensure_future(coro)
             loop.run_forever()
         except (KeyboardInterrupt, SystemExit):
             _log.debug("The request to stop receiving has been received. Currently in the process of shutting down...")
         except Exception as exc:
             _log.info("We encountered the error, currently in the process of shutting down...", exc_info=exc)
         finally:
-            loop.run_until_complete(self.updater.stop())
+            self.run_until_complete_functions(stop_functions, loop)
             loop.run_until_complete(self.close())
 
-    def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None):
+    def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None, startup_functions: List[Callable] = None, stop_functions: List[Callable] = None):
         """This method is used to run the bot, updater, and update fetcher process.
+
+        .. hint::
+            .. code:: python
+
+                ...
+                bot = Bot(token="YOUR_TOKEN")
+
+                bot.run() # to run the bot
 
         Parameters
         ----------
             log_handler: :class:`logging.Handler`, optional
-                Your File. Pass a file_id as String to send a file that exists on the Bale servers (recommended),
-                pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
+                A logging handler to use for logging. If provided, the class will use this handler for logging operations. Defaults to :class:`logging.StreamHandler`.
             log_level: :obj:`int`, optional
-                Additional interface options. It is used only when uploading a file.
+                The logging level to be used for logging. If provided, the class will use this level for logging operations. Defaults to :obj:`logging.INFO`.
             log_format: :obj:`str`, optional
-                Additional interface options. It is used only when uploading a file.
-
+                The format string to use for formatting log messages. If provided, the class will use this for logging messages. Defaults to ``%Y-%m-%d %H:%M:%S``.
+            startup_functions: a :obj:`list` of functions (including async funcs), optional
+                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method for execute) when the class is starting to run. Defaults to ``None``.
+            stop_functions: a :obj:`list` of functions (including async funcs), optional
+                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method for execute) when the class is Terminating work. Defaults to ``None``.
         """
         setup_logging(handler=log_handler, level=log_level, formatter=log_format)
+        operation_coroutine = list()
+        if startup_functions is None:
+            startup_functions = ()
+        if stop_functions is None:
+            stop_functions = ()
+        if updater := self._updater:
+            startup_functions.append(updater.setup)
+            operation_coroutine.append(updater.start_polling())
+            stop_functions.append(updater.stop)
 
-        return self.__run()
+        return self.__run(startup_functions=startup_functions, operation_coroutine=operation_coroutine, stop_functions=stop_functions)
