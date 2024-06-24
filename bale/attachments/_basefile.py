@@ -12,11 +12,11 @@ from __future__ import annotations
 from bale import BaleObject
 from typing import Optional, Any, ClassVar
 from io import BufferedIOBase
-from bale.utils.types import MissingValue
 
 from ._inputfile import InputFile
 
 __all__ = ("BaseFile",)
+
 
 class BaseFile(BaleObject):
     """This object shows a Base File Class.
@@ -26,7 +26,8 @@ class BaseFile(BaleObject):
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
+            Unique identifier for this file, which is supposed to be the same over time and for different bots.
+            Can’t be used to download or reuse the file.
         file_size: :obj:`int`, optional
             File size in bytes, if known.
 
@@ -46,7 +47,7 @@ class BaseFile(BaleObject):
     AUDIO: ClassVar[str] = "audio"
     ANIMATION: ClassVar[str] = "animation"
 
-    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = MissingValue, **kwargs) -> None:
+    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = None, **kwargs) -> None:
         super().__init__()
         self._id = file_id
         self.file_id = file_id
@@ -61,7 +62,7 @@ class BaseFile(BaleObject):
         """
         return await self.get_bot().get_file(self.file_id)
 
-    async def save_to_memory(self, out: "BufferedIOBase" | Any):
+    async def save_to_memory(self, out: "BufferedIOBase" | Any, close_file: bool = False) -> None:
         """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`,
         the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
 
@@ -69,11 +70,15 @@ class BaseFile(BaleObject):
         ----------
             out: :class:`io.BinaryIO`
                 A file-like object. Must be opened for writing in binary mode.
+            close_file: :obj:`bool`
+                TODO: FILL THAT
 
         """
         buf = await self.get()
 
         out.write(buf)
+        if close_file:
+            out.close()
 
     def to_dict(self):
         data = dict(file_id=self.file_id)
@@ -89,7 +94,8 @@ class BaseFile(BaleObject):
         return data
 
     def to_input_file(self) -> InputFile:
-        """Converts the file to a standard object for sending/uploading it. This object is require in the file sending methods.
+        """Converts the file to a standard object for sending/uploading it.
+        This object is require in the file sending methods.
 
         Returns
         --------

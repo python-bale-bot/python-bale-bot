@@ -11,11 +11,11 @@
 from typing import Optional, Dict
 from ._basefile import BaseFile
 from ._photosize import PhotoSize
-from bale.utils.types import MissingValue
 
 __all__ = (
     "Animation",
 )
+
 
 class Animation(BaseFile):
     """This object shows an Animation.
@@ -25,7 +25,8 @@ class Animation(BaseFile):
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
+            Unique identifier for this file, which is supposed to be the same over time and for different bots.
+            Can’t be used to download or reuse the file.
         width: int
             Animation width as defined by sender.
         height: str
@@ -50,8 +51,9 @@ class Animation(BaseFile):
         "mime_type"
     )
 
-    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int, file_name: Optional[str] = MissingValue,
-                 thumbnail: Optional["PhotoSize"] = MissingValue, mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue) -> None:
+    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, duration: int,
+                 file_name: Optional[str] = None, thumbnail: Optional["PhotoSize"] = None,
+                 mime_type: Optional[str] = None, file_size: Optional[int] = None) -> None:
         super().__init__(file_id, file_unique_id, file_size)
 
         self.width = width

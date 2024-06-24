@@ -17,6 +17,7 @@ __all__ = (
     "InputFile",
 )
 
+
 class InputFile:
     """This object shows a file ready to send/upload.
 
@@ -47,6 +48,7 @@ class InputFile:
         "file_input",
         "file_name"
     )
+
     def __init__(self, file_input: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None) -> None:
         if not isinstance(file_input, (str, BufferedReader, bytes)):
             raise TypeError(
@@ -54,7 +56,7 @@ class InputFile:
             )
 
         if isinstance(file_input, str):
-            file_input = file_input.encode("utf-8")
+            file_input = file_input.encode()
         elif isinstance(file_input, BufferedReader):
             file_input = file_input.read()
 
@@ -70,7 +72,7 @@ class InputFile:
     def to_multipart_payload(self) -> Dict:
         payload = {
             "value": self.file_input,
-            "content_type" : "multipart/form-data"
+            "content_type": "multipart/form-data"
         }
         if self.file_name:
             payload["filename"] = self.file_name

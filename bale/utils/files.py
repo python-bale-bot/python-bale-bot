@@ -13,12 +13,14 @@ from typing import Union, Any, Optional, Type, TYPE_CHECKING
 if TYPE_CHECKING:
     from bale import BaleObject
 
+
 def is_file_valid(obj: Optional[Union[Path, str]]) -> Optional[Path]:
     if obj is None:
         return None
 
     path = Path(obj)
     return path if path.is_file() else None
+
 
 def parse_file_input(
         file_input: Any,
@@ -33,7 +35,7 @@ def parse_file_input(
         if result_path := is_file_valid(file_input):
             return result_path.open(mode="rb")
     elif attachment_type and isinstance(file_input, attachment_type):
-        return file_input.file_id # type: ignore
+        return file_input.file_id  # type: ignore
     elif isinstance(file_input, InputFile):
         return file_input
 

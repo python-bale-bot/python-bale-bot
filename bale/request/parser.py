@@ -14,6 +14,7 @@ from json.decoder import JSONDecodeError
 if TYPE_CHECKING:
     from aiohttp import ClientResponse
 
+
 async def json_or_text(response: "ClientResponse"):
     text = await response.text()
 
@@ -23,6 +24,7 @@ async def json_or_text(response: "ClientResponse"):
         return text
     else:
         return json
+
 
 class ResponseParser:
     """A parser for parse http response.
