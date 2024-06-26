@@ -151,8 +151,8 @@ class BaleObject:
         return obj
 
     @classmethod
-    def from_dict(cls: Type[Bale_obj_instance], payload: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
-        return cls._from_dict(data=payload, bot=bot)
+    def from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
+        return cls._from_dict(data=data, bot=bot)
 
     @classmethod
     def from_list(cls: Type[Bale_obj_instance], payloads_list: Optional[List[Dict]], bot: "Bot") -> Optional[List[Bale_obj_instance]]:
