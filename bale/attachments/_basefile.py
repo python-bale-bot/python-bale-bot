@@ -71,7 +71,7 @@ class BaseFile(BaleObject):
             out: :class:`io.BinaryIO`
                 A file-like object. Must be opened for writing in binary mode.
             close_file: :obj:`bool`
-                TODO: FILL THAT
+                If :obj:`True`, the file will be closed after writing. Default is :obj:`False`.
 
         """
         buf = await self.get()
