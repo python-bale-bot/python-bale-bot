@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Optional, Any, Tuple, Type, TYPE_CHECKING
 
 from bale.utils.request import ResponseStatusCode
+
 if TYPE_CHECKING:
     from bale.request.parser import ResponseParser
 
@@ -30,12 +31,14 @@ __all__ = (
     "__ERROR_CLASSES__"
 )
 
+
 class HTTPClientError:
     USER_OR_CHAT_NOT_FOUND = "no such group or user"
     TOKEN_NOT_FOUND = "Bad Request: Token not found"
     RATE_LIMIT = "bot limit exceed"
     LOCAL_RATE_LIMIT = "local_rate_limited"
     PERMISSION_DENIED = "permission_denied"
+
 
 class BaleError(Exception):
     """
@@ -81,6 +84,7 @@ class InvalidToken(BaleError):
     def check_description(description: Optional[str]) -> bool:
         return description and "token not found" in description.lower()
 
+
 class APIError(BaleError):
     """
     Exception that's raised for when status code 400 occurs and Error is Unknown.
@@ -122,6 +126,7 @@ class NotFound(BaleError):
     def check_description(description: Optional[str]) -> bool:
         return description and HTTPClientError.USER_OR_CHAT_NOT_FOUND in description
 
+
 class Forbidden(BaleError):
     """
     Exception that's raised for when status code 403 occurs.
@@ -137,6 +142,7 @@ class Forbidden(BaleError):
     def check_description(description: Optional[str]) -> bool:
         return description and description.startswith("Forbidden:")
 
+
 class BadRequest(BaleError):
     """
     Exception that's raised for when Bale server say Bad Request.
@@ -150,6 +156,7 @@ class BadRequest(BaleError):
     @staticmethod
     def check_description(description: Optional[str]) -> bool:
         return description and description.startswith("Bad Request:")
+
 
 class RateLimited(BaleError):
     """

@@ -10,10 +10,12 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from typing import Optional, Dict, TYPE_CHECKING
+
 if TYPE_CHECKING:
     from bale import Bot
 
 from bale import BaleObject
+
 
 class MenuKeyboardButton(BaleObject):
     """This object shows a Keyboard Button
@@ -33,7 +35,8 @@ class MenuKeyboardButton(BaleObject):
         "request_location"
     )
 
-    def __init__(self, text: str, *, request_contact: Optional[bool] = False, request_location: Optional[bool] = False) -> None:
+    def __init__(self, text: str, *, request_contact: Optional[bool] = False,
+                 request_location: Optional[bool] = False) -> None:
         super().__init__()
         self.text = text
         self.request_contact = request_contact

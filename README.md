@@ -16,36 +16,39 @@
 
 </div>
 
-# Introduction
+## Introduction
 
-## What is Bale?
+### What is Bale?
+
 **The "Bale" is a messenger-platform for send and receive messages.** it's provides services for developers, and they can send or receive messages through `bots` like normal users and These services are provided by [web services](https://dev.bale.ai) (`API`).
 
-## What is python-bale-bot?
+### What is python-bale-bot?
+
 **The "python-bale-bot" is a Python language package optimized for developers to use web services provided by "Bale".**
 
-# Installing
+## Installing
 <div align='center'>
   
   **You can install or update `python-bale-bot` via:**
   
 </div>
 
-### PyPi:
+### PyPi
 
 ```
 $ pip install python-bale-bot -U
 ```
 
-### Git:
+### Git
 
 ```
-$ git clone https://github.com/python-bale-bot/python-bale-bot
-$ cd python-bale-bot
-$ python setup.py install
+git clone https://github.com/python-bale-bot/python-bale-bot
+cd python-bale-bot
+python setup.py install
 ```
 
-# Quick Start
+## Quick Start
+
 To get started, learn how the library works through the library. In addition, there are examples in the "[Examples](https://docs.python-bale-bot.ir/en/stable/examples.html)" section of the library.
 
 ```python
@@ -56,20 +59,21 @@ client = Bot(token="YOUR TOKEN")
 
 @client.listen('on_ready')
 async def on_ready_handler():
-	print(client.user, "is Ready!")
+    print(client.user, "is Ready!")
 
 @client.handle(CommandHandler("start"))
 async def start_command(message: Message):
-	await message.reply(f'Hi {message.author.first_name}!')
+    await message.reply(f'Hi {message.author.first_name}!')
 
 client.run()
 ```
 
-# Documentation
+## Documentation
+
 **The [package documentation](https://docs.python-bale-bot.ir/en/stable) is the technical reference for python-bale-bot. It contains descriptions of all available classes, modules, methods and arguments as well as the changelog.**
 
+## Contact to Developers
 
-# Contact to Developers
 [![Email](https://img.shields.io/badge/Email-python--bale--bot@googlegroups.com-green?logo=Gmail&logoColor=white)](mailto:python-bale-bot@googlegroups.com)
 [![Discord](https://img.shields.io/discord/942347256508596225?logo=discord&logoColor=white&label=Support%20Server
 )](https://discord.gg/bYHEzyDe2j)

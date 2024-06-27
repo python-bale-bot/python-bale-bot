@@ -11,11 +11,11 @@
 from __future__ import annotations
 from typing import Optional
 from bale import BaleObject
-from bale.utils.types import MissingValue
 
 __all__ = (
     "ChatPhoto",
 )
+
 
 class ChatPhoto(BaleObject):
     """This object represents a chat photo.
@@ -50,10 +50,10 @@ class ChatPhoto(BaleObject):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
         """
-        return self.get_bot().get_file(self.small_file_id)
+        return await self.get_bot().get_file(self.small_file_id)
 
     async def get_big_file(self):
         """
         For the documentation of the arguments, please see :meth:`bale.Bot.get_file`.
         """
-        return self.get_bot().get_file(self.big_file_id)
+        return await self.get_bot().get_file(self.big_file_id)

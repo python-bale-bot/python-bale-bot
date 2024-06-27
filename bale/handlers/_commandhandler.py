@@ -31,7 +31,8 @@ class CommandHandler(BaseHandler):
            The check function for this handler.
 
            .. hint::
-               Called in :meth:`check_new_update`, when new update confirm. This checker indicates whether the Update should be covered by the handler or not.
+               Called in :meth:`check_new_update`, when new update confirm.
+               This checker indicates whether the Update should be covered by the handler or not.
    """
     __slots__ = (
         "commands",
@@ -73,14 +74,15 @@ class CommandHandler(BaseHandler):
 
         return params
 
-    async def check_new_update(self, update: "Update") -> Optional[Union[Tuple["Message", List[str]], Tuple["Message"]]]:
+    async def check_new_update(self, update: "Update"
+                               ) -> Optional[Union[Tuple["Message", List[str]], Tuple["Message"]]]:
         if (
             update.message and
             update.message.text and
             len(update.message.text) > 1
         ):
             message = update.message
-            args = message.text[1:].split() # /command arg1 arg2 ...
+            args = message.text[1:].split()  # /command arg1 arg2 ...
             command = args[0]
             args = args[1:]
             if (

@@ -14,11 +14,11 @@ if TYPE_CHECKING:
     from bale import Bot
 
 from bale import BaleObject, User
-from bale.utils.types import MissingValue
 
 __all__ = (
     "ChatMember",
 )
+
 
 class ChatMember(BaleObject):
     """This object shows a member in chat.
@@ -92,15 +92,15 @@ class ChatMember(BaleObject):
     )
 
     def __init__(
-            self, status: str, user: "User", is_member: Optional[bool] = MissingValue,
-            can_change_info: Optional[bool] = MissingValue, can_post_messages: Optional[bool] = MissingValue,
-            can_edit_messages: Optional[bool] = MissingValue, can_delete_messages: Optional[bool] = MissingValue,
-            can_invite_users: Optional[bool] = MissingValue, can_restrict_members: Optional[bool] = MissingValue,
-            can_pin_messages: Optional[bool] = MissingValue, can_promote_members: Optional[bool] = MissingValue,
-            can_send_messages: Optional[bool] = MissingValue, can_send_media_messages: Optional[bool] = MissingValue,
-            can_reply_to_story: Optional[bool] = MissingValue, can_send_link_message: Optional[bool] = MissingValue,
-            can_send_forwarded_message: Optional[bool] = MissingValue, can_see_members: Optional[bool] = MissingValue,
-            can_add_story: Optional[bool] = MissingValue, can_be_edited: Optional[bool] = MissingValue
+            self, status: str, user: "User", is_member: Optional[bool] = None,
+            can_change_info: Optional[bool] = None, can_post_messages: Optional[bool] = None,
+            can_edit_messages: Optional[bool] = None, can_delete_messages: Optional[bool] = None,
+            can_invite_users: Optional[bool] = None, can_restrict_members: Optional[bool] = None,
+            can_pin_messages: Optional[bool] = None, can_promote_members: Optional[bool] = None,
+            can_send_messages: Optional[bool] = None, can_send_media_messages: Optional[bool] = None,
+            can_reply_to_story: Optional[bool] = None, can_send_link_message: Optional[bool] = None,
+            can_send_forwarded_message: Optional[bool] = None, can_see_members: Optional[bool] = None,
+            can_add_story: Optional[bool] = None, can_be_edited: Optional[bool] = None
     ) -> None:
         super().__init__()
         self.status = status

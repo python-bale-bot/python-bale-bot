@@ -14,6 +14,7 @@ __all__ = (
     "WebhookInfo",
 )
 
+
 class WebhookInfo(BaleObject):
     """This object shows a WebhookInfo.
 
@@ -31,6 +32,7 @@ class WebhookInfo(BaleObject):
         "has_custom_certificate",
         "pending_update_count"
     )
+
     def __init__(self, url: str, has_custom_certificate: int, pending_update_count: int) -> None:
         super().__init__()
         self.url = url

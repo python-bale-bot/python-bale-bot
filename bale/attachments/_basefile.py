@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject
-from typing import Optional, Any, ClassVar
+from typing import Optional, Any, ClassVar, Union
 from io import BufferedIOBase
 
 from ._inputfile import InputFile
@@ -26,7 +26,7 @@ class BaseFile(BaleObject):
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for 
+            Unique identifier for this file, which is supposed to be the same over time and for
             different bots. Can’t be used to download or reuse the file.
         file_size: :obj:`int`, optional
             File size in bytes, if known.
@@ -47,8 +47,8 @@ class BaseFile(BaleObject):
     AUDIO: ClassVar[str] = "audio"
     ANIMATION: ClassVar[str] = "animation"
 
-    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = None, **kwargs
-                ) -> None:
+    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = None,
+                 **kwargs) -> None:
         super().__init__()
         self._id = file_id
         self.file_id = file_id
@@ -63,7 +63,7 @@ class BaseFile(BaleObject):
         """
         return await self.get_bot().get_file(self.file_id)
 
-    async def save_to_memory(self, out: "BufferedIOBase" | Any, close_file: bool = False) -> None:
+    async def save_to_memory(self, out: Union["BufferedIOBase", Any], close_file: bool = False) -> None:
         """Download this file into memory. out needs to be supplied with a :class:`io.BufferedIOBase`,
         the file contents will be saved to that object using the :meth:`io.BufferedIOBase.write` method.
 

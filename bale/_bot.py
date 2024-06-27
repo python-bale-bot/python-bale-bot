@@ -243,6 +243,7 @@ class Bot:
             event_name: :obj:`str`
                 Name of the event to set.
         """
+
         def wrapper(func) -> Any:
             self.add_event(event_name, func)
 
@@ -273,6 +274,7 @@ class Bot:
             handler: :class:`bale.BaseHandler`
                 a :class:`bale.BaseHandler` instance
         """
+
         def wrapper(func) -> H:
             self.add_handler(handler, func)
             return handler
@@ -280,7 +282,8 @@ class Bot:
         return wrapper
 
     def add_handler(self, handler: "BaseHandler", wrapper) -> None:
-        """Set wrapper or listener for a handler.
+        """Set a wrapper for a handler.
+        Once set, each time this event is triggered by the dispatch method, the callback set for that event is called.
 
         .. hint::
             .. code:: python
@@ -298,7 +301,7 @@ class Bot:
             handler: :class:`bale.BaseHandler`
                 a :class:`bale.BaseHandler` instance
             wrapper: Callable
-                Function to add as wrapper for handler.
+                Function to set as wrapper for handler.
         """
         if not asyncio.iscoroutinefunction(wrapper):
             raise TypeError(f"{wrapper.__name__} is not a coroutine function")
@@ -310,7 +313,8 @@ class Bot:
         self._handlers.append(handler)
 
     def add_event(self, event_name: str, wrapper) -> None:
-        """Set wrapper or listener for an event.
+        """Set a wrapper function for an event.
+        Once set, each time this event is triggered by the dispatch method, the callback set for that event is called.
 
         .. hint::
             .. code:: python
@@ -326,20 +330,22 @@ class Bot:
             event_name: :obj:`str`
                 Name of the event
             wrapper: Callable
-                Function to add as wrapper for event
+                Function to set as wrapper for event
         """
         if not asyncio.iscoroutinefunction(wrapper):
             raise TypeError(f"{wrapper.__name__} is not a coroutine function")
 
         self._events[event_name] = wrapper
 
-    def wait_for(self, checks: Union[Dict[Union[int, str], BaseCheck], List[BaseCheck], Tuple[BaseCheck], BaseCheck], timeout: Optional[float] = None):
+    def wait_for(self, checks: Union[Dict[Union[int, str], BaseCheck], List[BaseCheck], Tuple[BaseCheck], BaseCheck],
+                 timeout: Optional[float] = None):
         """Waits for a handler to be dispatched.
 
-        This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a self-contained way.
-        The timeout parameter is passed onto :meth:`asyncio.wait_for`. By default, it does not ``timeout``.
-        Note that this does propagate the :class:`asyncio.TimeoutError` for you in case of timeout and is provided for ease of use.
-        In case the event returns multiple arguments, a tuple containing those arguments is returned instead.
+        This could be used to wait for a user to reply to a message, or send a photo, or to edit a message in a
+        self-contained way. The timeout parameter is passed onto :meth:`asyncio.wait_for`. By default, it does not
+        ``timeout``. Note that this does propagate the :class:`asyncio.TimeoutError` for you in case of timeout and is
+        provided for ease of use. In case the event returns multiple arguments, a tuple containing those arguments is
+        returned instead.
 
         .. important::
             This function returns the first check that meets the requirements.
@@ -360,7 +366,8 @@ class Bot:
 
         Parameters
         ----------
-            checks: Dict[:obj:`int` | :obj:`str`, :class:`bale.BaseCheck`] | :class:`bale.BaseCheck` | List[:class:`bale.BaseCheck`]
+            checks: Dict[:obj:`int` | :obj:`str`, :class:`bale.BaseCheck`] | :class:`bale.BaseCheck` |
+            List[:class:`bale.BaseCheck`]
                 The checks must be of the following types:
 
                 - an instance of :class:`bale.BaseCheck` object
@@ -371,31 +378,24 @@ class Bot:
                         ...
                         context = await bot.wait_for(MessageId(...), ...)
 
-                - a list that contains the :class:`bale.BaseCheck` object
+                - a dict whose keys is types of :obj:`int` or :obj:`str` and it's values is types of instances of
+                :class:`bale.BaseCheck` object
                     .. code:: python
 
-                        from bale.checks import ATTACHMENT, MessageId, CAPTION
+                        from bale import WaitContext
+                        from bale.checks import ATTACHMENT, ANY
 
                         ...
-                        context = await bot.wait_for([
-                            ATTACHMENT, # message has any attachment (voice, audio, document, ...)
-                            MessageId(1234), # The unique identifier of the message must be equal to "1234"
-                            CAPTION  # message has any caption
-                        ], ...)
-
-                - a dict whose keys is types of :obj:`int` or :obj:`str` and it's values is types of instances of :class:`bale.BaseCheck` object
-                    .. code:: python
-
-                        from bale.checks import ATTACHMENT, MessageId, CAPTION
-
-                        ...
-                        context = await bot.wait_for({
-                            1: ATTACHMENT, # message has any attachment (voice, audio, document, ...)
-                            2: MessageId(1234), # The unique identifier of the message must be equal to "1234"
-                            3: CAPTION  # message has any caption
-                        }, ...)
-                        if context.key == 1: # is the check key "1"?
-                            await context.update.message.reply("you're sent a message with caption")
+                        ctx: WaitContext = await bot.wait_for({
+                            "attachment": ATTACHMENT, # message has any attachment (voice, audio, document, ...)
+                            "cancel": ANY # message dose not has any attachment
+                        })
+                        if ctx.key == "attachment": # is the check key "cancel"?
+                            return await ctx.update.message.reply("you're sent a message with caption")
+                        else:
+                            if message := ctx.update.message:
+                                await message.reply("The operation has been canceled.")
+                            return
 
             timeout: :obj:`float`, optional
                 The number of seconds to wait before timing out and raising :class:`asyncio.TimeoutError`.
@@ -426,7 +426,9 @@ class Bot:
         if isinstance(checks, (tuple, list)) and len(checks) > 0:
             _log.warning("Bot.wait_for: You have provided a list to the parameter “checks”;"
                          " we have converted it into a dictionary with numeric keys ranging from 0 to %s.\n"
-                         "However, please use either the dictionary or a single BaseCheck instance in this parameter next time.", len(checks))
+                         "However, please use either the dictionary or a single BaseCheck instance "
+                         "in this parameter next time.",
+                         len(checks))
             checks: Dict[int, BaseCheck] = dict(zip(range(len(checks)), checks))
 
         if not isinstance(checks, dict):
@@ -474,8 +476,7 @@ class Bot:
 
     def dispatch(self, event_name: str, /, *args, **kwargs) -> None:
         method = 'on_' + event_name
-        core = self._events.get(method)
-        if core:
+        if core := self._events.get(method):
             self._create_event_schedule(core, method, *args, **kwargs)
 
     async def _on_handler_error_callback(self, handler: "BaseHandler", update: "Update", exc: Exception):
@@ -2098,8 +2099,7 @@ class Bot:
         response = await self._http.get_updates(
             params=handle_request_param(payload)
         )
-        updates = [Update.from_dict(data=update_payload, bot=self) for update_payload in response.result
-                if not offset or (offset and update_payload.get("update_id") > offset)] if response.result else None
+        updates = Update.from_list(response.result, self)
         if updates:
             for update in updates:
                 message = update.message
@@ -2114,10 +2114,26 @@ class Bot:
         return updates
 
     def done_task_callback(self, task: asyncio.Task) -> None:
+        """This function remove an task from :class:`asyncio.Task`(s) set if it is a member."""
         self.__tasks.discard(task)
 
     def create_task(self, coroutine: Coroutine, *, name: str = None) -> asyncio.Task:
+        """This function used to make a new task.
+
+        Parameters
+        ----------
+            coroutine: :class:`asyncio.Coroutine`
+                The coroutine to create task.
+            name: :class:`str`, optional
+                The name of the task.
+
+        Returns
+        -------
+            :class:`asyncio.Task`
+                The created task.
+        """
         task = asyncio.create_task(coroutine, name=name)
+        self.__tasks.add(task)
         task.add_done_callback(self.done_task_callback)
 
         return task
@@ -2134,8 +2150,10 @@ class Bot:
         #         pass
         # In Handler, errors are handled by their on_error function.
 
-    async def _process_handler(self, handler: "BaseHandler", update: "Update", params: Tuple[Any, ...] = None):
-        core = handler.handle_update(update, *params)
+    async def _process_handler(self, handler: "BaseHandler", update: "Update", *args: Tuple[Any, ...]):
+        if not args:
+            args = None
+        core = handler.handle_update(update, *args)
         await self.__run_handler(core, handler, update)
 
     async def process_update(self, update: "Update"):
@@ -2202,11 +2220,14 @@ class Bot:
     def _get_loop(self) -> asyncio.AbstractEventLoop:
         try:
             loop = asyncio.get_event_loop()
-        except RuntimeError: # https://github.com/python/cpython/blob/main/Lib/asyncio/events.py#L715-L717
+        except RuntimeError:  # https://github.com/python/cpython/blob/main/Lib/asyncio/events.py#L715-L717
             loop = asyncio.new_event_loop()
             asyncio.set_event_loop(loop)
 
-        def signal_handler():
+        def raise_system_exit_exc():
+            """
+            This function raises a SystemExit exception.
+            """
             raise SystemExit
 
         for sig in (SIGINT, SIGTERM):
@@ -2214,13 +2235,23 @@ class Bot:
         return loop
 
     def run_until_complete_functions(self, functions: List[Callable], loop: asyncio.AbstractEventLoop) -> None:
+        """Run a list of function and wait to complete these.
+
+        Parameters
+        ----------
+            functions: List[:obj:`callable`]
+                The list of functions to run.
+            loop: :class:`asyncio.AbstractEventLoop`
+                The event loop.
+        """
         for func in functions:
             if asyncio.iscoroutinefunction(func):
-                loop.run_until_complete(func)
+                loop.run_until_complete(func())
             else:
                 func()
 
-    def __run(self, startup_functions: List[Callable], operation_coroutine: List[Coroutine], stop_functions: List[Callable]) -> None:
+    def __run(self, startup_functions: List[Callable], operation_coroutine: List[Coroutine],
+              cleanup_functions: List[Callable]) -> None:
         loop = self._get_loop()
 
         try:
@@ -2235,10 +2266,12 @@ class Bot:
         except Exception as exc:
             _log.info("We encountered the error, currently in the process of shutting down...", exc_info=exc)
         finally:
-            self.run_until_complete_functions(stop_functions, loop)
+            self.run_until_complete_functions(cleanup_functions, loop)
             loop.run_until_complete(self.close())
 
-    def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None, startup_functions: List[Callable] = None, stop_functions: List[Callable] = None):
+    def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None,
+            startup_functions: List[Callable] = None, cleanup_functions: List[Callable] = None
+            ):
         """This method is used to run the bot, updater, and update fetcher process.
 
         .. hint::
@@ -2252,25 +2285,32 @@ class Bot:
         Parameters
         ----------
             log_handler: :class:`logging.Handler`, optional
-                A logging handler to use for logging. If provided, the class will use this handler for logging operations. Defaults to :class:`logging.StreamHandler`.
+                A logging handler to use for logging. If provided, the class will use this handler for logging
+                operations. Defaults to :class:`logging.StreamHandler`.
             log_level: :obj:`int`, optional
-                The logging level to be used for logging. If provided, the class will use this level for logging operations. Defaults to :obj:`logging.INFO`.
+                The logging level to be used for logging. If provided, the class will use this level for logging
+                operations. Defaults to :obj:`logging.INFO`.
             log_format: :obj:`str`, optional
-                The format string to use for formatting log messages. If provided, the class will use this for logging messages. Defaults to ``%Y-%m-%d %H:%M:%S``.
+                The format string to use for formatting log messages. If provided, the class will use this for logging
+                messages. Defaults to ``%Y-%m-%d %H:%M:%S``.
             startup_functions: a :obj:`list` of functions (including async funcs), optional
-                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method for execute) when the class is starting to run. Defaults to ``None``.
-            stop_functions: a :obj:`list` of functions (including async funcs), optional
-                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method for execute) when the class is Terminating work. Defaults to ``None``.
+                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method
+                for execute) when the class is starting to run. Defaults to ``None``.
+            cleanup_functions: a :obj:`list` of functions (including async funcs), optional
+                A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method
+                for execute) when the class is Terminating work. Defaults to ``None``.
         """
         setup_logging(handler=log_handler, level=log_level, formatter=log_format)
-        operation_coroutine = list()
+        operation_coroutine = []
         if startup_functions is None:
-            startup_functions = ()
-        if stop_functions is None:
-            stop_functions = ()
+            startup_functions = []
+        if cleanup_functions is None:
+            cleanup_functions = []
         if updater := self._updater:
+            startup_functions.append(self.get_me)
             startup_functions.append(updater.setup)
             operation_coroutine.append(updater.start_polling())
-            stop_functions.append(updater.stop)
+            cleanup_functions.append(updater.stop)
 
-        return self.__run(startup_functions=startup_functions, operation_coroutine=operation_coroutine, stop_functions=stop_functions)
+        return self.__run(startup_functions=startup_functions, operation_coroutine=operation_coroutine,
+                          cleanup_functions=cleanup_functions)

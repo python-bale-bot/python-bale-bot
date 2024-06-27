@@ -9,7 +9,7 @@ Copyright (C) 2024. All Rights Reserved.
 """
 
 __all__ = (
-    "MissingObject",
+    "MissingValueType",
     "MissingValue",
     "BaleObject",
     "WebhookInfo",
@@ -63,13 +63,13 @@ __all__ = (
     "__version__"
 )
 
-from .utils.types import MissingObject, MissingValue
+from .utils.types import MissingValueType, MissingValue
 from ._baleobject import BaleObject
 from ._webhookinfo import WebhookInfo
 from ._waitcontext import WaitContext
 from .attachments import (
-    InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation, InputMedia, InputMediaPhoto,
-    InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument
+    InputFile, BaseFile, PhotoSize, Document, Voice, Audio, Contact, Location, Video, Animation, InputMedia,
+    InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument
 )
 from ._chatphoto import ChatPhoto
 from ._error import (

@@ -13,6 +13,7 @@ from typing import TYPE_CHECKING, Any, Type, List, Dict, TypeVar, Optional
 import logging
 import inspect
 from json import dumps
+
 if TYPE_CHECKING:
     from bale import Bot
 
@@ -23,12 +24,14 @@ __all__ = (
     "BaleObject",
 )
 
+
 class BaleObject:
     __slots__ = (
         "__bot",
         "_id",
         "_locked"
     )
+
     def __init__(self) -> None:
         self.__bot: Optional["Bot"] = None
         self._id = None
@@ -51,7 +54,7 @@ class BaleObject:
     def get_bot(self) -> "Bot":
         if not self.__bot:
             raise RuntimeError(
-                "Bot object is not set for `{}`!".format(self.__class__.__name__)
+                f"Bot object is not set for `{self.__class__.__name__}`!"
             )
 
         return self.__bot
@@ -97,7 +100,7 @@ class BaleObject:
 
     @classmethod
     def _get_signature_parameters(cls):
-        return inspect.signature(cls).parameters
+        return inspect.signature(cls.__init__).parameters
 
     def _get_attrs(self, *, to_dict: bool) -> Dict[str, Any]:
         attributes = {item: getattr(self, item, None) for cls in self.__class__.__mro__[:-1] for item in cls.__slots__}
@@ -132,19 +135,21 @@ class BaleObject:
         if not data:
             return None
 
-        def has_default(key: str) -> bool:
-            param = parameters[key]
-            return not param.default is param.empty
-
-        def get_attr(key: str) -> Any:
-            if not key in data and not has_default(key):
-                _log.warning("The %s argument is required in the %s class, but this value was not found in the given data.", key, cls.__name__)
-
+        def get_value(key: str) -> Any:
+            if key not in data and (
+                    parameters[key].default is inspect.Parameter.empty
+            ):
+                _log.warning(
+                    "The %s argument is required in the %s class, but this value was not "
+                    "found in the given data.", key,
+                    cls.__name__)
             return data.get(key)
 
         parameters = cls._get_signature_parameters()
         existing_kwargs = {
-            key: get_attr(key) for key in parameters
+            key: get_value(key)
+            for key in parameters
+            if key != 'self'
         }
         obj: Bale_obj_instance = cls(**existing_kwargs)
 
@@ -157,13 +162,14 @@ class BaleObject:
         return cls._from_dict(data=data, bot=bot)
 
     @classmethod
-    def from_list(cls: Type[Bale_obj_instance], payloads_list: Optional[List[Dict]], bot: "Bot") -> Optional[List[Bale_obj_instance]]:
+    def from_list(cls: Type[Bale_obj_instance], payloads_list: Optional[List[Dict]], bot: "Bot"
+                  ) -> Optional[List[Bale_obj_instance]]:
         if not payloads_list or not isinstance(payloads_list, list):
             return None
 
         objects = []
-        for obj_payload in payloads_list:
-            obj: Bale_obj_instance = cls._from_dict(data=obj_payload, bot=bot)
+        for payload in payloads_list:
+            obj: Bale_obj_instance = cls.from_dict(payload, bot)
             objects.append(obj)
 
         return objects

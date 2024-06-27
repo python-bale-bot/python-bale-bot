@@ -44,8 +44,8 @@ class Audio(BaseFile):
         "mime_type"
     )
 
-    def __init__(self, file_id: str, file_unique_id: str, duration: int, 
-                 file_name: Optional[str] = None, title: Optional[str] = None, 
+    def __init__(self, file_id: str, file_unique_id: str, duration: int,
+                 file_name: Optional[str] = None, title: Optional[str] = None,
                  mime_type: Optional[str] = None, file_size: Optional[int] = None) -> None:
         super().__init__(file_id, file_unique_id, file_size)
 

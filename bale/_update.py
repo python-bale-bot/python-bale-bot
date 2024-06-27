@@ -11,12 +11,12 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Dict, Optional, ClassVar
 from bale import BaleObject, Message, CallbackQuery
-from bale.utils.types import MissingValue
 
 if TYPE_CHECKING:
     from bale import Bot
 
 __all__ = ("Update",)
+
 
 class Update(BaleObject):
     """This object represents an incoming update.
@@ -48,8 +48,8 @@ class Update(BaleObject):
         "edited_message"
     )
 
-    def __init__(self, update_id: int, callback_query: "CallbackQuery" = MissingValue, message: "Message" = MissingValue,
-                 edited_message: "Message" = MissingValue) -> None:
+    def __init__(self, update_id: int, callback_query: Optional["CallbackQuery"] = None,
+                 message: Optional["Message"] = None, edited_message: Optional["Message"] = None) -> None:
         super().__init__()
         self._id = update_id
         self.update_id = int(update_id)
@@ -88,4 +88,7 @@ class Update(BaleObject):
         return self.update_id < other.update_id
 
     def __gt__(self, other):
-        return not self.__lt__(other)
+        if not isinstance(other, Update):
+            raise NotImplementedError
+
+        return self.update_id > other.update_id

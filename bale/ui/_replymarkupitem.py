@@ -12,11 +12,13 @@ from __future__ import annotations
 from typing import Union, Optional
 from . import InlineKeyboardButton, MenuKeyboardButton
 
+
 class ReplyMarkupItem:
     __slots__ = (
         "_item",
         "_row"
     )
+
     def __init__(self, item: Union[InlineKeyboardButton, MenuKeyboardButton], row: Optional[int] = 1) -> None:
         """This object represents a Reply Markup Item.
 

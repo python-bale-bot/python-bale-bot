@@ -11,7 +11,8 @@
 from __future__ import annotations
 from typing import TYPE_CHECKING, Optional, List, Union, Dict
 from bale import BaleObject, Document, PhotoSize, Video, Audio, Animation
-from bale.utils.types import FileInput, MediaInput, MissingValue, OptionalParam
+from bale.utils.types import FileInput, MediaInput, MissingValue, MaybeMissing
+
 if TYPE_CHECKING:
     from bale import InlineKeyboardMarkup, MenuKeyboardMarkup, LabeledPrice, Location, Contact, InputFile, Message
 
@@ -41,8 +42,8 @@ class User(BaleObject):
         "id"
     )
 
-    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: OptionalParam[str] = MissingValue,
-                 username: OptionalParam[str] = MissingValue) -> None:
+    def __init__(self, user_id: int, is_bot: bool, first_name: str, last_name: Optional[str] = None,
+                 username: Optional[str] = None) -> None:
         super().__init__()
         self._id = user_id
         self.is_bot = is_bot
@@ -71,7 +72,8 @@ class User(BaleObject):
         """Aliases for :attr:`id`"""
         return self.id
 
-    async def send(self, text: str, components: OptionalParam[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
+    async def send(self, text: str,
+                   components: MaybeMissing[Union["InlineKeyboardMarkup", "MenuKeyboardMarkup"]] = MissingValue,
                    delete_after: Optional[Union[float, int]] = None):
         """
         Shortcut method for:
@@ -91,8 +93,8 @@ class User(BaleObject):
         """
         return await self.get_bot().send_message(self.chat_id, text, components=components, delete_after=delete_after)
 
-    async def send_document(self, document: Union["Document", FileInput], *, caption: OptionalParam[str] = MissingValue,
-                            components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_document(self, document: Union["Document", FileInput], *, caption: MaybeMissing[str] = MissingValue,
+                            components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                             delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         Shortcut method for:
@@ -111,10 +113,10 @@ class User(BaleObject):
                 await user.send_document(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
         return await self.get_bot().send_document(self.chat_id, document, caption=caption, components=components,
-                                                  delete_after=delete_after, file_name = file_name)
+                                                  delete_after=delete_after, file_name=file_name)
 
-    async def send_photo(self, photo: Union["PhotoSize", FileInput], *, caption: OptionalParam[str] = MissingValue,
-                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_photo(self, photo: Union["PhotoSize", FileInput], *, caption: MaybeMissing[str] = MissingValue,
+                         components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         Shortcut method for:
@@ -132,10 +134,11 @@ class User(BaleObject):
 
                 await user.send_photo(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
+        return await self.get_bot().send_photo(self.chat_id, photo, caption=caption, components=components,
+                                               delete_after=delete_after, file_name=file_name)
 
-    async def send_video(self, video: Union["Video", FileInput], *, caption: OptionalParam[str] = MissingValue,
-                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_video(self, video: Union["Video", FileInput], *, caption: MaybeMissing[str] = MissingValue,
+                         components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         Shortcut method for:
@@ -153,11 +156,13 @@ class User(BaleObject):
 
                 await user.send_video(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_video(self.chat_id, video, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
+        return await self.get_bot().send_video(self.chat_id, video, caption=caption, components=components,
+                                               delete_after=delete_after, file_name=file_name)
 
-    async def send_animation(self, animation: Union["Animation", FileInput], *, duration: OptionalParam[int] = MissingValue, width: OptionalParam[int] = MissingValue,
-                             height: OptionalParam[int] = MissingValue, caption: OptionalParam[str] = MissingValue,
-                             components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_animation(self, animation: Union["Animation", FileInput], *,
+                             duration: MaybeMissing[int] = MissingValue, width: MaybeMissing[int] = MissingValue,
+                             height: MaybeMissing[int] = MissingValue, caption: MaybeMissing[str] = MissingValue,
+                             components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                              delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         Shortcut method for:
@@ -175,11 +180,12 @@ class User(BaleObject):
 
                 await user.send_animation(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration, width=width, height=height, caption=caption,
-                                                   components=components, delete_after=delete_after, file_name=file_name)
+        return await self.get_bot().send_animation(self.chat_id, animation, duration=duration, width=width,
+                                                   height=height, caption=caption, components=components,
+                                                   delete_after=delete_after, file_name=file_name)
 
-    async def send_audio(self, audio: Union["Audio", InputFile], *, caption: OptionalParam[str] = MissingValue,
-                         components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_audio(self, audio: Union["Audio", InputFile], *, caption: MaybeMissing[str] = MissingValue,
+                         components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                          delete_after: Optional[Union[float, int]] = None, file_name: Optional[str] = None):
         """
         Shortcut method for:
@@ -197,9 +203,11 @@ class User(BaleObject):
 
                 await user.send_audio(bale.InputFile("FILE_ID"), caption = "this is a caption", ...)
         """
-        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption, components=components, delete_after=delete_after, file_name=file_name)
+        return await self.get_bot().send_audio(self.chat_id, audio, caption=caption, components=components,
+                                               delete_after=delete_after, file_name=file_name)
 
-    async def send_location(self, location: "Location", *, components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_location(self, location: "Location", *,
+                            components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                             delete_after: Optional[Union[float, int]] = None):
         """
         Shortcut method for:
@@ -217,9 +225,11 @@ class User(BaleObject):
 
                 await user.send_location(bale.Location(35.71470468031143, 51.8568519168293))
         """
-        return await self.get_bot().send_location(self.chat_id, location, components=components, delete_after=delete_after)
+        return await self.get_bot().send_location(self.chat_id, location, components=components,
+                                                  delete_after=delete_after)
 
-    async def send_contact(self, contact: "Contact", *, components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
+    async def send_contact(self, contact: "Contact", *,
+                           components: MaybeMissing["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue,
                            delete_after: Optional[Union[float, int]] = None):
         """
         Shortcut method for:
@@ -237,12 +247,16 @@ class User(BaleObject):
 
                 await user.send_contact(bale.Contact('09****', 'first name', 'last name))
         """
-        return await self.get_bot().send_contact(self.chat_id, contact, components=components, delete_after=delete_after)
+        return await self.get_bot().send_contact(self.chat_id, contact, components=components,
+                                                 delete_after=delete_after)
 
-    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["LabeledPrice"], *, payload: OptionalParam[str] = MissingValue,
-               photo_url: OptionalParam[str] = MissingValue, need_name: OptionalParam[bool] = False, need_phone_number: OptionalParam[bool] = False,
-               need_email: OptionalParam[bool] = False, need_shipping_address: OptionalParam[bool] = False, is_flexible: OptionalParam[bool] = True,
-               delete_after: Optional[Union[float, int]] = None):
+    async def send_invoice(self, title: str, description: str, provider_token: str, prices: List["LabeledPrice"], *,
+                           payload: MaybeMissing[str] = MissingValue,
+                           photo_url: MaybeMissing[str] = MissingValue, need_name: MaybeMissing[bool] = False,
+                           need_phone_number: MaybeMissing[bool] = False,
+                           need_email: MaybeMissing[bool] = False, need_shipping_address: MaybeMissing[bool] = False,
+                           is_flexible: MaybeMissing[bool] = True,
+                           delete_after: Optional[Union[float, int]] = None):
         """
         Shortcut method for:
 
@@ -263,12 +277,15 @@ class User(BaleObject):
                 )
         """
         return await self.get_bot().send_invoice(self.chat_id, title, description, provider_token, prices,
-                                           invoice_payload=payload, photo_url=photo_url, need_name=need_name, need_email=need_email,
-                                           need_phone_number=need_phone_number, need_shipping_address=need_shipping_address, is_flexible=is_flexible,
-                                           delete_after=delete_after)
+                                                 invoice_payload=payload, photo_url=photo_url, need_name=need_name,
+                                                 need_email=need_email,
+                                                 need_phone_number=need_phone_number,
+                                                 need_shipping_address=need_shipping_address, is_flexible=is_flexible,
+                                                 delete_after=delete_after)
 
     async def send_media_group(self, media: List[MediaInput], *,
-                    components: OptionalParam["InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue) -> List["Message"]:
+                               components: MaybeMissing[
+                                   "InlineKeyboardMarkup", "MenuKeyboardMarkup"] = MissingValue) -> List["Message"]:
         """
         Shortcut method for:
 

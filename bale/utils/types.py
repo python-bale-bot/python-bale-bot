@@ -8,8 +8,9 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+from __future__ import annotations
 from pathlib import Path
-from typing import Union, Dict, Any, TypeVar, Callable, Coroutine, TYPE_CHECKING
+from typing import Union, Dict, Any, TypeVar, Callable, Coroutine, TYPE_CHECKING, Tuple
 
 if TYPE_CHECKING:
     # noinspection PyUnresolvedReferences
@@ -20,7 +21,6 @@ if TYPE_CHECKING:
         Video,
         Animation,
         Voice,
-        InputMedia,
         InputMediaPhoto,
         InputMediaVideo,
         InputMediaAnimation,
@@ -71,18 +71,6 @@ class MissingValueType:
     def __ne__(self, other):
         return not self.__eq__(other)
 
-    def __le__(self, _):
-        return False
-
-    def __ge__(self, _):
-        return False
-
-    def __lt__(self, _):
-        return False
-
-    def __gt__(self, _):
-        return False
-
     def __hash__(self):
         return 0
 
@@ -92,13 +80,37 @@ class MissingValueType:
 
 MissingValue: MissingValueType = MissingValueType()
 
+G = TypeVar('G')
+
+
 class _MaybeMissingGenerator:
+    """
+    A generator class to create type hints for values that may be missing.
+
+    This class allows the creation of type hints that include a special
+    `MissingValueType`, indicating a value that is considered missing.
+    This can be useful in situations where you need to differentiate between
+    a value being `None` and a value being missing.
+
+    Usage example:
+        .. code:: python
+            from bale.utils.types import MissingValue, MaybeMissing
+
+            def process_value(value: MaybeMissing[int]):
+                if value is MissingValue:
+                    print("The value is missing.")
+                else:
+                    print(f"The value is an integer: {value}")
+
+    """
     __slots__ = ()
 
-    def __getitem__(self, item: Union[tuple, Any]) -> Union[MissingValue, ...]:
+    def __getitem__(self, item: Union[Tuple[Any, ...], Any]) -> Union[MissingValueType, G]:
         if not isinstance(item, tuple):
             item = (item, )
-        return Union[(MissingValueType, ) + item]
+        items = (MissingValueType,) + item
+
+        return Union[items]
 
 
-OptionalParam = _MaybeMissingGenerator()
+MaybeMissing = _MaybeMissingGenerator()

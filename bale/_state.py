@@ -13,12 +13,14 @@ from typing import TYPE_CHECKING, Deque, Optional, Union
 import weakref
 from collections import deque
 from bale.helpers import find
+
 if TYPE_CHECKING:
     from bale import Bot, Message, User, Chat
 
 __all__ = (
     "State",
 )
+
 
 class State:
     __slots__ = (

@@ -35,8 +35,7 @@ class Location(BaleObject):
         "horizontal_accuracy"
     )
 
-    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = None
-                ) -> None:
+    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = None) -> None:
         super().__init__()
         self.longitude = longitude
         self.latitude = latitude

@@ -14,6 +14,7 @@ from itertools import groupby
 from . import ReplyMarkupItem, InlineKeyboardButton, MenuKeyboardButton
 from bale.utils.request import to_json
 
+
 class BaseReplyMarkup:
     __slots__ = ("__keyboards",)
     def __init__(self) -> None:

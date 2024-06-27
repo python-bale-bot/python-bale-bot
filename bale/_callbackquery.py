@@ -10,7 +10,6 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject, User, Message
-from bale.utils.types import MissingValue
 from typing import Optional, Dict, TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -49,8 +48,8 @@ class CallbackQuery(BaleObject):
     )
 
     def __init__(
-            self, callback_id: str, from_user: "User", data: Optional[str] = MissingValue, message: Optional["Message"] = MissingValue,
-            inline_message_id: Optional[str] = MissingValue
+            self, callback_id: str, from_user: "User", data: Optional[str] = None,
+            message: Optional["Message"] = None, inline_message_id: Optional[str] = None
     ) -> None:
         super().__init__()
         self._id = callback_id

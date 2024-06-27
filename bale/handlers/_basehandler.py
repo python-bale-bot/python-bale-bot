@@ -23,6 +23,7 @@ __all__ = (
 
 ER = TypeVar("ER")
 
+
 class BaseHandler:
     """This object shows a Base Handler.
     This is a base class for all update handlers. You can create custom handlers by inheriting from it.
@@ -39,7 +40,8 @@ class BaseHandler:
                     pass
 
         2. Create the method :meth:`check_new_update` inside the class
-        When processing updates, the :meth:`check_new_update` method is called. This method must return either None or a tuple.
+        When processing updates, the :meth:`check_new_update` method is called. This method must return either None
+        or a tuple.
 
             .. code:: python
 
@@ -149,14 +151,16 @@ class BaseHandler:
         return self
 
     async def handle_update(self, update: "Update", *args):
-        """This function works if the handler is required to cover the new Update and calls the :attr:`callback` function.
+        """This function works if the handler is required to cover the new Update and calls the :attr:`callback`
+        function.
 
         Parameters
         ----------
             update: :class:`bale.Update`
                 The update to be tested.
             args:
-                Additional objects, if given to this parameter, will be passed directly to the :attr:`callback` function.
+                Additional objects, if given to this parameter, will be passed directly to the :attr:`callback`
+                function.
         """
         if self.callback:
             try:

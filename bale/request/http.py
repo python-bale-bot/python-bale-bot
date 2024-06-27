@@ -26,6 +26,7 @@ __all__ = ("HTTPClient", "Route")
 
 _log = logging.getLogger(__name__)
 
+
 class Route:
     __slots__ = (
         "base_url",
@@ -46,10 +47,12 @@ class Route:
     def url(self):
         return f"{self.base_url}/{self.endpoint}"
 
+
 def parse_form_data(value: Any):
     if isinstance(value, int):
         value = str(value)
     return value
+
 
 class HTTPClient:
     """Send a Request to BALE API Server"""
@@ -79,7 +82,8 @@ class HTTPClient:
 
     def reload_session(self) -> None:
         if self.__session and self.__session.closed:
-            self.__session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(keepalive_timeout=20.0, **self.__extra))
+            self.__session = aiohttp.ClientSession(connector=aiohttp.TCPConnector(keepalive_timeout=20.0,
+                                                                                  **self.__extra))
 
     async def start(self) -> None:
         if self.__session:
@@ -118,7 +122,8 @@ class HTTPClient:
             try:
                 async with self.__session.request(method=method, url=url, **kwargs) as original_response:
                     original_response: aiohttp.ClientResponse
-                    _log.debug('[%s] %s with %s has returned %s', method, url, kwargs.get('data'), original_response.status)
+                    _log.debug('[%s] %s with %s has returned %s', method, url, kwargs.get('data'),
+                               original_response.status)
                     response = await ResponseParser.parse_response(original_response)
                     if original_response.status == ResponseStatusCode.OK:
                         return response

@@ -8,9 +8,10 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Any, Type, TYPE_CHECKING, Optional, Dict, NamedTuple
+from typing import Any, Type, TYPE_CHECKING, Optional, Dict
 from bale.utils.types import MissingValue
 import json
+
 if TYPE_CHECKING:
     from bale.request import ResponseParser
     from bale._error import BaleError
@@ -19,9 +20,9 @@ __all__ = (
     "ResponseStatusCode",
     "to_json",
     "find_error_class",
-	"RequestParams",
-    "handle_request_param"
+    "handle_request_payload"
 )
+
 
 class ResponseStatusCode:
     OK = 200
@@ -30,8 +31,10 @@ class ResponseStatusCode:
     PERMISSION_DENIED = 403
     RATE_LIMIT = 429
 
+
 def to_json(obj: Any) -> str:
     return json.dumps(obj)
+
 
 def find_error_class(response: "ResponseParser") -> Optional[Type["BaleError"]]:
     from bale._error import __ERROR_CLASSES__
@@ -42,14 +45,10 @@ def find_error_class(response: "ResponseParser") -> Optional[Type["BaleError"]]:
 
     return None
 
-class RequestParams(NamedTuple):
-    payload: Optional[Dict[str, Any]]
 
-def convert_to_json(payload: Dict[str, Any]) -> Dict[str, Any]:
-    return {
+def handle_request_payload(payload: Dict[str, Any] = None):
+    payload = {
         key: value.to_json() if hasattr(value, 'to_json') else value
         for key, value in payload.items() if value is not MissingValue
     }
-
-def handle_request_param(payload: Dict[str, Any] = None):
-    return RequestParams(payload=convert_to_json(payload))
+    return payload

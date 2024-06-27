@@ -12,6 +12,7 @@ from __future__ import annotations
 from typing import Optional, Dict
 from . import BaseReplyMarkup, InlineKeyboardButton, ReplyMarkupItem
 
+
 class InlineKeyboardMarkup(BaseReplyMarkup):
     """
     .. admonition:: Examples

@@ -74,10 +74,10 @@ class Updater:
         return await self._polling()
 
     async def _polling(self):
-        async def action_getupdates() -> bool: # When False is returned, the operation stops.
+        async def action_getupdates() -> bool:  # When False is returned, the operation stops.
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
-            except BaleError as exc: # includes InvalidToken, RateLimited, ...
+            except BaleError as exc:  # includes InvalidToken, RateLimited, ...
                 raise exc
             except Exception as exc:
                 _log.critical("Somthing was happened when we process Update data from bale", exc_info=exc)
@@ -85,7 +85,8 @@ class Updater:
 
             if updates:
                 for update in updates:
-                    await self.bot.update_queue.put(update)
+                    if not self.current_offset or update.update_id > self.current_offset:
+                        await self.bot.update_queue.put(update)
                 self._last_offset = updates[-1].update_id
 
             return True
@@ -101,14 +102,15 @@ class Updater:
             ), name="Get Updates Worker Task"
         )
 
-    async def __start_worker(self, work_coroutine: Callable[..., Coroutine], error_handler: Callable[[BaleError], bool]) -> None:
+    async def __start_worker(self, work_coroutine: Callable[..., Coroutine], error_handler: Callable[[BaleError], bool]
+                             ) -> None:
         wait_stop_task = asyncio.create_task(self.__stop_worker_event.wait())
 
         while self._running:
             try:
                 work_task = asyncio.create_task(work_coroutine())
 
-                done, pending = await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED)
+                done = (await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED))[0]
                 if wait_stop_task in done:
                     _log.debug("Update was canceled by stop worker event")
 
@@ -121,11 +123,11 @@ class Updater:
                 interval = 0
             except BaleError as exc:
                 _log.debug("Error while Getting Updates: %s", exc)
-                if not error_handler(exc): # Does the error handler allow the updater to continue?
+                if not error_handler(exc):  # Does the error handler allow the updater to continue?
                     raise exc
 
-                interval = 10 # 10 seconds to show errors
-            else: # back interval to normal
+                interval = 10  # 10 seconds to show errors
+            else:  # back interval to normal
                 interval = self.interval
 
             if interval:
@@ -136,5 +138,6 @@ class Updater:
         if self._running:
             self.__stop_worker_event.set()
 
+        self.__stop_worker_event = None
         self.__worker_task = None
         self._running = False

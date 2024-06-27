@@ -14,8 +14,10 @@ if TYPE_CHECKING:
     from bale import Update
     from bale.checks import BaseCheck
 
+
 class WaitContext:
-    """A class represents information obtained from the :meth:`bale.Bot.wait_for` method. This class provides details related to the received data.
+    """A class represents information obtained from the :meth:`bale.Bot.wait_for` method.
+    This class provides details related to the received data.
 
     .. admonition:: Examples
 
@@ -26,6 +28,7 @@ class WaitContext:
         "_key",
         "_update"
     )
+
     def __init__(self, key: str, check: "BaseCheck", update: "Update") -> None:
         self._key = key
         self._check = check
