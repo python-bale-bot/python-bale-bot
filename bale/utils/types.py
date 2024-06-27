@@ -100,4 +100,5 @@ class _MaybeMissingGenerator:
             item = (item, )
         return Union[(MissingValueType, ) + item]
 
+
 OptionalParam = _MaybeMissingGenerator()
