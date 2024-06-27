@@ -26,8 +26,8 @@ class BaseFile(BaleObject):
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for different bots.
-            Can’t be used to download or reuse the file.
+            Unique identifier for this file, which is supposed to be the same over time and for 
+            different bots. Can’t be used to download or reuse the file.
         file_size: :obj:`int`, optional
             File size in bytes, if known.
 
@@ -47,7 +47,8 @@ class BaseFile(BaleObject):
     AUDIO: ClassVar[str] = "audio"
     ANIMATION: ClassVar[str] = "animation"
 
-    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = None, **kwargs) -> None:
+    def __init__(self, file_id: str, file_unique_id: str, file_size: Optional[int] = None, **kwargs
+                ) -> None:
         super().__init__()
         self._id = file_id
         self.file_id = file_id
