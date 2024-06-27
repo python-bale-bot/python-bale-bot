@@ -40,7 +40,8 @@ class Invoice(BaleObject):
         "total_amount"
     )
 
-    def __init__(self, title: str, description: str, start_parameter: str, currency: str, total_amount: int) -> None:
+    def __init__(self, title: str, description: str, start_parameter: str, currency: str, 
+                total_amount: int) -> None:
         super().__init__()
         self.title = title
         self.description = description
