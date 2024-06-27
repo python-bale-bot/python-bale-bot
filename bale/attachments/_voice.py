@@ -23,8 +23,8 @@ class Voice(BaseFile):
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for different bots.
-            Can’t be used to download or reuse the file.
+            Unique identifier for this file, which is supposed to be the same over time and for 
+            different bots. Can’t be used to download or reuse the file.
         file_name: :obj:`str`, optional
             Original voice filename as defined by sender.
         mime_type: :obj:`str`, optional
