@@ -127,7 +127,8 @@ class BaleObject:
         return data
 
     @classmethod
-    def _from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
+    def _from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot"
+                   ) -> Optional[Bale_obj_instance]:
         if not data:
             return None
 
@@ -151,7 +152,8 @@ class BaleObject:
         return obj
 
     @classmethod
-    def from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot") -> Optional[Bale_obj_instance]:
+    def from_dict(cls: Type[Bale_obj_instance], data: Optional[Dict], bot: "Bot"
+                   ) -> Optional[Bale_obj_instance]:
         return cls._from_dict(data=data, bot=bot)
 
     @classmethod
