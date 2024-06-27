@@ -55,7 +55,8 @@ MediaInput = Union[
     "InputMediaDocument"
 ]
 
-class MissingObject:
+
+class MissingValueType:
     __slots__ = ()
 
     def __str__(self):
@@ -64,11 +65,11 @@ class MissingObject:
     def __repr__(self):
         return "MissingValue"
 
-    def __eq__(self, _):
-        return False
+    def __eq__(self, other):
+        return isinstance(other, MissingValueType)
 
-    def __ne__(self, _):
-        return False
+    def __ne__(self, other):
+        return not self.__eq__(other)
 
     def __le__(self, _):
         return False
@@ -85,7 +86,11 @@ class MissingObject:
     def __hash__(self):
         return 0
 
-MissingValue: Any = MissingObject()
+    def __bool__(self):
+        return False
+
+
+MissingValue: MissingValueType = MissingValueType()
 
 class _MaybeMissingGenerator:
     __slots__ = ()
@@ -93,6 +98,7 @@ class _MaybeMissingGenerator:
     def __getitem__(self, item: Union[tuple, Any]) -> Union[MissingValue, ...]:
         if not isinstance(item, tuple):
             item = (item, )
-        return Union[(MissingObject, ) + item]
+        return Union[(MissingValueType, ) + item]
+
 
 OptionalParam = _MaybeMissingGenerator()

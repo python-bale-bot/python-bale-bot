@@ -11,11 +11,11 @@
 from __future__ import annotations
 from typing import Optional
 from bale import BaleObject
-from bale.utils.types import MissingValue
 
 __all__ = (
     "Location",
 )
+
 
 class Location(BaleObject):
     """This object shows a Location
@@ -35,7 +35,8 @@ class Location(BaleObject):
         "horizontal_accuracy"
     )
 
-    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = MissingValue) -> None:
+    def __init__(self, longitude: int, latitude: int, horizontal_accuracy: Optional[int] = None
+                ) -> None:
         super().__init__()
         self.longitude = longitude
         self.latitude = latitude
@@ -48,4 +49,3 @@ class Location(BaleObject):
     def link(self) -> str:
         """:obj:`str`: Export location link from Google map"""
         return f"https://maps.google.com/maps?q=loc:{self.longitude},{self.latitude}"
-

@@ -10,11 +10,11 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from typing import Optional
 from bale import BaleObject
-from bale.utils.types import MissingValue
 
 __all__ = (
     "Contact",
 )
+
 
 class Contact(BaleObject):
     """This object shows a Contact.
@@ -37,7 +37,8 @@ class Contact(BaleObject):
         "user_id"
     )
 
-    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str] = MissingValue, user_id: Optional[int] = MissingValue) -> None:
+    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str] = None,
+                 user_id: Optional[int] = None) -> None:
         super().__init__()
         self._id = user_id
         self.phone_number = phone_number

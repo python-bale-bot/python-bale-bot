@@ -10,6 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 import logging
 
+
 def setup_logging(level: int = logging.INFO, handler: logging.Handler = None, formatter: str = None):
     if handler is None:
         handler = logging.StreamHandler()

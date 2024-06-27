@@ -11,11 +11,11 @@
 from __future__ import annotations
 from ._basefile import BaseFile
 from typing import Optional
-from bale.utils.types import MissingValue
 
 __all__ = (
     "PhotoSize",
 )
+
 
 class PhotoSize(BaseFile):
     """This object represents one size of a photo or a file/sticker thumbnail.
@@ -40,7 +40,9 @@ class PhotoSize(BaseFile):
         "height",
         "file_size"
     )
-    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int, file_size: Optional[int] = MissingValue) -> None:
+
+    def __init__(self, file_id: str, file_unique_id: str, width: int, height: int,
+                 file_size: Optional[int] = None) -> None:
         super().__init__(file_id, file_unique_id, file_size, width=width, height=height)
         self._id = file_id
         self.file_id = file_id

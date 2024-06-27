@@ -11,21 +11,22 @@
 from typing import Dict, Optional
 from ._basefile import BaseFile
 from ._photosize import PhotoSize
-from bale.utils.types import MissingValue
 
 __all__ = (
-	"Document",
+    "Document",
 )
 
+
 class Document(BaseFile):
-	"""This object shows a Document.
+    """This object shows a Document.
 
     Attributes
     ----------
         file_id: :obj:`str`
             Identifier for this file, which can be used to download or reuse the file.
         file_unique_id: :obj:`str`
-            Unique identifier for this file, which is supposed to be the same over time and for different bots. Can’t be used to download or reuse the file.
+            Unique identifier for this file, which is supposed to be the same over time and for 
+            different bots. Can’t be used to download or reuse the file.
         thumbnail: :class:`bale.PhotoSize`, optional
             document thumbnail as defined by sender.
         file_name: :obj:`str`, optional
@@ -35,28 +36,29 @@ class Document(BaseFile):
         file_size: :obj:`int`, optional
             File size in bytes, if known.
     """
-	__slots__ = (
+    __slots__ = (
         "thumbnail",
         "file_name",
         "mime_type"
-	)
+    )
 
-	def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = MissingValue, thumbnail: Optional["PhotoSize"] = MissingValue,
-				 mime_type: Optional[str] = MissingValue, file_size: Optional[int] = MissingValue) -> None:
-		super().__init__(file_id, file_unique_id, file_size)
-		self.thumbnail = thumbnail
-		self.file_name = file_name
-		self.mime_type = mime_type
-		self.file_size = file_size
+    def __init__(self, file_id: str, file_unique_id: str, file_name: Optional[str] = None,
+                 thumbnail: Optional["PhotoSize"] = None,
+                 mime_type: Optional[str] = None, file_size: Optional[int] = None) -> None:
+        super().__init__(file_id, file_unique_id, file_size)
+        self.thumbnail = thumbnail
+        self.file_name = file_name
+        self.mime_type = mime_type
+        self.file_size = file_size
 
-		self._lock()
+        self._lock()
 
-	@classmethod
-	def from_dict(cls, data: Optional[Dict], bot):
-		data = BaseFile.parse_data(data)
-		if not data:
-			return None
+    @classmethod
+    def from_dict(cls, data: Optional[Dict], bot):
+        data = BaseFile.parse_data(data)
+        if not data:
+            return None
 
-		data["thumbnail"] = PhotoSize.from_dict(data.get('thumbnail'), bot)
+        data["thumbnail"] = PhotoSize.from_dict(data.get('thumbnail'), bot)
 
-		return super().from_dict(data, bot)
+        return super().from_dict(data, bot)

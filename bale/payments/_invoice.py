@@ -12,38 +12,41 @@ from __future__ import annotations
 from bale import BaleObject
 
 __all__ = (
-	"Invoice",
+    "Invoice",
 )
 
+
 class Invoice(BaleObject):
-	"""This object shows Invoice
+    """This object shows Invoice
 
     Attributes
     ----------
         title: str
-        	Product name.
+            Product name.
         description: str
-        	Product description.
+            Product description.
         start_parameter: str
-        	Unique bot deep-linking parameter that can be used to generate this invoice.
+            Unique bot deep-linking parameter that can be used to generate this invoice.
         currency: str
-        	Three-letter ISO 4217 currency code.
+            Three-letter ISO 4217 currency code.
         total_amount: int
-        	Total price in the smallest units of the currency (integer, not float/double).
+            Total price in the smallest units of the currency (integer, not float/double).
     """
-	__slots__ = (
-		"title",
-		"description",
-		"start_parameter",
-		"currency",
-		"total_amount"
-	)
-	def __init__(self, title: str, description: str, start_parameter: str, currency: str, total_amount: int) -> None:
-		super().__init__()
-		self.title = title
-		self.description = description
-		self.start_parameter = start_parameter
-		self.currency = currency
-		self.total_amount = total_amount
+    __slots__ = (
+        "title",
+        "description",
+        "start_parameter",
+        "currency",
+        "total_amount"
+    )
 
-		self._lock()
+    def __init__(self, title: str, description: str, start_parameter: str, currency: str, 
+                total_amount: int) -> None:
+        super().__init__()
+        self.title = title
+        self.description = description
+        self.start_parameter = start_parameter
+        self.currency = currency
+        self.total_amount = total_amount
+
+        self._lock()

@@ -10,7 +10,6 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from bale import BaleObject
-from bale.utils.types import MissingValue
 from typing import Optional
 
 __all__ = (
@@ -40,7 +39,8 @@ class SuccessfulPayment(BaleObject):
         "shipping_option_id"
     )
 
-    def __init__(self, currency: str, total_amount: int, invoice_payload: Optional[str] = MissingValue, shipping_option_id: Optional[str] = MissingValue) -> None:
+    def __init__(self, currency: str, total_amount: int, invoice_payload: Optional[str] = None,
+                 shipping_option_id: Optional[str] = None) -> None:
         super().__init__()
         self.currency = currency
         self.total_amount = total_amount
