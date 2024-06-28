@@ -1,5 +1,95 @@
 [build-system]
-requires = ["setuptools", "wheel"]
+requires = ["setuptools >= 61.0"]
 build-backend = "setuptools.build_meta"
 
+[project]
+name = "python-bale-bot"
+description = "An API wrapper for Bale written in Python"
+authors = [
+    { name = "Kian Ahmadian", email = "devs@python-bale-bot.ir" }
+]
+readme = { file = "README.rst", content-type = "text/x-rst" }
+license = { file = "LICENSE" }
+requires-python = ">=3.8"
+classifiers = [
+  "Development Status :: 5 - Production/Stable",
+  "Topic :: Software Development",
+  "Topic :: Software Development :: Build Tools",
+  "License :: OSI Approved",
+  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
+  "Intended Audience :: Developers",
+  "Operating System :: OS Independent",
+  "Natural Language :: Persian",
+  "Natural Language :: English",
+  "Programming Language :: Python",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.8",
+  "Programming Language :: Python :: 3.9",
+  "Programming Language :: Python :: 3.10",
+  "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
+  "Topic :: Internet", 
+  "Topic :: Software Development :: Libraries",
+  "Topic :: Software Development :: Libraries :: Python Modules",
+  "Topic :: Utilities",
+  "Typing :: Typed",
+]
+keywords = [
+    "bale",
+    "bale-bot",
+    "framework",
+    "bot",
+]
+dynamic = ["version", "dependencies"]
 
+[tool.setuptools.dynamic]
+dependencies = { file = "requirements.txt" }
+
+[project.urls]
+"Homepage" = "https://python-bale-bot.ir"
+"Documentation" = "https://docs.python-bale-bot.ir/en/stable/"
+"Bug Tracker" = "https://github.com/python-bale-bot/python-bale-bot/issues"
+"Source Code" = "https://github.com/python-bale-bot/python-bale-bot/"
+"News" = "https://ble.ir/pbblib"
+"Changelog" = "https://python-bale-bot.ir/changelog"
+"Support" = "https://python-bale-bot.ir/support"
+
+[project.optional-dependencies]
+docs = [
+    'sphinx==7.3.7',
+    'sphinx-pypi-upload',
+    'sphinx-paramlinks==0.6.0',
+    'sphinxcontrib-mermaid==0.8.1',
+    'sphinx-copybutton==0.5.2',
+    'furo==2024.5.6',
+    'sphinx-inline-tabs==2023.4.21'
+]
+
+[tool.setuptools]
+packages = [
+    "bale",
+    "bale.attachments",
+    "bale.handlers",
+    "bale.payments",
+    "bale.request",
+    "bale.ui",
+    "bale.utils",
+]
+include-package-data = true
+
+[tool.pyright]
+include = [
+    "bale",
+    "bale.attachment",
+    "bale.handlers",
+    "bale.payments",
+    "bale.request",
+    "bale.ui",
+    "bale.utils",
+]
+exclude = [
+    "build",
+    "**/__pycache__",
+    "dist",
+    "docs",
+]
