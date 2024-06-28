@@ -68,7 +68,7 @@ docs = [
 [tool.setuptools]
 packages = [
     "bale",
-    "bale.attachment",
+    "bale.attachments",
     "bale.handlers",
     "bale.payments",
     "bale.request",
