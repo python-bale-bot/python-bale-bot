@@ -23,7 +23,6 @@ classifiers = [
   "Natural Language :: English",
   ""Programming Language :: Python",
   "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.7",
   "Programming Language :: Python :: 3.8",
   "Programming Language :: Python :: 3.9",
   "Programming Language :: Python :: 3.10",
@@ -69,11 +68,11 @@ docs = [
 packages = [
     "bale",
     "bale.attachment",
-    "discord.handlers",
-    "discord.payments",
-    "discord.request",
-    "discord.ui",
-    "discord.utils",
+    "bale.handlers",
+    "bale.payments",
+    "bale.request",
+    "bale.ui",
+    "bale.utils",
 ]
 include-package-data = true
 
@@ -81,11 +80,11 @@ include-package-data = true
 include = [
     "bale",
     "bale.attachment",
-    "discord.handlers",
-    "discord.payments",
-    "discord.request",
-    "discord.ui",
-    "discord.utils",
+    "bale.handlers",
+    "bale.payments",
+    "bale.request",
+    "bale.ui",
+    "bale.utils",
 ]
 exclude = [
     "build",
