@@ -18,10 +18,11 @@ if TYPE_CHECKING:
     from bale import Bot
 
 __all__ = (
-    "Updater"
+    "Updater",
 )
 
 _log = logging.getLogger(__name__)
+
 
 class Updater:
     """This object represents a Updater.
@@ -32,11 +33,11 @@ class Updater:
     """
     __slots__ = (
         "bot",
+        "interval",
         "_last_offset",
         "_running",
         "__worker_task",
         "__stop_worker_event",
-        "interval"
     )
 
     def __init__(self, bot: "Bot") -> None:
@@ -85,7 +86,10 @@ class Updater:
 
             if updates:
                 for update in updates:
-                    if not self.current_offset or update.update_id > self.current_offset:
+                    if (
+                            not self.current_offset or
+                            update.update_id > self.current_offset  # This is due to a bug sometimes caused by the Bale servers.
+                    ):
                         await self.bot.update_queue.put(update)
                 self._last_offset = updates[-1].update_id
 
@@ -110,11 +114,15 @@ class Updater:
             try:
                 work_task = asyncio.create_task(work_coroutine())
 
-                done = (await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED))[0]
+                done = (
+                    await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED)
+                )[0]
                 if wait_stop_task in done:
                     _log.debug("Update was canceled by stop worker event")
 
-                if not (work_task in done and work_task.result()):
+                if not (
+                        work_task in done and work_task.result()
+                ):
                     break
             except InvalidToken as exc:
                 _log.error('Token was invalid')
