@@ -61,7 +61,7 @@ class Updater:
 
         self.__stop_worker_event = asyncio.Event()
 
-    async def start_polling(self):
+    async def start_polling(self, getupdates_error_handler: Callable[[Any], bool] = None):
         if self._running:
             raise RuntimeError("Updater is running")
 
@@ -72,9 +72,9 @@ class Updater:
         self.bot.dispatch("ready")
         _log.debug("Updater is started!")
 
-        return await self._polling()
+        return await self._polling(getupdates_error_handler=getupdates_error_handler)
 
-    async def _polling(self):
+    async def _polling(self, getupdates_error_handler: Callable[[Any], bool] = None):
         async def action_getupdates() -> bool:  # When False is returned, the operation stops.
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
@@ -95,14 +95,14 @@ class Updater:
 
             return True
 
-        def getupdates_error(exc: Any) -> bool:
+        def default_getupdates_error_handler(exc: Any) -> bool:
             _log.exception("Exception happened when polling for updates.", exc_info=exc)
             return False
 
         self.__worker_task = asyncio.create_task(
             self.__start_worker(
                 action_getupdates,
-                getupdates_error
+                getupdates_error_handler or default_getupdates_error_handler
             ), name="Get Updates Worker Task"
         )
 
