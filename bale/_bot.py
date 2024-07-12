@@ -2270,7 +2270,8 @@ class Bot:
             loop.run_until_complete(self.close())
 
     def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None,
-            startup_functions: List[Callable] = None, cleanup_functions: List[Callable] = None
+            startup_functions: List[Callable] = None, cleanup_functions: List[Callable] = None,
+            getupdates_error_handler: Callable[[Any], bool] = None
             ):
         """This method is used to run the bot, updater, and update fetcher process.
 
