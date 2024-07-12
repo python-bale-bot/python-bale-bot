@@ -97,7 +97,7 @@ class Updater:
 
         def default_getupdates_error_handler(exc: Any) -> bool:
             _log.exception("Exception happened when polling for updates.", exc_info=exc)
-            return False
+            return True  # so that the updater continues its worker.
 
         self.__worker_task = asyncio.create_task(
             self.__start_worker(
