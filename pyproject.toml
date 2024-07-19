@@ -56,7 +56,7 @@ dependencies = { file = "requirements.txt" }
 
 [project.optional-dependencies]
 docs = [
-    'sphinx==7.3.7',
+    'sphinx==7.4.6',
     'sphinx-pypi-upload',
     'sphinx-paramlinks==0.6.0',
     'sphinxcontrib-mermaid==0.8.1',
