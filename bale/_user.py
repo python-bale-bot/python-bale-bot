@@ -66,6 +66,39 @@ class User(BaleObject):
     def chat_id(self) -> int:
         """Aliases for :attr:`id`"""
         return self.id
+    
+    def state(self, value: Any) -> None:
+        """Set and save the user's state."""
+        self._state = value
+        # Assuming there's a method to save state, e.g., in a database
+        self._save_state(value)
+
+    def get_state(self) -> Any:
+        """Load and return the user's state."""
+        if not hasattr(self, '_state'):
+            # Assuming there's a method to load state from storage
+            self._state = self._load_state()
+        return self._state
+
+    def clear_state(self) -> None:
+        """Clear the user's state."""
+        if hasattr(self, '_state'):
+            del self._state
+        # Assuming there's a method to clear state from storage
+        self._clear_state()
+
+    def _save_state(self, value: Any) -> None:
+        # Implementation for saving state to storage
+        pass
+
+    def _load_state(self) -> Any:
+        # Implementation for loading state from storage
+        pass
+
+    def _clear_state(self) -> None:
+        # Implementation for clearing state from storage
+        pass
+
 
     @property
     def user_id(self) -> int:
