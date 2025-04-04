@@ -18,10 +18,11 @@ if TYPE_CHECKING:
     from bale import Bot
 
 __all__ = (
-    "Updater"
+    "Updater",
 )
 
 _log = logging.getLogger(__name__)
+
 
 class Updater:
     """This object represents a Updater.
@@ -32,11 +33,11 @@ class Updater:
     """
     __slots__ = (
         "bot",
+        "interval",
         "_last_offset",
         "_running",
         "__worker_task",
         "__stop_worker_event",
-        "interval"
     )
 
     def __init__(self, bot: "Bot") -> None:
@@ -60,7 +61,7 @@ class Updater:
 
         self.__stop_worker_event = asyncio.Event()
 
-    async def start_polling(self):
+    async def start_polling(self, getupdates_error_handler: Callable[[Any], bool] = None):
         if self._running:
             raise RuntimeError("Updater is running")
 
@@ -71,9 +72,9 @@ class Updater:
         self.bot.dispatch("ready")
         _log.debug("Updater is started!")
 
-        return await self._polling()
+        return await self._polling(getupdates_error_handler=getupdates_error_handler)
 
-    async def _polling(self):
+    async def _polling(self, getupdates_error_handler: Callable[[Any], bool] = None):
         async def action_getupdates() -> bool:  # When False is returned, the operation stops.
             try:
                 updates = await self.bot.get_updates(offset=self._last_offset)
@@ -85,20 +86,23 @@ class Updater:
 
             if updates:
                 for update in updates:
-                    if not self.current_offset or update.update_id > self.current_offset:
+                    if (
+                            not self.current_offset or
+                            update.update_id > self.current_offset  # This is due to a bug sometimes caused by the Bale servers.
+                    ):
                         await self.bot.update_queue.put(update)
                 self._last_offset = updates[-1].update_id
 
             return True
 
-        def getupdates_error(exc: Any) -> bool:
+        def default_getupdates_error_handler(exc: Any) -> bool:
             _log.exception("Exception happened when polling for updates.", exc_info=exc)
-            return False
+            return True  # so that the updater continues its worker.
 
         self.__worker_task = asyncio.create_task(
             self.__start_worker(
                 action_getupdates,
-                getupdates_error
+                getupdates_error_handler or default_getupdates_error_handler
             ), name="Get Updates Worker Task"
         )
 
@@ -110,11 +114,15 @@ class Updater:
             try:
                 work_task = asyncio.create_task(work_coroutine())
 
-                done = (await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED))[0]
+                done = (
+                    await asyncio.wait([work_task, wait_stop_task], return_when=asyncio.FIRST_COMPLETED)
+                )[0]
                 if wait_stop_task in done:
                     _log.debug("Update was canceled by stop worker event")
 
-                if not (work_task in done and work_task.result()):
+                if not (
+                        work_task in done and work_task.result()
+                ):
                     break
             except InvalidToken as exc:
                 _log.error('Token was invalid')

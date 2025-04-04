@@ -2270,7 +2270,8 @@ class Bot:
             loop.run_until_complete(self.close())
 
     def run(self, /, log_handler: logging.Handler = None, log_level: int = logging.INFO, log_format: str = None,
-            startup_functions: List[Callable] = None, cleanup_functions: List[Callable] = None
+            startup_functions: List[Callable] = None, cleanup_functions: List[Callable] = None,
+            getupdates_error_handler: Callable[[Any], bool] = None
             ):
         """This method is used to run the bot, updater, and update fetcher process.
 
@@ -2299,6 +2300,8 @@ class Bot:
             cleanup_functions: a :obj:`list` of functions (including async funcs), optional
                 A tuple of functions to be executed (for async functions using :meth:`asyncio.run_until_complete` method
                 for execute) when the class is Terminating work. Defaults to ``None``.
+            getupdates_error_handler: a callable returns :obj:`bool`, optional
+
         """
         setup_logging(handler=log_handler, level=log_level, formatter=log_format)
         operation_coroutine = []
@@ -2309,7 +2312,7 @@ class Bot:
         if updater := self._updater:
             startup_functions.append(self.get_me)
             startup_functions.append(updater.setup)
-            operation_coroutine.append(updater.start_polling())
+            operation_coroutine.append(updater.start_polling(getupdates_error_handler=getupdates_error_handler))
             cleanup_functions.append(updater.stop)
 
         return self.__run(startup_functions=startup_functions, operation_coroutine=operation_coroutine,
