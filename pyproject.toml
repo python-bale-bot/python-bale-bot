@@ -9,30 +9,30 @@ authors = [
     { name = "Kian Ahmadian", email = "devs@python-bale-bot.ir" }
 ]
 readme = { file = "README.rst", content-type = "text/x-rst" }
-license = { file = "LICENSE" }
-requires-python = ">=3.8"
+license = "GPL-2.0-only"
+license-files = ["LICENSE"]
+requires-python = ">=3.10"
 classifiers = [
-  "Development Status :: 5 - Production/Stable",
-  "Topic :: Software Development",
-  "Topic :: Software Development :: Build Tools",
-  "License :: OSI Approved",
-  "License :: OSI Approved :: GNU General Public License v2 (GPLv2)",
-  "Intended Audience :: Developers",
-  "Operating System :: OS Independent",
-  "Natural Language :: Persian",
-  "Natural Language :: English",
-  "Programming Language :: Python",
-  "Programming Language :: Python :: 3",
-  "Programming Language :: Python :: 3.8",
-  "Programming Language :: Python :: 3.9",
-  "Programming Language :: Python :: 3.10",
-  "Programming Language :: Python :: 3.11",
-  "Programming Language :: Python :: 3.12",
-  "Topic :: Internet", 
-  "Topic :: Software Development :: Libraries",
-  "Topic :: Software Development :: Libraries :: Python Modules",
-  "Topic :: Utilities",
-  "Typing :: Typed",
+    "Development Status :: 5 - Production/Stable",
+    "Intended Audience :: Developers",
+    "Operating System :: OS Independent",
+    "Natural Language :: Persian",
+    "Natural Language :: English",
+    "Programming Language :: Python",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3 :: Only",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Programming Language :: Python :: 3.14",
+    "Framework :: AsyncIO",
+    "Topic :: Communications :: Chat",
+    "Topic :: Internet :: WWW/HTTP",
+    "Topic :: Software Development :: Libraries",
+    "Topic :: Software Development :: Libraries :: Python Modules",
+    "Topic :: Utilities",
+    "Typing :: Typed",
 ]
 keywords = [
     "bale",
@@ -43,6 +43,7 @@ keywords = [
 dynamic = ["version", "dependencies"]
 
 [tool.setuptools.dynamic]
+version = { attr = "bale.version.__version__" }
 dependencies = { file = "requirements.txt" }
 
 [project.urls]
@@ -52,7 +53,7 @@ dependencies = { file = "requirements.txt" }
 "Source Code" = "https://github.com/python-bale-bot/python-bale-bot/"
 "News" = "https://ble.ir/pbblib"
 "Changelog" = "https://python-bale-bot.ir/changelog"
-"Support" = "https://python-bale-bot.ir/support"
+"Support" = "https://ble.ir/pbblib"
 
 [project.optional-dependencies]
 docs = [
@@ -65,27 +66,13 @@ docs = [
     'sphinx-inline-tabs==2023.4.21'
 ]
 
-[tool.setuptools]
-packages = [
-    "bale",
-    "bale.attachments",
-    "bale.handlers",
-    "bale.payments",
-    "bale.request",
-    "bale.ui",
-    "bale.utils",
-]
-include-package-data = true
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["bale*"]
 
 [tool.pyright]
 include = [
-    "bale",
-    "bale.attachment",
-    "bale.handlers",
-    "bale.payments",
-    "bale.request",
-    "bale.ui",
-    "bale.utils",
+    "bale"
 ]
 exclude = [
     "build",
@@ -93,3 +80,9 @@ exclude = [
     "dist",
     "docs",
 ]
+
+[tool.setuptools.package-data]
+bale = ["py.typed"]
+
+[tool.pylint.'MESSAGES CONTROL']
+disable = ["line-too-long", "too-many-instance-attributes", "too-many-arguments", "missing-function-docstring", "too-many-positional-arguments", "too-many-public-methods", "missing-module-docstring", "too-many-locals", "too-many-lines", "no-member", "too-few-public-methods", "duplicate-code", "broad-exception-caught"]
