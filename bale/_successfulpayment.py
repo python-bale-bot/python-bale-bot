@@ -1,0 +1,75 @@
+#  An API wrapper for Bale written in Python
+#  Copyright (c) 2022-2026
+#  Kian Ahmadian <devs@python-bale-bot.ir>
+#  All rights reserved.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+#
+# This software is licensed under the GNU General Public License v2.0.
+# See the accompanying LICENSE file for details.
+#
+# You should have received a copy of the GNU General Public License v2.0
+# along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+from __future__ import annotations
+
+from ._baleobject import BaleObject
+
+__all__ = ("SuccessfulPayment",)
+
+
+class SuccessfulPayment(BaleObject):
+    """
+    This object contains basic information about a successful payment.
+
+    Attributes:
+        currency (:obj:`str`):
+            The currency in which the transaction was made.
+        total_amount (:obj:`int`):
+            The total sum of the transaction amount.
+        invoice_payload (:obj:`str`, optional):
+            Bot specified invoice payload.
+        shipping_option_id (:obj:`str`, optional):
+            Identifier of the shipping option chosen by the user.
+        provider_payment_charge_id (:obj:`str`, optional):
+            The transaction tracking number if the payment was made through the `Bale <https://ble.ir>`_ wallet.
+    """
+
+    __slots__ = (
+        "currency",
+        "total_amount",
+        "invoice_payload",
+        "shipping_option_id",
+        "provider_payment_charge_id",
+    )
+
+    def __init__(
+        self,
+        currency: str,
+        total_amount: int,
+        invoice_payload: str | None = None,
+        shipping_option_id: str | None = None,
+        provider_payment_charge_id: str | None = None,
+    ) -> None:
+        super().__init__()
+        self.currency = currency
+        self.total_amount = total_amount
+        self.invoice_payload = invoice_payload
+        self.shipping_option_id = shipping_option_id
+        self.provider_payment_charge_id = provider_payment_charge_id
+
+        self._lock()
+
+    @property
+    def payload(self) -> str | None:
+        """Aliases for :attr:`invoice_payload`"""
+        return self.invoice_payload

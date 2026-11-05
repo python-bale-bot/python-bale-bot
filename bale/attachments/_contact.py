@@ -1,44 +1,54 @@
-# An API wrapper for Bale written in Python
-# Copyright (c) 2022-2024
-# Kian Ahmadian <devs@python-bale-bot.ir>
-# All rights reserved.
+#  An API wrapper for Bale written in Python
+#  Copyright (c) 2022-2026
+#  Kian Ahmadian <devs@python-bale-bot.ir>
+#  All rights reserved.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 #
 # This software is licensed under the GNU General Public License v2.0.
 # See the accompanying LICENSE file for details.
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import Optional
-from bale import BaleObject
 
-__all__ = (
-    "Contact",
-)
+from .._baleobject import BaleObject
+
+__all__ = ("Contact",)
 
 
 class Contact(BaleObject):
     """This object shows a Contact.
 
-    Attributes
-    ----------
-        phone_number: int
+    Attributes:
+        phone_number (:obj:`int`):
             Contact’s phone number.
-        first_name: str
+        first_name (:obj:`str`):
             Contact’s first name.
-        last_name: :obj:`str`, optional
+        last_name (:obj:`str`, optional):
             Contact’s last name.
-        user_id: :obj:`int`, optional
+        user_id (:obj:`int`, optional):
             Contact’s user identifier in Bale.
     """
-    __slots__ = (
-        "phone_number",
-        "first_name",
-        "last_name",
-        "user_id"
-    )
 
-    def __init__(self, phone_number: int, first_name: str, last_name: Optional[str] = None,
-                 user_id: Optional[int] = None) -> None:
+    __slots__ = ("phone_number", "first_name", "last_name", "user_id")
+
+    def __init__(
+        self,
+        phone_number: int,
+        first_name: str,
+        last_name: str | None = None,
+        user_id: int | None = None,
+    ) -> None:
         super().__init__()
         self._id = user_id
         self.phone_number = phone_number

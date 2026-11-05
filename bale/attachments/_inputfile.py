@@ -1,7 +1,19 @@
-# An API wrapper for Bale written in Python
-# Copyright (c) 2022-2024
-# Kian Ahmadian <devs@python-bale-bot.ir>
-# All rights reserved.
+#  An API wrapper for Bale written in Python
+#  Copyright (c) 2022-2026
+#  Kian Ahmadian <devs@python-bale-bot.ir>
+#  All rights reserved.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+#
+#  This software is licensed under the GNU General Public License v2.0.
+#  See the accompanying LICENSE file for details.
+#
+#  You should have received a copy of the GNU General Public License v2.0
+#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 #
 # This software is licensed under the GNU General Public License v2.0.
 # See the accompanying LICENSE file for details.
@@ -10,80 +22,81 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import Union, Optional, Dict
-from io import BufferedReader
+from io import BufferedReader, IOBase
+from pathlib import Path
+from typing import Any, BinaryIO, Type
 
-__all__ = (
-    "InputFile",
-)
+from .._utils.files import is_file_valid
+
+__all__ = ("InputFile",)
 
 
 class InputFile:
-    """This object shows a file ready to send/upload.
+    """This object shows a file or bytes ready to upload.
 
-    .. warning::
-        Just for upload file, you can use "file_name" param.
     .. admonition:: Examples
 
-        :any:`Attachment Bot <examples.attachment>`
+        :any:`examples.attachment`
 
-    .. code:: python
+    .. code-block:: python
 
         # upload the file
         with open('./my_file.png', 'rb') as f:
             file = InputFile(f.read())
 
-        # use the unique file id
-        file = InputFile("YOUR_FILE_ID")
-
-    Parameters
-    ----------
-        file_input: :class:`io.BufferedReader` | :obj:`str` | :class:`bytes`
-            Your File. Pass a file_id as String to send a file that exists on the Bale servers (recommended),
-            pass an HTTP URL as a String for Bale to get a file from the Internet, or upload a new one.
-        file_name: :obj:`str`, optional
-            Additional interface options. It is used only when uploading a file.
+    Arguments:
+        data:
+            Your file to upload.
+        filename:
+            Additional interface options.
     """
-    __slots__ = (
-        "file_input",
-        "file_name"
-    )
 
-    def __init__(self, file_input: str | "BufferedReader" | bytes, *, file_name: Optional[str] = None) -> None:
-        if not isinstance(file_input, (str, BufferedReader, bytes)):
+    __slots__ = ("_data", "_filename")
+
+    def __init__(
+        self,
+        data: bytes | IOBase | BinaryIO,
+        *,
+        filename: str | None = None,
+    ) -> None:
+        if not isinstance(data, (str, BufferedReader, bytes)):
             raise TypeError(
-                "file_input parameter must be one of str, BufferedReader, and byte types"
+                "file_input parameter must be one of bytes, BufferedReader and BinaryIO types"
             )
 
-        if isinstance(file_input, str):
-            file_input = file_input.encode()
-        elif isinstance(file_input, BufferedReader):
-            file_input = file_input.read()
+        if filename and not isinstance(filename, str):
+            raise TypeError("file_name param must be type of str")
 
-        if file_name:
-            if not isinstance(file_name, str):
-                raise TypeError(
-                    "file_name param must be type of str"
-                )
+        self._data: bytes | IOBase | BinaryIO = data
+        self._filename: str | None = filename
 
-        self.file_input: Union[bytes, str] = file_input
-        self.file_name: Optional[str] = file_name
+    @classmethod
+    def from_bytes(
+        cls: Type["InputFile"], data: bytes, filename: str | None = None
+    ) -> InputFile:
+        return InputFile(data, filename=filename)
 
-    def to_multipart_payload(self) -> Dict:
-        payload = {
-            "value": self.file_input,
-            "content_type": "multipart/form-data"
-        }
-        if self.file_name:
-            payload["filename"] = self.file_name
+    @classmethod
+    def from_path(
+        cls: Type["InputFile"], path: str | Path, filename: str | None = None
+    ) -> InputFile:
+        if p := is_file_valid(path):
+            return InputFile(p.open("rb"), filename=filename or p.name)
+
+        raise FileNotFoundError(f"File not found: {path}")
+
+    def to_multipart_payload(self) -> dict[str, Any]:
+        payload = {"value": self._data, "content_type": "multipart/form-data"}
+        if self._filename:
+            payload["filename"] = self._filename
 
         return payload
 
-    def __eq__(self, other) -> bool:
-        return isinstance(other, InputFile) and self.file_input == other.file_input
+    def __eq__(self, other: Any) -> bool:
+        return isinstance(other, InputFile) and self._data == other._data
 
-    def __ne__(self, other) -> bool:
+    def __ne__(self, other: Any) -> bool:
         return not self.__eq__(other)
 
     def __repr__(self):
-        return f"<InputFile file_name={self.file_name}>"
+        return f"<InputFile file_name={self._filename}>"
