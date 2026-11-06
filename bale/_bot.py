@@ -2766,7 +2766,7 @@ class Bot:
 
     @arguments_shield
     async def ask_review(
-        self, user_id: int, *, delay_seconds: int | None, **kwargs
+        self, user_id: int, *, delay_seconds: int | None = None, **kwargs
     ) -> bool:
         """Use this method to request the user’s client to submit or edit a review about the bot. A dedicated form is displayed in the user’s client, containing separate sections for submitting a review and rating, as shown in the image.
 
