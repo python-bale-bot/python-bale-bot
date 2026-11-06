@@ -19,8 +19,8 @@ else:
     from typing_extensions import NotRequired
 
 if TYPE_CHECKING:
-    from .callbackquery import CallbackQuery
     from .message import Message
+    from .callbackquery import CallbackQuery
     from .precheckoutquery import PreCheckoutQuery
 
 __all__ = ("Update",)

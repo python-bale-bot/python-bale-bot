@@ -16,9 +16,11 @@ from pathlib import Path
 from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar
 
 if TYPE_CHECKING:
-    from bale import InputFile  # noqa
-    from bale import (InputMediaAnimation, InputMediaAudio, InputMediaDocument,
-                      InputMediaPhoto, InputMediaVideo)
+    from bale import (  # noqa
+        InlineKeyboardButton, InputMediaAnimation,
+        InputMediaAudio, InputMediaDocument, InputMediaPhoto,
+        InputMediaVideo, KeyboardButton, InputFile
+    )
 
 
 class _Sentinel(Enum):

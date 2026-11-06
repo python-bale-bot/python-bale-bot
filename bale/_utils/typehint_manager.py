@@ -58,8 +58,7 @@ def get_resolved_hints(func):
         namespace: dict[Any, Any] = {}
 
     with suppress(Exception):
-        from bale import (InlineKeyboardMarkup, InputFile, ReplyKeyboardMarkup,
-                          ReplyKeyboardRemove)
+        from bale import InlineKeyboardMarkup, ReplyKeyboardMarkup, ReplyKeyboardRemove, InputFile
 
         namespace.setdefault("InlineKeyboardMarkup", InlineKeyboardMarkup)
         namespace.setdefault("ReplyKeyboardMarkup", ReplyKeyboardMarkup)

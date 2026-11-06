@@ -1,17 +1,7 @@
-#  An API wrapper for Bale written in Python
-#  Copyright (c) 2022-2026
-#  Kian Ahmadian <devs@python-bale-bot.ir>
-#  All rights reserved.
-#
-#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2026
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
 #
 # This software is licensed under the GNU General Public License v2.0.
 # See the accompanying LICENSE file for details.
@@ -62,7 +52,7 @@ def parse_file_input(
         return file_input.file_id
 
     if not isinstance(attachment_types, tuple) and attachment_types is not None:
-        attachment_types = (attachment_types,)
+        attachment_types = (attachment_types, )
 
     att_names = (
         ", ".join(a.__class__.__name__ for a in attachment_types) + ", "

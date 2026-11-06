@@ -17,8 +17,8 @@ from typing import TYPE_CHECKING, Any, TypeAlias, TypeVar, cast
 from .._utils.checkers import iscoroutinefunction
 
 if TYPE_CHECKING:
-    from bale.context import Context
     from bale.handlers import Cooldown
+    from bale.context import Context
 
 __all__ = ("UpdateHandler",)
 

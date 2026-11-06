@@ -16,6 +16,7 @@ from aiohttp import ClientResponse
 from .._utils.object import json as _json
 from ._response_parameters import ResponseParameters
 
+
 __all__ = ("json_or_text", "BaleResponse")
 
 

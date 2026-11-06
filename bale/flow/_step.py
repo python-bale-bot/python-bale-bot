@@ -10,12 +10,13 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
+from typing import Any, TypeVar, TYPE_CHECKING
 from collections.abc import Callable, Coroutine
-from typing import TYPE_CHECKING, Any, TypeVar
 
-from .._utils.checkers import iscoroutinefunction, validate_timeout
-from .._utils.typehint import MISSING, SentinelOrValue
 from ..handlers import UpdateHandler
+
+from .._utils.typehint import MISSING, SentinelOrValue
+from .._utils.checkers import iscoroutinefunction, validate_timeout
 
 __all__ = ("Step",)
 

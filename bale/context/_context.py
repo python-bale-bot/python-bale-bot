@@ -158,7 +158,7 @@ class Context:
         reply_markup: SentinelOrValue[
             "InlineKeyboardMarkup | ReplyKeyboardMarkup"
         ] = MISSING,
-        **kwargs,
+        **kwargs
     ) -> "Message":
         """|shortcut|
 

@@ -19,8 +19,8 @@ else:
     from typing_extensions import NotRequired
 
 if TYPE_CHECKING:
-    from .message import Message
     from .user import User
+    from .message import Message
 
 __all__ = ("CallbackQuery",)
 

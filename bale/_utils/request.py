@@ -10,7 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, TypeAlias
+from typing import Any, TYPE_CHECKING, TypeAlias
 
 from aiohttp import FormData
 
@@ -21,8 +21,7 @@ from ..attachments import InputFile
 from ..constants import StringEnum
 
 if TYPE_CHECKING:
-    from bale import (InputMediaAnimation, InputMediaAudio, InputMediaDocument,
-                      InputMediaPhoto, InputMediaVideo)
+    from bale import InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument
 
     MediaInput: TypeAlias = (
         InputMediaPhoto
@@ -72,11 +71,11 @@ def _parse_form_data_field_value(value: Any):
     return value
 
 
-def build_media_group(
-    payload: dict[str, Any],
-) -> tuple[dict[str, Any] | None, FormData | None]:
+def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, FormData | None]:
     media: list[MediaInput] = payload["media"]
-    use_form_data = any(isinstance(i.media, InputFile) for i in media)
+    use_form_data = any(
+        isinstance(i.media, InputFile) for i in media
+    )
 
     if use_form_data:
         form = FormData()
@@ -88,7 +87,9 @@ def build_media_group(
             media_value = m.media
             media_caption = m.caption
 
-            media_item = {"type": media_type}
+            media_item = {
+                "type": media_type
+            }
             if media_caption:
                 media_item["caption"] = media_caption
 
@@ -103,21 +104,24 @@ def build_media_group(
             media_array.append(media_item)
 
         for key, value in build_payload(payload).items():
-            if key != "media":
+            if key != 'media':
                 form.add_field(key, _parse_form_data_field_value(value))
         form.add_field("media", json.dumps(media_array))
 
         return None, form
 
-    payload["media"] = [i.to_dict() for i in media]
+    payload["media"] = [
+        i.to_dict()
+        for i in media
+    ]
 
     return payload, None
 
 
-def maybe_form_data(
-    data: dict, form_data: FormData | None = None
-) -> tuple[dict[str, Any] | None, FormData | None]:
-    use_form_data = any(isinstance(value, InputFile) for key, value in data.items())
+def maybe_form_data(data: dict, form_data: FormData | None = None) -> tuple[dict[str, Any] | None, FormData | None]:
+    use_form_data = any(
+        isinstance(value, InputFile) for key, value in data.items()
+    )
     if use_form_data:
         return None, build_form_data(data)
 

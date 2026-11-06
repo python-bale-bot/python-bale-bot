@@ -20,9 +20,8 @@ from types import UnionType as types_UnionType
 from typing import TYPE_CHECKING, Any, cast
 
 from bale.checks import Check
-
-from .._exceptions import BadArgument, MissingRequiredArgument, UserInputError
-from ._converter import ChatConverter, Converter, UserConverter
+from ._converter import Converter, ChatConverter, UserConverter
+from .._exceptions import MissingRequiredArgument, BadArgument, UserInputError
 from ._updatehandler import UpdateHandler
 
 if TYPE_CHECKING:
@@ -223,8 +222,7 @@ class CommandHandler(UpdateHandler):
                 if result := await expected_type(context, raw):
                     return result
             else:
-                from bale import Chat, User
-
+                from bale import User, Chat
                 convert_mapping = {User: UserConverter, Chat: ChatConverter}
                 if expected_type in convert_mapping:
                     expected_type: typing.Type[User] | typing.Type[Chat]
@@ -302,7 +300,7 @@ class CommandHandler(UpdateHandler):
         )  # None, if update doesn't has any message
 
         if text and (prefix := await self.check_prefix(context)):
-            command, _, query = text[len(prefix) :].partition(" ")
+            command, _, query = text[len(prefix):].partition(" ")
 
             if (command in self.commands + []) and (
                 not self.check or await self.check.check_update(context)

@@ -39,9 +39,9 @@ class ContextData:
     async def get_raw(self) -> dict[str, Any]:
         if self._scope is ContextDataScope.BOT:
             return await self._storage.get_bot_data()
-        if self._scope is ContextDataScope.CHAT and self._key is not None:
+        elif self._scope is ContextDataScope.CHAT and self._key is not None:
             return await self._storage.get_chat_data(self._key)
-        if self._scope is ContextDataScope.USER and self._key is not None:
+        elif self._scope is ContextDataScope.USER and self._key is not None:
             return await self._storage.get_user_data(self._key)
 
         return {}
@@ -49,9 +49,9 @@ class ContextData:
     async def update_raw(self, data: dict[str, Any]) -> None:
         if self._scope is ContextDataScope.BOT:
             return await self._storage.update_bot_data(data)
-        if self._scope is ContextDataScope.CHAT and self._key is not None:
+        elif self._scope is ContextDataScope.CHAT and self._key is not None:
             return await self._storage.update_chat_data(self._key, data)
-        if self._scope is ContextDataScope.USER and self._key is not None:
+        elif self._scope is ContextDataScope.USER and self._key is not None:
             return await self._storage.update_user_data(self._key, data)
         return None
 

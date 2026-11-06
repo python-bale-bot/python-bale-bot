@@ -1,17 +1,7 @@
-#  An API wrapper for Bale written in Python
-#  Copyright (c) 2022-2026
-#  Kian Ahmadian <devs@python-bale-bot.ir>
-#  All rights reserved.
-#
-#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2026
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
 #
 # This software is licensed under the GNU General Public License v2.0.
 # See the accompanying LICENSE file for details.
@@ -19,11 +9,12 @@
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
+from typing import Literal, TypeVar, TYPE_CHECKING, Generic
 
-from typing import TYPE_CHECKING, Generic, Literal, TypeVar
+from bale import ChatFullInfo
 
 if TYPE_CHECKING:
-    from bale import ChatFullInfo, User
+    from bale import Chat, User
     from bale.context import Context
 
 T_co = TypeVar("T_co", covariant=True)
@@ -32,13 +23,12 @@ __all__ = ("Converter", "ChatConverter", "UserConverter")
 
 
 class Converter(Generic[T_co]):
-    async def __call__(self, context: "Context", raw: str) -> T_co | Literal[False]: ...
+    async def __call__(self, context: "Context", raw: str) -> T_co | Literal[False]:
+        ...
 
 
 class ChatConverter(Converter["ChatFullInfo"]):
-    async def __call__(
-        self, context: "Context", raw: str
-    ) -> "ChatFullInfo | Literal[False]":
+    async def __call__(self, context: "Context", raw: str) -> "ChatFullInfo | Literal[False]":
         bot = context.bot
         if raw.startswith("@"):
             raw = raw.removeprefix("@")

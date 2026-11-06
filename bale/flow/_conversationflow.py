@@ -447,8 +447,8 @@ class ConversationFlow(metaclass=ConversationMeta):
             ) = getattr(self, "on_timeout", None)
             if timeout_callback is not None and iscoroutinefunction(timeout_callback):
                 protocol = await self._run_timeout_callback_safe(
-                    timeout_callback(step)
-                )  # noqa
+                    timeout_callback(step)  # noqa
+                )
 
             if (
                 protocol in (MISSING, None)
@@ -496,8 +496,8 @@ class ConversationFlow(metaclass=ConversationMeta):
         if matched_args is None:
             fallback_callback = getattr(self, "on_fallback", None)
             protocol = (
-                await self.on_fallback(ctx, current_step) if fallback_callback else None
-            )  # noqa
+                await self.on_fallback(ctx, current_step) if fallback_callback else None  # noqa
+            )
             if protocol is not None:
                 return await self._apply_protocol(protocol, ctx, current_step)
 

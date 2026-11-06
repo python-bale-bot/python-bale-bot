@@ -17,7 +17,7 @@ from .._baleobject import BaleObject
 from .._utils import markup as utils_markup
 
 if TYPE_CHECKING:
-    pass  # type: ignore
+    from . import InlineKeyboardButton, KeyboardButton  # type: ignore
 
 ButtonT = TypeVar("ButtonT", bound=BaleObject)
 SelfT = TypeVar("SelfT", bound="ReplyMarkup")

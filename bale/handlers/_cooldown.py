@@ -1,23 +1,14 @@
-#  An API wrapper for Bale written in Python
-#  Copyright (c) 2022-2026
-#  Kian Ahmadian <devs@python-bale-bot.ir>
-#  All rights reserved.
-#
-#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.#  This software is licensed under the GNU General Public License v2.0.
-#  See the accompanying LICENSE file for details.
-#
-#  You should have received a copy of the GNU General Public License v2.0
-#  along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+# An API wrapper for Bale written in Python
+# Copyright (c) 2022-2026
+# Kian Ahmadian <devs@python-bale-bot.ir>
+# All rights reserved.
 #
 # This software is licensed under the GNU General Public License v2.0.
 # See the accompanying LICENSE file for details.
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
+
 import time
 from collections.abc import Callable
 from datetime import timedelta
@@ -29,12 +20,11 @@ from ..context import Context
 
 if TYPE_CHECKING:
     from bale.constants import CooldownTarget
-
     Target: TypeAlias = Callable[[Context], Any] | CooldownTarget
 
 Func_T = TypeVar("Func_T", bound=Callable[..., Any])
 
-__all__ = ("Cooldown", "cooldown")
+__all__ = ("Cooldown",)
 
 
 class Cooldown:
