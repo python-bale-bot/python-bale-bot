@@ -201,6 +201,13 @@ class ReplyMarkup(ABC, BaleObject, Generic[ButtonT]):
 
         return cls(keyboards)
 
+    def __repr__(self) -> str:
+        extra = ", ".join(
+            [f"{key}={value!r}" for key, value in self._api_kwargs.items()]
+        )
+
+        return f"<{self.__class__.__name__} {self._payload}={self._keyboards} {extra}>"
+
     def to_dict(self) -> dict[str, Any]:
         payload = {
             self._payload: [[btn.to_dict() for btn in row] for row in self._keyboards]
