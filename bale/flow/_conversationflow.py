@@ -72,7 +72,7 @@ class FlowTransition:
         if not isinstance(invoke_handlers, bool):
             raise TypeError("invoke_handlers must be type of boolean.")
         if timeout is not MISSING and timeout is not None:
-            if not isinstance(timeout, (float, int)):
+            if not isinstance(timeout, (float, int)) and not isinstance(timeout, bool):
                 raise TypeError("timeout must be type if float or int.")
             if target is END:
                 raise TypeError(
@@ -258,7 +258,8 @@ class ConversationFlow(metaclass=ConversationMeta):
         storage = self._storage
         data = await storage.get_flow_data(self._initial_key)
         if data and self._is_our_record(data) and (stp_name := data.get("step")):
-            return self._steps.get(stp_name or "")
+            if stp_name is not None:
+                return self._steps.get(stp_name or "")
 
         return None
 
@@ -422,7 +423,7 @@ class ConversationFlow(metaclass=ConversationMeta):
         try:
             await asyncio.sleep(delay)
         except asyncio.CancelledError:
-            pass
+            raise
         except Exception as exc:
             _log.exception(
                 "timeout processing failed for flow step %s", step, exc_info=exc

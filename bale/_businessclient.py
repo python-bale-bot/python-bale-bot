@@ -338,7 +338,7 @@ class BusinessClient:
         }
 
         response = await self.request(
-            APIEndpoint.SEND_DOCUMENT, maybe_form_data=payload, **kwargs
+            APIEndpoint.SEND_DOCUMENT, json=payload, **kwargs
         )
         result = Message.from_dict(data=response.result)
         return cast(Message, result)
@@ -388,7 +388,7 @@ class BusinessClient:
         }
 
         response = await self.request(
-            APIEndpoint.SEND_PHOTO, maybe_form_data=payload, **kwargs
+            APIEndpoint.SEND_PHOTO, json=payload, **kwargs
         )
         result = Message.from_dict(data=response.result)
         return cast(Message, result)
@@ -438,7 +438,7 @@ class BusinessClient:
         }
 
         response = await self.request(
-            APIEndpoint.SEND_AUDIO, maybe_form_data=payload, **kwargs
+            APIEndpoint.SEND_AUDIO, json=payload, **kwargs
         )
         result = Message.from_dict(data=response.result)
         return cast(Message, result)
@@ -488,7 +488,7 @@ class BusinessClient:
         }
 
         response = await self.request(
-            APIEndpoint.SEND_VIDEO, maybe_form_data=payload, **kwargs
+            APIEndpoint.SEND_VIDEO, json=payload, **kwargs
         )
         result = Message.from_dict(data=response.result)
         return cast(Message, result)

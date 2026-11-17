@@ -126,7 +126,7 @@ class BaleObject:
         """
         :meta private:
         """
-        if isinstance(other, self.__class__):
+        if isinstance(other, self.__class__) and self._id is not None:
             return self._id == other._id
 
         return super().__eq__(other)
@@ -177,22 +177,13 @@ class BaleObject:
         return inspect.signature(cls.__init__).parameters
 
     def _get_public_attrs(self, *, to_dict: bool = False) -> dict[str, Any]:
-        def try_to_dict(key: str):
-            val = getattr(self, key, None)
+        def try_to_dict(val: Any):
             if to_dict:
                 if hasattr(val, "to_dict") and callable(val.to_dict):
                     return val.to_dict()
-                if isinstance(val, list):
+                if isinstance(val, list | tuple | set):
                     return [
-                        (
-                            item.to_dict()
-                            if hasattr(item, "to_dict") and callable(item.to_dict)
-                            else (
-                                item.copy()
-                                if hasattr(item, "copy") and callable(item.copy)
-                                else item
-                            )
-                        )
+                        try_to_dict(item)
                         for item in val
                     ]
                 if hasattr(val, "copy") and callable(val.copy):
@@ -209,9 +200,14 @@ class BaleObject:
                 continue
             slots.update(base_slots)
 
-        attributes: dict[str, Any] = {
-            key: try_to_dict(key) for key in slots if key[0] != "_"
-        }
+        attributes: dict[str, Any] = {}
+        for key in slots:
+            if key.startswith("_"):
+                continue
+
+            value = try_to_dict(getattr(self, key, None))
+            if not to_dict or value is not None:  # to_dict -> value not None
+                attributes[key] = value
 
         return attributes
 

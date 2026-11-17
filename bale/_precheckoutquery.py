@@ -10,11 +10,11 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
-from typing import TYPE_CHECKING
+from typing import TYPE_CHECKING, overload, Literal
 
 from ._baleobject import BaleObject
 from ._user import User
-from ._utils.typehint import MISSING, SentinelOrValue
+from ._utils.typehint import MISSING, SentinelOrValue, SentinelType
 
 if TYPE_CHECKING:
     from bale import Bot
@@ -66,6 +66,12 @@ class PreCheckoutQuery(BaleObject):
 
         self._lock()
 
+    @overload
+    async def answer(self, ok: Literal[True], error_message: SentinelType = MISSING): ...
+
+    @overload
+    async def answer(self, ok: Literal[False], error_message: str): ...
+
     async def answer(self, ok: bool, error_message: SentinelOrValue[str] = MISSING):
         """|shortcut|
 
@@ -78,7 +84,7 @@ class PreCheckoutQuery(BaleObject):
 
         .. versionadded:: 3.0
         """
-        return await self.get_bot().answer_pre_checkout_query(
+        return await self.get_bot().answer_pre_checkout_query(  # type: ignore
             self.id, ok, error_message
         )
 

@@ -78,7 +78,7 @@ class InvalidToken(BaleError):
     def check_description(description: str | None) -> bool:
         """Check whether the server response description indicates a missing or invalid token.
 
-        Args:
+        Arguments:
             description (:obj:`str` | :obj:`None`): The error description from the API response.
 
         Returns:

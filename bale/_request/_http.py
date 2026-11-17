@@ -11,22 +11,37 @@
 from __future__ import annotations
 
 import asyncio
-import inspect
 import logging
-from collections.abc import Callable, Coroutine
+import ssl
+from collections.abc import AsyncGenerator
 from typing import Any, cast
 
-import aiohttp
+import certifi
+from aiohttp import (
+    ClientSession,
+    FormData,
+    TraceConfig,
+    BasicAuth,
+    TCPConnector,
+    ServerTimeoutError,
+    ClientError
+)
+from aiohttp.hdrs import USER_AGENT, CONTENT_LENGTH, CONTENT_TYPE
 
 from .._exceptions import (BadRequest, BaleError, Forbidden, InvalidToken,
                            NetworkError, NotFound, RateLimited, TimeOut)
 from .._utils import request as utils_request
-from ..constants import BALE_API_BASE_URL, BALE_API_FILE_URL
+from ..constants import BALE_API_BASE_URL, BALE_API_FILE_URL, DEFAULT_CHUNK_SIZE
+
 from ._parser import BaleResponse
 
 __all__ = ("HTTPClient", "Route")
 
 _log = logging.getLogger(__name__)
+
+
+def _get_default_ssl_context() -> "ssl.SSLContext":
+    return ssl.create_default_context(cafile=certifi.where())
 
 
 class Route:
@@ -104,21 +119,19 @@ class HTTPClient:
         self,
         token: str,
         connector_init: dict[str, Any] | None = None,
-        http_trace: aiohttp.TraceConfig | None = None,
+        http_trace: TraceConfig | None = None,
         proxy: str | None = None,
-        proxy_auth: aiohttp.BasicAuth | None = None,
+        proxy_auth: BasicAuth | None = None,
     ) -> None:
         if not isinstance(token, str):
             raise TypeError("token param must be type of str.")
 
-        if not connector_init:
-            connector_init = {
-                "keepalive_timeout": 20.0,
-                "ttl_dns_cache": 300,
-                "enable_cleanup_closed": True,
-            }
+        connector_init = dict(connector_init) if connector_init else {}
+        connector_init.setdefault("keepalive_timeout", 20.0)
+        connector_init.setdefault("ttl_dns_cache", 300)
+        connector_init.setdefault("ssl", _get_default_ssl_context())
 
-        self.session: aiohttp.ClientSession | None = None
+        self.session: ClientSession | None = None
         self.token = token
         self.connector_init = connector_init
         self.http_trace = http_trace
@@ -129,7 +142,7 @@ class HTTPClient:
     def user_agent(self) -> str:
         return "python-bale-bot (https://python-bale-bot.ir): An API wrapper for Bale written in Python"
 
-    def get_session(self) -> aiohttp.ClientSession:
+    def get_session(self) -> ClientSession:
         if not self.session:
             raise TypeError(
                 "session is not initialized. Please call `.start()` before using this method."
@@ -141,10 +154,10 @@ class HTTPClient:
 
     def create_session(self) -> None:
         if self.session is None or self.session.closed:
-            self.session = aiohttp.ClientSession(
-                connector=aiohttp.TCPConnector(**self.connector_init),
+            self.session = ClientSession(
+                connector=TCPConnector(**self.connector_init),
                 headers={
-                    "User-Agent": self.user_agent,
+                    USER_AGENT: self.user_agent,
                 },
                 trace_configs=[self.http_trace] if self.http_trace else None,
             )
@@ -241,15 +254,15 @@ class HTTPClient:
         raise BaleError(f"{message}: {status_code}")
 
     async def request(
-        self, route: Route, *, form_data: aiohttp.FormData | None = None, **kwargs
+        self, route: Route, *, form_data: FormData | None = None, json: dict[Any, Any] | None = None, **kwargs
     ) -> BaleResponse:
         url, masked_url = route.url, route.masked_url
         method = route.request_method
         headers = {}
 
-        if "json" in kwargs:
-            headers["Content-Type"] = "application/json"
-            kwargs["data"] = utils_request.to_json(kwargs.pop("json"))
+        if json:
+            headers[CONTENT_TYPE] = "application/json"
+            kwargs["data"] = utils_request.to_json(json)
         if form_data:
             kwargs["data"] = form_data
 
@@ -275,56 +288,55 @@ class HTTPClient:
                 self.validate_response(response)
 
                 return cast(BaleResponse, response)
-        except aiohttp.ServerTimeoutError as exc:
+        except ServerTimeoutError as exc:
             raise TimeOut() from exc
         except asyncio.TimeoutError as exc:
             raise TimeOut() from exc
-        except aiohttp.ClientError as exc:
+        except ClientError as exc:
             raise NetworkError(f"{exc.__class__.__name__}: {exc}") from exc
 
-    async def get_file(self, file_id: str):
+    async def get_file(self, file_id: str, **kwargs):
         base_file_url = BALE_API_FILE_URL.format(TOKEN=self.token)
+
+        if self.proxy is not None:
+            kwargs["proxy"] = self.proxy
+        if self.proxy_auth is not None:
+            kwargs["proxy_auth"] = self.proxy_auth
 
         try:
             async with self.get_session().get(
-                f"{base_file_url}/{file_id}", raise_for_status=True
+                f"{base_file_url}/{file_id}", raise_for_status=True, **kwargs  # noqa
             ) as original_response:
                 return await original_response.read()
-        except aiohttp.ServerTimeoutError as exc:
+        except ServerTimeoutError as exc:
             raise TimeOut() from exc
-        except aiohttp.ClientError as exc:
+        except ClientError as exc:
             raise NetworkError(f"{exc.__class__.__name__}: {exc}") from exc
 
-    async def download_file(
+    async def stream_file(
         self,
         file_id: str,
-        write_func: Callable[[Any], Any],
         *,
-        chunk_size: int = 64 << 10,
-        progress: (
-            Callable[[int | None, float], Coroutine[Any, Any, Any] | Any] | None
-        ) = None,
+        chunk_size: int = DEFAULT_CHUNK_SIZE,
         **kwargs,
-    ) -> None:
+    ) -> AsyncGenerator[tuple[int | None, bytes], None]:
         base_file_url = BALE_API_FILE_URL.format(TOKEN=self.token)
-        is_awaitable = inspect.isawaitable(progress) if progress is not None else False
+
+        if self.proxy is not None:
+            kwargs["proxy"] = self.proxy
+        if self.proxy_auth is not None:
+            kwargs["proxy_auth"] = self.proxy_auth
 
         try:
             async with self.get_session().get(
                 f"{base_file_url}/{file_id}", raise_for_status=True, **kwargs  # noqa
             ) as response:
-                total = response.headers.get("Content-Length")
+                total = response.headers.get(CONTENT_LENGTH)
                 total = int(total) if str(total).isdigit() else None
-                downloaded = 0.0
 
                 async for chunk in response.content.iter_chunked(chunk_size):
-                    downloaded += len(chunk)
-                    write_func(chunk)
-                    if progress:
-                        coro = progress(total, downloaded)
-                        if is_awaitable:
-                            await coro
-        except aiohttp.ServerTimeoutError as exc:
+                    yield total, chunk
+        except ServerTimeoutError as exc:
             raise TimeOut() from exc
-        except aiohttp.ClientError as exc:
+        except ClientError as exc:
             raise NetworkError(f"{exc.__class__.__name__}: {exc}") from exc

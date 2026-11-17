@@ -49,7 +49,7 @@ class Context:
         /,
         bot: "Bot",
         update: "Update",
-        args: list[str] | tuple[str],
+        args: list[str] | tuple[str, ...],
         storage: "BaseStorage | None" = None,
         handler: "UpdateHandler | None" = None,
         flow: "ConversationFlow | None" = None,

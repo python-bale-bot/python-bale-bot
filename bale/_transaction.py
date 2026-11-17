@@ -64,7 +64,7 @@ class Transaction(BaleObject):
         if not parsed_data:
             return None
 
-        parsed_data["created_at"] = parse_time(parsed_data.get("createdAt"))
+        parsed_data["created_at"] = parse_time(parsed_data.pop("createdAt"))
         parsed_data["user_id"] = parsed_data.pop("userID")
 
         return super().from_dict(parsed_data, bot)

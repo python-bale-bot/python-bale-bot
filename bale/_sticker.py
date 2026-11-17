@@ -8,13 +8,10 @@
 #
 # You should have received a copy of the GNU General Public License v2.0
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
-from typing import TYPE_CHECKING
 
 from ._baleobject import BaleObject
 from .attachments import PhotoSize
 
-if TYPE_CHECKING:
-    pass
 
 __all__ = ("Sticker",)
 
@@ -56,7 +53,7 @@ class Sticker(BaleObject):
         self,
         file_id: str,
         file_unique_id: str,
-        sticker_type: str,
+        type: str,
         width: int,
         height: int,
         thumb: "PhotoSize | None" = None,
@@ -67,7 +64,7 @@ class Sticker(BaleObject):
         self._id = file_id
         self.file_id = file_id
         self.file_unique_id = file_unique_id
-        self.type = sticker_type
+        self.type = type
         self.width = width
         self.height = height
         self.thumb = thumb

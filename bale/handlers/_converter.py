@@ -10,14 +10,15 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 from typing import Literal, TypeVar, TYPE_CHECKING, Generic
-
-from bale import ChatFullInfo
+from re import compile as re_compile
 
 if TYPE_CHECKING:
-    from bale import Chat, User
+    from bale import ChatFullInfo, User
     from bale.context import Context
 
 T_co = TypeVar("T_co", covariant=True)
+NUMERIC_ID_PATTERN = re_compile(r"^[0-9]{5,}$")
+USERNAME_PATTERN = re_compile(r"^[a-zA-z][a-zA-Z_0-9]{4,31}]$")
 
 __all__ = ("Converter", "ChatConverter", "UserConverter")
 
@@ -33,7 +34,10 @@ class ChatConverter(Converter["ChatFullInfo"]):
         if raw.startswith("@"):
             raw = raw.removeprefix("@")
 
-        if "@" in raw:
+        if not (
+            NUMERIC_ID_PATTERN.fullmatch(raw) or
+            USERNAME_PATTERN.fullmatch(raw)
+        ):
             return False
 
         chat = await bot.get_chat(raw)
@@ -43,7 +47,7 @@ class ChatConverter(Converter["ChatFullInfo"]):
 class UserConverter(Converter["User"]):
     async def __call__(self, context: "Context", raw: str) -> "User | Literal[False]":
         bot = context.bot
-        if "@" in raw:
+        if NUMERIC_ID_PATTERN.fullmatch(raw):
             return False
 
         user = await bot.get_user(raw)

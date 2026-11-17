@@ -30,6 +30,7 @@ __all__ = (
     "ChatType",
     "ChatMemberStatus",
     "ChatAction",
+    "KeyboardButtonStyle",
     "TransactionStatus",
     "CooldownTarget",
     "ConversationFlowTarget",
@@ -180,30 +181,35 @@ class ChatAction(StringEnum):
     TYPING = "typing"
     ":obj:`str`: Shows that the action is 'bot is typing.'"
     CHOOSE_STICKER = "choose_sticker"
-    ":obj:`str`: Shows that the action is 'bot is selecting a sticker.'"
+    ":obj:`str`: Shows that the action is 'bot is selecting a sticker."
     RECORD_VIDEO = "record_video"
-    ":obj:`str`: Shows that the action is 'bot is recording a video.'"
+    ":obj:`str`: Shows that the action is 'bot is recording a video."
     RECORD_VOICE = "record_voice"
-    ":obj:`str`: Shows that the action is 'bot is recording a voice.'"
+    ":obj:`str`: Shows that the action is 'bot is recording a voice."
     UPLOAD_PHOTO = "upload_photo"
-    ":obj:`str`: Shows that the action is 'bot is uploading a photo.'"
+    ":obj:`str`: Shows that the action is 'bot is uploading a photo."
     UPLOAD_VIDEO = "upload_video"
-    ":obj:`str`: Shows that the action is 'bot is uploading a video.'"
+    ":obj:`str`: Shows that the action is 'bot is uploading a video."
     UPLOAD_VOICE = "upload_voice"
-    ":obj:`str`: Shows that the action is 'bot is uploading a voice.'"
+    ":obj:`str`: Shows that the action is 'bot is uploading a voice."
 
 
 class KeyboardButtonStyle(StringEnum):
+    """
+    .. inbaledocs::
+        https://docs.bale.ai/#style
+
+    """
     PRIMARY = "primary"
-    ":obj:`str`: Shows keyboard button style is primary (usually blue)."
+    ":obj:`str`: Shows keyboard button style is primary (``#00b894``)."
     BLUE = PRIMARY
     ":obj:`str`: An alias for :attr:`PRIMARY`."
     SUCCESS = "success"
-    ":obj:`str`: Shows keyboard button style is success (usually green)."
+    ":obj:`str`: Shows keyboard button style is success (``#24863d``)."
     GREEN = SUCCESS
     ":obj:`str`: An alias for :attr:`SUCCESS`."
     DANGER = "danger"
-    ":obj:`str`: Shows keyboard button style is danger (usually red)."
+    ":obj:`str`: Shows keyboard button style is danger (``#e82a3c``)."
     RED = DANGER
     ":obj:`str`: An alias for :attr:`DANGER`."
 

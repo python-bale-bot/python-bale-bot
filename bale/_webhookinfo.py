@@ -29,7 +29,7 @@ class WebhookInfo(BaleObject):
     .. versionadded:: 3.0
     """
 
-    __slots__ = ("url", "has_custom_certificate", "pending_update_count")
+    __slots__ = ("url", "pending_update_count")
 
     def __init__(self, url: str, pending_update_count: int) -> None:
         super().__init__()

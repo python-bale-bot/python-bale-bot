@@ -25,6 +25,9 @@ class BaseMiddleware(ABC):
     :class:`BaseMiddleware` and then register an instance of that class
     with the :class:`~bale.Bot`.
 
+    See Also:
+        :meth:`.Bot.add_middleware`
+
     .. versionadded:: 3.0
     """
 

@@ -10,6 +10,7 @@
 # along with this program. If not, see <https://www.gnu.org/licenses/gpl-2.0.html>.
 from __future__ import annotations
 
+from contextlib import ExitStack
 from typing import Any, TYPE_CHECKING, TypeAlias
 
 from aiohttp import FormData
@@ -18,7 +19,7 @@ from .._baleobject import BaleObject
 from .._utils.object import json
 from .._utils.typehint import MISSING
 from ..attachments import InputFile
-from ..constants import StringEnum
+from ..constants import StringEnum, InputMediaType
 
 if TYPE_CHECKING:
     from bale import InputMediaPhoto, InputMediaVideo, InputMediaAnimation, InputMediaAudio, InputMediaDocument
@@ -65,13 +66,15 @@ def _get_parameter_value(value: Any):
 
 
 def _parse_form_data_field_value(value: Any):
-    if isinstance(value, int):
+    if isinstance(value, int) and not isinstance(value, bool):
         value = str(value)
+    if isinstance(value, StringEnum):
+        value = value.value
 
     return value
 
 
-def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, FormData | None]:
+def build_media_group(payload: dict[str, Any], stack: ExitStack | None = None) -> tuple[dict[str, Any] | None, FormData | None]:
     media: list[MediaInput] = payload["media"]
     use_form_data = any(
         isinstance(i.media, InputFile) for i in media
@@ -83,11 +86,11 @@ def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, F
         media_array = []
 
         for idx, m in enumerate(media, start=1):
-            media_type = m.type
+            media_type = m.type.value if isinstance(m.type, InputMediaType) else m.type
             media_value = m.media
             media_caption = m.caption
 
-            media_item = {
+            media_item: dict[str, Any] = {
                 "type": media_type
             }
             if media_caption:
@@ -96,8 +99,11 @@ def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, F
             if isinstance(media_value, InputFile):
                 field_name = f"{media_type}_{idx}"
                 media_item["media"] = f"attach://{field_name}"
-                field_kwargs = media_value.to_multipart_payload()
-                form.add_field(name=field_name, **field_kwargs)
+                val = media_value.to_value(stack)
+                field_kwargs = {"content_type": "multipart/form-data"}
+                if filename := media_value.filename:
+                    field_kwargs["filename"] = filename
+                form.add_field(name=field_name, value=val, **field_kwargs)
             else:
                 media_item["media"] = _parse_form_data_field_value(media_value)
 
@@ -106,7 +112,7 @@ def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, F
         for key, value in build_payload(payload).items():
             if key != 'media':
                 form.add_field(key, _parse_form_data_field_value(value))
-        form.add_field("media", json.dumps(media_array))
+        form.add_field("media", to_json(media_array))
 
         return None, form
 
@@ -118,17 +124,20 @@ def build_media_group(payload: dict[str, Any]) -> tuple[dict[str, Any] | None, F
     return payload, None
 
 
-def maybe_form_data(data: dict, form_data: FormData | None = None) -> tuple[dict[str, Any] | None, FormData | None]:
+def maybe_form_data(data: dict, *, form_data: FormData | None = None, stack: ExitStack | None = None) -> tuple[dict[str, Any] | None, FormData | None]:
+    if form_data is not None:
+        return None, form_data
+
     use_form_data = any(
         isinstance(value, InputFile) for key, value in data.items()
     )
     if use_form_data:
-        return None, build_form_data(data)
+        return None, build_form_data(data, stack)
 
     return build_payload(data), None
 
 
-def build_form_data(data: Any) -> FormData:
+def build_form_data(data: Any, stack: ExitStack | None = None) -> FormData:
     if isinstance(data, FormData):
         return data
 
@@ -139,8 +148,8 @@ def build_form_data(data: Any) -> FormData:
                 continue
 
             if isinstance(value, InputFile):
-                field_kwargs = value.to_multipart_payload()
-                form_data.add_field(name=key, **field_kwargs)
+                val = value.to_value(stack)
+                form_data.add_field(name=key, value=val, filename=value.filename, content_type="multipart/form-data")
             else:
                 form_data.add_field(name=key, value=_parse_form_data_field_value(value))
 

@@ -63,8 +63,10 @@ MaybeCoro = T | Coro[T]
 MaybeFunc = T | Callable[..., T]
 MaybeCoroFunc = T | CoroFunc
 MaybeAwaitable = T | Awaitable[T]
+
 MISSING = _Sentinel.MISSING
 SentinelOrValue: TypeAlias = T | _Sentinel | None
+SentinelType: TypeAlias = _Sentinel
 
 JSONDICT = dict[str, Any]
 _Button = "InlineKeyboardButton | KeyboardButton"
