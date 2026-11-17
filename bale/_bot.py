@@ -32,6 +32,7 @@ from ._exceptions import (FlowBadStatusError, MiddlewareError, NotFound,
 from ._message import Message
 from ._request import BaleResponse, HTTPClient, Route
 from ._sticker import Sticker
+from ._botcommand import BotCommand
 from ._transaction import Transaction
 from ._update import Update
 from ._user import User
@@ -120,179 +121,213 @@ class Bot:
 
     An overview of all wrapped methods of the `Bale <https://ble.ir>`_ web services:
 
-    .. tab:: Sending Messages
+        .. tab:: Sending Messages
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.send_message`
-              - sending normal message
-            * - :meth:`~Bot.send_photo`
-              - sending photo
-            * - :meth:`~Bot.send_video`
-              - sending video
-            * - :meth:`~Bot.send_animation`
-              - sending animation
-            * - :meth:`~Bot.send_audio`
-              - sending audio
-            * - :meth:`~Bot.send_voice`
-              - sending voice
-            * - :meth:`~Bot.send_contact`
-              - sending contact
-            * - :meth:`~Bot.send_document`
-              - sending document
-            * - :meth:`~Bot.send_invoice`
-              - sending an invoice
-            * - :meth:`~Bot.send_location`
-              - sending location
-            * - :meth:`~Bot.send_sticker`
-              - sending sticker
-            * - :meth:`~Bot.send_chat_action`
-              - sending chat action
-            * - :meth:`~Bot.send_media_group`
-              - sending media grouped together
+                * - Method
+                  - Description
+                * - :meth:`~Bot.send_message`
+                  - sending normal message
+                * - :meth:`~Bot.send_photo`
+                  - sending photo
+                * - :meth:`~Bot.send_video`
+                  - sending video
+                * - :meth:`~Bot.send_animation`
+                  - sending animation
+                * - :meth:`~Bot.send_audio`
+                  - sending audio
+                * - :meth:`~Bot.send_voice`
+                  - sending voice
+                * - :meth:`~Bot.send_contact`
+                  - sending contact
+                * - :meth:`~Bot.send_document`
+                  - sending document
+                * - :meth:`~Bot.send_invoice`
+                  - sending an invoice
+                * - :meth:`~Bot.send_location`
+                  - sending location
+                * - :meth:`~Bot.send_sticker`
+                  - sending sticker
+                * - :meth:`~Bot.send_chat_action`
+                  - sending chat action
+                * - :meth:`~Bot.send_media_group`
+                  - sending media grouped together
 
-    .. tab:: Message Management
+        .. tab:: Message Management
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.copy_message`
-              - copying the contents of an arbitrary message
-            * - :meth:`~Bot.delete_message`
-              - deleting message
-            * - :meth:`~Bot.edit_message_text`
-              - editing message (text)
-            * - :meth:`~Bot.edit_message_caption`
-              - editing captions
-            * - :meth:`~Bot.edit_message_reply_markup`
-              - editing reply markup
-            * - :meth:`~Bot.forward_message`
-              - forwarding message
+                * - Method
+                  - Description
+                * - :meth:`~Bot.copy_message`
+                  - copying the contents of an arbitrary message
+                * - :meth:`~Bot.delete_message`
+                  - deleting message
+                * - :meth:`~Bot.edit_message_text`
+                  - editing message (text)
+                * - :meth:`~Bot.edit_message_caption`
+                  - editing captions
+                * - :meth:`~Bot.edit_message_reply_markup`
+                  - editing reply markup
+                * - :meth:`~Bot.forward_message`
+                  - forwarding message
 
-    .. tab:: Retrieving Information
+        .. tab:: Retrieving Information
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.get_me`
-              - getting information about bot
-            * - :meth:`~Bot.get_chat`
-              - getting information about a chat
-            * - :meth:`~Bot.get_user`
-              - getting information about a user
-            * - :meth:`~Bot.get_chat_member`
-              - getting information about a chat member
-            * - :meth:`~Bot.get_chat_members`
-              - getting the list of members in a chat
+                * - Method
+                  - Description
+                * - :meth:`~Bot.get_me`
+                  - getting information about bot
+                * - :meth:`~Bot.get_chat`
+                  - getting information about a chat
+                * - :meth:`~Bot.get_user`
+                  - getting information about a user
+                * - :meth:`~Bot.get_chat_member`
+                  - getting information about a chat member
+                * - :meth:`~Bot.get_chat_members`
+                  - getting the list of members in a chat
 
-    .. tab:: Webhook & Update System
+        .. tab:: Webhook & Update System
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.delete_webhook`
-              - removing webhook integration
-            * - :meth:`~Bot.set_webhook`
-              - setting a webhook to receive updates
-            * - :meth:`~Bot.get_updates`
-              - getting pending updates
-            * - :meth:`~Bot.get_webhook_info`
-              - getting current webhook status
+                * - Method
+                  - Description
+                * - :meth:`~Bot.delete_webhook`
+                  - removing webhook integration
+                * - :meth:`~Bot.set_webhook`
+                  - setting a webhook to receive updates
+                * - :meth:`~Bot.get_updates`
+                  - getting pending updates
+                * - :meth:`~Bot.get_webhook_info`
+                  - getting current webhook status
 
-    .. tab:: Invite Links
+        .. tab:: Invite Links
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.create_chat_invite_link`
-              - creating an invitation link for a chat
-            * - :meth:`~Bot.export_chat_invite_link`
-              - exporting the primary invite link of a chat
-            * - :meth:`~Bot.revoke_chat_invite_link`
-              - revoking an invitation link
+                * - Method
+                  - Description
+                * - :meth:`~Bot.create_chat_invite_link`
+                  - creating an invitation link for a chat
+                * - :meth:`~Bot.export_chat_invite_link`
+                  - exporting the primary invite link of a chat
+                * - :meth:`~Bot.revoke_chat_invite_link`
+                  - revoking an invitation link
 
-    .. tab:: Chat Moderation & Utilities
+        .. tab:: Chat Moderation & Utilities
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.leave_chat`
-              - leaving from a chat
-            * - :meth:`~Bot.invite_user`
-              - inviting a user to chat
-            * - :meth:`~Bot.get_chat_administrators`
-              - getting the list of admins in a chat
-            * - :meth:`~Bot.get_chat_members_count`
-              - getting the number of members in a chat
-            * - :meth:`~Bot.set_chat_title`
-              - setting the title of a chat
-            * - :meth:`~Bot.set_chat_photo`
-              - setting the photo of a chat
-            * - :meth:`~Bot.delete_chat_photo`
-              - deleting the photo of a chat
-            * - :meth:`~Bot.set_chat_description`
-              - setting the description of a chat
-            * - :meth:`~Bot.promote_chat_member`
-              - promoting/demoting a chat member (admin rights)
-            * - :meth:`~Bot.ban_chat_member`
-              - banning a member from chat
-            * - :meth:`~Bot.unban_chat_member`
-              - unbanning a user from chat
-            * - :meth:`~Bot.pin_chat_message`
-              - pinning a message
-            * - :meth:`~Bot.unpin_chat_message`
-              - unpinning a message
-            * - :meth:`~Bot.unpin_all_chat_messages`
-              - unpinning all messages in a chat
+                * - Method
+                  - Description
+                * - :meth:`~Bot.leave_chat`
+                  - leaving from a chat
+                * - :meth:`~Bot.invite_user`
+                  - inviting a user to chat
+                * - :meth:`~Bot.get_chat_administrators`
+                  - getting the list of admins in a chat
+                * - :meth:`~Bot.get_chat_members_count`
+                  - getting the number of members in a chat
+                * - :meth:`~Bot.set_chat_title`
+                  - setting the title of a chat
+                * - :meth:`~Bot.set_chat_photo`
+                  - setting the photo of a chat
+                * - :meth:`~Bot.delete_chat_photo`
+                  - deleting the photo of a chat
+                * - :meth:`~Bot.set_chat_description`
+                  - setting the description of a chat
+                * - :meth:`~Bot.promote_chat_member`
+                  - promoting/demoting a chat member (admin rights)
+                * - :meth:`~Bot.ban_chat_member`
+                  - banning a member from chat
+                * - :meth:`~Bot.unban_chat_member`
+                  - unbanning a user from chat
+                * - :meth:`~Bot.pin_chat_message`
+                  - pinning a message
+                * - :meth:`~Bot.unpin_chat_message`
+                  - unpinning a message
+                * - :meth:`~Bot.unpin_all_chat_messages`
+                  - unpinning all messages in a chat
 
-    .. tab:: Payments
+        .. tab:: Payments
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.answer_pre_checkout_query`
-              - answering a pre-checkout query
-            * - :meth:`~Bot.create_invoice_link`
-              - creating an invoice link
-            * - :meth:`~Bot.inquire_transaction`
-              - inquiring about a transaction
-            * - :meth:`~Bot.ask_review`
-              - asking for a review on a payment
+                * - Method
+                  - Description
+                * - :meth:`~Bot.answer_pre_checkout_query`
+                  - answering a pre-checkout query
+                * - :meth:`~Bot.create_invoice_link`
+                  - creating an invoice link
+                * - :meth:`~Bot.inquire_transaction`
+                  - inquiring about a transaction
 
-    .. tab:: Callback & Files
+        .. tab:: Callback & Files
 
-        .. list-table::
-            :widths: 40 60
-            :header-rows: 1
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
 
-            * - Method
-              - Description
-            * - :meth:`~Bot.answer_callback_query`
-              - answering a callback query
-            * - :meth:`~Bot.download_file`
-              - downloading a file
+                * - Method
+                  - Description
+                * - :meth:`~Bot.answer_callback_query`
+                  - answering a callback query
+                * - :meth:`~Bot.download_file`
+                  - downloading a file
+
+        .. tab:: Bot Commands
+
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
+
+                * - Method
+                  - Description
+                * - :meth:`~Bot.get_my_commands`
+                  - getting the current list of bot commands
+                * - :meth:`~Bot.set_my_commands`
+                  - setting the list of bot commands
+                * - :meth:`~Bot.delete_my_commands`
+                  - deleting the list of bot commands
+
+        .. tab:: Feedback & Reviews
+
+            .. list-table::
+                :widths: 40 60
+                :header-rows: 1
+                :class: methods-tb
+
+                * - Method
+                  - Description
+                * - :meth:`~Bot.ask_review`
+                  - requesting the user to submit or edit a bot review and rating
 
     Note:
         The values provided for the parameters of any covered method are validated against their defined type hints before sending the request to the web service. If a value does not match the type hint, a :exc:`TypeError` will be raised.
@@ -307,6 +342,7 @@ class Bot:
         :ref:`how_to_create_bale_bot`
 
     .. versionchanged:: 3.0
+
         - The :paramref:`options` parameter has been added.
         - CamelCase aliases have been added for all bot methods to fully synchronize with the official naming conventions of the Bale documentation.
     """
@@ -2989,6 +3025,97 @@ class Bot:
 
         return target_file
 
+    async def get_my_commands(self, **kwargs) -> tuple[BotCommand, ...]:
+        """Use this method to get the list of commands set for the bot.
+
+        .. code-block:: python
+
+            commands = await bot.get_my_commands()
+
+        Returns:
+             A list of commands.
+
+        See Also:
+            :ref:`commands`, :meth:`set_my_commands`, :meth:`delete_my_commands`
+
+        .. versionadded:: 3.0
+        """
+        response_result = (
+            await self.request(APIEndpoint.GET_MY_COMMANDS, **kwargs)
+        ).result
+        commands = BotCommand.from_list(response_result, self)
+        return cast(tuple[BotCommand, ...], commands)
+
+    getMyCommands = get_my_commands
+    """A alias for :meth:`get_my_commands`.
+
+    .. versionadded:: 3.0
+    """
+
+    @arguments_shield
+    async def set_my_commands(self, commands: Sequence[BotCommand], **kwargs) -> bool:
+        """Use this method to set and configure the bot's command list.
+
+        .. code-block:: python
+
+            from bale import BotCommand
+
+
+            commands = [
+                BotCommand(command="start", description="Start interacting with the bot"),
+                BotCommand(command="help", description="Show help and instructions"),
+                BotCommand(command="support", description="Contact our support team")
+            ]
+            await bot.set_my_commands(commands)
+
+        Arguments:
+            commands:
+                A list of commands that will replace the previous ones.
+
+        Returns:
+             Returns :obj:`True` if the operation is successful, and :obj:`False` otherwise.
+
+        See Also:
+            :ref:`commands`, :meth:`get_my_commands`, :meth:`delete_my_commands`
+
+        .. versionadded:: 3.0
+        """
+        payload = {
+            "commands": commands,
+        }
+
+        response = await self.request(APIEndpoint.SET_MY_COMMANDS, json=payload, **kwargs)
+        return cast(bool, response.result)
+
+    setMyCommands = set_my_commands
+    """A alias for :meth:`set_my_commands`.
+
+    .. versionadded:: 3.0
+    """
+
+    async def delete_my_commands(self, **kwargs) -> bool:
+        """Use this method to delete all commands set for the bot.
+
+        .. code-block:: python
+
+            await bot.delete_my_commands()
+
+        Returns:
+             Returns :obj:`True` if the operation is successful, and :obj:`False` otherwise.
+
+        See Also:
+            :ref:`commands`, :meth:`get_my_commands`, :meth:`set_my_commands`
+
+        .. versionadded:: 3.0
+        """
+        response = await self.request(APIEndpoint.DELETE_MY_COMMANDS, **kwargs)
+        return cast(bool, response.result)
+
+    deleteMyCommands = delete_my_commands
+    """A alias for :meth:`delete_my_commands`.
+
+    .. versionadded:: 3.0
+    """
     @arguments_shield
     async def invite_user(
         self, chat_id: str | int, user_id: str | int, **kwargs
